@@ -78,23 +78,27 @@ jobs:
             --jq '.[0].number')
 
           if [ -z "$PR_NUMBER" ]; then
-            PR_BODY=$(printf '%s\n%s\n\n%s\n%s\n\n%s\n%s\n' \
+            printf '%s\n' \
               '## 🔄 Automated Sync PR' \
               "**Release:** \`$TAG\`" \
+              '' \
               '### 📦 Release Notes' \
               "$NOTES" \
+              '' \
               '---' \
-              'This PR ensures **dev** stays ahead of **main** after a release.')
-            PR_NUMBER=$(gh pr create \
+              'This PR ensures **dev** stays ahead of **main** after a release.' \
+              > pr_body.txt
+
+            gh pr create \
               --base dev \
               --head "$BRANCH" \
               --title "🔄 Sync main → dev after release $TAG" \
-              --body "$PR_BODY" \
+              --body-file pr_body.txt \
               --label automation \
               --label sync \
-              --label "$TAG" \
-              --json number \
-              --jq '.number')
+              --label "$TAG"
+
+            PR_NUMBER=$(gh pr view "$BRANCH" --json number --jq '.number')
           fi
 
           echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
