@@ -58,7 +58,7 @@ class JwtService implements JwtServiceInterface
             ];
         }
 
-        /** @var User $user */
+        /** @var User&JWTSubject $user */
         $user = $record->user;
 
         $access = JWTAuth::fromUser($user);
