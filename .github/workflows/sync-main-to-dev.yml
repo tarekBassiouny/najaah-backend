@@ -78,7 +78,7 @@ jobs:
               '## 🔄 Automated Sync PR' \
               "**Release:** \`$TAG\`" \
               '' \
-              '### 📦 Release Notes' \
+              '### 📦 Release Notes:' \
               "$NOTES" \
               '' \
               '---' \
