@@ -1,0 +1,50 @@
+name: Create Release Tag
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine next version
+        id: version
+        run: |
+          # Detect latest tag or default to v0.1.0
+          latest=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.1.0")
+          echo "Latest: $latest"
+
+          # Auto bump patch version
+          base="${latest#v}"
+          major=$(echo $base | cut -d. -f1)
+          minor=$(echo $base | cut -d. -f2)
+          patch=$(echo $base | cut -d. -f3)
+          patch=$((patch+1))
+          new="v$major.$minor.$patch"
+
+          echo "new_tag=$new" >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git tag ${{ steps.version.outputs.new_tag }}
+          git push origin ${{ steps.version.outputs.new_tag }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.new_tag }}
+          name: "Release ${{ steps.version.outputs.new_tag }}"
+          body: |
+            Automatic release created from merging into main.
+            See commits for details.
