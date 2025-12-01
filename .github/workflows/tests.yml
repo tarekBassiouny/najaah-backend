@@ -1,10 +1,9 @@
 name: PHPUnit Tests
 
 on:
-  # Runs after analysis.yml completes; can also be triggered manually
-  workflow_run:
-    workflows: ["Static Analysis"]
-    types: [completed]
+  # PRs to dev/main and manual runs
+  pull_request:
+    branches: [dev, main]
   workflow_dispatch:
 
 jobs:

@@ -1,10 +1,9 @@
 name: Static Analysis
 
 on:
-  # Runs after style.yml completes; can also be triggered manually
-  workflow_run:
-    workflows: ["Style Checks"]
-    types: [completed]
+  # PRs to dev/main and manual runs
+  pull_request:
+    branches: [dev, main]
   workflow_dispatch:
 
 jobs:
