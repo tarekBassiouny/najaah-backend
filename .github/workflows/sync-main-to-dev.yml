@@ -1,3 +1,5 @@
+# yamllint disable rule:line-length rule:truthy
+---
 name: Sync main to dev
 
 on:
@@ -7,7 +9,8 @@ on:
   workflow_run:
     workflows:
       - "Create Release Tag"
-    types: [completed]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -16,8 +19,9 @@ permissions:
 jobs:
   sync:
     if: >-
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
+      || (github.event_name == 'workflow_run'
+      && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
 
     steps:
@@ -30,8 +34,7 @@ jobs:
       - name: Determine tag from event
         id: tag
         run: |
-          # Prefer the tag that triggered this workflow (on: push tags)
-          tag="${GITHUB_REF_NAME:-}"
+          tag="${GITHUB_REF_NAME#refs/tags/}"
           if [ -z "$tag" ]; then
             tag=$(git describe --tags --abbrev=0)
           fi
@@ -46,12 +49,10 @@ jobs:
         run: |
           notes=$(curl -s \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.tag.outputs.tag }} \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.tag.outputs.tag }}" \
             | jq -r '.body')
 
-          echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$notes" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          printf "notes<<EOF\n%s\nEOF\n" "$notes" >> "$GITHUB_OUTPUT"
 
       - name: Create sync branch
         id: branch
@@ -67,27 +68,39 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH="${{ steps.branch.outputs.name }}"
-          # Check if PR already exists for this branch/base
-          PR_NUMBER=$(gh pr list --base dev --head "$BRANCH" --json number --jq '.[0].number')
+
+          PR_NUMBER=$(gh pr list \
+            --base dev \
+            --head "$BRANCH" \
+            --json number \
+            --jq '.[0].number')
+
           if [ -z "$PR_NUMBER" ]; then
+            cat > pr_body.txt <<'EOF'
+            ## 🔄 Automated Sync PR
+            **Release:** `${{ steps.tag.outputs.tag }}`
+
+            ### 📦 Release Notes
+            ${{ steps.notes.outputs.notes }}
+
+            ---
+            This PR ensures **dev** stays ahead of **main** after a release.
+            EOF
             PR_NUMBER=$(gh pr create \
               --base dev \
               --head "$BRANCH" \
               --title "🔄 Sync main → dev after release ${{ steps.tag.outputs.tag }}" \
-              --body "## 🔄 Automated Sync PR
-**Release:** ${{ steps.tag.outputs.tag }}
-
-### 📦 Release Notes
-${{ steps.notes.outputs.notes }}
-
----
-This PR ensures that **dev** stays ahead of **main** after a tagged release." \
-              --label automation --label sync \
-              --json number --jq '.number')
+              --body-file pr_body.txt \
+              --label automation \
+              --label sync \
+              --label "${{ steps.tag.outputs.tag }}" \
+              --json number \
+              --jq '.number')
           fi
+
           echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
-      - name: Auto-approve the PR
+      - name: Auto-approve PR
         if: ${{ steps.pr.outputs.number }}
         uses: hmarr/auto-approve-action@v3
         with:
@@ -100,3 +113,18 @@ This PR ensures that **dev** stays ahead of **main** after a tagged release." \
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.pr.outputs.number }}
           merge-method: merge
+
+      - name: Delete sync branch after merge
+        if: ${{ steps.pr.outputs.number }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sleep 10
+          BRANCH="${{ steps.branch.outputs.name }}"
+          STATUS=$(gh pr view "${{ steps.pr.outputs.number }}" --json state --jq '.state')
+
+          if [ "$STATUS" = "CLOSED" ]; then
+            git push origin --delete "$BRANCH" || true
+          else
+            echo "PR not closed yet, skipping branch delete."
+          fi
