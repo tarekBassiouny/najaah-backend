@@ -11,9 +11,9 @@ class UserDeviceSeeder extends Seeder
     public function run(): void
     {
         // Assign 1–3 devices per user
-        User::all()->each(function (User $user) {
+        User::all()->each(function (User $user): void {
             UserDevice::factory()
-                ->count(rand(1, 3))
+                ->count(rand(1, 1))
                 ->create(['user_id' => $user->id]);
         });
     }

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Center;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -19,7 +20,7 @@ class EnrollmentSeeder extends Seeder
                 Enrollment::factory()->create([
                     'user_id' => $user->id,
                     'course_id' => $course->id,
-                    'assigned_by' => $user->id, // self-assigned for seeding
+                    'center_id' => $course->center_id,
                 ]);
             }
         }

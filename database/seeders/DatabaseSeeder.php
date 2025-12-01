@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             CenterSeeder::class,
             RoleSeeder::class,
             UserSeeder::class,
-            UserCenterSeeder::class,
             UserDeviceSeeder::class,
 
             // --- Course Structure ---
