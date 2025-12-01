@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -35,9 +39,12 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create sync branch
+        id: branch
         run: |
-          git checkout -B sync-main-to-dev
-          git push origin sync-main-to-dev --force
+          BRANCH="sync-main-to-dev-${{ steps.tag.outputs.tag }}-${{ github.run_id }}"
+          git checkout -B "$BRANCH"
+          git push origin "$BRANCH" --force
+          echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
 
       - name: Create PR main → dev
         id: cpr
@@ -45,7 +52,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: dev
-          branch: sync-main-to-dev
+          branch: ${{ steps.branch.outputs.name }}
           title: "🔄 Sync main → dev after release ${{ steps.tag.outputs.tag }}"
           body: |
             ## 🔄 Automated Sync PR
@@ -57,7 +64,7 @@ jobs:
             ---
             This PR ensures that **dev** stays ahead of **main** after a tagged release.
           labels: "automation,sync"
-          delete-branch: false
+          delete-branch: true
           draft: false
 
       - name: Auto-approve the PR
@@ -73,9 +80,3 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: merge
-
-      - name: Delete sync branch after merge
-        if: ${{ steps.cpr.outputs.pull-request-number }}
-        run: |
-          sleep 10
-          git push origin --delete sync-main-to-dev || true
