@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class VideoSetting extends Model
 {
+    /** @use HasFactory<\Database\Factories\VideoSettingFactory> */
     use HasFactory;
     use SoftDeletes;
 
@@ -29,7 +30,7 @@ class VideoSetting extends Model
         'settings' => 'array',
     ];
 
-    /** @return BelongsTo<Video, VideoSetting> */
+    /** @return BelongsTo<Video, self> */
     public function video(): BelongsTo
     {
         return $this->belongsTo(Video::class);

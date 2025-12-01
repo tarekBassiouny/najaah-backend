@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Role extends Model
 {
+    /** @use HasFactory<\Database\Factories\RoleFactory> */
     use HasFactory;
     use SoftDeletes;
 
@@ -34,7 +35,7 @@ class Role extends Model
         'description_translations' => 'array',
     ];
 
-    /** @return BelongsToMany<User, Role> */
+    /** @return BelongsToMany<User, self> */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'role_user');

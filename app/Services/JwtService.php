@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Contracts\JwtServiceInterface;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JwtService implements JwtServiceInterface
@@ -16,6 +17,7 @@ class JwtService implements JwtServiceInterface
     /**
      * @return array{access_token: string, refresh_token: string}
      */
+    /** @param User&JWTSubject $user */
     public function create(User $user, UserDevice $device): array
     {
         $access = JWTAuth::fromUser($user);

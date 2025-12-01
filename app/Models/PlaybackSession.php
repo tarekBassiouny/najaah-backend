@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class PlaybackSession extends Model
 {
+    /** @use HasFactory<\Database\Factories\PlaybackSessionFactory> */
     use HasFactory;
     use SoftDeletes;
 
@@ -44,19 +45,19 @@ class PlaybackSession extends Model
         'is_full_play' => 'boolean',
     ];
 
-    /** @return BelongsTo<User, PlaybackSession> */
+    /** @return BelongsTo<User, self> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return BelongsTo<Video, PlaybackSession> */
+    /** @return BelongsTo<Video, self> */
     public function video(): BelongsTo
     {
         return $this->belongsTo(Video::class);
     }
 
-    /** @return BelongsTo<UserDevice, PlaybackSession> */
+    /** @return BelongsTo<UserDevice, self> */
     public function device(): BelongsTo
     {
         return $this->belongsTo(UserDevice::class, 'device_id');

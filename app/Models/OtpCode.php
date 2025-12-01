@@ -24,9 +24,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class OtpCode extends Model
 {
+    /** @use HasFactory<\Database\Factories\OtpCodeFactory> */
     use HasFactory;
     use SoftDeletes;
 
+    /** @var array<string, mixed> */
     protected $attributes = [
         'provider' => 'sms',
     ];
@@ -48,7 +50,7 @@ class OtpCode extends Model
         'consumed_at' => 'datetime',
     ];
 
-    /** @return BelongsTo<User, OtpCode> */
+    /** @return BelongsTo<User, self> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

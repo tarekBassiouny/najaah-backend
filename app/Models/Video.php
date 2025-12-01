@@ -37,7 +37,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Video extends Model
 {
-    use HasFactory, SoftDeletes;
+    /** @use HasFactory<\Database\Factories\VideoFactory> */
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'title_translations',
@@ -68,25 +70,25 @@ class Video extends Model
         'thumbnail_urls' => 'array',
     ];
 
-    /** @return BelongsTo<User, Video> */
+    /** @return BelongsTo<User, self> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /** @return BelongsTo<VideoUploadSession, Video> */
+    /** @return BelongsTo<VideoUploadSession, self> */
     public function uploadSession(): BelongsTo
     {
         return $this->belongsTo(VideoUploadSession::class, 'upload_session_id');
     }
 
-    /** @return HasOne<VideoSetting, Video> */
+    /** @return HasOne<VideoSetting, self> */
     public function setting(): HasOne
     {
         return $this->hasOne(VideoSetting::class);
     }
 
-    /** @return BelongsToMany<Course, Video> */
+    /** @return BelongsToMany<Course, self> */
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_video')
@@ -95,7 +97,7 @@ class Video extends Model
             ->wherePivotNull('deleted_at');
     }
 
-    /** @return HasMany<PlaybackSession, Video> */
+    /** @return HasMany<PlaybackSession, self> */
     public function playbackSessions(): HasMany
     {
         return $this->hasMany(PlaybackSession::class);

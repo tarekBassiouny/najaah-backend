@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class VideoUploadSession extends Model
 {
+    /** @use HasFactory<\Database\Factories\VideoUploadSessionFactory> */
     use HasFactory;
     use SoftDeletes;
 
@@ -41,19 +42,19 @@ class VideoUploadSession extends Model
         'progress_percent' => 'integer',
     ];
 
-    /** @return BelongsTo<Center, VideoUploadSession> */
+    /** @return BelongsTo<Center, self> */
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);
     }
 
-    /** @return BelongsTo<User, VideoUploadSession> */
+    /** @return BelongsTo<User, self> */
     public function uploader(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_by');
     }
 
-    /** @return HasMany<Video, VideoUploadSession> */
+    /** @return HasMany<Video, self> */
     public function videos(): HasMany
     {
         return $this->hasMany(Video::class, 'upload_session_id');

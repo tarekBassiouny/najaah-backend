@@ -23,7 +23,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Section extends Model
 {
-    use HasFactory, SoftDeletes;
+    /** @use HasFactory<\Database\Factories\SectionFactory> */
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'course_id',
@@ -40,13 +42,13 @@ class Section extends Model
         'visible' => 'boolean',
     ];
 
-    /** @return BelongsTo<Course, Section> */
+    /** @return BelongsTo<Course, self> */
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
     }
 
-    /** @return BelongsToMany<Video, Section> */
+    /** @return BelongsToMany<Video, self> */
     public function videos(): BelongsToMany
     {
         return $this->belongsToMany(Video::class, 'course_video', 'section_id', 'video_id')
@@ -55,7 +57,7 @@ class Section extends Model
             ->wherePivotNull('deleted_at');
     }
 
-    /** @return BelongsToMany<Pdf, Section> */
+    /** @return BelongsToMany<Pdf, self> */
     public function pdfs(): BelongsToMany
     {
         return $this->belongsToMany(Pdf::class, 'course_pdf', 'section_id', 'pdf_id')

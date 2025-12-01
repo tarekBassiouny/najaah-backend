@@ -39,7 +39,11 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'center_id',
@@ -60,55 +64,55 @@ class User extends Authenticatable
         'last_login_at' => 'datetime',
     ];
 
-    /** @return BelongsTo<Center, User> */
+    /** @return BelongsTo<Center, self> */
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);
     }
 
-    /** @return BelongsToMany<Center, User> */
+    /** @return BelongsToMany<Center, self> */
     public function centers(): BelongsToMany
     {
         return $this->belongsToMany(Center::class, 'user_centers');
     }
 
-    /** @return BelongsToMany<Role> */
+    /** @return BelongsToMany<Role, self> */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_user');
     }
 
-    /** @return HasMany<UserDevice> */
+    /** @return HasMany<UserDevice, self> */
     public function devices(): HasMany
     {
         return $this->hasMany(UserDevice::class);
     }
 
-    /** @return HasMany<JwtToken> */
+    /** @return HasMany<JwtToken, self> */
     public function tokens(): HasMany
     {
         return $this->hasMany(JwtToken::class);
     }
 
-    /** @return HasMany<Enrollment, User> */
+    /** @return HasMany<Enrollment, self> */
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
     }
 
-    /** @return HasMany<PlaybackSession> */
+    /** @return HasMany<PlaybackSession, self> */
     public function playbackSessions(): HasMany
     {
         return $this->hasMany(PlaybackSession::class);
     }
 
-    /** @return HasMany<AuditLog, User> */
+    /** @return HasMany<AuditLog, self> */
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AuditLog::class);
     }
 
-    /** @return HasOne<StudentSetting, User> */
+    /** @return HasOne<StudentSetting, self> */
     public function studentSetting(): HasOne
     {
         return $this->hasOne(StudentSetting::class);

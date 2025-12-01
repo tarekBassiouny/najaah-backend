@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class SystemSetting extends Model
 {
+    /** @use HasFactory<\Database\Factories\SystemSettingFactory> */
     use HasFactory;
     use SoftDeletes;
 
