@@ -17,12 +17,12 @@ class UserDeviceFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'device_uuid' => (string) Str::uuid(),
-            'device_name' => $this->faker->optional()->word(),
-            'device_os' => $this->faker->randomElement(['iOS', 'Android', 'Windows', 'Linux']),
-            'device_type' => $this->faker->randomElement(['mobile', 'tablet', 'desktop']),
-            'is_active' => true,
-            'last_used_at' => $this->faker->optional()->dateTimeBetween('-1 month', 'now'),
+            'device_id' => (string) Str::uuid(),
+            'model' => $this->faker->word(),
+            'os_version' => $this->faker->randomElement(['iOS 17', 'Android 14', 'Windows 11', 'macOS 14']),
+            'status' => 0,
+            'approved_at' => now(),
+            'last_used_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
         ];
     }
 }

@@ -24,6 +24,10 @@ class RoleFactory extends Factory
 
         return [
             'name' => ucfirst($name),
+            'name_translations' => [
+                'en' => ucfirst($name),
+                'ar' => 'دور '.ucfirst($name),
+            ],
             'slug' => Str::slug($name),
             'description_translations' => [
                 'en' => ucfirst($name).' role',

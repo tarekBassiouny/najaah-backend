@@ -22,11 +22,11 @@ class JwtTokenFactory extends Factory
         return [
             'user_id' => User::factory(),
             'device_id' => UserDevice::factory(),
-            'token' => Str::random(160),
+            'access_token' => Str::random(160),
             'refresh_token' => Str::random(200),
             'expires_at' => $expires,
             'refresh_expires_at' => $refreshExpires,
-            'revoked' => false,
+            'revoked_at' => null,
         ];
     }
 }
