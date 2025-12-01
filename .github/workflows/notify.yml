@@ -12,14 +12,13 @@ jobs:
   notify:
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
-
     steps:
       - name: Send Slack alert
         uses: slackapi/slack-github-action@v1.25.0
         with:
           payload: |
             {
-              "text": ":rotating_light: CI Failed in workflow `${{ github.event.workflow.name }}` (status: `${{ github.event.workflow_run.conclusion }}`) on `${{ github.event.workflow_run.head_branch }}`. Check logs."
+              "text": ":rotating_light: Workflow `${{ github.event.workflow.name }}` failed (status: `${{ github.event.workflow_run.conclusion }}`) on branch `${{ github.event.workflow_run.head_branch }}` at `${{ github.event.workflow_run.updated_at }}`. See run: ${{ github.event.workflow_run.html_url }}"
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -38,4 +37,7 @@ jobs:
             Workflow: ${{ github.event.workflow.name }}
             Status: ${{ github.event.workflow_run.conclusion }}
             Branch: ${{ github.event.workflow_run.head_branch }}
-            Run URL: ${{ github.event.workflow_run.html_url }}
+            Updated At: ${{ github.event.workflow_run.updated_at }}
+            URL: ${{ github.event.workflow_run.html_url }}
+
+    # Reminder: deploy.yml can listen to successful Tests workflow without touching this file.

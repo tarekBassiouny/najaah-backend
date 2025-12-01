@@ -1,7 +1,7 @@
 name: Static Analysis
 
 on:
-  # Run automatically after style.yml completes
+  # Runs after style.yml completes; can also be triggered manually
   workflow_run:
     workflows: ["Style Checks"]
     types: [completed]
@@ -9,12 +9,12 @@ on:
 
 jobs:
   phpstan:
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    # Only run when previous workflow succeeded or manual trigger
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     name: PHPStan
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Cache Composer packages
@@ -23,12 +23,12 @@ jobs:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
 
-      - name: Set up PHP
+      - name: Set up PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          coverage: none
           tools: composer
+          coverage: none
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -41,3 +41,5 @@ jobs:
         with:
           name: phpstan-log
           path: phpstan.log
+
+    # Reminder: deploy.yml can listen on successful Tests workflow_run; no changes needed here.

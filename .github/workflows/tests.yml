@@ -1,7 +1,7 @@
 name: PHPUnit Tests
 
 on:
-  # Run automatically after analysis.yml completes
+  # Runs after analysis.yml completes; can also be triggered manually
   workflow_run:
     workflows: ["Static Analysis"]
     types: [completed]
@@ -9,7 +9,8 @@ on:
 
 jobs:
   tests:
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    # Only run when analysis succeeded or manual trigger
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     services:
@@ -17,29 +18,27 @@ jobs:
         image: mysql:8
         env:
           MYSQL_DATABASE: testing
-          MYSQL_USER: testing
-          MYSQL_PASSWORD: testing
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
         options: >
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=5s
-          --health-timeout=3s
-          --health-retries=10
+          --health-cmd="mysqladmin ping --silent" --health-interval=5s --health-timeout=3s --health-retries=10
 
     env:
-      APP_ENV: test
+      # Point Laravel to the static test environment file; no .env modifications
+      APP_ENV: testing
       APP_ENVIRONMENT_FILE: .env.test
       DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       DB_DATABASE: testing
-      DB_USERNAME: testing
-      DB_PASSWORD: testing
+      DB_USERNAME: root
+      DB_PASSWORD: root
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Cache Composer packages
@@ -48,12 +47,12 @@ jobs:
           path: vendor
           key: composer-${{ hashFiles('composer.lock') }}
 
-      - name: Set up PHP
+      - name: Set up PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          coverage: none
           tools: composer
+          coverage: none
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -61,14 +60,14 @@ jobs:
       - name: Confirm .env.test present
         run: ls -la .env.test
 
-      - name: Wait for MySQL
+      - name: Wait for MySQL (40 attempts)
         run: |
           for i in {1..40}; do
             if mysqladmin ping -h127.0.0.1 -uroot -proot --silent; then
               echo "MySQL is up"; break
             fi
-            echo "Waiting for MySQL ($i/40)..."
-            sleep 2
+            echo "Waiting for MySQL ($i/40)...";
+            sleep 2;
           done
 
       - name: Run migrations
@@ -82,3 +81,5 @@ jobs:
         with:
           name: phpunit-results
           path: junit.xml
+
+    # Reminder: a future deploy.yml can listen to this workflow_run success without modifying this file.
