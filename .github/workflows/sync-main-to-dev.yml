@@ -2,35 +2,60 @@ name: Sync main to dev
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'     # Trigger only when a release tag is pushed to main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Create sync PR (main → dev)
+      - name: Get latest tag (release version)
+        id: tag
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
+      - name: Fetch release notes from GitHub API
+        id: notes
+        run: |
+          notes=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.tag.outputs.tag }} \
+            | jq -r '.body')
+
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$notes" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create sync branch from main
+        run: |
+          git checkout -b sync-main-to-dev
+          git push -u origin sync-main-to-dev --force
+
+      - name: Create PR from main → dev
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: dev
-          head: main
-          title: "🔄 Sync main → dev (automated after release)"
-          body: |
-            This PR was automatically created to sync **main** into **dev**  
-            after a release was merged into the main branch.
-
-            - No manual action needed  
-            - Auto-merge will trigger automatically  
-            - Ensures `dev` stays ahead of `main`
           branch: sync-main-to-dev
+          title: "🔄 Sync main → dev after release ${{ steps.tag.outputs.tag }}"
+          body: |
+            **Release:** ${{ steps.tag.outputs.tag }}
+
+            ---
+            ### 📦 Release Notes
+
+            ${{ steps.notes.outputs.notes }}
+
+            ---
+            Automated sync to ensure **dev** stays ahead of **main**.
           labels: "automation,sync"
           draft: false
 
@@ -47,3 +72,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: merge
+
+      - name: Delete sync branch after merge
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+          # Wait for auto-merge to complete
+          sleep 10
+          git push origin --delete sync-main-to-dev || true
