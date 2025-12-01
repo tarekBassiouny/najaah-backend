@@ -1,0 +1,162 @@
+name: CD Pipeline (Blue/Green Deployment)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Blue/Green Deployment
+    runs-on: ubuntu-latest
+
+    # Manual Approval Required
+    environment:
+      name: production
+      url: https://${{ secrets.SERVER_DOMAIN }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # --------------------------------------------------
+      # 1. Build Frontend Assets Locally (Vite)
+      # --------------------------------------------------
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node packages
+        run: npm ci
+
+      - name: Build Assets
+        run: npm run build
+
+
+      # --------------------------------------------------
+      # 2. SSH & Blue/Green Deploy Logic
+      # --------------------------------------------------
+      - name: Blue/Green Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /var/www
+
+            echo "Detecting active environment..."
+            if [ -L current ] && [ "$(readlink current)" = "/var/www/blue" ]; then
+              ACTIVE=blue
+              INACTIVE=green
+            else
+              ACTIVE=green
+              INACTIVE=blue
+            fi
+
+            echo "Active: $ACTIVE"
+            echo "Inactive: $INACTIVE"
+
+            echo "Deploying to $INACTIVE environment..."
+
+            # Pull latest code into inactive directory
+            cd /var/www/$INACTIVE
+            git fetch --all
+            git reset --hard origin/main
+
+            echo "Building Docker containers for $INACTIVE..."
+            docker compose -f docker-compose.$INACTIVE.yml down
+            docker compose -f docker-compose.$INACTIVE.yml pull
+            docker compose -f docker-compose.$INACTIVE.yml up -d --build
+
+            echo "Running migrations on $INACTIVE..."
+            docker compose -f docker-compose.$INACTIVE.yml exec php php artisan migrate --force
+
+            echo "Optimizing..."
+            docker compose -f docker-compose.$INACTIVE.yml exec php php artisan optimize:clear
+            docker compose -f docker-compose.$INACTIVE.yml exec php php artisan optimize
+
+            echo "Restarting queues..."
+            docker compose -f docker-compose.$INACTIVE.yml exec php php artisan queue:restart
+
+
+            # ------------------------------------------------------
+            # Health Check on INACTIVE before switching live
+            # ------------------------------------------------------
+            echo "Performing health check on $INACTIVE..."
+            for i in {1..10}; do
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://${{ secrets.SERVER_DOMAIN }}/health)
+              if [ "$STATUS" -eq 200 ]; then
+                echo "$INACTIVE passed health check"
+                break
+              fi
+              echo "Waiting for health check..."
+              sleep 5
+            done
+
+            if [ "$STATUS" -ne 200 ]; then
+              echo "Health check failed! Aborting and keeping $ACTIVE active."
+              exit 1
+            fi
+
+
+            # ------------------------------------------------------
+            # Blue/Green Switch (Zero Downtime)
+            # ------------------------------------------------------
+            echo "Switching production to $INACTIVE..."
+            ln -sfn /var/www/$INACTIVE /var/www/current
+
+            echo "Reloading Nginx..."
+            sudo systemctl reload nginx
+
+            echo "Blue/Green switch complete!"
+            echo "New active environment: $INACTIVE"
+
+
+      # --------------------------------------------------
+      # Slack Success Notification
+      # --------------------------------------------------
+      - name: Slack Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": ":rocket: Blue/Green Deployment Succeeded! Environment switched successfully."
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+
+  # ------------------------------------------------------
+  # Failure Notifications
+  # ------------------------------------------------------
+  notify-failure:
+    name: Deployment Failed Alerts
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: failure()
+
+    steps:
+      - name: Slack Failure Alert
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": ":rotating_light: *Blue/Green Deployment FAILED!* The active environment was not switched."
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Email Failure Alert
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "🚨 Production Deployment Failed"
+          to: ${{ secrets.ALERT_EMAIL }}
+          from: "CD Bot <cd@example.com>"
+          body: "Blue/Green deployment failed for commit: ${{ github.sha }}."
