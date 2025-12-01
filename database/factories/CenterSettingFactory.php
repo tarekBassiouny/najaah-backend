@@ -16,10 +16,10 @@ class CenterSettingFactory extends Factory
     {
         return [
             'center_id' => Center::factory(),
-            'key' => $this->faker->unique()->slug(),
-            'value' => [
-                'en' => $this->faker->sentence(),
-                'ar' => $this->faker->sentence(),
+            'settings' => [
+                'default_view_limit' => 2,
+                'allow_extra_view_requests' => true,
+                'pdf_download_permission' => false,
             ],
         ];
     }

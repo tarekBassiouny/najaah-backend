@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -20,12 +22,12 @@ class AdminAuthController extends Controller
 
         if (! $user || ! Hash::check($data['password'], (string) $user->password)) {
             return response()->json([
-                'error' => 'Invalid credentials'
+                'error' => 'Invalid credentials',
             ], 401);
         }
 
         return response()->json([
-            'user'  => new AdminUserResource($user),
+            'user' => new AdminUserResource($user),
             'token' => $user->createToken('admin')->plainTextToken,
         ]);
     }

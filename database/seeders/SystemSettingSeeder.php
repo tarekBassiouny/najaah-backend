@@ -20,7 +20,7 @@ class SystemSettingSeeder extends Seeder
 
         SystemSetting::factory()->create([
             'key' => 'support_email',
-            'value' => 'support@example.com',
+            'value' => ['email' => 'support@example.com'],
             'is_public' => true,
         ]);
     }

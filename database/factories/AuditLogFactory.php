@@ -17,12 +17,12 @@ class AuditLogFactory extends Factory
         return [
             'user_id' => User::factory(),
             'action' => $this->faker->randomElement(['created', 'updated', 'deleted', 'viewed']),
-            'auditable_type' => null,
-            'auditable_id' => null,
-            'before' => null,
-            'after' => null,
-            'ip_address' => $this->faker->ipv4(),
-            'user_agent' => $this->faker->userAgent(),
+            'entity_type' => User::class,
+            'entity_id' => 1,
+            'metadata' => [
+                'ip' => $this->faker->ipv4(),
+                'ua' => $this->faker->userAgent(),
+            ],
         ];
     }
 }

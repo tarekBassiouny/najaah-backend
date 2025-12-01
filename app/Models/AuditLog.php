@@ -12,16 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
- * @property int $user_id
+ * @property int|null $user_id
  * @property string $action
- * @property string|null $auditable_type
- * @property int|null $auditable_id
- * @property array<mixed>|null $before
- * @property array<mixed>|null $after
- * @property string|null $ip_address
- * @property string|null $user_agent
- * @property-read User $user
- * @property-read Model|null $auditable
+ * @property string $entity_type
+ * @property int $entity_id
+ * @property array<mixed> $metadata
+ * @property-read User|null $user
+ * @property-read Model|null $entity
  */
 class AuditLog extends Model
 {
@@ -30,17 +27,13 @@ class AuditLog extends Model
     protected $fillable = [
         'user_id',
         'action',
-        'auditable_type',
-        'auditable_id',
-        'before',
-        'after',
-        'ip_address',
-        'user_agent',
+        'entity_type',
+        'entity_id',
+        'metadata',
     ];
 
     protected $casts = [
-        'before' => 'array',
-        'after' => 'array',
+        'metadata' => 'array',
     ];
 
     /** @return BelongsTo<User, AuditLog> */
@@ -50,8 +43,12 @@ class AuditLog extends Model
     }
 
     /** @return MorphTo<Model, AuditLog> */
-    public function auditable(): MorphTo
+    public function entity(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo(
+            name: 'entity',
+            type: 'entity_type',
+            id: 'entity_id'
+        );
     }
 }

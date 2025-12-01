@@ -13,13 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $user_id
  * @property int $course_id
- * @property int|null $assigned_by
- * @property \Illuminate\Support\Carbon $assigned_at
+ * @property int $center_id
+ * @property int $status
+ * @property \Illuminate\Support\Carbon $enrolled_at
  * @property \Illuminate\Support\Carbon|null $expires_at
- * @property string $status
  * @property-read User $user
  * @property-read Course $course
- * @property-read User|null $assignedBy
+ * @property-read Center $center
  */
 class Enrollment extends Model
 {
@@ -28,15 +28,16 @@ class Enrollment extends Model
     protected $fillable = [
         'user_id',
         'course_id',
-        'assigned_by',
-        'assigned_at',
-        'expires_at',
+        'center_id',
         'status',
+        'enrolled_at',
+        'expires_at',
     ];
 
     protected $casts = [
-        'assigned_at' => 'datetime',
+        'enrolled_at' => 'datetime',
         'expires_at' => 'datetime',
+        'status' => 'integer',
     ];
 
     /** @return BelongsTo<User, Enrollment> */
@@ -51,9 +52,9 @@ class Enrollment extends Model
         return $this->belongsTo(Course::class);
     }
 
-    /** @return BelongsTo<User, Enrollment> */
-    public function assignedBy(): BelongsTo
+    /** @return BelongsTo<Center, Enrollment> */
+    public function center(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'assigned_by');
+        return $this->belongsTo(Center::class);
     }
 }

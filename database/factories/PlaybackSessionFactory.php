@@ -21,8 +21,9 @@ class PlaybackSessionFactory extends Factory
             'video_id' => Video::factory(),
             'device_id' => UserDevice::factory(),
             'started_at' => now()->subMinutes(rand(1, 500)),
-            'last_position_seconds' => rand(5, 2000),
-            'completed' => $this->faker->boolean(20),
+            'ended_at' => now(),
+            'progress_percent' => $this->faker->numberBetween(0, 100),
+            'is_full_play' => $this->faker->boolean(20),
         ];
     }
 }

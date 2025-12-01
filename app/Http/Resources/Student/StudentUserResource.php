@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources\Student;
 
 use App\Models\User;
@@ -20,11 +22,13 @@ class StudentUserResource extends JsonResource
         $user = $this->resource;
 
         return [
-            'id'    => $user->id,
-            'name'  => $user->name,
+            'id' => $user->id,
+            'name' => $user->name,
             'phone' => $user->phone,
             'email' => $user->email,
-            'role'  => $user->roles->first()?->name,
+            'status' => $user->status,
+            'is_student' => $user->is_student,
+            'roles' => $user->roles->pluck('name'),
         ];
     }
 }

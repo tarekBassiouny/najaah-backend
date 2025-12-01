@@ -3,13 +3,14 @@ name: CI Pipeline
 on:
   pull_request:
     branches:
+      - dev
       - main
-      - develop
+  workflow_dispatch:
 
 jobs:
 
   # ----------------------------------------------------------
-  # 1. PHPCS — Fastest & first quality gate
+  # 1. PHPCS
   # ----------------------------------------------------------
   phpcs:
     name: PHPCS Code Style
@@ -26,7 +27,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: "8.3"
 
       - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist
@@ -42,7 +43,7 @@ jobs:
 
 
   # ----------------------------------------------------------
-  # 2. PHPStan — static analysis
+  # 2. PHPStan
   # ----------------------------------------------------------
   phpstan:
     name: PHPStan Static Analysis
@@ -60,7 +61,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: "8.3"
           extensions: mbstring, intl, pdo_mysql
 
       - run: composer install --no-interaction --prefer-dist
@@ -76,7 +77,7 @@ jobs:
 
 
   # ----------------------------------------------------------
-  # 3. PHPUnit — Laravel Sail
+  # 3. PHPUnit (Laravel Sail)
   # ----------------------------------------------------------
   phpunit:
     name: PHPUnit Tests (Laravel Sail)
@@ -132,7 +133,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: "8.3"
 
       - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist
@@ -147,7 +148,7 @@ jobs:
 
 
   # ----------------------------------------------------------
-  # 5. Notifications — only when CI fails
+  # 5. Notifications (only on failure)
   # ----------------------------------------------------------
   notify:
     name: Failure Alerts

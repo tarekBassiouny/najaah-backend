@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,14 +17,25 @@ use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property int $id
- * @property int $center_id
+ * @property int|null $center_id
  * @property string $name
+ * @property string|null $username
  * @property string $phone
  * @property string|null $email
  * @property string $password
- * @property bool $is_active
- * @property string|null $profile_photo_url
+ * @property int $status
+ * @property bool $is_student
+ * @property string|null $avatar_url
  * @property \Carbon\Carbon|null $last_login_at
+ * @property-read Center|null $center
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Center> $centers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Role> $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, UserDevice> $devices
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, JwtToken> $tokens
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, PlaybackSession> $playbackSessions
+ * @property-read StudentSetting|null $studentSetting
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, AuditLog> $auditLogs
  */
 class User extends Authenticatable
 {
@@ -31,18 +44,27 @@ class User extends Authenticatable
     protected $fillable = [
         'center_id',
         'name',
+        'username',
         'phone',
         'email',
         'password',
-        'is_active',
-        'profile_photo_url',
+        'status',
+        'is_student',
+        'avatar_url',
         'last_login_at',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'status' => 'integer',
+        'is_student' => 'boolean',
         'last_login_at' => 'datetime',
     ];
+
+    /** @return BelongsTo<Center, User> */
+    public function center(): BelongsTo
+    {
+        return $this->belongsTo(Center::class);
+    }
 
     /** @return BelongsToMany<Center, User> */
     public function centers(): BelongsToMany
@@ -68,7 +90,7 @@ class User extends Authenticatable
         return $this->hasMany(JwtToken::class);
     }
 
-    /** @return HasMany<Enrollment> */
+    /** @return HasMany<Enrollment, User> */
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
@@ -80,10 +102,16 @@ class User extends Authenticatable
         return $this->hasMany(PlaybackSession::class);
     }
 
-    /** @return HasMany<AuditLog> */
+    /** @return HasMany<AuditLog, User> */
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AuditLog::class);
+    }
+
+    /** @return HasOne<StudentSetting, User> */
+    public function studentSetting(): HasOne
+    {
+        return $this->hasOne(StudentSetting::class);
     }
 
     /** Automatically hash password */

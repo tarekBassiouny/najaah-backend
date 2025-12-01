@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Models\UserDevice;
@@ -20,12 +22,13 @@ class DeviceResource extends JsonResource
         $device = $this->resource;
 
         return [
-            'id'          => $device->id,
-            'device_uuid' => $device->device_uuid,
-            'device_name' => $device->device_name,
-            'device_os'   => $device->device_os,
-            'device_type' => $device->device_type,
-            'status'      => $device->status,
+            'id' => $device->id,
+            'device_id' => $device->device_id,
+            'model' => $device->model,
+            'os_version' => $device->os_version,
+            'status' => $device->status,
+            'approved_at' => $device->approved_at,
+            'last_used_at' => $device->last_used_at,
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -7,25 +9,18 @@ use App\Http\Requests\VerifyOtpRequest;
 use App\Http\Resources\DeviceResource;
 use App\Http\Resources\Student\StudentUserResource;
 use App\Http\Resources\TokenResource;
-use App\Services\DeviceService;
-use App\Services\JwtService;
-use App\Services\OtpService;
+use App\Services\Contracts\DeviceServiceInterface;
+use App\Services\Contracts\JwtServiceInterface;
+use App\Services\Contracts\OtpServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class LoginController extends Controller
 {
-    protected OtpService $otpService;
-    protected DeviceService $deviceService;
-    protected JwtService $jwtService;
-
     public function __construct(
-        OtpService $otpService,
-        DeviceService $deviceService,
-        JwtService $jwtService
+        private readonly OtpServiceInterface $otpService,
+        private readonly DeviceServiceInterface $deviceService,
+        private readonly JwtServiceInterface $jwtService
     ) {
-        $this->otpService     = $otpService;
-        $this->deviceService  = $deviceService;
-        $this->jwtService     = $jwtService;
     }
 
     public function verify(VerifyOtpRequest $request): JsonResponse
@@ -33,7 +28,10 @@ class LoginController extends Controller
         /** @var array{
          *     otp:string,
          *     token:string,
-         *     device_uuid:string
+         *     device_uuid:string,
+         *     device_name?:string,
+         *     device_os?:string,
+         *     device_type?:string
          * } $data
          */
         $data = $request->validated();
@@ -43,11 +41,12 @@ class LoginController extends Controller
             $data['token']
         );
 
-        if (! $otp) {
+        if ($otp === null || $otp->user === null) {
             return response()->json(['error' => 'Invalid OTP'], 422);
         }
 
-        $user   = $otp->user;
+        $user = $otp->user;
+
         $device = $this->deviceService->register(
             $user,
             $data['device_uuid'],
@@ -57,7 +56,7 @@ class LoginController extends Controller
         $tokens = $this->jwtService->create($user, $device);
 
         return response()->json([
-            'user'   => new StudentUserResource($user),
+            'user' => new StudentUserResource($user),
             'device' => new DeviceResource($device),
             'tokens' => new TokenResource($tokens),
         ]);

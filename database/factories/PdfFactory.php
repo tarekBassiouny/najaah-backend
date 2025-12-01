@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\User;
 use App\Models\Pdf;
-use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class PdfFactory extends Factory
 {
@@ -15,8 +16,6 @@ class PdfFactory extends Factory
     public function definition(): array
     {
         return [
-            'section_id' => Section::factory(),
-
             'title_translations' => [
                 'en' => 'PDF: '.$this->faker->sentence(),
                 'ar' => 'ملف: '.$this->faker->sentence(),
@@ -27,8 +26,13 @@ class PdfFactory extends Factory
                 'ar' => 'وصف: '.$this->faker->sentence(),
             ],
 
-            'file_url' => $this->faker->url(),
-            'order_index' => $this->faker->numberBetween(1, 50),
+            'source_type' => $this->faker->numberBetween(0, 1),
+            'source_provider' => $this->faker->randomElement(['s3', 'spaces', 'gcs']),
+            'source_id' => Str::uuid()->toString(),
+            'source_url' => $this->faker->url(),
+            'file_size_kb' => $this->faker->numberBetween(10, 50_000),
+            'file_extension' => $this->faker->randomElement(['pdf', 'docx']),
+            'created_by' => User::factory(),
         ];
     }
 }

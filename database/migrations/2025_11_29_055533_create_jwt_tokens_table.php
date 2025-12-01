@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -8,28 +10,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('jwt_tokens', function (Blueprint $table) {
+        Schema::create('jwt_tokens', function (Blueprint $table): void {
             $table->id();
-
             $table->foreignId('user_id')
                 ->constrained('users')
+                ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-
             $table->foreignId('device_id')
+                ->nullable()
                 ->constrained('user_devices')
-                ->cascadeOnDelete();
-
-            $table->text('token');
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
+            $table->string('access_token', 255);
             $table->string('refresh_token', 255);
-
             $table->timestamp('expires_at');
             $table->timestamp('refresh_expires_at');
-
-            $table->boolean('revoked')->default(false);
-
+            $table->timestamp('revoked_at')->nullable();
             $table->timestamps();
-
-            // A user cannot have duplicate refresh tokens for the same device
+            $table->softDeletes();
             $table->unique(['device_id', 'refresh_token']);
         });
     }

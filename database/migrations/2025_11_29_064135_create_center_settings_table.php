@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -8,20 +10,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('center_settings', function (Blueprint $table) {
+        Schema::create('center_settings', function (Blueprint $table): void {
             $table->id();
-
             $table->foreignId('center_id')
                 ->constrained('centers')
+                ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-
-            $table->string('key');
-            $table->json('value')->nullable();
-
+            $table->json('settings');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->index(['center_id', 'key']);
+            $table->unique('center_id');
         });
     }
 

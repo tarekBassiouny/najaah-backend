@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,18 +13,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('course_video', function (Blueprint $table) {
-            $table->bigIncrements('id');
-
-            $table->unsignedBigInteger('course_id');
-            $table->unsignedBigInteger('video_id');
-
-            $table->foreign('course_id')->references('id')->on('courses')->cascadeOnDelete();
-            $table->foreign('video_id')->references('id')->on('videos')->cascadeOnDelete();
-
-            $table->unique(['course_id', 'video_id']);
+        Schema::create('course_video', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('course_id')
+                ->constrained('courses')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->foreignId('video_id')
+                ->constrained('videos')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->foreignId('section_id')
+                ->nullable()
+                ->constrained('sections')
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
+            $table->unsignedInteger('order_index')->default(0);
+            $table->boolean('visible')->default(true);
+            $table->unsignedInteger('view_limit_override')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['course_id', 'video_id', 'section_id']);
         });
-
     }
 
     /**

@@ -11,7 +11,7 @@ class OtpCodeSeeder extends Seeder
     public function run(): void
     {
         // Create 10 pending OTPs
-        OtpCode::factory()->count(10)->create();
+        OtpCode::factory()->count(5)->create();
 
         // Create OTPs associated with users
         User::limit(5)->get()->each(function ($user) {

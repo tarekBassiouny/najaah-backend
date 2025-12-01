@@ -3,7 +3,8 @@ name: Auto Create PR for Codex Refactor Branches
 on:
   push:
     branches:
-      - "feature-codex/**"
+      - "feature/**"
+  workflow_dispatch:
 
 jobs:
   create_pr:
@@ -30,7 +31,7 @@ jobs:
             Generated automatically based on Codex instructions.
 
             Please review and approve.
-          base: main
+          base: dev
           branch: ${{ github.ref_name }}
           labels: |
             refactor

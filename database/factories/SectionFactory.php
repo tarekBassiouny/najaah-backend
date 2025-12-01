@@ -25,6 +25,7 @@ class SectionFactory extends Factory
                 'ar' => 'وصف: '.$this->faker->sentence(),
             ],
             'order_index' => $this->faker->numberBetween(1, 20),
+            'visible' => true,
         ];
     }
 }

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin array
+ * @mixin array<string, mixed>
  */
 class TokenResource extends JsonResource
 {
@@ -19,9 +21,9 @@ class TokenResource extends JsonResource
         $tokens = $this->resource;
 
         return [
-            'access_token'  => $tokens['access_token'] ?? null,
+            'access_token' => $tokens['access_token'] ?? null,
             'refresh_token' => $tokens['refresh_token'] ?? null,
-            'expires_in'    => $tokens['expires_in'] ?? null,
+            'expires_in' => $tokens['expires_in'] ?? 1800,
         ];
     }
 }

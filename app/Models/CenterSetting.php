@@ -12,8 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property int $id
  * @property int $center_id
- * @property string $key
- * @property array<mixed>|null $value
+ * @property array<mixed> $settings
  * @property-read Center $center
  */
 class CenterSetting extends Model
@@ -22,12 +21,11 @@ class CenterSetting extends Model
 
     protected $fillable = [
         'center_id',
-        'key',
-        'value',
+        'settings',
     ];
 
     protected $casts = [
-        'value' => 'array',
+        'settings' => 'array',
     ];
 
     /** @return BelongsTo<Center, CenterSetting> */

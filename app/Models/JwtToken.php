@@ -7,37 +7,39 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
  * @property int $user_id
- * @property int $device_id
- * @property string $token
+ * @property int|null $device_id
+ * @property string $access_token
  * @property string $refresh_token
  * @property \Carbon\Carbon $expires_at
  * @property \Carbon\Carbon $refresh_expires_at
- * @property bool $revoked
+ * @property \Carbon\Carbon|null $revoked_at
  * @property-read User $user
- * @property-read UserDevice $device
+ * @property-read UserDevice|null $device
  */
 class JwtToken extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
         'device_id',
-        'token',
+        'access_token',
         'refresh_token',
         'expires_at',
         'refresh_expires_at',
-        'revoked',
+        'revoked_at',
     ];
 
     protected $casts = [
         'expires_at' => 'datetime',
         'refresh_expires_at' => 'datetime',
-        'revoked' => 'boolean',
+        'revoked_at' => 'datetime',
     ];
 
     /** @return BelongsTo<User, JwtToken> */
