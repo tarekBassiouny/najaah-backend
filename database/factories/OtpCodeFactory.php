@@ -16,12 +16,12 @@ class OtpCodeFactory extends Factory
     {
         return [
             'phone' => $this->faker->e164PhoneNumber(),
-            'country_code' => $this->faker->countryCode(),
-            'otp' => (string) rand(100000, 999999),
-            'token' => Str::uuid()->toString(),
+            'otp_code' => (string) rand(100000, 999999),
+            'otp_token' => Str::uuid()->toString(),
+            'provider' => 'sms',
             'expires_at' => now()->addMinutes(5),
-            'is_used' => false,
-            'user_id' => null, // Optional — created on login
+            'consumed_at' => null,
+            'user_id' => null,
         ];
     }
 }

@@ -14,7 +14,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name_translations' => [
+            'title_translations' => [
                 'en' => $this->faker->word(),
                 'ar' => 'فئة '.$this->faker->word(),
             ],
@@ -22,6 +22,8 @@ class CategoryFactory extends Factory
                 'en' => $this->faker->sentence(),
                 'ar' => 'وصف: '.$this->faker->sentence(),
             ],
+            'parent_id' => null,
+            'order_index' => $this->faker->numberBetween(1, 50),
             'is_active' => true,
         ];
     }

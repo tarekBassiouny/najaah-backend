@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Center;
-use App\Models\CenterSetting;
+use App\Models\Course;
+use App\Models\CourseSetting;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CenterSettingFactory extends Factory
+class CourseSettingFactory extends Factory
 {
-    protected $model = CenterSetting::class;
+    protected $model = CourseSetting::class;
 
     public function definition(): array
     {
         return [
-            'center_id' => Center::factory(),
+            'course_id' => Course::factory(),
             'settings' => [
-                'default_view_limit' => 2,
+                'view_limit' => 2,
                 'allow_extra_view_requests' => true,
                 'pdf_download_permission' => false,
             ],

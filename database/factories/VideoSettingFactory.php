@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Center;
-use App\Models\CenterSetting;
+use App\Models\Video;
+use App\Models\VideoSetting;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CenterSettingFactory extends Factory
+class VideoSettingFactory extends Factory
 {
-    protected $model = CenterSetting::class;
+    protected $model = VideoSetting::class;
 
     public function definition(): array
     {
         return [
-            'center_id' => Center::factory(),
+            'video_id' => Video::factory(),
             'settings' => [
-                'default_view_limit' => 2,
+                'view_limit' => 2,
                 'allow_extra_view_requests' => true,
-                'pdf_download_permission' => false,
             ],
         ];
     }

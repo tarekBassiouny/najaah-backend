@@ -26,10 +26,10 @@ class CenterFactory extends Factory
             ],
             'logo_url' => $this->faker->imageUrl(200, 200),
             'primary_color' => $this->faker->hexColor(),
-            'default_view_limit' => 3,
+            'default_view_limit' => 2,
             'allow_extra_view_requests' => true,
-            'pdf_download_permission' => true,
-            'device_limit' => 3,
+            'pdf_download_permission' => false,
+            'device_limit' => 1,
         ];
     }
 }
