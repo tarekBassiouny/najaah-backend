@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class CourseSetting extends Model
 {
+    /** @use HasFactory<\Database\Factories\CourseSettingFactory> */
     use HasFactory;
     use SoftDeletes;
 
@@ -29,7 +30,7 @@ class CourseSetting extends Model
         'settings' => 'array',
     ];
 
-    /** @return BelongsTo<Course, CourseSetting> */
+    /** @return BelongsTo<Course, self> */
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
