@@ -8,26 +8,32 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
  * @property string $slug
  * @property int $type
- * @property array<string,string> $name_translations
- * @property array<string,string>|null $description_translations
+ * @property array<string, string> $name_translations
+ * @property array<string, string>|null $description_translations
  * @property string|null $logo_url
  * @property string|null $primary_color
  * @property int $default_view_limit
  * @property bool $allow_extra_view_requests
  * @property bool $pdf_download_permission
  * @property int $device_limit
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
+ * @property-read CenterSetting|null $setting
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoUploadSession> $videoUploadSessions
  */
 class Center extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
+    protected array $fillable = [
         'slug',
         'type',
         'name_translations',
@@ -40,7 +46,7 @@ class Center extends Model
         'device_limit',
     ];
 
-    protected $casts = [
+    protected array $casts = [
         'name_translations' => 'array',
         'description_translations' => 'array',
         'allow_extra_view_requests' => 'boolean',
@@ -49,21 +55,33 @@ class Center extends Model
         'device_limit' => 'integer',
     ];
 
-    /** @return belongsToMany<User> */
+    /** @return BelongsToMany<User, Center> */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_centers');
     }
 
-    /** @return HasMany<Course> */
+    /** @return HasMany<Course, Center> */
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
     }
 
-    /** @return BelongsToMany<User> */
-    public function admins(): BelongsToMany
+    /** @return HasMany<Enrollment, Center> */
+    public function enrollments(): HasMany
     {
-        return $this->belongsToMany(User::class, 'user_centers');
+        return $this->hasMany(Enrollment::class);
+    }
+
+    /** @return HasOne<CenterSetting, Center> */
+    public function setting(): HasOne
+    {
+        return $this->hasOne(CenterSetting::class);
+    }
+
+    /** @return HasMany<VideoUploadSession, Center> */
+    public function videoUploadSessions(): HasMany
+    {
+        return $this->hasMany(VideoUploadSession::class);
     }
 }

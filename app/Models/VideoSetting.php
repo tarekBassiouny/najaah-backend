@@ -11,16 +11,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
- * @property int $center_id
+ * @property int $video_id
  * @property array<mixed> $settings
- * @property-read Center $center
+ * @property-read Video $video
  */
-class CenterSetting extends Model
+class VideoSetting extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected array $fillable = [
-        'center_id',
+        'video_id',
         'settings',
     ];
 
@@ -28,9 +29,9 @@ class CenterSetting extends Model
         'settings' => 'array',
     ];
 
-    /** @return BelongsTo<Center, CenterSetting> */
-    public function center(): BelongsTo
+    /** @return BelongsTo<Video, VideoSetting> */
+    public function video(): BelongsTo
     {
-        return $this->belongsTo(Center::class);
+        return $this->belongsTo(Video::class);
     }
 }

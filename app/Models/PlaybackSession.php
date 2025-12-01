@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -14,8 +15,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $video_id
  * @property int $device_id
  * @property \Illuminate\Support\Carbon $started_at
- * @property int $last_position_seconds
- * @property bool $completed
+ * @property \Illuminate\Support\Carbon|null $ended_at
+ * @property int $progress_percent
+ * @property bool $is_full_play
  * @property-read User $user
  * @property-read Video $video
  * @property-read UserDevice $device
@@ -23,20 +25,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PlaybackSession extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
-    protected $fillable = [
+    protected array $fillable = [
         'user_id',
         'video_id',
         'device_id',
         'started_at',
-        'last_position_seconds',
-        'completed',
+        'ended_at',
+        'progress_percent',
+        'is_full_play',
     ];
 
-    protected $casts = [
+    protected array $casts = [
         'started_at' => 'datetime',
-        'last_position_seconds' => 'integer',
-        'completed' => 'boolean',
+        'ended_at' => 'datetime',
+        'progress_percent' => 'integer',
+        'is_full_play' => 'boolean',
     ];
 
     /** @return BelongsTo<User, PlaybackSession> */
