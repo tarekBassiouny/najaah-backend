@@ -22,7 +22,7 @@ class UserFactory extends Factory
             'phone' => $this->faker->unique()->e164PhoneNumber(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('password'),
-            'status' => 1,
+            'status' => $this->faker->numberBetween(0, 2),
             'is_student' => $this->faker->boolean(70),
             'avatar_url' => $this->faker->imageUrl(200, 200),
             'last_login_at' => $this->faker->dateTimeBetween('-20 days', 'now'),

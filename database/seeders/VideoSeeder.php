@@ -13,7 +13,7 @@ class VideoSeeder extends Seeder
         Course::with('sections')->get()->each(function (Course $course): void {
             foreach ($course->sections as $section) {
                 Video::factory()
-                    ->count(5)
+                    ->count(2)
                     ->create()
                     ->each(function (Video $video) use ($course, $section): void {
                         // Attach via pivot with ordering/visibility

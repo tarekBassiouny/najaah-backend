@@ -1,19 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RefreshTokenRequest;
-use App\Services\JwtService;
+use App\Services\Contracts\JwtServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class TokenController extends Controller
 {
-    protected JwtService $jwtService;
-
-    public function __construct(JwtService $jwtService)
-    {
-        $this->jwtService = $jwtService;
+    public function __construct(
+        private readonly JwtServiceInterface $jwtService
+    ) {
     }
 
     public function refresh(RefreshTokenRequest $request): JsonResponse

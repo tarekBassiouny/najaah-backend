@@ -12,7 +12,7 @@ class SectionSeeder extends Seeder
     {
         Course::all()->each(function (Course $course): void {
             Section::factory()
-                ->count(5)
+                ->count(2)
                 ->create([
                     'course_id' => $course->id,
                 ]);

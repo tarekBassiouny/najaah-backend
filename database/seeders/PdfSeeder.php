@@ -13,7 +13,7 @@ class PdfSeeder extends Seeder
         Course::with('sections', 'videos')->get()->each(function (Course $course): void {
             foreach ($course->sections as $section) {
                 Pdf::factory()
-                    ->count(4)
+                    ->count(2)
                     ->create()
                     ->each(function (Pdf $pdf) use ($course, $section): void {
                         $videoId = optional($course->videos->random())->id;

@@ -44,7 +44,7 @@ class UserSeeder extends Seeder
         // Students for each center
         foreach ($centers as $center) {
             User::factory()
-                ->count(25)
+                ->count(3)
                 ->create([
                     'center_id' => $center->id,
                     'is_student' => true,
