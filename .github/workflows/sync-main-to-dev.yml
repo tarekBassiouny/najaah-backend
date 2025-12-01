@@ -3,7 +3,7 @@ name: Sync main to dev
 on:
   push:
     tags:
-      - 'v*.*.*'     # Trigger only when a release tag is pushed to main
+      - 'v*.*.*'
 
 jobs:
   sync:
@@ -14,14 +14,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
 
-      - name: Get latest tag (release version)
+      - name: Get latest tag
         id: tag
         run: |
           tag=$(git describe --tags --abbrev=0)
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
-      - name: Fetch release notes from GitHub API
+      - name: Get release notes
         id: notes
         run: |
           notes=$(curl -s \
@@ -33,12 +34,12 @@ jobs:
           echo "$notes" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create sync branch from main
+      - name: Create sync branch
         run: |
-          git checkout -b sync-main-to-dev
-          git push -u origin sync-main-to-dev --force
+          git checkout -B sync-main-to-dev
+          git push origin sync-main-to-dev --force
 
-      - name: Create PR from main → dev
+      - name: Create PR main → dev
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
@@ -47,19 +48,19 @@ jobs:
           branch: sync-main-to-dev
           title: "🔄 Sync main → dev after release ${{ steps.tag.outputs.tag }}"
           body: |
+            ## 🔄 Automated Sync PR
             **Release:** ${{ steps.tag.outputs.tag }}
 
-            ---
             ### 📦 Release Notes
-
             ${{ steps.notes.outputs.notes }}
 
             ---
-            Automated sync to ensure **dev** stays ahead of **main**.
+            This PR ensures that **dev** stays ahead of **main** after a tagged release.
           labels: "automation,sync"
+          delete-branch: false
           draft: false
 
-      - name: Auto-approve PR
+      - name: Auto-approve the PR
         if: ${{ steps.cpr.outputs.pull-request-number }}
         uses: hmarr/auto-approve-action@v3
         with:
@@ -76,6 +77,5 @@ jobs:
       - name: Delete sync branch after merge
         if: ${{ steps.cpr.outputs.pull-request-number }}
         run: |
-          # Wait for auto-merge to complete
           sleep 10
           git push origin --delete sync-main-to-dev || true
