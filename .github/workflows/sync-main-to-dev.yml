@@ -47,7 +47,7 @@ jobs:
       - name: Get release notes
         id: notes
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
         run: |
           notes=$(curl -s \
             -H "Authorization: token $GH_TOKEN" \
@@ -65,7 +65,7 @@ jobs:
 
       - name: Ensure automation label exists
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
         run: |
           gh label create automation --color FF8800 || true
           gh label create sync --color BFD4F2 || true
@@ -73,7 +73,7 @@ jobs:
       - name: Create PR main → dev
         id: pr
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
           TAG: ${{ steps.tag.outputs.tag }}
           NOTES: ${{ steps.notes.outputs.notes }}
           BRANCH: ${{ steps.branch.outputs.name }}
@@ -113,20 +113,20 @@ jobs:
         if: ${{ steps.pr.outputs.number }}
         uses: hmarr/auto-approve-action@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ACTIONS_PAT }}
 
       - name: Enable auto-merge
         if: ${{ steps.pr.outputs.number }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACTIONS_PAT }}
           pull-request-number: ${{ steps.pr.outputs.number }}
           merge-method: merge
 
       - name: Delete sync branch after merge
         if: ${{ steps.pr.outputs.number }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
           BRANCH: ${{ steps.branch.outputs.name }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
         run: |
