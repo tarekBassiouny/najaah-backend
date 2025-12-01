@@ -6,10 +6,12 @@ on:
       - "Style Checks"
       - "Static Analysis"
       - "PHPUnit Tests"
-    types: [completed]
+    types:
+      - completed
 
 jobs:
   notify:
+    # Only run when the triggering workflow actually failed
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
     steps:
