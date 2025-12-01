@@ -50,7 +50,7 @@ jobs:
           GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
         run: |
           notes=$(curl -s \
-            -H "Authorization: token $GH_TOKEN" \
+            -H "Authorization: Bearer $GH_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.tag.outputs.tag }}" \
             | jq -r '.body')
           printf 'notes<<__EOF__\n%s\n__EOF__\n' "$notes" >> "$GITHUB_OUTPUT"
@@ -102,39 +102,9 @@ jobs:
               --title "🔄 Sync main → dev after release $TAG" \
               --body-file pr_body.txt \
               --label automation \
-              --label sync \
+              --label sync 
 
             PR_NUMBER=$(gh pr view "$BRANCH" --json number --jq '.number')
           fi
 
           echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-
-      - name: Auto-approve PR
-        if: ${{ steps.pr.outputs.number }}
-        uses: hmarr/auto-approve-action@v3
-        with:
-          github-token: ${{ secrets.ACTIONS_PAT }}
-          pull-request-number: ${{ steps.pr.outputs.number }}
-
-      - name: Enable auto-merge
-        if: ${{ steps.pr.outputs.number }}
-        uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          token: ${{ secrets.ACTIONS_PAT }}
-          pull-request-number: ${{ steps.pr.outputs.number }}
-          merge-method: merge
-
-      - name: Delete sync branch after merge
-        if: ${{ steps.pr.outputs.number }}
-        env:
-          GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
-          BRANCH: ${{ steps.branch.outputs.name }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-        run: |
-          sleep 10
-          STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
-          if [ "$STATE" = "CLOSED" ]; then
-            git push origin --delete "$BRANCH" || true
-          else
-            echo "PR not closed yet, skipping branch delete."
-          fi
