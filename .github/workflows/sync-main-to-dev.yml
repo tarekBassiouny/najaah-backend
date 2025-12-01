@@ -62,36 +62,41 @@ jobs:
           echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
 
       - name: Create PR main → dev
-        id: cpr
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: dev
-          branch: ${{ steps.branch.outputs.name }}
-          title: "🔄 Sync main → dev after release ${{ steps.tag.outputs.tag }}"
-          body: |
-            ## 🔄 Automated Sync PR
-            **Release:** ${{ steps.tag.outputs.tag }}
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="${{ steps.branch.outputs.name }}"
+          # Check if PR already exists for this branch/base
+          PR_NUMBER=$(gh pr list --base dev --head "$BRANCH" --json number --jq '.[0].number')
+          if [ -z "$PR_NUMBER" ]; then
+            PR_NUMBER=$(gh pr create \
+              --base dev \
+              --head "$BRANCH" \
+              --title "🔄 Sync main → dev after release ${{ steps.tag.outputs.tag }}" \
+              --body "## 🔄 Automated Sync PR
+**Release:** ${{ steps.tag.outputs.tag }}
 
-            ### 📦 Release Notes
-            ${{ steps.notes.outputs.notes }}
+### 📦 Release Notes
+${{ steps.notes.outputs.notes }}
 
-            ---
-            This PR ensures that **dev** stays ahead of **main** after a tagged release.
-          labels: "automation,sync"
-          delete-branch: true
-          draft: false
+---
+This PR ensures that **dev** stays ahead of **main** after a tagged release." \
+              --label automation --label sync \
+              --json number --jq '.number')
+          fi
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
       - name: Auto-approve the PR
-        if: ${{ steps.cpr.outputs.pull-request-number }}
+        if: ${{ steps.pr.outputs.number }}
         uses: hmarr/auto-approve-action@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable auto-merge
-        if: ${{ steps.cpr.outputs.pull-request-number }}
+        if: ${{ steps.pr.outputs.number }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          pull-request-number: ${{ steps.pr.outputs.number }}
           merge-method: merge
