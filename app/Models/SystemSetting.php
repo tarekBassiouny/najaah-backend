@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class SystemSetting extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\SystemSettingFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'key',

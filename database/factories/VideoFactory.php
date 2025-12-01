@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Section;
+use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

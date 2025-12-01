@@ -19,8 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Role extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\RoleFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -34,7 +34,7 @@ class Role extends Model
         'description_translations' => 'array',
     ];
 
-    /** @return BelongsToMany<User, Role> */
+    /** @return BelongsToMany<User, self> */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'role_user');

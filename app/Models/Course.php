@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Course extends Model
 {
+    /** @use HasFactory<\Database\Factories\CourseFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
@@ -82,44 +83,44 @@ class Course extends Model
         'publish_at' => 'datetime',
     ];
 
-    /** @return BelongsTo<Center, Course> */
+    /** @return BelongsTo<Center, self> */
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);
     }
 
-    /** @return BelongsTo<Category, Course> */
+    /** @return BelongsTo<Category, self> */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    /** @return BelongsTo<User, Course> */
+    /** @return BelongsTo<User, self> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /** @return BelongsTo<Course, Course> */
+    /** @return BelongsTo<Course, self> */
     public function clonedFrom(): BelongsTo
     {
         return $this->belongsTo(self::class, 'cloned_from_id');
     }
 
-    /** @return HasOne<CourseSetting, Course> */
+    /** @return HasOne<CourseSetting, self> */
     public function setting(): HasOne
     {
         return $this->hasOne(CourseSetting::class);
     }
 
-    /** @return HasMany<Section, Course> */
+    /** @return HasMany<Section, self> */
     public function sections(): HasMany
     {
         return $this->hasMany(Section::class);
     }
 
     /**
-     * @return BelongsToMany<Video, Course>
+     * @return BelongsToMany<Video, self>
      */
     public function videos(): BelongsToMany
     {
@@ -129,7 +130,7 @@ class Course extends Model
             ->wherePivotNull('deleted_at');
     }
 
-    /** @return BelongsToMany<Pdf, Course> */
+    /** @return BelongsToMany<Pdf, self> */
     public function pdfs(): BelongsToMany
     {
         return $this->belongsToMany(Pdf::class, 'course_pdf')
@@ -138,7 +139,7 @@ class Course extends Model
             ->wherePivotNull('deleted_at');
     }
 
-    /** @return HasMany<Enrollment, Course> */
+    /** @return HasMany<Enrollment, self> */
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);

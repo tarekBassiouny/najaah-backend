@@ -23,8 +23,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Category extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\CategoryFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'title_translations',
@@ -41,19 +41,19 @@ class Category extends Model
         'order_index' => 'integer',
     ];
 
-    /** @return BelongsTo<Category, Category> */
+    /** @return BelongsTo<Category, self> */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    /** @return HasMany<Category, Category> */
+    /** @return HasMany<Category, self> */
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    /** @return HasMany<Course, Category> */
+    /** @return HasMany<Course, self> */
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);

@@ -1,0 +1,59 @@
+name: Style Checks
+
+on:
+  # PRs to dev/main and manual runs
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+
+jobs:
+  style:
+    name: Run PHPCS & Pint
+    runs-on: ubuntu-latest
+    steps:
+      # Always checkout the code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Cache Composer vendor directory for faster installs
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      # Set up PHP 8.4 for style tooling
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: none
+
+      # Install dependencies (without modifying env files)
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      # Run PHPCS first
+      - name: Run PHPCS
+        run: vendor/bin/phpcs -p --standard=phpcs.xml | tee phpcs.log
+
+      # Run Pint in test mode
+      - name: Run Pint
+        run: vendor/bin/pint --test | tee pint.log
+
+      # Upload logs for debugging
+      - name: Upload PHPCS log
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpcs-log
+          path: phpcs.log
+
+      - name: Upload Pint log
+        uses: actions/upload-artifact@v4
+        with:
+          name: pint-log
+          path: pint.log
+
+    # Reminder: A future deploy workflow can listen to successful tests via workflow_run
+    # without changing this file.

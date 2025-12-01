@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class VideoSetting extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\VideoSettingFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'video_id',
@@ -29,7 +29,7 @@ class VideoSetting extends Model
         'settings' => 'array',
     ];
 
-    /** @return BelongsTo<Video, VideoSetting> */
+    /** @return BelongsTo<Video, self> */
     public function video(): BelongsTo
     {
         return $this->belongsTo(Video::class);

@@ -13,8 +13,7 @@ class OtpController extends Controller
 {
     public function __construct(
         private readonly OtpServiceInterface $otpService
-    ) {
-    }
+    ) {}
 
     public function send(SendOtpRequest $request): JsonResponse
     {

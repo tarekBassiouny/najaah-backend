@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class CourseSetting extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\CourseSettingFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'course_id',
@@ -29,7 +29,7 @@ class CourseSetting extends Model
         'settings' => 'array',
     ];
 
-    /** @return BelongsTo<Course, CourseSetting> */
+    /** @return BelongsTo<Course, self> */
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);

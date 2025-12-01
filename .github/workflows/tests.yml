@@ -1,0 +1,79 @@
+name: PHPUnit Tests
+
+on:
+  # PRs to dev/main and manual runs
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Run PHPUnit Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_DATABASE: testing
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent" --health-interval=5s --health-timeout=3s --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      # Ensure ParaTest is available for Laravel parallel testing (Collision 8.x requirement)
+      - name: Install ParaTest
+        run: composer require --dev brianium/paratest:^7.0 --no-interaction --no-progress
+
+      - name: Prepare environment for Laravel
+        run: |
+          cp .env.test .env
+          php artisan key:generate --force
+
+      - name: Confirm .env.test present
+        run: ls -la .env.test
+
+      - name: Wait for MySQL (40 attempts)
+        run: |
+          for i in {1..40}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -proot --silent; then
+              echo "MySQL is up"; break
+            fi
+            echo "Waiting for MySQL ($i/40)...";
+            sleep 2;
+          done
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Run PHPUnit (parallel)
+        run: php artisan test --parallel --processes=4 --log-junit junit.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-results
+          path: junit.xml
+
+    # Reminder: a future deploy.yml can listen to this workflow_run success without modifying this file.

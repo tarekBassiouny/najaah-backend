@@ -20,8 +20,7 @@ class LoginController extends Controller
         private readonly OtpServiceInterface $otpService,
         private readonly DeviceServiceInterface $deviceService,
         private readonly JwtServiceInterface $jwtService
-    ) {
-    }
+    ) {}
 
     public function verify(VerifyOtpRequest $request): JsonResponse
     {

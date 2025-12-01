@@ -13,8 +13,7 @@ class TokenController extends Controller
 {
     public function __construct(
         private readonly JwtServiceInterface $jwtService
-    ) {
-    }
+    ) {}
 
     public function refresh(RefreshTokenRequest $request): JsonResponse
     {

@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Pdf extends Model
 {
+    /** @use HasFactory<\Database\Factories\PdfFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
@@ -47,13 +48,13 @@ class Pdf extends Model
         'source_type' => 'integer',
     ];
 
-    /** @return BelongsTo<User, Pdf> */
+    /** @return BelongsTo<User, self> */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /** @return BelongsToMany<Course, Pdf> */
+    /** @return BelongsToMany<Course, self> */
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_pdf')

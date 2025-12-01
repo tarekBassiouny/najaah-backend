@@ -9,6 +9,16 @@ parameters:
   level: max
 
   checkMissingIterableValueType: true
-  checkGenericClassInNonGenericObjectType: true
   inferPrivatePropertyTypeFromConstructor: true
+  checkUninitializedProperties: true
+  reportUnmatchedIgnoredErrors: true
   treatPhpDocTypesAsCertain: false
+
+  universalObjectCratesClasses:
+    - Illuminate\Database\Eloquent\Model
+
+  bootstrapFiles:
+    - vendor/larastan/larastan/bootstrap.php
+
+  ignoreErrors:
+    - '#should return Illuminate\\Database\\Eloquent\\Relations\\#'

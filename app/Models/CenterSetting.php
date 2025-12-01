@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class CenterSetting extends Model
 {
+    /** @use HasFactory<\Database\Factories\CenterSettingFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
@@ -28,7 +29,7 @@ class CenterSetting extends Model
         'settings' => 'array',
     ];
 
-    /** @return BelongsTo<Center, CenterSetting> */
+    /** @return BelongsTo<Center, self> */
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);

@@ -25,8 +25,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class UserDevice extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\UserDeviceFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -44,19 +44,19 @@ class UserDevice extends Model
         'last_used_at' => 'datetime',
     ];
 
-    /** @return BelongsTo<User, UserDevice> */
+    /** @return BelongsTo<User, self> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return HasMany<JwtToken, UserDevice> */
+    /** @return HasMany<JwtToken, self> */
     public function tokens(): HasMany
     {
         return $this->hasMany(JwtToken::class, 'device_id');
     }
 
-    /** @return HasMany<PlaybackSession, UserDevice> */
+    /** @return HasMany<PlaybackSession, self> */
     public function playbackSessions(): HasMany
     {
         return $this->hasMany(PlaybackSession::class, 'device_id');

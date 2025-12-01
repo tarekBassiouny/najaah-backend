@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Enrollment extends Model
 {
+    /** @use HasFactory<\Database\Factories\EnrollmentFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
@@ -40,19 +41,19 @@ class Enrollment extends Model
         'status' => 'integer',
     ];
 
-    /** @return BelongsTo<User, Enrollment> */
+    /** @return BelongsTo<User, self> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return BelongsTo<Course, Enrollment> */
+    /** @return BelongsTo<Course, self> */
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
     }
 
-    /** @return BelongsTo<Center, Enrollment> */
+    /** @return BelongsTo<Center, self> */
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);

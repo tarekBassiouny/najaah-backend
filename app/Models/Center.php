@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Center extends Model
 {
+    /** @use HasFactory<\Database\Factories\CenterFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
@@ -55,31 +56,31 @@ class Center extends Model
         'device_limit' => 'integer',
     ];
 
-    /** @return BelongsToMany<User, Center> */
+    /** @return BelongsToMany<User, self> */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_centers');
     }
 
-    /** @return HasMany<Course, Center> */
+    /** @return HasMany<Course, self> */
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
     }
 
-    /** @return HasMany<Enrollment, Center> */
+    /** @return HasMany<Enrollment, self> */
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
     }
 
-    /** @return HasOne<CenterSetting, Center> */
+    /** @return HasOne<CenterSetting, self> */
     public function setting(): HasOne
     {
         return $this->hasOne(CenterSetting::class);
     }
 
-    /** @return HasMany<VideoUploadSession, Center> */
+    /** @return HasMany<VideoUploadSession, self> */
     public function videoUploadSessions(): HasMany
     {
         return $this->hasMany(VideoUploadSession::class);

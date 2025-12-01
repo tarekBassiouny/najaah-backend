@@ -23,8 +23,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class JwtToken extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\JwtTokenFactory> */
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -42,13 +42,13 @@ class JwtToken extends Model
         'revoked_at' => 'datetime',
     ];
 
-    /** @return BelongsTo<User, JwtToken> */
+    /** @return BelongsTo<User, self> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return BelongsTo<UserDevice, JwtToken> */
+    /** @return BelongsTo<UserDevice, self> */
     public function device(): BelongsTo
     {
         return $this->belongsTo(UserDevice::class);

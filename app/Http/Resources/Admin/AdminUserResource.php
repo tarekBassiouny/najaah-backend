@@ -20,10 +20,10 @@ class AdminUserResource extends JsonResource
         $user = $this->resource;
 
         return [
-            'id'    => $user->id,
-            'name'  => $user->name,
+            'id' => $user->id,
+            'name' => $user->name,
             'email' => $user->email,
-            'role'  => $user->roles->first()?->name,
+            'role' => $user->roles->first()?->name,
         ];
     }
 }

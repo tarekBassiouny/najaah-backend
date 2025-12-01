@@ -1,0 +1,42 @@
+name: Static Analysis
+
+on:
+  # PRs to dev/main and manual runs
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+
+jobs:
+  phpstan:
+    name: Run PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress | tee phpstan.log
+
+      - name: Upload PHPStan log
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpstan-log
+          path: phpstan.log
+
+    # Reminder: deploy.yml can listen on successful Tests workflow_run; no changes needed here.

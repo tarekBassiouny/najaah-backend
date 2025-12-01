@@ -10,9 +10,7 @@ use App\Services\Contracts\DeviceServiceInterface;
 
 class DeviceService implements DeviceServiceInterface
 {
-    /**
-     * @param array<string, mixed> $meta
-     */
+    /** @param array<string, mixed> $meta */
     public function register(User $user, string $uuid, array $meta): UserDevice
     {
         /** @var UserDevice|null $device */

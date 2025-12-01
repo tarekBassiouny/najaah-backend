@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin array<string, mixed>
+ * @mixin \ArrayAccess<string, mixed>
  */
 class TokenResource extends JsonResource
 {

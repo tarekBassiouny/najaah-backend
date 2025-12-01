@@ -1,10 +1,10 @@
-Laravel 12 + PHP 8.3 Best Practices (AI-Ready Guidelines & Full Test Coverage)
+Laravel 12 + PHP 8.4 Best Practices (AI-Ready Guidelines & Full Test Coverage)
 
 Version 2025 – Comprehensive Engineering Standards
 
 Table of Contents
 
-PHP 8.3 Best Practices
+PHP 8.4 Best Practices
 
 Laravel 12 Best Practices
 
@@ -26,7 +26,7 @@ Unit & Integration Testing (Full Coverage)
 
 Summary Checklist
 
-1. PHP 8.3 Best Practices
+1. PHP 4 Best Practices
 1.1 Core Language Modernization
 
 Strict typing in all PHP files:
@@ -197,7 +197,7 @@ New debugging utilities.
 
 When asking AI to generate code:
 
-Require PHP 8.3 strict typing
+Require PHP 8.4 strict typing
 
 PSR-12 formatting
 
@@ -319,7 +319,7 @@ Queue restart
 
 7.2 Server Setup
 
-PHP 8.3 FPM
+PHP 8.4 FPM
 
 MySQL 8.4 or PostgreSQL 16
 
@@ -503,7 +503,7 @@ Validate exceptions
 
 11. Summary Checklist
 Area	Status
-Strict PHP 8.3 typing	✔️
+Strict PHP 8.4 typing	✔️
 Laravel 12 architecture	✔️
 Strong DB conventions	✔️
 Queues + caching	✔️
