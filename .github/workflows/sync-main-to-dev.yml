@@ -63,6 +63,11 @@ jobs:
           git push origin "$BRANCH" --force
           echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
 
+      - name: Ensure automation label exists
+        run: |
+          gh label create automation --color FF8800 || true
+          gh label create sync --color BFD4F2 || true
+
       - name: Create PR main → dev
         id: pr
         env:
@@ -96,7 +101,6 @@ jobs:
               --body-file pr_body.txt \
               --label automation \
               --label sync \
-              --label "$TAG"
 
             PR_NUMBER=$(gh pr view "$BRANCH" --json number --jq '.number')
           fi
