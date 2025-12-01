@@ -27,9 +27,7 @@ class OtpCode extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected string $table = 'otp_requests';
-
-    protected array $attributes = [
+    protected $attributes = [
         'provider' => 'sms',
     ];
 

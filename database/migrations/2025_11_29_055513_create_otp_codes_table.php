@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('otp_requests', function (Blueprint $table): void {
+        Schema::create('otp_codes', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')
                 ->nullable()
