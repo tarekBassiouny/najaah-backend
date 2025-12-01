@@ -64,6 +64,8 @@ jobs:
           echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
 
       - name: Ensure automation label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh label create automation --color FF8800 || true
           gh label create sync --color BFD4F2 || true
