@@ -9,8 +9,8 @@ use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Contracts\JwtServiceInterface;
 use Illuminate\Support\Facades\DB;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class JwtService implements JwtServiceInterface
 {
