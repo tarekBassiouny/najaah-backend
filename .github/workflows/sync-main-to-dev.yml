@@ -93,6 +93,9 @@ jobs:
               "$NOTES" \
               '' \
               '---' \
+              '⚠️ **IMPORTANT:** This PR must be merged using **Rebase and Merge** only.' \
+              'Using merge commits or squash merging will break branch alignment.' \
+              '' \
               'This PR ensures **dev** stays ahead of **main** after a release.' \
               > pr_body.txt
 
