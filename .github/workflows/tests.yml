@@ -8,8 +8,7 @@ on:
 
 jobs:
   tests:
-    # Only run when analysis succeeded or manual trigger
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    name: Run PHPUnit Tests
     runs-on: ubuntu-latest
 
     services:

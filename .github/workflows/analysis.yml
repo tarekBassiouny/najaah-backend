@@ -8,9 +8,7 @@ on:
 
 jobs:
   phpstan:
-    # Only run when previous workflow succeeded or manual trigger
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-    name: PHPStan
+    name: Run PHPStan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
