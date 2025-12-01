@@ -20,12 +20,12 @@ class VideoSetting extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'video_id',
         'settings',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'settings' => 'array',
     ];
 

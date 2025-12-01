@@ -19,13 +19,13 @@ class SystemSetting extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'key',
         'value',
         'is_public',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'value' => 'array',
         'is_public' => 'boolean',
     ];

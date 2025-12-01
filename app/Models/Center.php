@@ -33,7 +33,7 @@ class Center extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'slug',
         'type',
         'name_translations',
@@ -46,7 +46,7 @@ class Center extends Model
         'device_limit',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'name_translations' => 'array',
         'description_translations' => 'array',
         'allow_extra_view_requests' => 'boolean',

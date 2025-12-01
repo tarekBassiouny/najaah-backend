@@ -25,7 +25,7 @@ class Section extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'course_id',
         'title_translations',
         'description_translations',
@@ -33,7 +33,7 @@ class Section extends Model
         'visible',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'title_translations' => 'array',
         'description_translations' => 'array',
         'order_index' => 'integer',

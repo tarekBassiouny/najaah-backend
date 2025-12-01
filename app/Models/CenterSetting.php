@@ -19,12 +19,12 @@ class CenterSetting extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'center_id',
         'settings',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'settings' => 'array',
     ];
 

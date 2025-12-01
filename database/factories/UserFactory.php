@@ -21,8 +21,8 @@ class UserFactory extends Factory
             'phone' => $this->faker->unique()->e164PhoneNumber(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('password'),
-            'is_active' => true,
-            'profile_photo_url' => $this->faker->optional()->imageUrl(200, 200),
+            'status' => $this->faker->randomElement([0, 2]) ,
+            'avatar_url' => $this->faker->optional()->imageUrl(200, 200),
             'last_login_at' => $this->faker->optional()->dateTimeBetween('-20 days', 'now'),
         ];
     }

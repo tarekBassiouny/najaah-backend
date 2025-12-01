@@ -27,7 +27,7 @@ class PlaybackSession extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'video_id',
         'device_id',
@@ -37,7 +37,7 @@ class PlaybackSession extends Model
         'is_full_play',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
         'progress_percent' => 'integer',

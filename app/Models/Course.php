@@ -46,7 +46,7 @@ class Course extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'center_id',
         'category_id',
         'title_translations',
@@ -68,7 +68,7 @@ class Course extends Model
         'publish_at',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'title_translations' => 'array',
         'description_translations' => 'array',
         'instructor_translations' => 'array',

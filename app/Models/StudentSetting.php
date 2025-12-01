@@ -20,12 +20,12 @@ class StudentSetting extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'settings',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'settings' => 'array',
     ];
 

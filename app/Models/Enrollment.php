@@ -25,7 +25,7 @@ class Enrollment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'course_id',
         'center_id',
@@ -34,7 +34,7 @@ class Enrollment extends Model
         'expires_at',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'enrolled_at' => 'datetime',
         'expires_at' => 'datetime',
         'status' => 'integer',

@@ -22,14 +22,14 @@ class Role extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'name_translations',
         'slug',
         'description_translations',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'name_translations' => 'array',
         'description_translations' => 'array',
     ];
