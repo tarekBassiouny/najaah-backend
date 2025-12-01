@@ -1,7 +1,7 @@
 <?php
 
-use PHPOpenSourceSaver\JWTAuth\Providers\JWT\Lcobucci;
 use PHPOpenSourceSaver\JWTAuth\Providers\Auth\Illuminate as JWTAuthProvider;
+use PHPOpenSourceSaver\JWTAuth\Providers\JWT\Lcobucci;
 use PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate as JWTStorageProvider;
 
 /*

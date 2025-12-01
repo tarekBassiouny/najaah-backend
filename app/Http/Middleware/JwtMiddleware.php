@@ -20,7 +20,7 @@ class JwtMiddleware
         try {
             $user = JWTAuth::parseToken()->authenticate();
 
-            if (!$user) {
+            if (! $user) {
                 $error = 'User not found';
             }
         } catch (TokenExpiredException) {
