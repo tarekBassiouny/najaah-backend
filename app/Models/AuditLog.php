@@ -24,7 +24,7 @@ class AuditLog extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'action',
         'entity_type',
@@ -32,7 +32,7 @@ class AuditLog extends Model
         'metadata',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'metadata' => 'array',
     ];
 

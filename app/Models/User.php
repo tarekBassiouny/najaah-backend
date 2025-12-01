@@ -41,7 +41,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'center_id',
         'name',
         'username',
@@ -54,7 +54,7 @@ class User extends Authenticatable
         'last_login_at',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'status' => 'integer',
         'is_student' => 'boolean',
         'last_login_at' => 'datetime',

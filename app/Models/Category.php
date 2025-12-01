@@ -26,7 +26,7 @@ class Category extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'title_translations',
         'description_translations',
         'parent_id',
@@ -34,7 +34,7 @@ class Category extends Model
         'is_active',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'title_translations' => 'array',
         'description_translations' => 'array',
         'is_active' => 'boolean',

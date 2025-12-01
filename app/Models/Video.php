@@ -39,7 +39,7 @@ class Video extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'title_translations',
         'description_translations',
         'source_type',
@@ -57,7 +57,7 @@ class Video extends Model
         'thumbnail_urls',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'title_translations' => 'array',
         'description_translations' => 'array',
         'tags' => 'array',

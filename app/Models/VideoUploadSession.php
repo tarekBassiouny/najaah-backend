@@ -27,7 +27,7 @@ class VideoUploadSession extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'center_id',
         'uploaded_by',
         'bunny_upload_id',
@@ -36,7 +36,7 @@ class VideoUploadSession extends Model
         'error_message',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'upload_status' => 'integer',
         'progress_percent' => 'integer',
     ];

@@ -26,7 +26,7 @@ class JwtToken extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'device_id',
         'access_token',
@@ -36,7 +36,7 @@ class JwtToken extends Model
         'revoked_at',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'expires_at' => 'datetime',
         'refresh_expires_at' => 'datetime',
         'revoked_at' => 'datetime',

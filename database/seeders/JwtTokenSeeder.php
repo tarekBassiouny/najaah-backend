@@ -10,7 +10,7 @@ class JwtTokenSeeder extends Seeder
 {
     public function run(): void
     {
-        UserDevice::all()->each(function ($device) {
+        UserDevice::all()->each(function (UserDevice $device): void {
             JwtToken::factory()->create([
                 'user_id' => $device->user_id,
                 'device_id' => $device->id,

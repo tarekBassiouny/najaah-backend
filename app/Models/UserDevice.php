@@ -28,7 +28,7 @@ class UserDevice extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'device_id',
         'model',
@@ -38,7 +38,7 @@ class UserDevice extends Model
         'last_used_at',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'status' => 'integer',
         'approved_at' => 'datetime',
         'last_used_at' => 'datetime',

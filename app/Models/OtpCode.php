@@ -33,7 +33,7 @@ class OtpCode extends Model
         'provider' => 'sms',
     ];
 
-    protected array $fillable = [
+    protected $fillable = [
         'phone',
         'otp_code',
         'otp_token',
@@ -45,7 +45,7 @@ class OtpCode extends Model
         'user_id',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'expires_at' => 'datetime',
         'consumed_at' => 'datetime',
     ];

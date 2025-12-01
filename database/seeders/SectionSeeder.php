@@ -10,7 +10,7 @@ class SectionSeeder extends Seeder
 {
     public function run(): void
     {
-        Course::all()->each(function ($course) {
+        Course::all()->each(function (Course $course): void {
             Section::factory()
                 ->count(5)
                 ->create([

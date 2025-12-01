@@ -28,7 +28,7 @@ class Pdf extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'title_translations',
         'description_translations',
         'source_type',
@@ -40,7 +40,7 @@ class Pdf extends Model
         'created_by',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'title_translations' => 'array',
         'description_translations' => 'array',
         'file_size_kb' => 'integer',
