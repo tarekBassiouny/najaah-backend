@@ -29,21 +29,21 @@ jobs:
 
             - No manual action needed  
             - Auto-merge will trigger automatically  
-            - Ensures `dev` stays ahead of `main`  
+            - Ensures `dev` stays ahead of `main`
           branch: sync-main-to-dev
-          labels: ["automation", "sync"]
+          labels: "automation,sync"
           draft: false
 
-      - name: Enable auto-merge on sync PR
+      - name: Auto-approve PR
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        uses: hmarr/auto-approve-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge
         if: ${{ steps.cpr.outputs.pull-request-number }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: merge
-
-      - name: Approve the PR (required for protected branches)
-        if: ${{ steps.cpr.outputs.pull-request-number }}
-        uses: hmarr/auto-approve-action@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
