@@ -1,0 +1,49 @@
+name: Sync main to dev
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create sync PR (main → dev)
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: dev
+          head: main
+          title: "🔄 Sync main → dev (automated after release)"
+          body: |
+            This PR was automatically created to sync **main** into **dev**  
+            after a release was merged into the main branch.
+
+            - No manual action needed  
+            - Auto-merge will trigger automatically  
+            - Ensures `dev` stays ahead of `main`  
+          branch: sync-main-to-dev
+          labels: ["automation", "sync"]
+          draft: false
+
+      - name: Enable auto-merge on sync PR
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: merge
+
+      - name: Approve the PR (required for protected branches)
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        uses: hmarr/auto-approve-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
