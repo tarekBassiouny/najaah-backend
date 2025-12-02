@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @property int $id
@@ -37,7 +38,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read StudentSetting|null $studentSetting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, AuditLog> $auditLogs
  */
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
@@ -86,7 +87,7 @@ class User extends Authenticatable
     }
 
     /** @return HasMany<JwtToken, self> */
-    public function tokens(): HasMany
+    public function jwtTokens(): HasMany
     {
         return $this->hasMany(JwtToken::class);
     }
@@ -119,5 +120,19 @@ class User extends Authenticatable
     public function setPasswordAttribute(string $value): void
     {
         $this->attributes['password'] = Hash::make($value);
+    }
+
+    public function getJWTIdentifier(): int
+    {
+        /** @var int $id */
+        $id = $this->getKey();
+
+        return $id;
+    }
+
+    /** @return array<string, mixed> */
+    public function getJWTCustomClaims(): array
+    {
+        return [];
     }
 }
