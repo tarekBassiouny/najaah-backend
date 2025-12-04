@@ -114,7 +114,7 @@ Status: Production-Ready
 ## jwt_tokens
 - id
 - user_id
-- access_token (hashed)
+- access_token (TEXT, hashed)
 - refresh_token (hashed)
 - expires_at
 - refresh_expires_at

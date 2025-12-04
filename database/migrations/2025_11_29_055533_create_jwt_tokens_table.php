@@ -21,7 +21,7 @@ return new class extends Migration
                 ->constrained('user_devices')
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
-            $table->string('access_token', 255);
+            $table->text('access_token');
             $table->string('refresh_token', 255);
             $table->timestamp('expires_at');
             $table->timestamp('refresh_expires_at');
