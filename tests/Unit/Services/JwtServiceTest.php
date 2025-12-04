@@ -80,4 +80,25 @@ class JwtServiceTest extends TestCase
         $this->assertSame('', $result['access_token']);
         $this->assertSame('', $result['refresh_token']);
     }
+
+    public function test_create_persists_long_access_token(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        /** @var UserDevice $device */
+        $device = UserDevice::factory()->create(['user_id' => $user->id]);
+
+        $longToken = str_repeat('a', 600);
+        JWTAuth::shouldReceive('fromUser')->once()->with($user)->andReturn($longToken);
+
+        $this->assertNotNull($this->service);
+        $tokens = $this->service->create($user, $device);
+
+        $this->assertSame($longToken, $tokens['access_token']);
+        $this->assertDatabaseHas('jwt_tokens', [
+            'user_id' => $user->id,
+            'device_id' => $device->id,
+            'access_token' => $longToken,
+        ]);
+    }
 }

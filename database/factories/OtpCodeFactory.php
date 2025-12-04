@@ -14,8 +14,11 @@ class OtpCodeFactory extends Factory
 
     public function definition(): array
     {
+        $country = '+2';
+
         return [
-            'phone' => $this->faker->e164PhoneNumber(),
+            'phone' => $this->faker->numerify('1##########'),
+            'country_code' => $country,
             'otp_code' => (string) rand(100000, 999999),
             'otp_token' => Str::uuid()->toString(),
             'provider' => 'sms',

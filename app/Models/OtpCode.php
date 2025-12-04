@@ -34,6 +34,7 @@ class OtpCode extends Model
 
     protected $fillable = [
         'phone',
+        'country_code',
         'otp_code',
         'otp_token',
         'otp',

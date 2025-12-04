@@ -24,13 +24,14 @@ class OtpServiceTest extends TestCase
     public function test_send_creates_otp_record_and_returns_token(): void
     {
         $this->assertNotNull($this->service);
-        $result = $this->service->send('+201234567890', '+20');
+        $result = $this->service->send('1234567890', '+20');
 
         $this->assertArrayHasKey('token', $result);
         $this->assertIsString($result['token']);
 
         $this->assertDatabaseHas('otp_codes', [
-            'phone' => '+201234567890',
+            'phone' => '1234567890',
+            'country_code' => '+20',
             'otp_token' => $result['token'],
         ]);
     }

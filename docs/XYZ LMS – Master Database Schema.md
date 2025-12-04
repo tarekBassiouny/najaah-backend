@@ -47,6 +47,7 @@ Status: Production-Ready
 - name
 - email (nullable)
 - phone (nullable)
+- country_code
 - username (nullable)
 - password (nullable)
 - avatar_url (nullable)
@@ -100,6 +101,7 @@ Status: Production-Ready
 - id
 - user_id (nullable)
 - phone
+- country_code
 - otp_code
 - otp_token
 - provider (sms/whatsapp/email/voice)
@@ -350,6 +352,36 @@ Override priority: **Student > Video > Course > Center**
 - description_translations (JSON, nullable)
 - parent_id (nullable)
 - order_index
+- created_at
+- updated_at
+- deleted_at
+
+---
+
+# 11. Instructors (NEW)
+
+## instructors
+- id (BIGINT, PK)
+- center_id (nullable) 
+  # nullable = global instructors allowed (optional)
+- name_translations (JSON)
+- bio_translations (JSON, nullable)
+- title_translations (JSON, nullable)          # e.g., Professor, Doctor, Trainer
+- avatar_url (STRING, nullable)
+- email (STRING, nullable)
+- phone (STRING, nullable)
+- social_links (JSON, nullable)                # { "facebook": "", "instagram": "", ... }
+- created_by (user_id)
+- created_at
+- updated_at
+- deleted_at
+
+## course_instructors
+# Pivot table for multi-instructor courses (M:N)
+- id
+- course_id
+- instructor_id
+- role (STRING, nullable)                      # lead, assistant, guest (optional)
 - created_at
 - updated_at
 - deleted_at
