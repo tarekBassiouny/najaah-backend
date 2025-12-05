@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             // --- Course Structure ---
             CategorySeeder::class,
             CourseSeeder::class,
+            InstructorSeeder::class,
             SectionSeeder::class,
             VideoSeeder::class,
             PdfSeeder::class,

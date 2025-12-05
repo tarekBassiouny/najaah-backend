@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\OtpCode;
+use App\Models\User;
 use App\Services\Contracts\OtpServiceInterface;
 use Illuminate\Support\Str;
 
@@ -16,9 +17,13 @@ class OtpService implements OtpServiceInterface
     public function send(string $phone, string $countryCode): array
     {
         $token = Str::uuid()->toString();
+        $user = User::where('phone', $phone)
+            ->where('country_code', $countryCode)->first();
 
         OtpCode::create([
+            'user_id' => $user?->id,
             'phone' => $phone,
+            'country_code' => $countryCode,
             'otp' => (string) rand(100000, 999999),
             'token' => $token,
             'otp_code' => (string) rand(100000, 999999),

@@ -22,6 +22,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property string $name
  * @property string|null $username
  * @property string $phone
+ * @property string|null $country_code
  * @property string|null $email
  * @property string $password
  * @property int $status
@@ -48,6 +49,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'username',
         'phone',
+        'country_code',
         'email',
         'password',
         'status',

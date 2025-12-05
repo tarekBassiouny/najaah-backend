@@ -18,13 +18,21 @@ class AuthApiTest extends TestCase
 
     public function test_send_otp_endpoint_creates_record(): void
     {
+        $user = User::factory()->create([
+            'phone' => '1234567890',
+            'country_code' => '+20',
+        ]);
+
         $response = $this->postJson('/api/v1/auth/send-otp', [
-            'phone' => '+201234567890',
+            'phone' => '1234567890',
             'country_code' => '+20',
         ]);
 
         $response->assertOk()->assertJsonStructure(['token']);
-        $this->assertDatabaseHas('otp_codes', ['phone' => '+201234567890']);
+        $this->assertDatabaseHas('otp_codes', [
+            'phone' => '1234567890',
+            'country_code' => '+20',
+        ]);
     }
 
     public function test_verify_endpoint_registers_device_and_tokens(): void
