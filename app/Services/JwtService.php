@@ -21,13 +21,13 @@ class JwtService implements JwtServiceInterface
     public function create(User $user, UserDevice $device): array
     {
         $access = JWTAuth::fromUser($user);
-        $refresh = bin2hex(random_bytes(40));
+        $refresh = bin2hex(random_bytes(10));
 
-        DB::transaction(function () use ($user, $device, $refresh): void {
+        DB::transaction(function () use ($user, $device, $refresh, $access): void {
             JwtToken::create([
                 'user_id' => $user->id,
                 'device_id' => $device->id,
-                'access_token' => '',
+                'access_token' => $access,
                 'refresh_token' => $refresh,
                 'expires_at' => now()->addMinutes(30),
                 'refresh_expires_at' => now()->addDays(30),

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\AdminAuthService;
+use App\Services\Contracts\AdminAuthServiceInterface;
 use App\Services\Contracts\DeviceServiceInterface;
 use App\Services\Contracts\JwtServiceInterface;
 use App\Services\Contracts\OtpServiceInterface;
@@ -21,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
             OtpServiceInterface::class => OtpService::class,
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
+            AdminAuthServiceInterface::class => AdminAuthService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {

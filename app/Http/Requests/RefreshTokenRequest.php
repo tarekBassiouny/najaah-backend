@@ -22,4 +22,17 @@ class RefreshTokenRequest extends FormRequest
             'refresh_token' => ['required', 'string'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'refresh_token' => [
+                'description' => 'The refresh token issued at login.',
+                'example' => 'jwt-refresh-token',
+            ],
+        ];
+    }
 }
