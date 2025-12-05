@@ -20,7 +20,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Role extends Model
 {
     /** @use HasFactory<\Database\Factories\RoleFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'name',

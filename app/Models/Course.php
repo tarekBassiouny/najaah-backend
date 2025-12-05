@@ -48,7 +48,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Course extends Model
 {
     /** @use HasFactory<\Database\Factories\CourseFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $with = ['instructors', 'primaryInstructor'];
 

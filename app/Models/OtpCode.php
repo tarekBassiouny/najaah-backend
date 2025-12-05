@@ -25,7 +25,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class OtpCode extends Model
 {
     /** @use HasFactory<\Database\Factories\OtpCodeFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     /** @var array<string, mixed> */
     protected $attributes = [

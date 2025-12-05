@@ -61,7 +61,6 @@ class SendOtpRequest extends FormRequest
             'country_code' => $normalizedCountry ?? $rawCountry,
             'phone' => $local,
         ]);
-
     }
 
     public function withValidator(Validator $validator): void

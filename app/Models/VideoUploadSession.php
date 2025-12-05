@@ -25,7 +25,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class VideoUploadSession extends Model
 {
     /** @use HasFactory<\Database\Factories\VideoUploadSessionFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'center_id',

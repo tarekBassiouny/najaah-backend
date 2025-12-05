@@ -18,7 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class CourseSetting extends Model
 {
     /** @use HasFactory<\Database\Factories\CourseSettingFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'course_id',

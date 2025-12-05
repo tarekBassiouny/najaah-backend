@@ -38,7 +38,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Video extends Model
 {
     /** @use HasFactory<\Database\Factories\VideoFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'title_translations',

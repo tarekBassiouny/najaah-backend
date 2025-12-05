@@ -12,11 +12,13 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @use Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\Pivots\CourseInstructorFactory>
+ * @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\Pivots\CourseInstructorFactory>
  */
 class CourseInstructor extends Pivot
 {
+    /** @use HasFactory<\Database\Factories\AuditLogFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $table = 'course_instructors';

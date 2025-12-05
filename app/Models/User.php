@@ -38,11 +38,18 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PlaybackSession> $playbackSessions
  * @property-read StudentSetting|null $studentSetting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, AuditLog> $auditLogs
+ *
+ * @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\UserFactory>
  */
 class User extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens;
+
+    /** @use HasFactory<\Database\Factories\CategoryFactory> */
+    use HasFactory;
+
+    use Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'center_id',

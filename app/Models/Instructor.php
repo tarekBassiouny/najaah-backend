@@ -29,7 +29,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Instructor extends Model
 {
     /** @use HasFactory<\Database\Factories\InstructorFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'center_id',

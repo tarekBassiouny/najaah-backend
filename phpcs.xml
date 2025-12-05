@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="Project Standard">
+    <description>XYZ-LMS PHPCS rules</description>
+    <file>app</file>
+    <file>routes</file>
+    <file>database</file>
+    <rule ref="PSR12"/>
+    <rule ref="Squiz.WhiteSpace.ScopeOpeningBrace"/>
+</ruleset>
