@@ -29,10 +29,6 @@ class CourseFactory extends Factory
                 'en' => $this->faker->paragraph(),
                 'ar' => 'وصف: '.$this->faker->sentence(),
             ],
-            'instructor_translations' => [
-                'en' => $this->faker->name(),
-                'ar' => 'المدرب '.$this->faker->name(),
-            ],
             'college_translations' => [
                 'en' => $this->faker->company().' College',
                 'ar' => 'كلية '.$this->faker->company(),
@@ -42,6 +38,7 @@ class CourseFactory extends Factory
             'difficulty_level' => $this->faker->numberBetween(0, 2),
             'language' => $this->faker->randomElement(['en', 'ar', 'de']),
             'course_code' => 'COURSE-'.$this->faker->unique()->numerify('####'),
+            'primary_instructor_id' => null,
             'tags' => [
                 'module' => $this->faker->word(),
                 'type' => $this->faker->randomElement(['intro', 'part', 'qna']),

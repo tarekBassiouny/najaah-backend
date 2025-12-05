@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Pivots\CourseInstructor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,12 +19,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $category_id
  * @property array<string, string> $title_translations
  * @property array<string, string>|null $description_translations
- * @property array<string, string>|null $instructor_translations
  * @property array<string, string>|null $college_translations
  * @property string|null $grade_year
  * @property int $difficulty_level
  * @property string $language
  * @property string|null $course_code
+ * @property int|null $primary_instructor_id
  * @property array<string, mixed>|null $tags
  * @property int $status
  * @property bool $is_published
@@ -35,30 +36,34 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null $publish_at
  * @property-read Center $center
  * @property-read Category|null $category
+ * @property-read Instructor|null $primaryInstructor
  * @property-read User $creator
  * @property-read CourseSetting|null $setting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Section> $sections
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Video> $videos
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Pdf> $pdfs
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Instructor> $instructors
  */
 class Course extends Model
 {
     /** @use HasFactory<\Database\Factories\CourseFactory> */
     use HasFactory, SoftDeletes;
 
+    protected $with = ['instructors', 'primaryInstructor'];
+
     protected $fillable = [
         'center_id',
         'category_id',
         'title_translations',
         'description_translations',
-        'instructor_translations',
         'college_translations',
         'grade_year',
         'thumbnail_url',
         'difficulty_level',
         'language',
         'course_code',
+        'primary_instructor_id',
         'tags',
         'status',
         'is_published',
@@ -72,7 +77,6 @@ class Course extends Model
     protected $casts = [
         'title_translations' => 'array',
         'description_translations' => 'array',
-        'instructor_translations' => 'array',
         'college_translations' => 'array',
         'tags' => 'array',
         'is_published' => 'boolean',
@@ -81,6 +85,7 @@ class Course extends Model
         'difficulty_level' => 'integer',
         'status' => 'integer',
         'publish_at' => 'datetime',
+        'primary_instructor_id' => 'integer',
     ];
 
     /** @return BelongsTo<Center, self> */
@@ -93,6 +98,12 @@ class Course extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /** @return BelongsTo<Instructor, self> */
+    public function primaryInstructor(): BelongsTo
+    {
+        return $this->belongsTo(Instructor::class, 'primary_instructor_id');
     }
 
     /** @return BelongsTo<User, self> */
@@ -135,6 +146,16 @@ class Course extends Model
     {
         return $this->belongsToMany(Pdf::class, 'course_pdf')
             ->withPivot(['section_id', 'video_id', 'order_index', 'visible', 'download_permission_override', 'created_at', 'updated_at', 'deleted_at'])
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at');
+    }
+
+    /** @return BelongsToMany<Instructor, self> */
+    public function instructors(): BelongsToMany
+    {
+        return $this->belongsToMany(Instructor::class, 'course_instructors')
+            ->using(CourseInstructor::class)
+            ->withPivot(['role', 'created_at', 'updated_at', 'deleted_at'])
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
     }
