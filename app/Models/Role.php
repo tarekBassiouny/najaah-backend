@@ -39,6 +39,7 @@ class Role extends Model
         'description_translations' => 'array',
     ];
 
+    /** @var array<int, string> */
     protected array $translatable = [
         'name',
         'description',

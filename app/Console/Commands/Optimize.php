@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\CodeQuality;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
-class RunAllCommands extends Command
+class Optimize extends Command
 {
-    protected $signature = 'system:run-all';
+    protected $signature = 'system:optimize';
 
     protected $description = 'Run common maintenance tasks and builds';
 
@@ -21,12 +21,7 @@ class RunAllCommands extends Command
         $this->runArtisan('view:clear');
         $this->runArtisan('optimize:clear');
         $this->runArtisan('migrate', ['--force' => true]);
-        // $this->runArtisan('queue:restart');
         $this->shell(['composer', 'dump-autoload']);
-        // $this->shell(['npm', 'run', 'build']);
-        $this->shell(['./vendor/bin/pint', '--test']);
-        $this->shell(['./vendor/bin/phpstan', 'analyse', '--memory-limit=2G']);
-        $this->shell(['php', 'artisan', 'test']);
 
         return self::SUCCESS;
     }

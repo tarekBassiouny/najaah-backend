@@ -17,13 +17,13 @@ class AddSectionRequest extends FormRequest
     {
         if ($this->has('title') && ! $this->has('title_translations')) {
             $this->merge([
-                'title_translations' => ['en' => (string) $this->input('title')],
+                'title_translations' => ['en' => ($this->input('title', ''))],
             ]);
         }
 
         if ($this->has('description') && ! $this->has('description_translations')) {
             $this->merge([
-                'description_translations' => ['en' => (string) $this->input('description')],
+                'description_translations' => ['en' => ($this->input('description', ''))],
             ]);
         }
     }

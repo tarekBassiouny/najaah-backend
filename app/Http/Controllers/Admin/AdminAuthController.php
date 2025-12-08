@@ -35,7 +35,9 @@ class AdminAuthController extends Controller
     public function logout(): JsonResponse
     {
         try {
-            $token = Auth::guard('admin')->getToken();
+            /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+            $guard = Auth::guard('admin');
+            $token = $guard->getToken();
             if (! $token) {
                 return response()->json([
                     'success' => false,
@@ -43,7 +45,7 @@ class AdminAuthController extends Controller
                 ], 400);
             }
 
-            Auth::guard('admin')->invalidate($token);
+            $guard->invalidate(true);
 
             return response()->json([
                 'success' => true,
@@ -59,7 +61,9 @@ class AdminAuthController extends Controller
 
     public function me(): JsonResponse
     {
-        $user = Auth::guard('admin')->authenticate();
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('admin');
+        $user = $guard->user() ?? $guard->authenticate();
 
         return response()->json([
             'success' => true,
@@ -69,7 +73,9 @@ class AdminAuthController extends Controller
 
     public function refresh(): JsonResponse
     {
-        $newToken = Auth::guard('admin')->refresh();
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('admin');
+        $newToken = $guard->refresh();
 
         return response()->json([
             'success' => true,

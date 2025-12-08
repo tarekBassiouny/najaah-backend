@@ -24,10 +24,14 @@ class SectionWorkflowController extends Controller
     ): JsonResponse {
         /** @var array<string, mixed> $data */
         $data = $request->validated();
+        /** @var array<int, int> $videos */
+        $videos = is_array($data['videos'] ?? null) ? array_map('intval', $data['videos']) : [];
+        /** @var array<int, int> $pdfs */
+        $pdfs = is_array($data['pdfs'] ?? null) ? array_map('intval', $data['pdfs']) : [];
         $section = $createSectionWithStructureAction->execute(
             $data,
-            $data['videos'] ?? [],
-            $data['pdfs'] ?? []
+            $videos,
+            $pdfs
         );
 
         return response()->json([
@@ -43,11 +47,15 @@ class SectionWorkflowController extends Controller
     ): JsonResponse {
         /** @var array<string, mixed> $data */
         $data = $request->validated();
+        /** @var array<int, int> $videos */
+        $videos = is_array($data['videos'] ?? null) ? array_map('intval', $data['videos']) : [];
+        /** @var array<int, int> $pdfs */
+        $pdfs = is_array($data['pdfs'] ?? null) ? array_map('intval', $data['pdfs']) : [];
         $updated = $updateSectionWithStructureAction->execute(
             $section,
             $data,
-            $data['videos'] ?? [],
-            $data['pdfs'] ?? []
+            $videos,
+            $pdfs
         )->load(['videos', 'pdfs']);
 
         return response()->json([

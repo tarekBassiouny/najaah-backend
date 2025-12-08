@@ -17,19 +17,19 @@ class UpdateCourseRequest extends FormRequest
     {
         if ($this->has('title') && ! $this->has('title_translations')) {
             $this->merge([
-                'title_translations' => ['en' => (string) $this->input('title')],
+                'title_translations' => ['en' => ($this->input('title', ''))],
             ]);
         }
 
         if ($this->has('description') && ! $this->has('description_translations')) {
             $this->merge([
-                'description_translations' => ['en' => (string) $this->input('description')],
+                'description_translations' => ['en' => ($this->input('description', ''))],
             ]);
         }
 
         if ($this->has('difficulty') && ! $this->has('difficulty_level')) {
             $this->merge([
-                'difficulty_level' => $this->mapDifficulty((string) $this->input('difficulty')),
+                'difficulty_level' => $this->mapDifficulty((string) $this->input('difficulty', '')),
             ]);
         }
 

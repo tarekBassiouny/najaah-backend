@@ -54,6 +54,7 @@ class Instructor extends Model
         'social_links' => 'array',
     ];
 
+    /** @var array<int, string> */
     protected array $translatable = [
         'name',
         'bio',

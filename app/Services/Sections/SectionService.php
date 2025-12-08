@@ -29,12 +29,15 @@ class SectionService implements SectionServiceInterface
     /** @param array<string, mixed> $data */
     public function create(array $data): Section
     {
-        $nextOrder = $this->nextOrderIndex((int) $data['course_id']);
+        $courseId = isset($data['course_id']) && is_numeric($data['course_id']) ? (int) $data['course_id'] : 0;
+        $nextOrder = $this->nextOrderIndex($courseId);
 
-        $section = Section::create([
+        $payload = [
             ...$data,
             'order_index' => $data['order_index'] ?? $nextOrder,
-        ]);
+        ];
+
+        $section = Section::create($payload);
 
         return $section->fresh(['videos', 'pdfs']) ?? $section;
     }

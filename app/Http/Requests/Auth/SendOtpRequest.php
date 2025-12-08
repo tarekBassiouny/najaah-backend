@@ -45,14 +45,13 @@ class SendOtpRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $rawCountryInput = $this->input('country_code', '');
-        $rawCountry = is_scalar($rawCountryInput) ? (string) $rawCountryInput : '';
+        $rawCountry = $this->input('country_code', '');
         $countryDigits = preg_replace('/\D+/', '', $rawCountry) ?? '';
         $normalizedDigits = ltrim($countryDigits, '0');
         $normalizedCountry = $normalizedDigits !== '' ? '+'.$normalizedDigits : ($rawCountry !== '' ? $rawCountry : null);
 
         $rawPhoneInput = $this->input('phone', '');
-        $phoneDigits = preg_replace('/\D+/', '', is_scalar($rawPhoneInput) ? (string) $rawPhoneInput : '') ?? '';
+        $phoneDigits = preg_replace('/\D+/', '', (string) $rawPhoneInput) ?? '';
         $local = $normalizedDigits !== '' && str_starts_with($phoneDigits, $normalizedDigits) ? substr($phoneDigits, strlen($normalizedDigits)) : $phoneDigits;
 
         $this->merge([

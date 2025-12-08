@@ -53,6 +53,7 @@ class Pdf extends Model
         'source_type' => 'integer',
     ];
 
+    /** @var array<int, string> */
     protected array $translatable = [
         'title',
         'description',

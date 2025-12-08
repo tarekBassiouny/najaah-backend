@@ -18,7 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class CourseInstructor extends Pivot
 {
+    /** @use HasFactory<\Database\Factories\Pivots\CourseInstructorFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $table = 'course_instructors';

@@ -73,8 +73,8 @@ class SectionStructureService implements SectionStructureServiceInterface
 
         $pivot->save();
 
-        if ($previousSectionId !== null && $previousSectionId !== $section->id) {
-            $this->syncVideoOrderForSection($section->course_id, $previousSectionId);
+        if ($previousSectionId !== null && is_numeric($previousSectionId) && $previousSectionId !== $section->id) {
+            $this->syncVideoOrderForSection((int) $section->course_id, (int) $previousSectionId);
         }
     }
 
@@ -139,8 +139,8 @@ class SectionStructureService implements SectionStructureServiceInterface
 
         $pivot->save();
 
-        if ($previousSectionId !== null && $previousSectionId !== $section->id) {
-            $this->syncPdfOrderForSection($section->course_id, $previousSectionId);
+        if ($previousSectionId !== null && is_numeric($previousSectionId) && $previousSectionId !== $section->id) {
+            $this->syncPdfOrderForSection((int) $section->course_id, (int) $previousSectionId);
         }
     }
 
@@ -213,12 +213,17 @@ class SectionStructureService implements SectionStructureServiceInterface
     /** @return array<int, int> */
     private function currentVideoIds(Section $section): array
     {
-        return CourseVideo::where('course_id', $section->course_id)
+        $rawIds = CourseVideo::where('course_id', $section->course_id)
             ->where('section_id', $section->id)
             ->whereNull('deleted_at')
             ->orderBy('order_index')
             ->pluck('video_id')
             ->all();
+
+        /** @var array<int, int> $ids */
+        $ids = array_map(static fn (int|string $id): int => (int) $id, $rawIds);
+
+        return $ids;
     }
 
     private function nextVideoOrder(Section $section): int
@@ -234,12 +239,17 @@ class SectionStructureService implements SectionStructureServiceInterface
     /** @return array<int, int> */
     private function currentPdfIds(Section $section): array
     {
-        return CoursePdf::where('course_id', $section->course_id)
+        $rawIds = CoursePdf::where('course_id', $section->course_id)
             ->where('section_id', $section->id)
             ->whereNull('deleted_at')
             ->orderBy('order_index')
             ->pluck('pdf_id')
             ->all();
+
+        /** @var array<int, int> $ids */
+        $ids = array_map(static fn (int|string $id): int => (int) $id, $rawIds);
+
+        return $ids;
     }
 
     private function nextPdfOrder(Section $section): int
@@ -254,27 +264,31 @@ class SectionStructureService implements SectionStructureServiceInterface
 
     private function syncVideoOrderForSection(int $courseId, int $sectionId): void
     {
-        $ids = CourseVideo::where('course_id', $courseId)
+        $rawIds = CourseVideo::where('course_id', $courseId)
             ->where('section_id', $sectionId)
             ->whereNull('deleted_at')
             ->orderBy('order_index')
             ->pluck('video_id')
             ->all();
+        /** @var array<int, int> $ids */
+        $ids = array_map(static fn (int|string $id): int => (int) $id, $rawIds);
 
-        $section = new Section(['id' => $sectionId, 'course_id' => $courseId]);
+        $section = new Section(['id' => (int) $sectionId, 'course_id' => (int) $courseId]);
         $this->syncVideoOrder($section, $ids);
     }
 
     private function syncPdfOrderForSection(int $courseId, int $sectionId): void
     {
-        $ids = CoursePdf::where('course_id', $courseId)
+        $rawIds = CoursePdf::where('course_id', $courseId)
             ->where('section_id', $sectionId)
             ->whereNull('deleted_at')
             ->orderBy('order_index')
             ->pluck('pdf_id')
             ->all();
+        /** @var array<int, int> $ids */
+        $ids = array_map(static fn (int|string $id): int => (int) $id, $rawIds);
 
-        $section = new Section(['id' => $sectionId, 'course_id' => $courseId]);
+        $section = new Section(['id' => (int) $sectionId, 'course_id' => (int) $courseId]);
         $this->syncPdfOrder($section, $ids);
     }
 

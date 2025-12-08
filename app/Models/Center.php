@@ -60,6 +60,7 @@ class Center extends Model
         'device_limit' => 'integer',
     ];
 
+    /** @var array<int, string> */
     protected array $translatable = [
         'name',
         'description',

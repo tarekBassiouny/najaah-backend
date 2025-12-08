@@ -18,7 +18,9 @@ class AdminAuthService implements AdminAuthServiceInterface
             'is_student' => false, // prevent student login
         ];
 
-        if (! $token = Auth::guard('admin')->attempt($credentials)) {
+        $token = Auth::guard('admin')->attempt($credentials);
+
+        if (! is_string($token) || $token === '') {
             return null;
         }
 

@@ -18,7 +18,7 @@ class StoreSectionRequest extends FormRequest
         if (! $this->has('course_id') && $this->route('course')) {
             $course = $this->route('course');
             $this->merge([
-                'course_id' => is_object($course) ? $course->id : $course,
+                'course_id' => is_object($course) && property_exists($course, 'id') ? (int) $course->id : (int) $course,
             ]);
         }
     }

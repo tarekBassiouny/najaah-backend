@@ -74,6 +74,7 @@ class Video extends Model
         'thumbnail_urls' => 'array',
     ];
 
+    /** @var array<int, string> */
     protected array $translatable = [
         'title',
         'description',

@@ -52,11 +52,6 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-
-        "lint": [
-            "@lint:styles",
-            "@lint:php"
-        ],
         "lint": [
             "./vendor/bin/pint --test",
             "./vendor/bin/phpstan analyse"

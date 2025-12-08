@@ -14,7 +14,8 @@ trait HasTranslations
             return parent::__get($key);
         }
 
-        $locale = request()->attributes->get('locale', app()->getLocale());
+        $localeValue = request()->attributes->get('locale', app()->getLocale());
+        $locale = is_string($localeValue) ? $localeValue : (string) app()->getLocale();
 
         return $this->getTranslation($key, $locale);
     }
@@ -24,6 +25,9 @@ trait HasTranslations
         return in_array($key, $this->getTranslatableAttributes(), true);
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function getTranslatableAttributes(): array
     {
         return $this->translatable ?? [];
@@ -31,7 +35,8 @@ trait HasTranslations
 
     public function getTranslation(string $field, string $locale): ?string
     {
-        $translations = $this->{$field.'_translations'} ?? [];
+        /** @var array<string, string> $translations */
+        $translations = is_array($this->{$field.'_translations'} ?? null) ? $this->{$field.'_translations'} : [];
 
         // Requested locale
         if (isset($translations[$locale])) {
@@ -44,6 +49,8 @@ trait HasTranslations
         }
 
         // Fallback: first available
-        return Arr::first($translations);
+        $first = Arr::first($translations);
+
+        return is_string($first) ? $first : null;
     }
 }

@@ -91,8 +91,10 @@ class SectionWorkflowService implements SectionWorkflowServiceInterface
     {
         $currentIds = $this->structureService->listVideos($section)->pluck('id')->all();
 
-        $toAttach = array_values(array_diff($videos, $currentIds));
-        $toDetach = array_values(array_diff($currentIds, $videos));
+        /** @var array<int, int> $toAttach */
+        $toAttach = array_values(array_diff($videos, array_map('intval', $currentIds)));
+        /** @var array<int, int> $toDetach */
+        $toDetach = array_values(array_diff(array_map('intval', $currentIds), $videos));
 
         foreach ($toAttach as $videoId) {
             $video = Video::findOrFail($videoId);
@@ -114,9 +116,12 @@ class SectionWorkflowService implements SectionWorkflowServiceInterface
     /** @param array<int, int> $pdfs */
     private function syncPdfs(Section $section, array $pdfs): void
     {
-        $currentIds = $this->structureService->listPdfs($section)->pluck('id')->all();
+        /** @var array<int, int> $currentIds */
+        $currentIds = array_map('intval', $this->structureService->listPdfs($section)->pluck('id')->all());
 
+        /** @var array<int, int> $toAttach */
         $toAttach = array_values(array_diff($pdfs, $currentIds));
+        /** @var array<int, int> $toDetach */
         $toDetach = array_values(array_diff($currentIds, $pdfs));
 
         foreach ($toAttach as $pdfId) {

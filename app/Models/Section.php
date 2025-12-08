@@ -47,6 +47,7 @@ class Section extends Model
         'visible' => 'boolean',
     ];
 
+    /** @var array<int, string> */
     protected array $translatable = [
         'title',
         'description',

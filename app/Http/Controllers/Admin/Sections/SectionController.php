@@ -109,12 +109,25 @@ class SectionController extends Controller
         Course $course,
         ReorderSectionRequest $request
     ): JsonResponse {
+        $validated = $request->validated();
+        $sectionsInput = $validated['sections'] ?? [];
+
+        if (! is_array($sectionsInput)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Invalid sections payload',
+            ], 422);
+        }
+
+        /** @var array<int, int> $ordered */
+        $ordered = array_values(array_map('intval', $sectionsInput));
+
         $sections = $course->sections()
-            ->whereIn('id', $request->input('sections', []))
+            ->whereIn('id', $ordered)
             ->get()
             ->keyBy('id');
 
-        foreach (array_values($request->input('sections', [])) as $index => $sectionId) {
+        foreach ($ordered as $index => $sectionId) {
             $section = $sections->get((int) $sectionId);
             if ($section === null) {
                 continue;

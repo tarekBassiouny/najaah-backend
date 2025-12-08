@@ -97,6 +97,7 @@ class Course extends Model
         'primary_instructor_id' => 'integer',
     ];
 
+    /** @var array<int, string> */
     protected array $translatable = [
         'title',
         'description',

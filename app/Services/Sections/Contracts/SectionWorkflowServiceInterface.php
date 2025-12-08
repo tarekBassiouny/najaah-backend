@@ -8,10 +8,18 @@ use App\Models\Section;
 
 interface SectionWorkflowServiceInterface
 {
-    /** @param array<string, mixed> $data @param array<int, int> $videos @param array<int, int> $pdfs */
+    /**
+     * @param  array<string, mixed>  $data
+     * @param  array<int, int>  $videos
+     * @param  array<int, int>  $pdfs
+     */
     public function createWithStructure(array $data, array $videos = [], array $pdfs = []): Section;
 
-    /** @param array<string, mixed> $data @param array<int, int> $videos @param array<int, int> $pdfs */
+    /**
+     * @param  array<string, mixed>  $data
+     * @param  array<int, int>  $videos
+     * @param  array<int, int>  $pdfs
+     */
     public function updateWithStructure(Section $section, array $data, array $videos = [], array $pdfs = []): Section;
 
     public function deleteWithStructure(Section $section): void;

@@ -45,6 +45,7 @@ class Category extends Model
         'order_index' => 'integer',
     ];
 
+    /** @var array<int, string> */
     protected array $translatable = [
         'title',
         'description',
