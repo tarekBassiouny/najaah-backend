@@ -18,8 +18,7 @@ class InstructorSeeder extends Seeder
         Center::all()->each(function (Center $center): void {
             $creator = User::where('center_id', $center->id)
                 ->where('is_student', false)
-                ->first()
-                ?? User::factory()->create([
+                ->first() ?? User::factory()->create([
                     'center_id' => $center->id,
                     'is_student' => false,
                 ]);

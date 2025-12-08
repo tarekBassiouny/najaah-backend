@@ -15,15 +15,15 @@ class CategoryFactory extends Factory
     {
         return [
             'title_translations' => [
-                'en' => $this->faker->word(),
-                'ar' => 'فئة '.$this->faker->word(),
+                'en' => 'Category',
+                'ar' => 'فئة',
             ],
             'description_translations' => [
-                'en' => $this->faker->sentence(),
-                'ar' => 'وصف: '.$this->faker->sentence(),
+                'en' => 'Category description',
+                'ar' => 'وصف الفئة',
             ],
             'parent_id' => null,
-            'order_index' => $this->faker->numberBetween(1, 50),
+            'order_index' => 1,
             'is_active' => true,
         ];
     }

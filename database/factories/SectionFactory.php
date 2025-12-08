@@ -17,14 +17,14 @@ class SectionFactory extends Factory
         return [
             'course_id' => Course::factory(),
             'title_translations' => [
-                'en' => 'Section: '.$this->faker->sentence(),
-                'ar' => 'قسم: '.$this->faker->sentence(),
+                'en' => 'Section: Title',
+                'ar' => 'قسم: العنوان',
             ],
             'description_translations' => [
-                'en' => $this->faker->paragraph(),
-                'ar' => 'وصف: '.$this->faker->sentence(),
+                'en' => 'Description',
+                'ar' => 'وصف',
             ],
-            'order_index' => $this->faker->numberBetween(1, 20),
+            'order_index' => 1,
             'visible' => true,
         ];
     }

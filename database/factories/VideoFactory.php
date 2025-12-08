@@ -18,33 +18,33 @@ class VideoFactory extends Factory
     {
         return [
             'title_translations' => [
-                'en' => 'Video: '.$this->faker->sentence(),
-                'ar' => 'فيديو: '.$this->faker->sentence(),
+                'en' => 'Video title',
+                'ar' => 'عنوان الفيديو',
             ],
 
             'description_translations' => [
-                'en' => $this->faker->paragraph(),
-                'ar' => 'وصف: '.$this->faker->sentence(),
+                'en' => 'Video description',
+                'ar' => 'وصف الفيديو',
             ],
 
-            'source_type' => $this->faker->numberBetween(0, 1),
-            'source_provider' => $this->faker->randomElement(['bunny', 'youtube', 'vimeo', 'zoom', 'custom']),
+            'source_type' => 0,
+            'source_provider' => 'bunny',
             'source_id' => Str::uuid()->toString(),
-            'source_url' => $this->faker->url(),
-            'duration_seconds' => $this->faker->numberBetween(30, 3600),
-            'lifecycle_status' => $this->faker->numberBetween(0, 4),
+            'source_url' => 'https://example.com/video.mp4',
+            'duration_seconds' => 120,
+            'lifecycle_status' => 2,
             'tags' => [
-                'type' => $this->faker->randomElement(['intro', 'part', 'qna']),
+                'type' => 'intro',
             ],
             'created_by' => User::factory(),
             'upload_session_id' => VideoUploadSession::factory(),
-            'original_filename' => $this->faker->word().'.mp4',
-            'encoding_status' => $this->faker->numberBetween(0, 3),
-            'thumbnail_url' => $this->faker->imageUrl(),
+            'original_filename' => 'video.mp4',
+            'encoding_status' => 1,
+            'thumbnail_url' => 'https://example.com/thumb.jpg',
             'thumbnail_urls' => [
-                'small' => $this->faker->imageUrl(),
-                'medium' => $this->faker->imageUrl(),
-                'large' => $this->faker->imageUrl(),
+                'small' => 'https://example.com/thumb-small.jpg',
+                'medium' => 'https://example.com/thumb-medium.jpg',
+                'large' => 'https://example.com/thumb-large.jpg',
             ],
         ];
     }

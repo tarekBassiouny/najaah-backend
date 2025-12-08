@@ -12,11 +12,15 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @use Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\Pivots\CourseInstructorFactory>
+ * @phpstan-use HasFactory<\Database\Factories\Pivots\CourseInstructorFactory>
+ *
+ * @method static \Database\Factories\Pivots\CourseInstructorFactory factory($count = null, $state = [])
  */
 class CourseInstructor extends Pivot
 {
+    /** @use HasFactory<\Database\Factories\Pivots\CourseInstructorFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $table = 'course_instructors';
@@ -29,6 +33,11 @@ class CourseInstructor extends Pivot
         'course_id',
         'instructor_id',
         'role',
+    ];
+
+    protected $casts = [
+        'course_id' => 'integer',
+        'instructor_id' => 'integer',
     ];
 
     /** @return BelongsTo<Course, self> */

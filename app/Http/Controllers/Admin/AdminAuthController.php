@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\AdminLoginRequest;
+use App\Http\Requests\Auth\AdminLoginRequest;
 use App\Http\Resources\Admin\AdminUserResource;
-use App\Services\Contracts\AdminAuthServiceInterface;
+use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
@@ -18,16 +19,14 @@ class AdminAuthController extends Controller
     {
         /** @var array{email:string,password:string} $data */
         $data = $request->validated();
-
         $result = $this->authService->login($data['email'], $data['password']);
 
         if ($result === null) {
-            return response()->json([
-                'error' => 'Invalid credentials',
-            ], 401);
+            return response()->json(['success' => false, 'error' => 'Invalid credentials'], 401);
         }
 
         return response()->json([
+            'success' => true,
             'user' => new AdminUserResource($result['user']),
             'token' => $result['token'],
         ]);
@@ -35,17 +34,52 @@ class AdminAuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        $this->authService->logout(request()->user());
+        try {
+            /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+            $guard = Auth::guard('admin');
+            $token = $guard->getToken();
+            if (! $token) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Token not provided',
+                ], 400);
+            }
 
-        return response()->json(['message' => 'Logged out']);
+            $guard->invalidate(true);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Logged out',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to logout',
+            ], 500);
+        }
     }
 
     public function me(): JsonResponse
     {
-        $user = $this->authService->me(request()->user());
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('admin');
+        $user = $guard->user() ?? $guard->authenticate();
 
         return response()->json([
-            'user' => $user !== null ? new AdminUserResource($user) : null,
+            'success' => true,
+            'user' => new AdminUserResource($user),
+        ]);
+    }
+
+    public function refresh(): JsonResponse
+    {
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('admin');
+        $newToken = $guard->refresh();
+
+        return response()->json([
+            'success' => true,
+            'token' => $newToken,
         ]);
     }
 }

@@ -6,11 +6,11 @@ namespace App\Actions\Courses;
 
 use App\Models\Course;
 use App\Models\Instructor;
-use App\Services\CourseInstructorService;
+use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
 
 class AssignInstructorToCourseAction
 {
-    public function __construct(private readonly CourseInstructorService $courseInstructorService) {}
+    public function __construct(private readonly CourseInstructorServiceInterface $courseInstructorService) {}
 
     public function execute(Course $course, Instructor $instructor, ?string $role = null): Course
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,7 +25,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Category extends Model
 {
     /** @use HasFactory<\Database\Factories\CategoryFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use HasTranslations;
+    use SoftDeletes;
 
     protected $fillable = [
         'title_translations',
@@ -39,6 +43,12 @@ class Category extends Model
         'description_translations' => 'array',
         'is_active' => 'boolean',
         'order_index' => 'integer',
+    ];
+
+    /** @var array<int, string> */
+    protected array $translatable = [
+        'title',
+        'description',
     ];
 
     /** @return BelongsTo<Category, self> */

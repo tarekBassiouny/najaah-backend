@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
+use App\Models\Pivots\RoleUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -20,7 +22,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Role extends Model
 {
     /** @use HasFactory<\Database\Factories\RoleFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use HasTranslations;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -34,9 +39,18 @@ class Role extends Model
         'description_translations' => 'array',
     ];
 
+    /** @var array<int, string> */
+    protected array $translatable = [
+        'name',
+        'description',
+    ];
+
     /** @return BelongsToMany<User, self> */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'role_user');
+        return $this->belongsToMany(User::class, 'role_user')
+            ->using(RoleUser::class)
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at');
     }
 }

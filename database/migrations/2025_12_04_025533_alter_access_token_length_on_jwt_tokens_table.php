@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+namespace Database\Migrations;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterAccessTokenLengthOnJwtTokensTable extends Migration
+return new class extends Migration
 {
     public function up(): void
     {
@@ -21,4 +23,4 @@ class AlterAccessTokenLengthOnJwtTokensTable extends Migration
             $table->string('access_token', 255)->change();
         });
     }
-}
+};

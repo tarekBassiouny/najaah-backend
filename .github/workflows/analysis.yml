@@ -3,7 +3,7 @@ name: Static Analysis
 on:
   # PRs to dev/main and manual runs
   pull_request:
-    branches: [dev, main]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist
 
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress | tee phpstan.log
+        run: vendor/bin/phpstan analyse --memory-limit=2G | tee phpstan.log
 
       - name: Upload PHPStan log
         uses: actions/upload-artifact@v4

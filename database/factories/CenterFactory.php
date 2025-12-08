@@ -14,18 +14,18 @@ class CenterFactory extends Factory
     public function definition(): array
     {
         return [
-            'slug' => $this->faker->unique()->slug(),
-            'type' => $this->faker->numberBetween(0, 1),
+            'slug' => 'center-'.uniqid(),
+            'type' => 0,
             'name_translations' => [
-                'en' => $this->faker->company(),
-                'ar' => 'مركز '.$this->faker->company(),
+                'en' => 'Center Name',
+                'ar' => 'مركز تجريبي',
             ],
             'description_translations' => [
-                'en' => $this->faker->paragraph(),
-                'ar' => 'وصف: '.$this->faker->sentence(),
+                'en' => 'Description',
+                'ar' => 'وصف المركز',
             ],
-            'logo_url' => $this->faker->imageUrl(200, 200),
-            'primary_color' => $this->faker->hexColor(),
+            'logo_url' => 'https://via.placeholder.com/200.png',
+            'primary_color' => '#000000',
             'default_view_limit' => 2,
             'allow_extra_view_requests' => true,
             'pdf_download_permission' => false,

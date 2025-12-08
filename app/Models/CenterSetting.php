@@ -18,7 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class CenterSetting extends Model
 {
     /** @use HasFactory<\Database\Factories\CenterSettingFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'center_id',

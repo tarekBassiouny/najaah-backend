@@ -25,7 +25,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class PlaybackSession extends Model
 {
     /** @use HasFactory<\Database\Factories\PlaybackSessionFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',

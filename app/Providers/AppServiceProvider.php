@@ -2,14 +2,20 @@
 
 namespace App\Providers;
 
-use App\Services\AdminAuthService;
-use App\Services\Contracts\AdminAuthServiceInterface;
-use App\Services\Contracts\DeviceServiceInterface;
-use App\Services\Contracts\JwtServiceInterface;
-use App\Services\Contracts\OtpServiceInterface;
-use App\Services\DeviceService;
-use App\Services\JwtService;
-use App\Services\OtpService;
+use App\Services\Auth\AdminAuthService;
+use App\Services\Auth\Contracts\AdminAuthServiceInterface;
+use App\Services\Auth\Contracts\JwtServiceInterface;
+use App\Services\Auth\Contracts\OtpServiceInterface;
+use App\Services\Auth\JwtService;
+use App\Services\Auth\OtpService;
+use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
+use App\Services\Courses\CourseInstructorService;
+use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Devices\DeviceService;
+use App\Services\Instructors\Contracts\InstructorServiceInterface;
+use App\Services\Instructors\InstructorService;
+use App\Services\Sections\Contracts\SectionServiceInterface;
+use App\Services\Sections\SectionService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,
+            InstructorServiceInterface::class => InstructorService::class,
+            CourseInstructorServiceInterface::class => CourseInstructorService::class,
+            SectionServiceInterface::class => SectionService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {

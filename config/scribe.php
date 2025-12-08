@@ -26,27 +26,27 @@ return [
 
     // The base URL displayed in the docs.
     // If you're using `laravel` type, you can set this to a dynamic string, like '{{ config("app.tenant_url") }}' to get a dynamic base URL.
-    'base_url' => config('app.url'),
+    'base_url' => rtrim(config('app.url'), '/'),
 
     // Routes to include in the docs
     'routes' => [
         [
             'match' => [
-                // Match only routes whose paths match this pattern (use * as a wildcard to match any characters). Example: 'users/*'.
-                'prefixes' => ['api/*'],
-
-                // Match only routes whose domains match this pattern (use * as a wildcard to match any characters). Example: 'api.*'.
-                // 'domains' => ['*'],
+                // Scan public API V1 routes in nested modular structure
+                'prefixes' => [
+                    '/api/v1/*',
+                    '/admin/*',
+                ],
             ],
 
-            // Include these routes even if they did not match the rules above.
+            // Force include nested API V1 modules
             'include' => [
-                'api/*',
+                '/api/v1/*',
+                '/admin/*',
             ],
 
-            // Exclude these routes even if they matched the rules above.
+            // Exclude internal Laravel and Sanctum endpoints
             'exclude' => [
-                // 'GET /health', 'admin.*'
                 'sanctum/*',
             ],
         ],
@@ -94,7 +94,7 @@ return [
         'enabled' => true,
 
         // The base URL to use in the API tester. Leave as null to be the same as the displayed URL (`scribe.base_url`).
-        'base_url' => null,
+        'base_url' => rtrim(config('app.url'), '/'),
 
         // [Laravel Sanctum] Fetch a CSRF token before each request, and add it as an X-XSRF-TOKEN header.
         'use_csrf' => false,
@@ -222,6 +222,7 @@ return [
             Strategies\StaticData::withSettings(data: [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
+                'X-Locale' => 'en',
             ]),
         ],
         'urlParameters' => [

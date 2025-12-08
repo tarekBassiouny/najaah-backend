@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
+use App\Models\Pivots\CoursePdf;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,7 +29,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Pdf extends Model
 {
     /** @use HasFactory<\Database\Factories\PdfFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use HasTranslations;
+    use SoftDeletes;
 
     protected $fillable = [
         'title_translations',
@@ -48,6 +53,12 @@ class Pdf extends Model
         'source_type' => 'integer',
     ];
 
+    /** @var array<int, string> */
+    protected array $translatable = [
+        'title',
+        'description',
+    ];
+
     /** @return BelongsTo<User, self> */
     public function creator(): BelongsTo
     {
@@ -58,6 +69,7 @@ class Pdf extends Model
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_pdf')
+            ->using(CoursePdf::class)
             ->withPivot(['section_id', 'video_id', 'order_index', 'visible', 'download_permission_override', 'created_at', 'updated_at', 'deleted_at'])
             ->withTimestamps()
             ->wherePivotNull('deleted_at');

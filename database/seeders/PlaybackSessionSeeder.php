@@ -23,9 +23,7 @@ class PlaybackSessionSeeder extends Seeder
             }
 
             foreach ($videos as $video) {
-                $device = $devices->isNotEmpty()
-                    ? $devices->random()
-                    : UserDevice::factory()->create(['user_id' => $user->id]);
+                $device = $devices->isNotEmpty() ? $devices->random() : UserDevice::factory()->create(['user_id' => $user->id]);
 
                 PlaybackSession::factory()->create([
                     'user_id' => $user->id,

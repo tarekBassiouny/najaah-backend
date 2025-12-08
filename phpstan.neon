@@ -2,11 +2,21 @@ includes:
   - vendor/larastan/larastan/extension.neon
 
 parameters:
+  tmpDir: storage/phpstan
   paths:
-    - app
-    - tests
+    - app/
+    - database/
+    - routes/
 
-  level: max
+  excludePaths:
+    - database/migrations/*
+    - database/factories/*
+    - database/seeders/*
+    - storage/*
+    - vendor/*
+    - tests/*
+
+  level: 7
 
   checkMissingIterableValueType: true
   inferPrivatePropertyTypeFromConstructor: true

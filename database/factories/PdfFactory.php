@@ -17,21 +17,21 @@ class PdfFactory extends Factory
     {
         return [
             'title_translations' => [
-                'en' => 'PDF: '.$this->faker->sentence(),
-                'ar' => 'ملف: '.$this->faker->sentence(),
+                'en' => 'PDF title',
+                'ar' => 'عنوان الملف',
             ],
 
             'description_translations' => [
-                'en' => $this->faker->paragraph(),
-                'ar' => 'وصف: '.$this->faker->sentence(),
+                'en' => 'PDF description',
+                'ar' => 'وصف الملف',
             ],
 
-            'source_type' => $this->faker->numberBetween(0, 1),
-            'source_provider' => $this->faker->randomElement(['s3', 'spaces', 'gcs']),
+            'source_type' => 0,
+            'source_provider' => 's3',
             'source_id' => Str::uuid()->toString(),
-            'source_url' => $this->faker->url(),
-            'file_size_kb' => $this->faker->numberBetween(10, 50_000),
-            'file_extension' => $this->faker->randomElement(['pdf', 'docx']),
+            'source_url' => 'https://example.com/file.pdf',
+            'file_size_kb' => 1024,
+            'file_extension' => 'pdf',
             'created_by' => User::factory(),
         ];
     }

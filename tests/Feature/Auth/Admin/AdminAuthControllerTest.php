@@ -1,0 +1,139 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class)->group('admin', 'auth');
+
+/**
+ * LOGIN
+ */
+test('admin login succeeds with valid credentials', function () {
+    $admin = User::factory()->create([
+        'email' => 'admin@example.com',
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $response = $this->postJson('/admin/auth/login', [
+        'email' => 'admin@example.com',
+        'password' => 'secret123',
+    ]);
+
+    $response->assertOk()
+        ->assertJsonStructure([
+            'success',
+            'user' => ['id', 'email'],
+            'token',
+        ])
+        ->assertJson(['success' => true]);
+});
+
+test('admin login fails with invalid credentials', function () {
+    $response = $this->postJson('/admin/auth/login', [
+        'email' => 'wrong@example.com',
+        'password' => 'invalid',
+    ]);
+
+    $response->assertStatus(401)
+        ->assertJson([
+            'success' => false,
+            'error' => 'Invalid credentials',
+        ]);
+});
+
+test('student cannot login as admin', function () {
+    $student = User::factory()->create([
+        'email' => 'student@test.com',
+        'password' => 'pass',
+        'is_student' => true,
+    ]);
+
+    $response = $this->postJson('/admin/auth/login', [
+        'email' => 'student@test.com',
+        'password' => 'pass',
+    ]);
+
+    // Even if credentials match, admin service blocks student login
+    $response->assertStatus(401)
+        ->assertJson([
+            'success' => false,
+            'error' => 'Invalid credentials',
+        ]);
+});
+
+/**
+ * ME
+ */
+test('admin can fetch their profile', function () {
+    $admin = $this->asAdmin(); // generates token + stores header
+
+    $response = $this->getJson('/admin/auth/me', $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonStructure([
+            'success',
+            'user' => ['id', 'email'],
+        ])
+        ->assertJson([
+            'success' => true,
+            'user' => ['id' => $admin->id],
+        ]);
+});
+
+test('unauthenticated request to me fails', function () {
+    $response = $this->getJson('/admin/auth/me');
+
+    $response->assertStatus(401);
+});
+
+/**
+ * REFRESH
+ */
+test('admin can refresh token', function () {
+    $admin = $this->asAdmin();
+
+    $oldToken = $this->adminToken;
+
+    $response = $this->postJson('/admin/auth/refresh', [], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonStructure(['success', 'token'])
+        ->assertJson(['success' => true]);
+
+    $newToken = $response->json('token');
+
+    expect($newToken)->not->toBe($oldToken);
+});
+
+test('refresh fails without token', function () {
+    $response = $this->postJson('/admin/auth/refresh');
+
+    $response->assertStatus(401);
+});
+
+/**
+ * LOGOUT
+ */
+test('admin can logout successfully', function () {
+    $admin = $this->asAdmin();
+
+    $response = $this->postJson('/admin/auth/logout', [], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJson([
+            'success' => true,
+            'message' => 'Logged out',
+        ]);
+});
+
+test('logout fails without token', function () {
+    $response = $this->postJson('/admin/auth/logout');
+
+    $response->assertStatus(401)
+        ->assertJson([
+            'message' => 'Unauthenticated.',
+        ]);
+});

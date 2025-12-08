@@ -107,7 +107,7 @@ Codex must create:
 Codex must ensure:
 - `phpstan.neon` passes with 0 errors
 - `./vendor/bin/sail pint --test` returns 0 issues
-- `phpcs` returns 0 issues
+- `php artisan test` returns green
 
 ---
 

@@ -17,9 +17,9 @@ class OtpCodeFactory extends Factory
         $country = '+2';
 
         return [
-            'phone' => $this->faker->numerify('1##########'),
+            'phone' => '1000000000',
             'country_code' => $country,
-            'otp_code' => (string) rand(100000, 999999),
+            'otp_code' => '123456',
             'otp_token' => Str::uuid()->toString(),
             'provider' => 'sms',
             'expires_at' => now()->addMinutes(5),

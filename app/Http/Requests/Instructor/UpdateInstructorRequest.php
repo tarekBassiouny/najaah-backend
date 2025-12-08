@@ -33,6 +33,47 @@ class UpdateInstructorRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'center_id' => [
+                'description' => 'Optional center ID for the instructor.',
+                'example' => 1,
+            ],
+            'name_translations' => [
+                'description' => 'Localized instructor name keyed by locale.',
+                'example' => ['en' => 'John Doe', 'ar' => 'جون دو'],
+            ],
+            'bio_translations' => [
+                'description' => 'Localized biography.',
+                'example' => ['en' => 'Senior instructor', 'ar' => 'مدرب كبير'],
+            ],
+            'title_translations' => [
+                'description' => 'Localized title or position.',
+                'example' => ['en' => 'Professor', 'ar' => 'أستاذ'],
+            ],
+            'avatar_url' => [
+                'description' => 'Profile image URL.',
+                'example' => 'https://example.com/avatar.jpg',
+            ],
+            'email' => [
+                'description' => 'Contact email for the instructor.',
+                'example' => 'john.doe@example.com',
+            ],
+            'phone' => [
+                'description' => 'Contact phone number.',
+                'example' => '+1234567890',
+            ],
+            'social_links' => [
+                'description' => 'Optional social/profile links.',
+                'example' => ['linkedin' => 'https://linkedin.com/in/johndoe'],
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

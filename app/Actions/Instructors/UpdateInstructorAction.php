@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Actions\Instructors;
 
+use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Instructor;
-use App\Services\InstructorService;
+use App\Services\Instructors\Contracts\InstructorServiceInterface;
 
 class UpdateInstructorAction
 {
+    use NormalizesTranslations;
+
     public function __construct(
-        private readonly InstructorService $instructorService,
+        private readonly InstructorServiceInterface $instructorService,
     ) {}
 
     /**
@@ -18,6 +21,16 @@ class UpdateInstructorAction
      */
     public function execute(Instructor $instructor, array $data): Instructor
     {
+        $data = $this->normalizeTranslations($data, [
+            'name_translations',
+            'bio_translations',
+            'title_translations',
+        ], [
+            'name_translations' => $instructor->name_translations ?? [],
+            'bio_translations' => $instructor->bio_translations ?? [],
+            'title_translations' => $instructor->title_translations ?? [],
+        ]);
+
         return $this->instructorService->update($instructor, $data);
     }
 }

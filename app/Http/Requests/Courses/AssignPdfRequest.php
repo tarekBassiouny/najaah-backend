@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests\Courses;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class AssignPdfRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array<string, array<int, string>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'pdf_id' => ['required', 'integer', 'exists:pdfs,id'],
+            'order_index' => ['nullable', 'integer', 'min:0'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'pdf_id' => [
+                'description' => 'PDF ID to attach to the course.',
+                'example' => 12,
+            ],
+            'order_index' => [
+                'description' => 'Optional position in the course.',
+                'example' => 2,
+            ],
+        ];
+    }
+}

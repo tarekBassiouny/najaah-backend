@@ -6,9 +6,9 @@ namespace App\Actions\Auth;
 
 use App\Models\User;
 use App\Models\UserDevice;
-use App\Services\Contracts\DeviceServiceInterface;
-use App\Services\Contracts\JwtServiceInterface;
-use App\Services\Contracts\OtpServiceInterface;
+use App\Services\Auth\Contracts\JwtServiceInterface;
+use App\Services\Auth\Contracts\OtpServiceInterface;
+use App\Services\Devices\Contracts\DeviceServiceInterface;
 
 class APILoginAction
 {

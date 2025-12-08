@@ -1,14 +1,13 @@
-name: PHPUnit Tests
+name: Pest Tests
 
 on:
-  # PRs to dev/main and manual runs
   pull_request:
     branches: [dev, main]
   workflow_dispatch:
 
 jobs:
   tests:
-    name: Run PHPUnit Tests
+    name: Run Pest Tests
     runs-on: ubuntu-latest
 
     services:
@@ -20,13 +19,16 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping --silent" --health-interval=5s --health-timeout=3s --health-retries=10
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=10
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache Composer packages
+      - name: Cache Composer dependencies
         uses: actions/cache@v3
         with:
           path: vendor
@@ -42,17 +44,10 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      # Ensure ParaTest is available for Laravel parallel testing (Collision 8.x requirement)
-      - name: Install ParaTest
-        run: composer require --dev brianium/paratest:^7.0 --no-interaction --no-progress
-
-      - name: Prepare environment for Laravel
+      - name: Copy test environment
         run: |
-          cp .env.test .env
+          cp .env.testing .env
           php artisan key:generate --force
-
-      - name: Confirm .env.test present
-        run: ls -la .env.test
 
       - name: Wait for MySQL (40 attempts)
         run: |
@@ -60,14 +55,14 @@ jobs:
             if mysqladmin ping -h127.0.0.1 -uroot -proot --silent; then
               echo "MySQL is up"; break
             fi
-            echo "Waiting for MySQL ($i/40)...";
-            sleep 2;
+            echo "Waiting for MySQL ($i/40)..."
+            sleep 2
           done
 
       - name: Run migrations
         run: php artisan migrate --force
 
-      - name: Run PHPUnit (parallel)
+      - name: Run Laravel Tests (Parallel)
         run: php artisan test --parallel --processes=4 --log-junit junit.xml
 
       - name: Upload test results
@@ -75,5 +70,3 @@ jobs:
         with:
           name: phpunit-results
           path: junit.xml
-
-    # Reminder: a future deploy.yml can listen to this workflow_run success without modifying this file.

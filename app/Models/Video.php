@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
+use App\Models\Pivots\CourseVideo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,7 +40,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Video extends Model
 {
     /** @use HasFactory<\Database\Factories\VideoFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use HasTranslations;
+    use SoftDeletes;
 
     protected $fillable = [
         'title_translations',
@@ -69,6 +74,12 @@ class Video extends Model
         'thumbnail_urls' => 'array',
     ];
 
+    /** @var array<int, string> */
+    protected array $translatable = [
+        'title',
+        'description',
+    ];
+
     /** @return BelongsTo<User, self> */
     public function creator(): BelongsTo
     {
@@ -91,6 +102,7 @@ class Video extends Model
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_video')
+            ->using(CourseVideo::class)
             ->withPivot(['section_id', 'order_index', 'visible', 'view_limit_override', 'created_at', 'updated_at', 'deleted_at'])
             ->withTimestamps()
             ->wherePivotNull('deleted_at');

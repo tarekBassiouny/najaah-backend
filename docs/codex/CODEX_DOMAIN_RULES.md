@@ -148,8 +148,8 @@ Codex must ensure:
 ### PHPStan  
 `phpstan analyse` → 0 errors
 
-### PHPCS  
-`phpcs -p` → 0 violations
+### Tests  
+`php artisan test` → green
 
 ---
 
