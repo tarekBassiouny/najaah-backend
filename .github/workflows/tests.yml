@@ -44,14 +44,15 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Copy test environment
+      - name: Prepare test env
         run: |
-          cp .env.testing .env
 
           # Override DB credentials for GitHub runner
-          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
-          sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
-          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env
+          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env.testing
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env.testing
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env.testing
+          
+          cp .env.testing .env
           
           php artisan key:generate --force
 
@@ -68,11 +69,11 @@ jobs:
       - name: Run migrations
         run: php artisan migrate --force
 
-      - name: Run Laravel Tests (Parallel)
+      - name: Run Laravel Tests
         run: php artisan test
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: phpunit-results
+          name: pest-results
           path: junit.xml
