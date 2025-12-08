@@ -47,6 +47,12 @@ jobs:
       - name: Copy test environment
         run: |
           cp .env.testing .env
+
+          # Override DB credentials for GitHub runner
+          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env
+          
           php artisan key:generate --force
 
       - name: Wait for MySQL (40 attempts)
