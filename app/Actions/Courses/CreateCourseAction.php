@@ -25,7 +25,6 @@ class CreateCourseAction
             'title_translations',
             'description_translations',
             'college_translations',
-            'instructor_translations',
         ]);
 
         return $this->courseService->create($data);

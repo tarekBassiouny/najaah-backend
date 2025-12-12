@@ -31,6 +31,7 @@ class CourseResource extends JsonResource
             'description' => $course->description,
             'difficulty' => $course->difficulty_level ?? null,
             'language' => $course->language,
+            'thumbnail' => $course->thumbnail_url ?? null,
             'price' => $course->price ?? null,
             'status' => $course->status,
             'primary_instructor_id' => $course->primary_instructor_id,
