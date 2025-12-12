@@ -24,4 +24,6 @@ interface JwtServiceInterface
      * }
      */
     public function refresh(string $refreshToken): array;
+
+    public function revokeCurrent(): void;
 }
