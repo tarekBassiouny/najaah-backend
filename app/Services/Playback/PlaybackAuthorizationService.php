@@ -15,8 +15,8 @@ use App\Models\UserDevice;
 use App\Models\Video;
 use App\Models\VideoSetting;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Carbon;
 
 class PlaybackAuthorizationService
 {

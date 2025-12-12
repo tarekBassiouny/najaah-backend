@@ -5,7 +5,7 @@ Implements **[TASK-XX] <Task Name>** according to the approved task specificatio
 ---
 
 ## 🎯 Task Reference
-- GitHub Issue: **[LMS][TASK-XX] <Task Name>**
+- Link to issue: **[LMS][TASK-XX] <Task Name>**
 - Spec: `docs/tasks/TASK-XX-<slug>.md`
 
 ---
