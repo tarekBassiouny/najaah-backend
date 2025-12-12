@@ -1,0 +1,60 @@
+You are working in a Git repository with a `dev` branch.
+
+TASK CONTEXT
+============
+Internal Task ID: {{TASK_ID}}
+GitHub Issue Number: #{{ISSUE_ID}}
+Task title: [LMS] {{TASK_TITLE}}
+
+{{TASK_BODY}}
+
+GIT WORKFLOW (MANDATORY)
+=======================
+1. Checkout `dev`
+2. Pull latest changes from `origin/dev`
+3. Create a new branch:
+   feature/{{TASK_BRANCH}}
+4. Implement ONLY this task
+5. Commit changes with message:
+   feat({{TASK_ID_LOWER}}): {{TASK_SLUG}} (#{{ISSUE_ID}})
+6. Push branch to origin
+7. Open a Pull Request targeting `dev` with:
+   - Title:
+     [LMS][{{TASK_ID}}][#{{ISSUE_ID}}] {{TASK_TITLE}}
+   - Description:
+     - Task: {{TASK_ID}}
+     - GitHub Issue: #{{ISSUE_ID}}
+     - Summary of changes
+     - What was NOT changed
+     - Tests added/updated
+     - Link to issue #{{ISSUE_ID}}
+
+STOP after creating the PR.
+
+STRICT SAFETY RULES
+===================
+- Implement ONLY what is defined in this task
+- Do NOT touch other tasks
+- Do NOT refactor unrelated code
+- Do NOT change APIs unless explicitly required
+- Do NOT modify database schema unless specified
+- If unsure → STOP and ask for clarification
+
+ALLOWED ACTIONS
+===============
+- Create new files required for this task
+- Modify existing files ONLY when required
+- Add tests related ONLY to this task
+
+FORBIDDEN ACTIONS
+=================
+- No speculative improvements
+- No TODO placeholders
+- No cross-task integration
+- No follow-up tasks
+
+OUTPUT REQUIREMENTS
+===================
+- All changes committed to the feature branch
+- PR created and ready for review
+- Stop execution immediately after PR creation
