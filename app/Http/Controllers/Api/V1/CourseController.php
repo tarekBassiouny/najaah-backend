@@ -25,7 +25,7 @@ class CourseController extends Controller
         $user = $request->user();
         $perPage = (int) $request->query('per_page', 15);
 
-        if (! $user instanceof User || $user->is_student === false) {
+        if (! ($user instanceof User) || $user->is_student === false) {
             return response()->json([
                 'success' => false,
                 'error' => [
