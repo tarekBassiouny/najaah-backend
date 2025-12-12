@@ -69,13 +69,12 @@ GIT WORKFLOW (MANDATORY)
    - Title:
      [LMS][$TASK_ID][#$ISSUE_ID] $TASK_TITLE
    - Description:
-     - Closes #$ISSUE_ID
      - Task: $TASK_ID
      - GitHub Issue: #$ISSUE_ID
      - Summary of changes
      - What was NOT changed
      - Tests added/updated
-     - Link to issue #$ISSUE_ID
+     - Closes #$ISSUE_ID
 
 STOP after creating the PR.
 

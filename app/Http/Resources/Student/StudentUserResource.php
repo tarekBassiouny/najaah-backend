@@ -29,6 +29,9 @@ class StudentUserResource extends JsonResource
             'status' => $user->status,
             'is_student' => $user->is_student,
             'roles' => $user->roles->pluck('name'),
+            'device' => $user->devices
+                ->where('status', \App\Models\UserDevice::STATUS_ACTIVE)
+                ->first(),
         ];
     }
 }

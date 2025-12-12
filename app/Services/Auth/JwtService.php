@@ -73,4 +73,21 @@ class JwtService implements JwtServiceInterface
             'refresh_token' => $refreshToken,
         ];
     }
+
+    public function revokeCurrent(): void
+    {
+        $token = JWTAuth::getToken();
+        if ($token === null) {
+            return;
+        }
+
+        /** @var JwtToken|null $record */
+        $record = JwtToken::where('access_token', (string) $token)->first();
+
+        if ($record !== null) {
+            $record->update(['revoked_at' => now()]);
+        }
+
+        JWTAuth::invalidate(true);
+    }
 }
