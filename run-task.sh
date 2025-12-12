@@ -69,6 +69,7 @@ GIT WORKFLOW (MANDATORY)
    - Title:
      [LMS][$TASK_ID][#$ISSUE_ID] $TASK_TITLE
    - Description:
+     - Closes #$ISSUE_ID
      - Task: $TASK_ID
      - GitHub Issue: #$ISSUE_ID
      - Summary of changes
