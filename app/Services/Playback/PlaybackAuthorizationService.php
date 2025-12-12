@@ -136,10 +136,6 @@ class PlaybackAuthorizationService
     {
         $limit = $this->resolveViewLimit($user, $video, $course, $pivotOverride);
 
-        if ($limit === null) {
-            return;
-        }
-
         $fullPlays = $video->playbackSessions()
             ->where('user_id', $user->id)
             ->where('is_full_play', true)
@@ -151,7 +147,7 @@ class PlaybackAuthorizationService
         }
     }
 
-    private function resolveViewLimit(User $user, Video $video, Course $course, ?int $pivotOverride): ?int
+    private function resolveViewLimit(User $user, Video $video, Course $course, ?int $pivotOverride): int
     {
         /** @var StudentSetting|null $studentSetting */
         $studentSetting = $user->studentSetting;
@@ -179,16 +175,13 @@ class PlaybackAuthorizationService
         }
 
         /** @var CenterSetting|null $centerSetting */
-        $centerSetting = $course->center?->setting;
+        $centerSetting = $course->center->setting;
         $centerLimit = $centerSetting?->settings['default_view_limit'] ?? null;
         if (is_numeric($centerLimit)) {
             return (int) $centerLimit;
         }
 
-        $center = $course->center;
-        $centerDefault = $center?->default_view_limit;
-
-        return is_numeric($centerDefault) ? (int) $centerDefault : null;
+        return (int) $course->center->default_view_limit;
     }
 
     private function signPlaybackUrl(Video $video): string
