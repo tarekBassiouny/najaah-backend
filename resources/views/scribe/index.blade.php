@@ -256,7 +256,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: December 8, 2025</li>
+        <li>Last updated: December 12, 2025</li>
     </ul>
 </div>
 
@@ -4505,9 +4505,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"description_translations\": [
         \"architecto\"
     ],
-    \"instructor_translations\": [
-        \"architecto\"
-    ],
     \"difficulty_level\": 1,
     \"created_by\": 5
 }"
@@ -4540,9 +4537,6 @@ let body = {
         "b"
     ],
     "description_translations": [
-        "architecto"
-    ],
-    "instructor_translations": [
         "architecto"
     ],
     "difficulty_level": 1,
@@ -4770,20 +4764,6 @@ Must be one of:
 
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>instructor_translations</code></b>&nbsp;&nbsp;
-<small>string[]</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="instructor_translations[0]"                data-endpoint="POSTadmin-courses"
-               data-component="body">
-        <input type="text" style="display: none"
-               name="instructor_translations[1]"                data-endpoint="POSTadmin-courses"
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>difficulty_level</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
 <i>optional</i> &nbsp;
@@ -4980,9 +4960,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"description_translations\": [
         \"architecto\"
     ],
-    \"instructor_translations\": [
-        \"architecto\"
-    ],
     \"difficulty_level\": 2,
     \"created_by\": 5
 }"
@@ -5015,9 +4992,6 @@ let body = {
         "b"
     ],
     "description_translations": [
-        "architecto"
-    ],
-    "instructor_translations": [
         "architecto"
     ],
     "difficulty_level": 2,
@@ -5253,20 +5227,6 @@ Must be one of:
                data-component="body">
         <input type="text" style="display: none"
                name="description_translations[1]"                data-endpoint="PUTadmin-courses--course_id-"
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>instructor_translations</code></b>&nbsp;&nbsp;
-<small>string[]</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="instructor_translations[0]"                data-endpoint="PUTadmin-courses--course_id-"
-               data-component="body">
-        <input type="text" style="display: none"
-               name="instructor_translations[1]"                data-endpoint="PUTadmin-courses--course_id-"
                data-component="body">
     <br>
 
