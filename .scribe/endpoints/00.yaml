@@ -1694,18 +1694,6 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      instructor_translations:
-        custom: []
-        name: instructor_translations
-        description: ''
-        required: false
-        example:
-          - architecto
-        type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       difficulty_level:
         custom: []
         name: difficulty_level
@@ -1741,8 +1729,6 @@ endpoints:
       title_translations:
         - b
       description_translations:
-        - architecto
-      instructor_translations:
         - architecto
       difficulty_level: 1
       created_by: 5
@@ -1949,18 +1935,6 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      instructor_translations:
-        custom: []
-        name: instructor_translations
-        description: ''
-        required: false
-        example:
-          - architecto
-        type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       difficulty_level:
         custom: []
         name: difficulty_level
@@ -1996,8 +1970,6 @@ endpoints:
       title_translations:
         - b
       description_translations:
-        - architecto
-      instructor_translations:
         - architecto
       difficulty_level: 2
       created_by: 5

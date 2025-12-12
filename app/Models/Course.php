@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array<string, string> $title_translations
  * @property array<string, string>|null $description_translations
  * @property array<string, string>|null $college_translations
- * @property array<string, string>|null $instructor_translations
  * @property string|null $grade_year
  * @property int $difficulty_level
  * @property string $language
@@ -65,7 +64,6 @@ class Course extends Model
         'title_translations',
         'description_translations',
         'college_translations',
-        'instructor_translations',
         'grade_year',
         'thumbnail_url',
         'difficulty_level',
@@ -86,7 +84,6 @@ class Course extends Model
         'title_translations' => 'array',
         'description_translations' => 'array',
         'college_translations' => 'array',
-        'instructor_translations' => 'array',
         'tags' => 'array',
         'is_published' => 'boolean',
         'is_featured' => 'boolean',
@@ -102,7 +99,6 @@ class Course extends Model
         'title',
         'description',
         'college',
-        'instructor',
     ];
 
     /** @return BelongsTo<Center, self> */

@@ -58,8 +58,6 @@ class UpdateCourseRequest extends FormRequest
             'title_translations.*' => ['string', 'max:255'],
             'description_translations' => ['sometimes', 'nullable', 'array'],
             'description_translations.*' => ['string'],
-            'instructor_translations' => ['sometimes', 'nullable', 'array'],
-            'instructor_translations.*' => ['string'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
         ];
@@ -110,10 +108,6 @@ class UpdateCourseRequest extends FormRequest
             'description_translations' => [
                 'description' => 'Localized descriptions keyed by locale.',
                 'example' => ['en' => 'Updated desc', 'ar' => 'وصف محدث'],
-            ],
-            'instructor_translations' => [
-                'description' => 'Localized instructor names keyed by locale.',
-                'example' => ['en' => 'Jane Doe', 'ar' => 'جين دو'],
             ],
             'difficulty_level' => [
                 'description' => 'Mapped numeric difficulty (auto-set from difficulty).',

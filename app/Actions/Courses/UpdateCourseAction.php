@@ -25,12 +25,10 @@ class UpdateCourseAction
             'title_translations',
             'description_translations',
             'college_translations',
-            'instructor_translations',
         ], [
             'title_translations' => $course->title_translations ?? [],
             'description_translations' => $course->description_translations ?? [],
             'college_translations' => $course->college_translations ?? [],
-            'instructor_translations' => $course->instructor_translations ?? [],
         ]);
 
         return $this->courseService->update($course, $data);
