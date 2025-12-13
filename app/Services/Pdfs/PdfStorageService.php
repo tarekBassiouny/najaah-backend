@@ -13,7 +13,6 @@ use App\Models\Video;
 use App\Services\Courses\CourseAttachmentService;
 use App\Services\Sections\SectionAttachmentService;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
@@ -22,6 +21,7 @@ class PdfStorageService
     use NormalizesTranslations;
 
     public const SOURCE_TYPE_URL = 0;
+
     public const SOURCE_TYPE_NATIVE = 1;
 
     public function __construct(

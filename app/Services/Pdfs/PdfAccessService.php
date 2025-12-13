@@ -10,9 +10,9 @@ use App\Models\User;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PdfAccessService
 {
