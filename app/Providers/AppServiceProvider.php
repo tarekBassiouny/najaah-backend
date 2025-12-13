@@ -24,6 +24,8 @@ use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\SectionService;
 use App\Services\Settings\CenterSettingsService;
 use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
+use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
+use App\Services\Settings\SettingsResolverService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
             EnrollmentServiceInterface::class => EnrollmentService::class,
             CenterServiceInterface::class => CenterService::class,
             CenterSettingsServiceInterface::class => CenterSettingsService::class,
+            SettingsResolverServiceInterface::class => SettingsResolverService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {
