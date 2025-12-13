@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
+        api: __DIR__.'/../routes/webhooks.php',
         health: '/up',
         then: function (): void {
             // Mobile API (JWT)

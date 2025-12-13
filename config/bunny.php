@@ -34,6 +34,7 @@ return [
         'library_id' => env('BUNNY_LIBRARY_ID'),
         'pull_zone' => env('BUNNY_PULL_ZONE'),
         'drm_enabled' => (bool) env('BUNNY_DRM_ENABLED', false),
+        'webhook_secret' => env('BUNNY_WEBHOOK_SECRET'),
     ],
 
     /*
