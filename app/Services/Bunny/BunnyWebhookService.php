@@ -7,7 +7,6 @@ namespace App\Services\Bunny;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Videos\VideoUploadService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class BunnyWebhookService
