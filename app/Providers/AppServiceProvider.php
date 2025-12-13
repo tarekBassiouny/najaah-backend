@@ -27,7 +27,9 @@ use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackSessionService;
 use App\Services\Playback\ViewLimitService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
+use App\Services\Sections\Contracts\SectionStructureServiceInterface;
 use App\Services\Sections\SectionService;
+use App\Services\Sections\SectionStructureService;
 use App\Services\Settings\CenterSettingsService;
 use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
@@ -50,6 +52,7 @@ class AppServiceProvider extends ServiceProvider
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
             SectionServiceInterface::class => SectionService::class,
+            SectionStructureServiceInterface::class => SectionStructureService::class,
             EnrollmentServiceInterface::class => EnrollmentService::class,
             CenterServiceInterface::class => CenterService::class,
             CenterSettingsServiceInterface::class => CenterSettingsService::class,
