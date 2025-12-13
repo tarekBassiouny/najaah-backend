@@ -12,7 +12,6 @@ use App\Models\UserDevice;
 use App\Models\Video;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
-use App\Services\Playback\ConcurrencyService;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Carbon;
