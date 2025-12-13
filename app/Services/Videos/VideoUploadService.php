@@ -15,9 +15,13 @@ use Illuminate\Validation\ValidationException;
 class VideoUploadService
 {
     public const STATUS_PENDING = 0;
+
     public const STATUS_UPLOADING = 1;
+
     public const STATUS_PROCESSING = 2;
+
     public const STATUS_READY = 3;
+
     public const STATUS_FAILED = 4;
 
     public function __construct(private readonly BunnyStreamClientInterface $bunnyClient) {}
