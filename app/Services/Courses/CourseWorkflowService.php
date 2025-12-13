@@ -16,7 +16,12 @@ use Illuminate\Validation\ValidationException;
 
 class CourseWorkflowService implements CourseWorkflowServiceInterface
 {
-    public function __construct(private readonly VideoPublishingService $videoPublishingService) {}
+    private VideoPublishingService $videoPublishingService;
+
+    public function __construct(?VideoPublishingService $videoPublishingService = null)
+    {
+        $this->videoPublishingService = $videoPublishingService ?? new VideoPublishingService();
+    }
 
     public function publishCourse(Course $course): Course
     {
