@@ -29,7 +29,7 @@ class StorePdfRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {

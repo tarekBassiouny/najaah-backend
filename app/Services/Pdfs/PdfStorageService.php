@@ -29,6 +29,9 @@ class PdfStorageService
         private readonly SectionAttachmentService $sectionAttachmentService,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function upload(
         UploadedFile $file,
         array $data,
