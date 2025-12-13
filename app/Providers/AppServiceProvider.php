@@ -8,6 +8,8 @@ use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
+use App\Services\Centers\CenterService;
+use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
 use App\Services\Courses\CourseInstructorService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
@@ -38,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
             SectionServiceInterface::class => SectionService::class,
             EnrollmentServiceInterface::class => EnrollmentService::class,
+            CenterServiceInterface::class => CenterService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {

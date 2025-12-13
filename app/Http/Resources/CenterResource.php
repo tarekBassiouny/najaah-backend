@@ -23,8 +23,17 @@ class CenterResource extends JsonResource
 
         return [
             'id' => $center->id,
+            'slug' => $center->slug,
+            'type' => $center->type,
             'name' => $center->name,
             'description' => $center->description,
+            'logo_url' => $center->logo_url,
+            'primary_color' => $center->primary_color,
+            'default_view_limit' => $center->default_view_limit,
+            'allow_extra_view_requests' => $center->allow_extra_view_requests,
+            'pdf_download_permission' => $center->pdf_download_permission,
+            'device_limit' => $center->device_limit,
+            'setting' => $center->setting,
         ];
     }
 }
