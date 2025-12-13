@@ -9,13 +9,12 @@ use App\Models\Course;
 use App\Models\CourseSetting;
 use App\Models\Enrollment;
 use App\Models\Section;
-use App\Models\StudentSetting;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
-use App\Models\VideoSetting;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use App\Services\Playback\ViewLimitService;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Carbon;
@@ -25,7 +24,8 @@ class PlaybackAuthorizationService
     public function __construct(
         private readonly EnrollmentServiceInterface $enrollmentService,
         private readonly PlaybackSessionService $sessionService,
-        private readonly DeviceServiceInterface $deviceService
+        private readonly DeviceServiceInterface $deviceService,
+        private readonly ViewLimitService $viewLimitService
     ) {}
 
     /**
@@ -44,7 +44,7 @@ class PlaybackAuthorizationService
         $this->assertSectionVisible($course, $section);
         $device = $this->assertDeviceApproved($user, $deviceId);
         $this->assertConcurrencyFree($user);
-        $this->assertWithinViewLimit($user, $video, $course, $pivot->view_limit_override);
+        $this->viewLimitService->assertWithinLimit($user, $video, $course, $pivot->view_limit_override);
 
         $signedUrl = $this->signPlaybackUrl($video);
         $session = $this->sessionService->startSession($user, $video, $device);
@@ -118,58 +118,6 @@ class PlaybackAuthorizationService
         if ($active !== null) {
             $this->deny('CONCURRENT_PLAYBACK', 'Another playback session is active.', 409);
         }
-    }
-
-    private function assertWithinViewLimit(User $user, Video $video, Course $course, ?int $pivotOverride): void
-    {
-        $limit = $this->resolveViewLimit($user, $video, $course, $pivotOverride);
-
-        $fullPlays = $video->playbackSessions()
-            ->where('user_id', $user->id)
-            ->where('is_full_play', true)
-            ->whereNull('deleted_at')
-            ->count();
-
-        if ($fullPlays >= $limit) {
-            $this->deny('VIEW_LIMIT_EXCEEDED', 'View limit exceeded.', 403);
-        }
-    }
-
-    private function resolveViewLimit(User $user, Video $video, Course $course, ?int $pivotOverride): int
-    {
-        /** @var StudentSetting|null $studentSetting */
-        $studentSetting = $user->studentSetting;
-        $studentLimit = $studentSetting?->settings['view_limit'] ?? null;
-        if (is_numeric($studentLimit)) {
-            return (int) $studentLimit;
-        }
-
-        /** @var VideoSetting|null $videoSetting */
-        $videoSetting = $video->setting;
-        $videoLimit = $videoSetting?->settings['view_limit'] ?? null;
-        if (is_numeric($videoLimit)) {
-            return (int) $videoLimit;
-        }
-
-        if (is_numeric($pivotOverride)) {
-            return (int) $pivotOverride;
-        }
-
-        /** @var CourseSetting|null $courseSetting */
-        $courseSetting = $course->setting;
-        $courseLimit = $courseSetting?->settings['view_limit'] ?? null;
-        if (is_numeric($courseLimit)) {
-            return (int) $courseLimit;
-        }
-
-        /** @var CenterSetting|null $centerSetting */
-        $centerSetting = $course->center->setting;
-        $centerLimit = $centerSetting?->settings['default_view_limit'] ?? null;
-        if (is_numeric($centerLimit)) {
-            return (int) $centerLimit;
-        }
-
-        return (int) $course->center->default_view_limit;
     }
 
     private function signPlaybackUrl(Video $video): string
