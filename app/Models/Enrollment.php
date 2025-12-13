@@ -23,6 +23,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Enrollment extends Model
 {
+    public const STATUS_ACTIVE = 0;
+
+    public const STATUS_DEACTIVATED = 1;
+
+    public const STATUS_CANCELLED = 2;
+
     /** @use HasFactory<\Database\Factories\EnrollmentFactory> */
     use HasFactory;
 
@@ -42,6 +48,21 @@ class Enrollment extends Model
         'expires_at' => 'datetime',
         'status' => 'integer',
     ];
+
+    /** @return array<int, string> */
+    public static function statusLabels(): array
+    {
+        return [
+            self::STATUS_ACTIVE => 'ACTIVE',
+            self::STATUS_DEACTIVATED => 'DEACTIVATED',
+            self::STATUS_CANCELLED => 'CANCELLED',
+        ];
+    }
+
+    public function statusLabel(): string
+    {
+        return self::statusLabels()[$this->status] ?? 'UNKNOWN';
+    }
 
     /** @return BelongsTo<User, self> */
     public function user(): BelongsTo

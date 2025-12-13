@@ -25,6 +25,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class UserDevice extends Model
 {
+    public const STATUS_ACTIVE = 0;
+
+    public const STATUS_REVOKED = 1;
+
+    public const STATUS_PENDING = 2;
+
     /** @use HasFactory<\Database\Factories\UserDeviceFactory> */
     use HasFactory;
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Actions\Courses\ListCoursesAction;
 use App\Actions\Courses\ShowCourseAction;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Courses\CourseResource;
@@ -12,17 +11,42 @@ use App\Http\Resources\Courses\CourseSummaryResource;
 use App\Http\Resources\PdfResource;
 use App\Http\Resources\VideoResource;
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\Pdf;
+use App\Models\User;
 use App\Models\Video;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
-    public function index(ListCoursesAction $listCoursesAction): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $perPage = (int) request()->query('per_page', 15);
-        $paginator = $listCoursesAction->execute($perPage);
-        $collection = collect($paginator->items())->filter(fn (Course $course): bool => (int) $course->status === 3);
+        $user = $request->user();
+        $perPage = (int) $request->query('per_page', 15);
+
+        if (! ($user instanceof User) || $user->is_student === false) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Only students can access courses.',
+                ],
+            ], 403);
+        }
+
+        $paginator = Course::query()
+            ->where('status', 3)
+            ->whereIn('id', function ($query) use ($user): void {
+                $query->select('course_id')
+                    ->from('enrollments')
+                    ->whereNull('deleted_at')
+                    ->where('status', Enrollment::STATUS_ACTIVE)
+                    ->where('user_id', $user->id);
+            })
+            ->paginate($perPage);
+
+        $collection = collect($paginator->items());
 
         return response()->json([
             'success' => true,

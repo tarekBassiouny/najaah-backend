@@ -16,7 +16,12 @@ class JwtMobileMiddleware
 
         /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
         $guard = Auth::guard('api');
-        $user = $guard->user() ?? $guard->authenticate();
+
+        try {
+            $user = $guard->user() ?? $guard->authenticate();
+        } catch (\Throwable) {
+            return response()->json(['success' => false, 'error' => 'User not found'], 401);
+        }
 
         if (! $user) {
             return response()->json(['success' => false, 'error' => 'User not found'], 401);

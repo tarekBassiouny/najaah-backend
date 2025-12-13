@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -24,10 +25,12 @@ return Application::configure(basePath: dirname(__DIR__))
                     require __DIR__.'/../routes/api/v1/auth.php';
 
                     Route::middleware(['jwt.mobile'])->group(function (): void {
+                        require __DIR__.'/../routes/api/v1/enrollments.php';
                         require __DIR__.'/../routes/api/v1/courses.php';
                         require __DIR__.'/../routes/api/v1/sections.php';
                         require __DIR__.'/../routes/api/v1/videos.php';
                         require __DIR__.'/../routes/api/v1/pdfs.php';
+                        require __DIR__.'/../routes/api/v1/playback.php';
                     });
                 });
 
@@ -38,10 +41,13 @@ return Application::configure(basePath: dirname(__DIR__))
                     require __DIR__.'/../routes/admin/auth.php';
 
                     Route::middleware(['jwt.admin'])->group(function (): void {
+                        require __DIR__.'/../routes/admin/enrollments.php';
                         require __DIR__.'/../routes/admin/courses.php';
                         require __DIR__.'/../routes/admin/sections.php';
                         require __DIR__.'/../routes/admin/videos.php';
                         require __DIR__.'/../routes/admin/pdfs.php';
+                        require __DIR__.'/../routes/admin/center-settings.php';
+                        require __DIR__.'/../routes/admin/settings.php';
                     });
                 });
         }
@@ -63,6 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // API middleware stack
         $middleware->api([
             SetRequestLocale::class,
+            SubstituteBindings::class,
         ]);
 
         // Middleware aliases
@@ -70,6 +77,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.mobile' => JwtMobileMiddleware::class,
             'jwt.admin' => JwtAdminMiddleware::class,
             'setlocale' => SetRequestLocale::class,
+            'enrollment.active' => \App\Http\Middleware\EnsureActiveEnrollment::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

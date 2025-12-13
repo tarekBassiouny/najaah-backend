@@ -20,7 +20,7 @@ class UserDeviceFactory extends Factory
             'device_id' => (string) Str::uuid(),
             'model' => 'device-model',
             'os_version' => 'os-version',
-            'status' => 0,
+            'status' => \App\Models\UserDevice::STATUS_ACTIVE,
             'approved_at' => now(),
             'last_used_at' => now(),
         ];
