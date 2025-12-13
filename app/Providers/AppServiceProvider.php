@@ -20,6 +20,7 @@ use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
 use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackSessionService;
+use App\Services\Playback\ViewLimitService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\SectionService;
 use App\Services\Settings\CenterSettingsService;
@@ -55,6 +56,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(PlaybackSessionService::class);
         $this->app->singleton(PlaybackAuthorizationService::class);
+        $this->app->singleton(ViewLimitService::class);
     }
 
     /**
