@@ -58,8 +58,9 @@ it('lists videos with upload sessions for admin center', function (): void {
         ->assertJsonPath('data.0.upload_sessions.0.upload_status', VideoUploadService::STATUS_FAILED)
         ->assertJsonPath('data.0.upload_sessions.0.error_message', 'Encoding failed');
 
-    $this->assertJsonMissingPath('data.0.playback_url', $response->json());
-    $this->assertJsonMissingPath('data.0.source_url', $response->json());
+    $json = $response->json();
+    expect($json['data'][0])->not->toHaveKey('playback_url')
+        ->and($json['data'][0])->not->toHaveKey('source_url');
 });
 
 it('requires admin authentication', function (): void {

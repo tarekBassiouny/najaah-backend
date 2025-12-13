@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\VideoController;
 use App\Http\Controllers\Admin\VideoUploadController;
 use App\Http\Controllers\Admin\VideoUploadSessionController;
-use App\Http\Controllers\Admin\VideoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/videos', [VideoController::class, 'index']);
