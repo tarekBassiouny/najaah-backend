@@ -12,6 +12,7 @@ use App\Models\UserDevice;
 use App\Models\Video;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use App\Services\Playback\ConcurrencyService;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Carbon;
@@ -22,7 +23,8 @@ class PlaybackAuthorizationService
         private readonly EnrollmentServiceInterface $enrollmentService,
         private readonly PlaybackSessionService $sessionService,
         private readonly DeviceServiceInterface $deviceService,
-        private readonly ViewLimitService $viewLimitService
+        private readonly ViewLimitService $viewLimitService,
+        private readonly ConcurrencyService $concurrencyService
     ) {}
 
     /**
@@ -40,7 +42,7 @@ class PlaybackAuthorizationService
         $pivot = $this->assertVideoAttached($course, $video);
         $this->assertSectionVisible($course, $section);
         $device = $this->assertDeviceApproved($user, $deviceId);
-        $this->assertConcurrencyFree($user);
+        $this->concurrencyService->assertNoActiveSession($user, $device, $video);
         $this->viewLimitService->assertWithinLimit($user, $video, $course, $pivot->view_limit_override);
 
         $signedUrl = $this->signPlaybackUrl($video);
@@ -103,18 +105,6 @@ class PlaybackAuthorizationService
     private function assertDeviceApproved(User $user, string $deviceId): UserDevice
     {
         return $this->deviceService->assertActiveDevice($user, $deviceId);
-    }
-
-    private function assertConcurrencyFree(User $user): void
-    {
-        $active = $user->playbackSessions()
-            ->whereNull('ended_at')
-            ->whereNull('deleted_at')
-            ->first();
-
-        if ($active !== null) {
-            $this->deny('CONCURRENT_PLAYBACK', 'Another playback session is active.', 409);
-        }
     }
 
     private function signPlaybackUrl(Video $video): string
