@@ -25,6 +25,19 @@ class RejectDeviceChangeRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'decision_reason' => [
+                'description' => 'Optional reason for rejecting the device change.',
+                'example' => 'Device policy violation',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

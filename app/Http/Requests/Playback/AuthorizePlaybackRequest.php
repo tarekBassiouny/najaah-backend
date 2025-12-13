@@ -26,6 +26,23 @@ class AuthorizePlaybackRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'device_id' => [
+                'description' => 'Identifier of the requesting device.',
+                'example' => 'device-123',
+            ],
+            'section_id' => [
+                'description' => 'Optional section context for the video.',
+                'example' => 5,
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

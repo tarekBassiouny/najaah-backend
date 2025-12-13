@@ -25,6 +25,19 @@ class RejectExtraViewRequestRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'decision_reason' => [
+                'description' => 'Optional reason for rejecting the request.',
+                'example' => 'Insufficient justification provided',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

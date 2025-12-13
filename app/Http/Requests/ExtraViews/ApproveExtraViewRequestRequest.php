@@ -26,6 +26,23 @@ class ApproveExtraViewRequestRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'granted_views' => [
+                'description' => 'Number of extra full plays granted.',
+                'example' => 3,
+            ],
+            'decision_reason' => [
+                'description' => 'Optional reason for approval.',
+                'example' => 'Verified request validity',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

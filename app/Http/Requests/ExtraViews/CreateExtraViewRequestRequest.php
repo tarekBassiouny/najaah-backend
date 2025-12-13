@@ -25,6 +25,19 @@ class CreateExtraViewRequestRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'reason' => [
+                'description' => 'Optional reason for requesting extra views.',
+                'example' => 'Need to review before exam',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

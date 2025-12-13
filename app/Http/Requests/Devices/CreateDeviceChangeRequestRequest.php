@@ -28,6 +28,31 @@ class CreateDeviceChangeRequestRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'new_device_id' => [
+                'description' => 'Identifier of the requested new device.',
+                'example' => 'device-xyz',
+            ],
+            'model' => [
+                'description' => 'Device model name.',
+                'example' => 'iPhone 15',
+            ],
+            'os_version' => [
+                'description' => 'Operating system version.',
+                'example' => 'iOS 17',
+            ],
+            'reason' => [
+                'description' => 'Optional reason for requesting device change.',
+                'example' => 'Upgraded phone',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

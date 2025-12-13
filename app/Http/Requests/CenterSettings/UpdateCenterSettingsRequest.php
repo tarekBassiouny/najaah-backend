@@ -32,6 +32,28 @@ class UpdateCenterSettingsRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'settings' => [
+                'description' => 'Center settings payload.',
+                'example' => [
+                    'default_view_limit' => 3,
+                    'allow_extra_view_requests' => true,
+                    'pdf_download_permission' => true,
+                    'device_limit' => 1,
+                    'branding' => [
+                        'logo_url' => 'https://example.com/logo.png',
+                        'primary_color' => '#000000',
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {

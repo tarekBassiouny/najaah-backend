@@ -35,6 +35,59 @@ class StoreCenterRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'slug' => [
+                'description' => 'Unique, immutable center slug.',
+                'example' => 'center-01',
+            ],
+            'type' => [
+                'description' => 'Center type identifier.',
+                'example' => 0,
+            ],
+            'name_translations' => [
+                'description' => 'Localized center name.',
+                'example' => ['en' => 'Center Name', 'ar' => 'اسم المركز'],
+            ],
+            'description_translations' => [
+                'description' => 'Localized center description.',
+                'example' => ['en' => 'Description'],
+            ],
+            'logo_url' => [
+                'description' => 'Logo URL for the center.',
+                'example' => 'https://example.com/logo.png',
+            ],
+            'primary_color' => [
+                'description' => 'Primary branding color.',
+                'example' => '#000000',
+            ],
+            'default_view_limit' => [
+                'description' => 'Default view limit for videos.',
+                'example' => 3,
+            ],
+            'allow_extra_view_requests' => [
+                'description' => 'Whether students can request extra views.',
+                'example' => true,
+            ],
+            'pdf_download_permission' => [
+                'description' => 'Whether PDF downloads are allowed by default.',
+                'example' => false,
+            ],
+            'device_limit' => [
+                'description' => 'Maximum active devices per student.',
+                'example' => 1,
+            ],
+            'settings' => [
+                'description' => 'Optional center settings payload.',
+                'example' => ['pdf_download_permission' => true],
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

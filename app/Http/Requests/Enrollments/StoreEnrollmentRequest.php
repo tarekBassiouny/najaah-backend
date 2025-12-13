@@ -39,6 +39,27 @@ class StoreEnrollmentRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'user_id' => [
+                'description' => 'Student user ID to enroll.',
+                'example' => 10,
+            ],
+            'course_id' => [
+                'description' => 'Course to enroll the student in.',
+                'example' => 5,
+            ],
+            'status' => [
+                'description' => 'Enrollment status (default ACTIVE).',
+                'example' => 'ACTIVE',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

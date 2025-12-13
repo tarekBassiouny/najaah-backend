@@ -35,6 +35,51 @@ class UpdateCenterRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'name_translations' => [
+                'description' => 'Localized center name.',
+                'example' => ['en' => 'Updated Name'],
+            ],
+            'description_translations' => [
+                'description' => 'Localized description.',
+                'example' => ['en' => 'Updated description'],
+            ],
+            'logo_url' => [
+                'description' => 'Logo URL.',
+                'example' => 'https://example.com/logo.png',
+            ],
+            'primary_color' => [
+                'description' => 'Primary branding color.',
+                'example' => '#123456',
+            ],
+            'default_view_limit' => [
+                'description' => 'Default view limit for videos.',
+                'example' => 5,
+            ],
+            'allow_extra_view_requests' => [
+                'description' => 'Whether extra view requests are allowed.',
+                'example' => true,
+            ],
+            'pdf_download_permission' => [
+                'description' => 'Whether PDF downloads are allowed by default.',
+                'example' => true,
+            ],
+            'device_limit' => [
+                'description' => 'Maximum active devices per student.',
+                'example' => 2,
+            ],
+            'settings' => [
+                'description' => 'Optional settings overrides.',
+                'example' => ['pdf_download_permission' => false],
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

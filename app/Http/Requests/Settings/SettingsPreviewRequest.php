@@ -28,6 +28,31 @@ class SettingsPreviewRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'student_id' => [
+                'description' => 'Optional student ID for resolution context.',
+                'example' => 1,
+            ],
+            'video_id' => [
+                'description' => 'Optional video ID for resolution context.',
+                'example' => 2,
+            ],
+            'course_id' => [
+                'description' => 'Optional course ID for resolution context.',
+                'example' => 3,
+            ],
+            'center_id' => [
+                'description' => 'Optional center ID for resolution context.',
+                'example' => 4,
+            ],
+        ];
+    }
+
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
