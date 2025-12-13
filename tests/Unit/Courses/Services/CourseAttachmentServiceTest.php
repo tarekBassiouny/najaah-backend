@@ -6,14 +6,14 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Video;
 use App\Services\Courses\CourseAttachmentService;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(Tests\TestCase::class, DatabaseTransactions::class);
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
 it('assigns and removes video via pivot model', function (): void {
     $service = new CourseAttachmentService;
     $course = Course::factory()->create();
-    $video = Video::factory()->create();
+    $video = Video::factory()->create(['encoding_status' => 3, 'lifecycle_status' => 2]);
 
     $service->assignVideo($course, $video->id);
     expect(CourseVideo::where('course_id', $course->id)->where('video_id', $video->id)->exists())->toBeTrue();

@@ -113,7 +113,11 @@ it('toggles section visibility', function (): void {
 
 it('assigns video', function (): void {
     $course = Course::factory()->create();
-    $video = Video::factory()->create(['created_by' => $course->created_by]);
+    $video = Video::factory()->create([
+        'created_by' => $course->created_by,
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+    ]);
 
     $response = $this->postJson("/admin/courses/{$course->id}/videos", [
         'video_id' => $video->id,
