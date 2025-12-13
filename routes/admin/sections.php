@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\Sections\SectionStructureController;
 use App\Http\Controllers\Admin\Sections\SectionWorkflowController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum'])->prefix('courses/{course}/sections')->group(function (): void {
+Route::prefix('courses/{course}/sections')->group(function (): void {
     Route::get('/', [SectionController::class, 'index']);
     Route::post('/', [SectionController::class, 'store']);
     Route::put('/reorder', [SectionController::class, 'reorder']);
