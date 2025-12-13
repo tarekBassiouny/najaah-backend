@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Playback;
 
 use App\Models\Course;
+use App\Models\ExtraViewRequest;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
@@ -60,7 +61,15 @@ class ViewLimitService
         $settings = $user->studentSetting?->settings ?? [];
         $extraViews = $settings['extra_views'][$video->id] ?? null;
 
-        return is_numeric($extraViews) ? (int) $extraViews : 0;
+        $base = is_numeric($extraViews) ? (int) $extraViews : 0;
+
+        $approved = ExtraViewRequest::where('user_id', $user->id)
+            ->where('video_id', $video->id)
+            ->where('status', ExtraViewRequest::STATUS_APPROVED)
+            ->whereNull('deleted_at')
+            ->sum('granted_views');
+
+        return $base + (int) $approved;
     }
 
     private function countFullPlays(User $user, Video $video): int

@@ -38,6 +38,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PlaybackSession> $playbackSessions
  * @property-read StudentSetting|null $studentSetting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, AuditLog> $auditLogs
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ExtraViewRequest> $extraViewRequests
  *
  * @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\UserFactory>
  */
@@ -123,6 +124,12 @@ class User extends Authenticatable implements JWTSubject
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AuditLog::class);
+    }
+
+    /** @return HasMany<ExtraViewRequest, self> */
+    public function extraViewRequests(): HasMany
+    {
+        return $this->hasMany(ExtraViewRequest::class);
     }
 
     /** @return HasOne<StudentSetting, self> */
