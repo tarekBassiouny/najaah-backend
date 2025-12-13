@@ -34,7 +34,7 @@ class VideoUploadService
             'center_id' => $center->id,
             'uploaded_by' => $admin->id,
             'bunny_upload_id' => $bunnyId,
-            'upload_status' => self::STATUS_UPLOADING,
+            'upload_status' => self::STATUS_PENDING,
             'progress_percent' => 0,
         ]);
 
@@ -44,7 +44,7 @@ class VideoUploadService
             $video->source_provider = $video->source_provider ?: 'bunny';
             $video->source_type = $video->source_type ?: 1;
             $video->source_id = $bunnyId;
-            $this->applyVideoState($video, self::STATUS_UPLOADING, []);
+            $this->applyVideoState($video, self::STATUS_PENDING, []);
         }
 
         $session->setAttribute('upload_url', $created['upload_url']);

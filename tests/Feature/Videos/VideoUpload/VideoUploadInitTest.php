@@ -21,7 +21,7 @@ it('creates bunny video and returns upload url', function (): void {
     ]);
 
     $response->assertCreated()
-        ->assertJsonPath('data.upload_status', VideoUploadService::STATUS_UPLOADING)
+        ->assertJsonPath('data.upload_status', VideoUploadService::STATUS_PENDING)
         ->assertJsonPath('data.bunny_upload_id', fn ($id) => is_string($id) && $id !== '')
         ->assertJsonPath('data.upload_url', fn ($url) => is_string($url) && $url !== '');
 
@@ -54,5 +54,5 @@ it('ties existing video to new upload session', function (): void {
     $video->refresh();
     expect($video->upload_session_id)->not->toBeNull()
         ->and($video->source_id)->not->toBeNull()
-        ->and($video->encoding_status)->toBe(VideoUploadService::STATUS_UPLOADING);
+        ->and($video->encoding_status)->toBe(VideoUploadService::STATUS_PENDING);
 });
