@@ -293,11 +293,17 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course--sections--section_id--unpublish">
                                 <a href="#endpoints-POSTapi-v1-admin-courses--course--sections--section_id--unpublish">POST api/v1/admin/courses/{course}/sections/{section_id}/unpublish</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-videos">
+                                <a href="#endpoints-GETapi-v1-admin-videos">GET api/v1/admin/videos</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--videos">
                                 <a href="#endpoints-POSTapi-v1-admin-courses--course_id--videos">POST api/v1/admin/courses/{course_id}/videos</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-courses--course_id--videos--video-">
                                 <a href="#endpoints-DELETEapi-v1-admin-courses--course_id--videos--video-">DELETE api/v1/admin/courses/{course_id}/videos/{video}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-video-upload-sessions">
+                                <a href="#endpoints-GETapi-v1-admin-video-upload-sessions">GET api/v1/admin/video-upload-sessions</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-video-uploads">
                                 <a href="#endpoints-POSTapi-v1-admin-video-uploads">POST api/v1/admin/video-uploads</a>
@@ -461,11 +467,17 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-courses--course--sections--section_id--unpublish">
                                 <a href="#endpoints-POSTadmin-courses--course--sections--section_id--unpublish">POST admin/courses/{course}/sections/{section_id}/unpublish</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETadmin-videos">
+                                <a href="#endpoints-GETadmin-videos">GET admin/videos</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-courses--course_id--videos">
                                 <a href="#endpoints-POSTadmin-courses--course_id--videos">POST admin/courses/{course_id}/videos</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEadmin-courses--course_id--videos--video-">
                                 <a href="#endpoints-DELETEadmin-courses--course_id--videos--video-">DELETE admin/courses/{course_id}/videos/{video}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETadmin-video-upload-sessions">
+                                <a href="#endpoints-GETadmin-video-upload-sessions">GET admin/video-upload-sessions</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-video-uploads">
                                 <a href="#endpoints-POSTadmin-video-uploads">POST admin/video-uploads</a>
@@ -1851,7 +1863,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/php478qo10spes1aaADvFL" </code></pre></div>
+    --form "avatar=@/tmp/php5s65kmdchhfg0U1xL8r" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2045,7 +2057,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php478qo10spes1aaADvFL</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php5s65kmdchhfg0U1xL8r</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -2265,7 +2277,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/php7dr4hnol4q313Xx78pz" </code></pre></div>
+    --form "avatar=@/tmp/phpcpscrrrbm20f5S3TPOo" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2475,7 +2487,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php7dr4hnol4q313Xx78pz</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpcpscrrrbm20f5S3TPOo</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -12887,6 +12899,130 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
+                    <h2 id="endpoints-GETapi-v1-admin-videos">GET api/v1/admin/videos</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-videos">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/videos" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/videos"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-videos">
+    </span>
+<span id="execution-results-GETapi-v1-admin-videos" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-videos"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-videos"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-videos" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-videos">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-videos" data-method="GET"
+      data-path="api/v1/admin/videos"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-videos', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-videos"
+                    onclick="tryItOut('GETapi-v1-admin-videos');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-videos"
+                    onclick="cancelTryOut('GETapi-v1-admin-videos');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-videos"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/videos</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-videos"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-videos"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-videos"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        </form>
+
                     <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--videos">POST api/v1/admin/courses/{course_id}/videos</h2>
 
 <p>
@@ -13208,6 +13344,130 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>The video. Example: <code>1</code></p>
             </div>
                     </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-video-upload-sessions">GET api/v1/admin/video-upload-sessions</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-video-upload-sessions">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/video-upload-sessions" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/video-upload-sessions"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-video-upload-sessions">
+    </span>
+<span id="execution-results-GETapi-v1-admin-video-upload-sessions" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-video-upload-sessions"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-video-upload-sessions"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-video-upload-sessions" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-video-upload-sessions">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-video-upload-sessions" data-method="GET"
+      data-path="api/v1/admin/video-upload-sessions"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-video-upload-sessions', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-video-upload-sessions"
+                    onclick="tryItOut('GETapi-v1-admin-video-upload-sessions');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-video-upload-sessions"
+                    onclick="cancelTryOut('GETapi-v1-admin-video-upload-sessions');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-video-upload-sessions"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/video-upload-sessions</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        </form>
 
                     <h2 id="endpoints-POSTapi-v1-admin-video-uploads">POST api/v1/admin/video-uploads</h2>
 
@@ -13959,7 +14219,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/php5qbijpablkir46hlArM" </code></pre></div>
+    --form "file=@/tmp/php1icbhs6cceb4dNq5Jts" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14110,7 +14370,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php5qbijpablkir46hlArM</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php1icbhs6cceb4dNq5Jts</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -22790,6 +23050,130 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
+                    <h2 id="endpoints-GETadmin-videos">GET admin/videos</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETadmin-videos">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/admin/videos" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/admin/videos"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETadmin-videos">
+    </span>
+<span id="execution-results-GETadmin-videos" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETadmin-videos"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETadmin-videos"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETadmin-videos" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETadmin-videos">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETadmin-videos" data-method="GET"
+      data-path="admin/videos"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETadmin-videos', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETadmin-videos"
+                    onclick="tryItOut('GETadmin-videos');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETadmin-videos"
+                    onclick="cancelTryOut('GETadmin-videos');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETadmin-videos"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>admin/videos</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETadmin-videos"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETadmin-videos"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETadmin-videos"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        </form>
+
                     <h2 id="endpoints-POSTadmin-courses--course_id--videos">POST admin/courses/{course_id}/videos</h2>
 
 <p>
@@ -23111,6 +23495,130 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>The video. Example: <code>1</code></p>
             </div>
                     </form>
+
+                    <h2 id="endpoints-GETadmin-video-upload-sessions">GET admin/video-upload-sessions</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETadmin-video-upload-sessions">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/admin/video-upload-sessions" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/admin/video-upload-sessions"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETadmin-video-upload-sessions">
+    </span>
+<span id="execution-results-GETadmin-video-upload-sessions" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETadmin-video-upload-sessions"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETadmin-video-upload-sessions"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETadmin-video-upload-sessions" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETadmin-video-upload-sessions">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETadmin-video-upload-sessions" data-method="GET"
+      data-path="admin/video-upload-sessions"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETadmin-video-upload-sessions', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETadmin-video-upload-sessions"
+                    onclick="tryItOut('GETadmin-video-upload-sessions');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETadmin-video-upload-sessions"
+                    onclick="cancelTryOut('GETadmin-video-upload-sessions');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETadmin-video-upload-sessions"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>admin/video-upload-sessions</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETadmin-video-upload-sessions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETadmin-video-upload-sessions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETadmin-video-upload-sessions"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        </form>
 
                     <h2 id="endpoints-POSTadmin-video-uploads">POST admin/video-uploads</h2>
 
@@ -23862,7 +24370,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/php9829bpb09gnu8py5YYj" </code></pre></div>
+    --form "file=@/tmp/phpnobt6o9qf3ni2ZFGktN" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -24013,7 +24521,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php9829bpb09gnu8py5YYj</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpnobt6o9qf3ni2ZFGktN</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -25385,7 +25893,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/admin/device-change-requests/10/reject" \
+    "http://xyz-lms.test/admin/device-change-requests/16/reject" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en" \
@@ -25397,7 +25905,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/admin/device-change-requests/10/reject"
+    "http://xyz-lms.test/admin/device-change-requests/16/reject"
 );
 
 const headers = {
@@ -25511,10 +26019,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="deviceChangeRequest_id"                data-endpoint="POSTadmin-device-change-requests--deviceChangeRequest_id--reject"
-               value="10"
+               value="16"
                data-component="url">
     <br>
-<p>The ID of the deviceChangeRequest. Example: <code>10</code></p>
+<p>The ID of the deviceChangeRequest. Example: <code>16</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">

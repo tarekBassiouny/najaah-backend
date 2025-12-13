@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "929b715d-f5a7-45d0-947a-ac7cd4c98736",
+        "_postman_id": "0ff80c66-776b-4ec7-95c8-cd4596fab898",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -3273,6 +3273,38 @@
                     "response": []
                 },
                 {
+                    "name": "GET api\/v1\/admin\/videos",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/videos",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/videos"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "POST api\/v1\/admin\/courses\/{course_id}\/videos",
                     "request": {
                         "url": {
@@ -3339,6 +3371,38 @@
                             ]
                         },
                         "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/admin\/video-upload-sessions",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/video-upload-sessions",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/video-upload-sessions"
+                        },
+                        "method": "GET",
                         "header": [
                             {
                                 "key": "Content-Type",
@@ -5673,6 +5737,38 @@
                     "response": []
                 },
                 {
+                    "name": "GET admin\/videos",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "admin\/videos",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/admin\/videos"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "POST admin\/courses\/{course_id}\/videos",
                     "request": {
                         "url": {
@@ -5739,6 +5835,38 @@
                             ]
                         },
                         "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET admin\/video-upload-sessions",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "admin\/video-upload-sessions",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/admin\/video-upload-sessions"
+                        },
+                        "method": "GET",
                         "header": [
                             {
                                 "key": "Content-Type",
@@ -6296,7 +6424,7 @@
                                 {
                                     "id": "deviceChangeRequest_id",
                                     "key": "deviceChangeRequest_id",
-                                    "value": "10",
+                                    "value": "16",
                                     "description": "The ID of the deviceChangeRequest."
                                 }
                             ]

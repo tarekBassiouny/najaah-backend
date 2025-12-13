@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v2)",
-    "_postman_id": "929b715d-f5a7-45d0-947a-ac7cd4c98736",
+    "_postman_id": "0ff80c66-776b-4ec7-95c8-cd4596fab898",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -2490,7 +2490,7 @@
                 {
                   "id": "deviceChangeRequest_id",
                   "key": "deviceChangeRequest_id",
-                  "value": "10",
+                  "value": "16",
                   "description": "The ID of the deviceChangeRequest."
                 }
               ]
@@ -2526,6 +2526,38 @@
     {
       "name": "🧑‍💼 Admin – Videos",
       "item": [
+        {
+          "name": "GET api/v1/admin/videos",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/videos",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/videos"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
         {
           "name": "POST api/v1/admin/video-uploads",
           "request": {
