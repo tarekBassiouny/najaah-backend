@@ -32,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/pdfs.php';
                         require __DIR__.'/../routes/api/v1/playback.php';
                         require __DIR__.'/../routes/api/v1/extra-view-requests.php';
+                        require __DIR__.'/../routes/api/v1/device-change-requests.php';
                     });
                 });
 
@@ -51,6 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/admin/settings.php';
                         require __DIR__.'/../routes/admin/audit-logs.php';
                         require __DIR__.'/../routes/admin/extra-view-requests.php';
+                        require __DIR__.'/../routes/admin/device-change-requests.php';
                     });
                 });
         }
