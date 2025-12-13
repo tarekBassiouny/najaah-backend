@@ -98,6 +98,7 @@ it('ignores decreasing progress updates', function (): void {
         'video_id' => $video->id,
         'device_id' => $device->id,
         'progress_percent' => 80,
+        'is_full_play' => false,
         'ended_at' => null,
     ]);
 
@@ -117,6 +118,7 @@ it('requires active enrollment for full play detection', function (): void {
         'video_id' => $video->id,
         'device_id' => $device->id,
         'progress_percent' => 80,
+        'is_full_play' => false,
         'ended_at' => null,
     ]);
 
@@ -142,6 +144,7 @@ it('ends a session and records final progress', function (): void {
         'video_id' => $video->id,
         'device_id' => $device->id,
         'progress_percent' => 70,
+        'is_full_play' => false,
         'ended_at' => null,
     ]);
 
