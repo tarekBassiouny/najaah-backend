@@ -20,7 +20,7 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
 
     public function __construct(?VideoPublishingService $videoPublishingService = null)
     {
-        $this->videoPublishingService = $videoPublishingService ?? new VideoPublishingService();
+        $this->videoPublishingService = $videoPublishingService ?? new VideoPublishingService;
     }
 
     public function publishCourse(Course $course): Course
