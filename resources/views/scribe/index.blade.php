@@ -299,6 +299,12 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-courses--course_id--videos--video-">
                                 <a href="#endpoints-DELETEapi-v1-admin-courses--course_id--videos--video-">DELETE api/v1/admin/courses/{course_id}/videos/{video}</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-video-uploads">
+                                <a href="#endpoints-POSTapi-v1-admin-video-uploads">POST api/v1/admin/video-uploads</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-">
+                                <a href="#endpoints-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-">PATCH api/v1/admin/video-uploads/{videoUploadSession_id}</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--pdfs">
                                 <a href="#endpoints-POSTapi-v1-admin-courses--course_id--pdfs">POST api/v1/admin/courses/{course_id}/pdfs</a>
                             </li>
@@ -460,6 +466,12 @@
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEadmin-courses--course_id--videos--video-">
                                 <a href="#endpoints-DELETEadmin-courses--course_id--videos--video-">DELETE admin/courses/{course_id}/videos/{video}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-video-uploads">
+                                <a href="#endpoints-POSTadmin-video-uploads">POST admin/video-uploads</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PATCHadmin-video-uploads--videoUploadSession_id-">
+                                <a href="#endpoints-PATCHadmin-video-uploads--videoUploadSession_id-">PATCH admin/video-uploads/{videoUploadSession_id}</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-courses--course_id--pdfs">
                                 <a href="#endpoints-POSTadmin-courses--course_id--pdfs">POST admin/courses/{course_id}/pdfs</a>
@@ -1839,7 +1851,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpjalo5jfe3jpp6cY4aEG" </code></pre></div>
+    --form "avatar=@/tmp/phpugkekcsrdmb95mmuR1m" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2033,7 +2045,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpjalo5jfe3jpp6cY4aEG</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpugkekcsrdmb95mmuR1m</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -2253,7 +2265,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phplao0o1urci3rfMECjMu" </code></pre></div>
+    --form "avatar=@/tmp/php09cs8ah4ken815NdLca" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2463,7 +2475,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phplao0o1urci3rfMECjMu</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php09cs8ah4ken815NdLca</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13197,6 +13209,411 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
+                    <h2 id="endpoints-POSTapi-v1-admin-video-uploads">POST api/v1/admin/video-uploads</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-video-uploads">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/video-uploads" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"center_id\": 1,
+    \"video_id\": 10,
+    \"original_filename\": \"lecture-1.mp4\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/video-uploads"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "center_id": 1,
+    "video_id": 10,
+    "original_filename": "lecture-1.mp4"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-video-uploads">
+</span>
+<span id="execution-results-POSTapi-v1-admin-video-uploads" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-video-uploads"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-video-uploads"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-video-uploads" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-video-uploads">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-video-uploads" data-method="POST"
+      data-path="api/v1/admin/video-uploads"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-video-uploads', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-video-uploads"
+                    onclick="tryItOut('POSTapi-v1-admin-video-uploads');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-video-uploads"
+                    onclick="cancelTryOut('POSTapi-v1-admin-video-uploads');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-video-uploads"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/video-uploads</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-video-uploads"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-video-uploads"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-video-uploads"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-admin-video-uploads"
+               value="1"
+               data-component="body">
+    <br>
+<p>Center ID to associate the upload with. The <code>id</code> of an existing record in the centers table. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="video_id"                data-endpoint="POSTapi-v1-admin-video-uploads"
+               value="10"
+               data-component="body">
+    <br>
+<p>Optional existing video to attach this upload session to. The <code>id</code> of an existing record in the videos table. Example: <code>10</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>original_filename</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="original_filename"                data-endpoint="POSTapi-v1-admin-video-uploads"
+               value="lecture-1.mp4"
+               data-component="body">
+    <br>
+<p>Original filename of the uploaded video. Must not be greater than 255 characters. Example: <code>lecture-1.mp4</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-">PATCH api/v1/admin/video-uploads/{videoUploadSession_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PATCH \
+    "http://xyz-lms.test/api/v1/admin/video-uploads/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"status\": \"READY\",
+    \"progress_percent\": 75,
+    \"source_id\": \"bunny-video-id\",
+    \"source_url\": \"https:\\/\\/example.com\\/video.mp4\",
+    \"duration_seconds\": 180,
+    \"error_message\": \"Transcode failed due to invalid codec\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/video-uploads/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "status": "READY",
+    "progress_percent": 75,
+    "source_id": "bunny-video-id",
+    "source_url": "https:\/\/example.com\/video.mp4",
+    "duration_seconds": 180,
+    "error_message": "Transcode failed due to invalid codec"
+};
+
+fetch(url, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-">
+</span>
+<span id="execution-results-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-" data-method="PATCH"
+      data-path="api/v1/admin/video-uploads/{videoUploadSession_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PATCHapi-v1-admin-video-uploads--videoUploadSession_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+                    onclick="tryItOut('PATCHapi-v1-admin-video-uploads--videoUploadSession_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+                    onclick="cancelTryOut('PATCHapi-v1-admin-video-uploads--videoUploadSession_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>api/v1/admin/video-uploads/{videoUploadSession_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>videoUploadSession_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="videoUploadSession_id"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the videoUploadSession. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="READY"
+               data-component="body">
+    <br>
+<p>New upload status (PENDING, UPLOADING, PROCESSING, READY, FAILED). Example: <code>READY</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>PENDING</code></li> <li><code>UPLOADING</code></li> <li><code>PROCESSING</code></li> <li><code>READY</code></li> <li><code>FAILED</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>progress_percent</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="progress_percent"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="75"
+               data-component="body">
+    <br>
+<p>Optional progress indicator between 0 and 100. Must be at least 0. Must not be greater than 100. Example: <code>75</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>source_id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="source_id"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="bunny-video-id"
+               data-component="body">
+    <br>
+<p>Optional Bunny video identifier when READY. Must not be greater than 255 characters. Example: <code>bunny-video-id</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>source_url</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="source_url"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="https://example.com/video.mp4"
+               data-component="body">
+    <br>
+<p>Optional playback/source URL when READY. Must not be greater than 2048 characters. Example: <code>https://example.com/video.mp4</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>duration_seconds</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="duration_seconds"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="180"
+               data-component="body">
+    <br>
+<p>Optional duration in seconds when READY. Must be at least 1. Example: <code>180</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>error_message</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="error_message"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="Transcode failed due to invalid codec"
+               data-component="body">
+    <br>
+<p>Optional error details when FAILED. Must not be greater than 2000 characters. Example: <code>Transcode failed due to invalid codec</code></p>
+        </div>
+        </form>
+
                     <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--pdfs">POST api/v1/admin/courses/{course_id}/pdfs</h2>
 
 <p>
@@ -13542,7 +13959,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpcf6qp1ssl79odnbknCl" </code></pre></div>
+    --form "file=@/tmp/php8fupsauqanii93tX6SA" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13693,7 +14110,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpcf6qp1ssl79odnbknCl</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php8fupsauqanii93tX6SA</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -22695,6 +23112,411 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
+                    <h2 id="endpoints-POSTadmin-video-uploads">POST admin/video-uploads</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTadmin-video-uploads">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/admin/video-uploads" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"center_id\": 1,
+    \"video_id\": 10,
+    \"original_filename\": \"lecture-1.mp4\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/admin/video-uploads"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "center_id": 1,
+    "video_id": 10,
+    "original_filename": "lecture-1.mp4"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTadmin-video-uploads">
+</span>
+<span id="execution-results-POSTadmin-video-uploads" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTadmin-video-uploads"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTadmin-video-uploads"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTadmin-video-uploads" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTadmin-video-uploads">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTadmin-video-uploads" data-method="POST"
+      data-path="admin/video-uploads"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTadmin-video-uploads', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTadmin-video-uploads"
+                    onclick="tryItOut('POSTadmin-video-uploads');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTadmin-video-uploads"
+                    onclick="cancelTryOut('POSTadmin-video-uploads');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTadmin-video-uploads"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>admin/video-uploads</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTadmin-video-uploads"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTadmin-video-uploads"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTadmin-video-uploads"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTadmin-video-uploads"
+               value="1"
+               data-component="body">
+    <br>
+<p>Center ID to associate the upload with. The <code>id</code> of an existing record in the centers table. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="video_id"                data-endpoint="POSTadmin-video-uploads"
+               value="10"
+               data-component="body">
+    <br>
+<p>Optional existing video to attach this upload session to. The <code>id</code> of an existing record in the videos table. Example: <code>10</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>original_filename</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="original_filename"                data-endpoint="POSTadmin-video-uploads"
+               value="lecture-1.mp4"
+               data-component="body">
+    <br>
+<p>Original filename of the uploaded video. Must not be greater than 255 characters. Example: <code>lecture-1.mp4</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-PATCHadmin-video-uploads--videoUploadSession_id-">PATCH admin/video-uploads/{videoUploadSession_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PATCHadmin-video-uploads--videoUploadSession_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PATCH \
+    "http://xyz-lms.test/admin/video-uploads/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"status\": \"READY\",
+    \"progress_percent\": 75,
+    \"source_id\": \"bunny-video-id\",
+    \"source_url\": \"https:\\/\\/example.com\\/video.mp4\",
+    \"duration_seconds\": 180,
+    \"error_message\": \"Transcode failed due to invalid codec\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/admin/video-uploads/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "status": "READY",
+    "progress_percent": 75,
+    "source_id": "bunny-video-id",
+    "source_url": "https:\/\/example.com\/video.mp4",
+    "duration_seconds": 180,
+    "error_message": "Transcode failed due to invalid codec"
+};
+
+fetch(url, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PATCHadmin-video-uploads--videoUploadSession_id-">
+</span>
+<span id="execution-results-PATCHadmin-video-uploads--videoUploadSession_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PATCHadmin-video-uploads--videoUploadSession_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PATCHadmin-video-uploads--videoUploadSession_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PATCHadmin-video-uploads--videoUploadSession_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PATCHadmin-video-uploads--videoUploadSession_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PATCHadmin-video-uploads--videoUploadSession_id-" data-method="PATCH"
+      data-path="admin/video-uploads/{videoUploadSession_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PATCHadmin-video-uploads--videoUploadSession_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PATCHadmin-video-uploads--videoUploadSession_id-"
+                    onclick="tryItOut('PATCHadmin-video-uploads--videoUploadSession_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PATCHadmin-video-uploads--videoUploadSession_id-"
+                    onclick="cancelTryOut('PATCHadmin-video-uploads--videoUploadSession_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PATCHadmin-video-uploads--videoUploadSession_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>admin/video-uploads/{videoUploadSession_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>videoUploadSession_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="videoUploadSession_id"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the videoUploadSession. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="READY"
+               data-component="body">
+    <br>
+<p>New upload status (PENDING, UPLOADING, PROCESSING, READY, FAILED). Example: <code>READY</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>PENDING</code></li> <li><code>UPLOADING</code></li> <li><code>PROCESSING</code></li> <li><code>READY</code></li> <li><code>FAILED</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>progress_percent</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="progress_percent"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="75"
+               data-component="body">
+    <br>
+<p>Optional progress indicator between 0 and 100. Must be at least 0. Must not be greater than 100. Example: <code>75</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>source_id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="source_id"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="bunny-video-id"
+               data-component="body">
+    <br>
+<p>Optional Bunny video identifier when READY. Must not be greater than 255 characters. Example: <code>bunny-video-id</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>source_url</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="source_url"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="https://example.com/video.mp4"
+               data-component="body">
+    <br>
+<p>Optional playback/source URL when READY. Must not be greater than 2048 characters. Example: <code>https://example.com/video.mp4</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>duration_seconds</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="duration_seconds"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="180"
+               data-component="body">
+    <br>
+<p>Optional duration in seconds when READY. Must be at least 1. Example: <code>180</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>error_message</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="error_message"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
+               value="Transcode failed due to invalid codec"
+               data-component="body">
+    <br>
+<p>Optional error details when FAILED. Must not be greater than 2000 characters. Example: <code>Transcode failed due to invalid codec</code></p>
+        </div>
+        </form>
+
                     <h2 id="endpoints-POSTadmin-courses--course_id--pdfs">POST admin/courses/{course_id}/pdfs</h2>
 
 <p>
@@ -23040,7 +23862,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpmdrc710p8fqp1isdEa7" </code></pre></div>
+    --form "file=@/tmp/phpkteksdstbiul0o1LTaX" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -23191,7 +24013,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpmdrc710p8fqp1isdEa7</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpkteksdstbiul0o1LTaX</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;

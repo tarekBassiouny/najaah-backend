@@ -7,17 +7,17 @@ use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\Video;
 use App\Services\Courses\CourseWorkflowService;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
-uses(TestCase::class, DatabaseTransactions::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 it('publishes course when ready', function (): void {
     $service = new CourseWorkflowService;
     $course = Course::factory()->create(['status' => 0, 'is_published' => false]);
     Section::factory()->create(['course_id' => $course->id]);
-    $video = Video::factory()->create(['lifecycle_status' => 2]);
+    $video = Video::factory()->create(['lifecycle_status' => 2, 'encoding_status' => 3, 'upload_session_id' => null]);
     CourseVideo::create([
         'course_id' => $course->id,
         'video_id' => $video->id,
@@ -42,7 +42,7 @@ it('clones course with pivots', function (): void {
     $service = new CourseWorkflowService;
     $course = Course::factory()->create();
     $section = Section::factory()->create(['course_id' => $course->id]);
-    $video = Video::factory()->create(['lifecycle_status' => 2]);
+    $video = Video::factory()->create(['lifecycle_status' => 2, 'encoding_status' => 3, 'upload_session_id' => null]);
     $pdf = Pdf::factory()->create();
     CourseVideo::create([
         'course_id' => $course->id,

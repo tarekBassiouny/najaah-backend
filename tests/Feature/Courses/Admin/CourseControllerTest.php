@@ -170,7 +170,11 @@ it('removes pdf', function (): void {
 it('publishes course', function (): void {
     $course = Course::factory()->create(['status' => 0, 'is_published' => false]);
     Section::factory()->create(['course_id' => $course->id]);
-    $video = Video::factory()->create(['lifecycle_status' => 2]);
+    $video = Video::factory()->create([
+        'lifecycle_status' => 2,
+        'encoding_status' => 3,
+        'upload_session_id' => null,
+    ]);
     CourseVideo::create([
         'course_id' => $course->id,
         'video_id' => $video->id,

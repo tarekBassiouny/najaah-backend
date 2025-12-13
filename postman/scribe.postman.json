@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "715c677a-1648-49e3-bb82-d49fac0b293e",
+        "_postman_id": "3153fdac-2d09-42c9-9b8d-8fa798cd2e3b",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -3362,6 +3362,84 @@
                     "response": []
                 },
                 {
+                    "name": "POST api\/v1\/admin\/video-uploads",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/video-uploads",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/video-uploads"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"center_id\":1,\"video_id\":10,\"original_filename\":\"lecture-1.mp4\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PATCH api\/v1\/admin\/video-uploads\/{videoUploadSession_id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/video-uploads\/:videoUploadSession_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/video-uploads\/:videoUploadSession_id",
+                            "variable": [
+                                {
+                                    "id": "videoUploadSession_id",
+                                    "key": "videoUploadSession_id",
+                                    "value": "1",
+                                    "description": "The ID of the videoUploadSession."
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"status\":\"READY\",\"progress_percent\":75,\"source_id\":\"bunny-video-id\",\"source_url\":\"https:\\\/\\\/example.com\\\/video.mp4\",\"duration_seconds\":180,\"error_message\":\"Transcode failed due to invalid codec\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "POST api\/v1\/admin\/courses\/{course_id}\/pdfs",
                     "request": {
                         "url": {
@@ -5676,6 +5754,84 @@
                             }
                         ],
                         "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST admin\/video-uploads",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "admin\/video-uploads",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/admin\/video-uploads"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"center_id\":1,\"video_id\":10,\"original_filename\":\"lecture-1.mp4\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PATCH admin\/video-uploads\/{videoUploadSession_id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "admin\/video-uploads\/:videoUploadSession_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/admin\/video-uploads\/:videoUploadSession_id",
+                            "variable": [
+                                {
+                                    "id": "videoUploadSession_id",
+                                    "key": "videoUploadSession_id",
+                                    "value": "1",
+                                    "description": "The ID of the videoUploadSession."
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"status\":\"READY\",\"progress_percent\":75,\"source_id\":\"bunny-video-id\",\"source_url\":\"https:\\\/\\\/example.com\\\/video.mp4\",\"duration_seconds\":180,\"error_message\":\"Transcode failed due to invalid codec\"}"
+                        },
                         "description": "",
                         "auth": {
                             "type": "noauth"

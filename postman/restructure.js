@@ -15,6 +15,7 @@ const tree = {
   adminCourses: folder("🧑‍💼 Admin – Courses"),
   adminSections: folder("🧑‍💼 Admin – Sections"),
   adminEnrollment: folder("🧑‍💼 Admin – Enrollment & Controls"),
+  adminVideos: folder("🧑‍💼 Admin – Videos"),
   adminPdfs: folder("🧑‍💼 Admin – PDFs"),
   adminAudit: folder("🧑‍💼 Admin – Audit & Settings"),
   mobileAuth: folder("📱 Mobile Auth (JWT)"),
@@ -22,6 +23,7 @@ const tree = {
   studentSections: folder("🎓 Student – Sections"),
   studentPlayback: folder("🎬 Student – Playback"),
   studentRequests: folder("📱 Student – Requests"),
+  studentVideos: folder("📱 Student – Videos"),
   instructors: folder("👨‍🏫 Instructors"),
   health: folder("🧪 Smoke & Health")
 };
@@ -42,6 +44,11 @@ function route(item) {
     return tree.adminEnrollment;
   if (raw.includes("/api/v1/admin/pdfs")) return tree.adminPdfs;
   if (
+    raw.includes("/api/v1/admin/videos") ||
+    raw.includes("/api/v1/admin/video-uploads")
+  ) 
+    return tree.adminVideos;
+  if (
     raw.includes("/api/v1/admin/audit-logs") ||
     raw.includes("/api/v1/admin/settings")
   )
@@ -59,6 +66,11 @@ function route(item) {
     return tree.studentRequests;
   if (raw.includes("/api/v1/instructors")) return tree.instructors;
   if (raw.endsWith("/up")) return tree.health;
+  if (
+    raw.endsWith("/api/v1/videos") ||
+    raw.endsWith("/api/v1/video-uploads")
+  ) 
+    return tree.studentVideos;
 
   return null;
 }
@@ -90,6 +102,7 @@ const finalCollection = {
     tree.adminCourses,
     tree.adminSections,
     tree.adminEnrollment,
+    tree.adminVideos,
     tree.adminPdfs,
     tree.adminAudit,
     tree.mobileAuth,
@@ -97,6 +110,7 @@ const finalCollection = {
     tree.studentSections,
     tree.studentPlayback,
     tree.studentRequests,
+    tree.studentVideos,
     tree.instructors,
     tree.health
   ].filter(f => f.item.length > 0)
