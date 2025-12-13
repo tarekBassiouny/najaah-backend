@@ -66,6 +66,23 @@
         ],
         "test": [
             "php artisan test"
+        ],
+        "postman:generate": [
+            "@postman:scribe",
+            "@postman:download",
+            "@postman:restructure"
+        ],
+
+            "postman:scribe": [
+            "php artisan scribe:generate"
+        ],
+
+            "postman:download": [
+            "curl http://xyz-lms.test/docs.postman -o postman/scribe.postman.json"
+        ],
+
+            "postman:restructure": [
+            "node postman/restructure.js"
         ]
     },
 
