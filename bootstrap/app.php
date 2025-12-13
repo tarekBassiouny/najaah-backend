@@ -36,25 +36,31 @@ return Application::configure(basePath: dirname(__DIR__))
                     });
                 });
 
-            // Admin (JWT)
+            // Admin (JWT) - canonical /api/v1/admin with backward-compatible /admin alias
+            $adminRoutes = static function (): void {
+                require __DIR__.'/../routes/admin/auth.php';
+
+                Route::middleware(['jwt.admin'])->group(function (): void {
+                    require __DIR__.'/../routes/admin/enrollments.php';
+                    require __DIR__.'/../routes/admin/courses.php';
+                    require __DIR__.'/../routes/admin/sections.php';
+                    require __DIR__.'/../routes/admin/videos.php';
+                    require __DIR__.'/../routes/admin/pdfs.php';
+                    require __DIR__.'/../routes/admin/center-settings.php';
+                    require __DIR__.'/../routes/admin/settings.php';
+                    require __DIR__.'/../routes/admin/audit-logs.php';
+                    require __DIR__.'/../routes/admin/extra-view-requests.php';
+                    require __DIR__.'/../routes/admin/device-change-requests.php';
+                });
+            };
+
+            Route::prefix('api/v1/admin')
+                ->middleware(['api'])
+                ->group($adminRoutes);
+
             Route::prefix('admin')
                 ->middleware(['api'])
-                ->group(function (): void {
-                    require __DIR__.'/../routes/admin/auth.php';
-
-                    Route::middleware(['jwt.admin'])->group(function (): void {
-                        require __DIR__.'/../routes/admin/enrollments.php';
-                        require __DIR__.'/../routes/admin/courses.php';
-                        require __DIR__.'/../routes/admin/sections.php';
-                        require __DIR__.'/../routes/admin/videos.php';
-                        require __DIR__.'/../routes/admin/pdfs.php';
-                        require __DIR__.'/../routes/admin/center-settings.php';
-                        require __DIR__.'/../routes/admin/settings.php';
-                        require __DIR__.'/../routes/admin/audit-logs.php';
-                        require __DIR__.'/../routes/admin/extra-view-requests.php';
-                        require __DIR__.'/../routes/admin/device-change-requests.php';
-                    });
-                });
+                ->group($adminRoutes);
         }
     )
     ->withCommands([
