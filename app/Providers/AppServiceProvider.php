@@ -22,6 +22,8 @@ use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackSessionService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\SectionService;
+use App\Services\Settings\CenterSettingsService;
+use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
             SectionServiceInterface::class => SectionService::class,
             EnrollmentServiceInterface::class => EnrollmentService::class,
             CenterServiceInterface::class => CenterService::class,
+            CenterSettingsServiceInterface::class => CenterSettingsService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {
