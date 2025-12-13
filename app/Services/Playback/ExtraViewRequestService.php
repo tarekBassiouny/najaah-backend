@@ -10,8 +10,8 @@ use App\Models\Enrollment;
 use App\Models\ExtraViewRequest;
 use App\Models\User;
 use App\Models\Video;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Carbon;
 
 class ExtraViewRequestService
 {
@@ -148,6 +148,9 @@ class ExtraViewRequestService
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
     private function audit(User $actor, string $action, array $metadata, int $entityId): void
     {
         AuditLog::create([
