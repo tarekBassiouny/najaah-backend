@@ -18,6 +18,7 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
     {
         $video = Video::findOrFail($videoId);
         $this->assertSameCenter($course, $video);
+        $this->assertVideoReady($video);
 
         $existing = CourseVideo::withTrashed()
             ->where('course_id', $course->id)
@@ -125,6 +126,15 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
         if ($resourceCenterId !== null && $resourceCenterId !== $course->center_id) {
             throw ValidationException::withMessages([
                 'center_id' => ['Attachment must belong to the same center as the course.'],
+            ]);
+        }
+    }
+
+    private function assertVideoReady(Video $video): void
+    {
+        if ((int) $video->encoding_status !== 3) {
+            throw ValidationException::withMessages([
+                'video_id' => ['Video is not ready to be attached.'],
             ]);
         }
     }

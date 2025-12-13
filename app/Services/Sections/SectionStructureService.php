@@ -35,6 +35,7 @@ class SectionStructureService implements SectionStructureServiceInterface
     public function attachVideo(Section $section, Video $video): void
     {
         $this->assertVideoBelongsToCourse($section, $video);
+        $this->assertVideoReady($video);
 
         $pivot = CourseVideo::withTrashed()
             ->where('video_id', $video->id)
@@ -302,6 +303,15 @@ class SectionStructureService implements SectionStructureServiceInterface
         if ($attachedToOtherCourse) {
             throw ValidationException::withMessages([
                 'course_id' => ['Video is already attached to another course.'],
+            ]);
+        }
+    }
+
+    private function assertVideoReady(Video $video): void
+    {
+        if ((int) $video->encoding_status !== 3) {
+            throw ValidationException::withMessages([
+                'video_id' => ['Video is not ready to be attached.'],
             ]);
         }
     }
