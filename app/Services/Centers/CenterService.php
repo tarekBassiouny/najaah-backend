@@ -61,6 +61,7 @@ class CenterService implements CenterServiceInterface
 
             if (! empty($data)) {
                 $center->update($data);
+                $center->save();
             }
 
             if (is_array($settings)) {
@@ -68,13 +69,15 @@ class CenterService implements CenterServiceInterface
                     ->updateOrCreate(['center_id' => $center->id], ['settings' => $settings]);
             }
 
-            return $center->fresh(['setting']) ?? $center;
+            $center->refresh();
+
+            return $center->load('setting');
         });
     }
 
     public function delete(Center $center): void
     {
-        Center::whereKey($center->id)->delete();
+        $center->delete();
     }
 
     public function restore(int $id): ?Center

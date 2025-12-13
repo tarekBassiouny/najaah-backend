@@ -50,17 +50,41 @@ class CenterController extends Controller
         ], 201);
     }
 
-    public function show(Center $center): JsonResponse
+    public function show(int $center): JsonResponse
     {
+        $center = Center::with('setting')->find($center);
+
+        if ($center === null) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Center not found',
+                ],
+            ], 404);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Center retrieved successfully',
-            'data' => new CenterResource($center->load('setting')),
+            'data' => new CenterResource($center),
         ]);
     }
 
-    public function update(UpdateCenterRequest $request, Center $center): JsonResponse
+    public function update(UpdateCenterRequest $request, int $center): JsonResponse
     {
+        $center = Center::find($center);
+
+        if ($center === null) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Center not found',
+                ],
+            ], 404);
+        }
+
         /** @var array<string, mixed> $data */
         $data = $request->validated();
         $updated = $this->centerService->update($center, $data);
@@ -72,8 +96,20 @@ class CenterController extends Controller
         ]);
     }
 
-    public function destroy(Center $center): JsonResponse
+    public function destroy(int $center): JsonResponse
     {
+        $center = Center::find($center);
+
+        if ($center === null) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Center not found',
+                ],
+            ], 404);
+        }
+
         $this->centerService->delete($center);
 
         return response()->json([

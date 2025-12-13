@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -66,6 +67,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // API middleware stack
         $middleware->api([
             SetRequestLocale::class,
+            SubstituteBindings::class,
         ]);
 
         // Middleware aliases
