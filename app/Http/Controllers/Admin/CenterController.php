@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ListCentersRequest;
 use App\Http\Requests\Centers\StoreCenterRequest;
 use App\Http\Requests\Centers\UpdateCenterRequest;
 use App\Http\Resources\CenterResource;
@@ -23,10 +24,11 @@ class CenterController extends Controller
      * @queryParam slug string Filter centers by slug. Example: center-1
      * @queryParam type int Filter by center type. Example: 1
      */
-    public function index(): JsonResponse
+    public function index(ListCentersRequest $request): JsonResponse
     {
-        $perPage = (int) request()->query('per_page', 15);
-        $filters = request()->only(['slug', 'type']);
+        $perPage = (int) $request->integer('per_page', 15);
+        /** @var array<string, mixed> $filters */
+        $filters = $request->only(['slug', 'type']);
 
         $paginator = $this->centerService->paginate($perPage, $filters);
 

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ListVideoUploadSessionsRequest;
 use App\Http\Resources\VideoUploadSessionResource;
 use App\Models\User;
 use App\Services\Videos\VideoUploadSessionQueryService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class VideoUploadSessionController extends Controller
 {
@@ -17,7 +17,7 @@ class VideoUploadSessionController extends Controller
         private readonly VideoUploadSessionQueryService $queryService
     ) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(ListVideoUploadSessionsRequest $request): JsonResponse
     {
         /** @var User|null $admin */
         $admin = $request->user();
@@ -33,6 +33,7 @@ class VideoUploadSessionController extends Controller
         }
 
         $perPage = (int) $request->integer('per_page', 15);
+        /** @var array<string, mixed> $filters */
         $filters = $request->only(['status', 'center_id']);
 
         $paginator = $this->queryService->paginate($admin, $perPage, $filters);
