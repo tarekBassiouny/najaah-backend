@@ -28,6 +28,9 @@ class InstructorController extends Controller
         private readonly ShowInstructorAction $showAction
     ) {}
 
+    /**
+     * @queryParam per_page int Items per page. Example: 15
+     */
     public function index(Request $request): JsonResponse
     {
         $perPage = max(1, (int) $request->query('per_page', 15));

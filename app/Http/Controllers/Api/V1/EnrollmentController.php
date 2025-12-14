@@ -17,6 +17,9 @@ class EnrollmentController extends Controller
         private readonly EnrollmentServiceInterface $enrollmentService
     ) {}
 
+    /**
+     * @queryParam per_page int Items per page. Example: 15
+     */
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
