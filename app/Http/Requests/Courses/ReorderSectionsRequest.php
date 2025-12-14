@@ -32,7 +32,7 @@ class ReorderSectionsRequest extends FormRequest
         return [
             'sections' => [
                 'description' => 'Ordered list of section IDs for the course.',
-                'example' => [1, 2, 3],
+                'example' => '[1,2,3]',
             ],
         ];
     }

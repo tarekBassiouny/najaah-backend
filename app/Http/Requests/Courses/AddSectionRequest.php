@@ -58,7 +58,7 @@ class AddSectionRequest extends FormRequest
             ],
             'order_index' => [
                 'description' => 'Optional order within the course.',
-                'example' => 1,
+                'example' => '1',
             ],
         ];
     }
