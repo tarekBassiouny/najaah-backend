@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "0ff80c66-776b-4ec7-95c8-cd4596fab898",
+        "_postman_id": "75ccd974-80aa-4150-8d18-c8a678ca0ced",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -19,6 +19,38 @@
             "name": "Endpoints",
             "description": "",
             "item": [
+                {
+                    "name": "POST api\/webhooks\/bunny",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/webhooks\/bunny",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/webhooks\/bunny"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
                 {
                     "name": "POST api\/v1\/auth\/send-otp",
                     "request": {
@@ -270,458 +302,6 @@
                             ]
                         },
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/instructors",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/instructors",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/instructors"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/v1\/instructors",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/instructors",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/instructors"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "multipart\/form-data"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "center_id",
-                                    "value": "1",
-                                    "type": "text",
-                                    "description": "Optional center ID that the instructor belongs to. The <code>id<\/code> of an existing record in the centers table."
-                                },
-                                {
-                                    "key": "name_translations[en]",
-                                    "value": "John Doe",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "name_translations[ar]",
-                                    "value": "\u062c\u0648\u0646 \u062f\u0648",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "bio_translations[en]",
-                                    "value": "Senior instructor",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "bio_translations[ar]",
-                                    "value": "\u0645\u062f\u0631\u0628 \u0643\u0628\u064a\u0631",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "title_translations[en]",
-                                    "value": "Professor",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "title_translations[ar]",
-                                    "value": "\u0623\u0633\u062a\u0627\u0630",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "avatar_url",
-                                    "value": "https:\/\/example.com\/avatar.jpg",
-                                    "type": "text",
-                                    "description": "Profile image URL."
-                                },
-                                {
-                                    "key": "email",
-                                    "value": "john.doe@example.com",
-                                    "type": "text",
-                                    "description": "Contact email for the instructor. Must be a valid email address."
-                                },
-                                {
-                                    "key": "phone",
-                                    "value": "+1234567890",
-                                    "type": "text",
-                                    "description": "Contact phone number."
-                                },
-                                {
-                                    "key": "social_links[0]",
-                                    "value": "architecto",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "metadata[specialization]",
-                                    "value": "Math",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "metadata[languages][0]",
-                                    "value": "en",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "metadata[languages][1]",
-                                    "value": "ar",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "avatar",
-                                    "src": [],
-                                    "type": "file"
-                                }
-                            ]
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/instructors\/{id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/instructors\/:id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/instructors\/:id",
-                            "variable": [
-                                {
-                                    "id": "id",
-                                    "key": "id",
-                                    "value": "1",
-                                    "description": "The ID of the instructor."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PUT api\/v1\/instructors\/{id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/instructors\/:id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/instructors\/:id",
-                            "variable": [
-                                {
-                                    "id": "id",
-                                    "key": "id",
-                                    "value": "1",
-                                    "description": "The ID of the instructor."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "multipart\/form-data"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "center_id",
-                                    "value": "1",
-                                    "type": "text",
-                                    "description": "Optional center ID for the instructor. The <code>id<\/code> of an existing record in the centers table."
-                                },
-                                {
-                                    "key": "name_translations[en]",
-                                    "value": "John Doe",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "name_translations[ar]",
-                                    "value": "\u062c\u0648\u0646 \u062f\u0648",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "bio_translations[en]",
-                                    "value": "Senior instructor",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "bio_translations[ar]",
-                                    "value": "\u0645\u062f\u0631\u0628 \u0643\u0628\u064a\u0631",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "title_translations[en]",
-                                    "value": "Professor",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "title_translations[ar]",
-                                    "value": "\u0623\u0633\u062a\u0627\u0630",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "avatar_url",
-                                    "value": "https:\/\/example.com\/avatar.jpg",
-                                    "type": "text",
-                                    "description": "Profile image URL."
-                                },
-                                {
-                                    "key": "email",
-                                    "value": "john.doe@example.com",
-                                    "type": "text",
-                                    "description": "Contact email for the instructor. Must be a valid email address."
-                                },
-                                {
-                                    "key": "phone",
-                                    "value": "+1234567890",
-                                    "type": "text",
-                                    "description": "Contact phone number."
-                                },
-                                {
-                                    "key": "social_links[0]",
-                                    "value": "architecto",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "metadata[specialization]",
-                                    "value": "Physics",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "avatar",
-                                    "src": [],
-                                    "type": "file"
-                                },
-                                {
-                                    "key": "_method",
-                                    "value": "PUT",
-                                    "type": "text"
-                                }
-                            ]
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE api\/v1\/instructors\/{id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/instructors\/:id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/instructors\/:id",
-                            "variable": [
-                                {
-                                    "id": "id",
-                                    "key": "id",
-                                    "value": "1",
-                                    "description": "The ID of the instructor."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/v1\/courses\/{course_id}\/instructors",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/instructors",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/instructors",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"instructor_id\":5,\"role\":\"assistant\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE api\/v1\/courses\/{course_id}\/instructors\/{instructor_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/instructors\/:instructor_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/instructors\/:instructor_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "instructor_id",
-                                    "key": "instructor_id",
-                                    "value": "1",
-                                    "description": "The ID of the instructor."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
                         "header": [
                             {
                                 "key": "Content-Type",
@@ -3504,6 +3084,458 @@
                     "response": []
                 },
                 {
+                    "name": "GET api\/v1\/admin\/instructors",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/instructors",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/v1\/admin\/instructors",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/instructors",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart\/form-data"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Optional center ID that the instructor belongs to. The <code>id<\/code> of an existing record in the centers table."
+                                },
+                                {
+                                    "key": "name_translations[en]",
+                                    "value": "John Doe",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "name_translations[ar]",
+                                    "value": "\u062c\u0648\u0646 \u062f\u0648",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "bio_translations[en]",
+                                    "value": "Senior instructor",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "bio_translations[ar]",
+                                    "value": "\u0645\u062f\u0631\u0628 \u0643\u0628\u064a\u0631",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "title_translations[en]",
+                                    "value": "Professor",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "title_translations[ar]",
+                                    "value": "\u0623\u0633\u062a\u0627\u0630",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "avatar_url",
+                                    "value": "https:\/\/example.com\/avatar.jpg",
+                                    "type": "text",
+                                    "description": "Profile image URL."
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "john.doe@example.com",
+                                    "type": "text",
+                                    "description": "Contact email for the instructor. Must be a valid email address."
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "+1234567890",
+                                    "type": "text",
+                                    "description": "Contact phone number."
+                                },
+                                {
+                                    "key": "social_links[0]",
+                                    "value": "architecto",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "metadata[specialization]",
+                                    "value": "Math",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "metadata[languages][0]",
+                                    "value": "en",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "metadata[languages][1]",
+                                    "value": "ar",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "avatar",
+                                    "src": [],
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/admin\/instructors\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/instructors\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the instructor."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/admin\/instructors\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/instructors\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the instructor."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart\/form-data"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Optional center ID for the instructor. The <code>id<\/code> of an existing record in the centers table."
+                                },
+                                {
+                                    "key": "name_translations[en]",
+                                    "value": "John Doe",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "name_translations[ar]",
+                                    "value": "\u062c\u0648\u0646 \u062f\u0648",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "bio_translations[en]",
+                                    "value": "Senior instructor",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "bio_translations[ar]",
+                                    "value": "\u0645\u062f\u0631\u0628 \u0643\u0628\u064a\u0631",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "title_translations[en]",
+                                    "value": "Professor",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "title_translations[ar]",
+                                    "value": "\u0623\u0633\u062a\u0627\u0630",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "avatar_url",
+                                    "value": "https:\/\/example.com\/avatar.jpg",
+                                    "type": "text",
+                                    "description": "Profile image URL."
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "john.doe@example.com",
+                                    "type": "text",
+                                    "description": "Contact email for the instructor. Must be a valid email address."
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "+1234567890",
+                                    "type": "text",
+                                    "description": "Contact phone number."
+                                },
+                                {
+                                    "key": "social_links[0]",
+                                    "value": "architecto",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "metadata[specialization]",
+                                    "value": "Physics",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "avatar",
+                                    "src": [],
+                                    "type": "file"
+                                },
+                                {
+                                    "key": "_method",
+                                    "value": "PUT",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/admin\/instructors\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/instructors\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the instructor."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/v1\/admin\/courses\/{course_id}\/instructors",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/courses\/:course_id\/instructors",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/courses\/:course_id\/instructors",
+                            "variable": [
+                                {
+                                    "id": "course_id",
+                                    "key": "course_id",
+                                    "value": "1",
+                                    "description": "The ID of the course."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"instructor_id\":5,\"role\":\"assistant\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/admin\/courses\/{course_id}\/instructors\/{instructor_id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/courses\/:course_id\/instructors\/:instructor_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/courses\/:course_id\/instructors\/:instructor_id",
+                            "variable": [
+                                {
+                                    "id": "course_id",
+                                    "key": "course_id",
+                                    "value": "1",
+                                    "description": "The ID of the course."
+                                },
+                                {
+                                    "id": "instructor_id",
+                                    "key": "instructor_id",
+                                    "value": "1",
+                                    "description": "The ID of the instructor."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "POST api\/v1\/admin\/courses\/{course_id}\/pdfs",
                     "request": {
                         "url": {
@@ -3956,2470 +3988,6 @@
                             "path": "api\/v1\/admin\/device-change-requests\/:deviceChangeRequest_id\/reject",
                             "query": [],
                             "raw": "{{baseUrl}}\/api\/v1\/admin\/device-change-requests\/:deviceChangeRequest_id\/reject",
-                            "variable": [
-                                {
-                                    "id": "deviceChangeRequest_id",
-                                    "key": "deviceChangeRequest_id",
-                                    "value": "16",
-                                    "description": "The ID of the deviceChangeRequest."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"decision_reason\":\"Device policy violation\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/auth\/login",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/auth\/login",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/auth\/login"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"email\":\"admin@example.com\",\"password\":\"admin123\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/auth\/me",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/auth\/me",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/auth\/me"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/auth\/refresh",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/auth\/refresh",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/auth\/refresh"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/auth\/logout",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/auth\/logout",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/auth\/logout"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/centers",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/centers",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/centers"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/centers",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/centers",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/centers"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"slug\":\"center-01\",\"type\":0,\"name_translations\":{\"en\":\"Center Name\",\"ar\":\"\u0627\u0633\u0645 \u0627\u0644\u0645\u0631\u0643\u0632\"},\"description_translations\":{\"en\":\"Description\"},\"logo_url\":\"https:\\\/\\\/example.com\\\/logo.png\",\"primary_color\":\"#000000\",\"default_view_limit\":3,\"allow_extra_view_requests\":false,\"pdf_download_permission\":false,\"device_limit\":1,\"settings\":{\"pdf_download_permission\":true}}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/centers\/{center}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/centers\/:center",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/centers\/:center",
-                            "variable": [
-                                {
-                                    "id": "center",
-                                    "key": "center",
-                                    "value": "1",
-                                    "description": "The center."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PUT admin\/centers\/{center}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/centers\/:center",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/centers\/:center",
-                            "variable": [
-                                {
-                                    "id": "center",
-                                    "key": "center",
-                                    "value": "1",
-                                    "description": "The center."
-                                }
-                            ]
-                        },
-                        "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"slug\":\"b\",\"type\":16,\"name_translations\":{\"en\":\"Updated Name\"},\"description_translations\":{\"en\":\"Updated description\"},\"logo_url\":\"https:\\\/\\\/example.com\\\/logo.png\",\"primary_color\":\"#123456\",\"default_view_limit\":5,\"allow_extra_view_requests\":false,\"pdf_download_permission\":false,\"device_limit\":2,\"settings\":{\"pdf_download_permission\":false}}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/centers\/{center}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/centers\/:center",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/centers\/:center",
-                            "variable": [
-                                {
-                                    "id": "center",
-                                    "key": "center",
-                                    "value": "1",
-                                    "description": "The center."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/centers\/{center}\/restore",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/centers\/:center\/restore",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/centers\/:center\/restore",
-                            "variable": [
-                                {
-                                    "id": "center",
-                                    "key": "center",
-                                    "value": "1",
-                                    "description": "The center."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/enrollments",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/enrollments",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/enrollments"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"user_id\":10,\"course_id\":5,\"status\":\"ACTIVE\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PUT admin\/enrollments\/{enrollment_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/enrollments\/:enrollment_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/enrollments\/:enrollment_id",
-                            "variable": [
-                                {
-                                    "id": "enrollment_id",
-                                    "key": "enrollment_id",
-                                    "value": "1",
-                                    "description": "The ID of the enrollment."
-                                }
-                            ]
-                        },
-                        "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"status\":\"DEACTIVATED\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/enrollments\/{enrollment_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/enrollments\/:enrollment_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/enrollments\/:enrollment_id",
-                            "variable": [
-                                {
-                                    "id": "enrollment_id",
-                                    "key": "enrollment_id",
-                                    "value": "1",
-                                    "description": "The ID of the enrollment."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/courses",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"title\":\"Sample Course\",\"description\":\"This is an introductory course.\",\"category_id\":1,\"center_id\":1,\"difficulty\":\"beginner\",\"language\":\"en\",\"price\":0,\"metadata\":{\"key\":\"value\"},\"title_translations\":[\"b\"],\"description_translations\":[\"architecto\"],\"difficulty_level\":1,\"created_by\":5}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/courses\/{course_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PUT admin\/courses\/{course_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"title\":\"Updated Course Title\",\"description\":\"Updated description.\",\"category_id\":2,\"center_id\":1,\"difficulty\":\"intermediate\",\"language\":\"en\",\"price\":10.5,\"metadata\":{\"key\":\"value\"},\"title_translations\":[\"b\"],\"description_translations\":[\"architecto\"],\"difficulty_level\":2,\"created_by\":5}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/courses\/{course_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course_id}\/publish",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/publish",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/publish",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course_id}\/clone",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/clone",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/clone",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"options\":{\"include_sections\":true,\"include_videos\":true,\"include_pdfs\":true}}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/courses\/{course_id}\/sections",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course}\/sections",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"course_id\":1,\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"sort_order\":1}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PUT admin\/courses\/{course_id}\/sections\/reorder",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/reorder",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/reorder",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"sections\":[16]}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/courses\/{course_id}\/sections\/{section_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PUT admin\/courses\/{course}\/sections\/{section_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections\/:section_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections\/:section_id",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"title\":\"Updated Section Title\",\"description\":\"Updated description.\",\"sort_order\":2}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/courses\/{course}\/sections\/{section_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections\/:section_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections\/:section_id",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course}\/sections\/{section_id}\/restore",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections\/:section_id\/restore",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections\/:section_id\/restore",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PATCH admin\/courses\/{course_id}\/sections\/{section_id}\/visibility",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/visibility",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/visibility",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "PATCH",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course}\/sections\/structure",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections\/structure",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections\/structure",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"course_id\":1,\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"sort_order\":1,\"videos\":[16],\"pdfs\":[16]}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PUT admin\/courses\/{course}\/sections\/{section_id}\/structure",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections\/:section_id\/structure",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections\/:section_id\/structure",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"title\":\"Updated Section\",\"description\":\"Updated description.\",\"sort_order\":2,\"videos\":[16],\"pdfs\":[16]}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/courses\/{course}\/sections\/{section_id}\/structure",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections\/:section_id\/structure",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections\/:section_id\/structure",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/courses\/{course_id}\/sections\/{section_id}\/videos",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/videos",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/videos",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/courses\/{course_id}\/sections\/{section_id}\/videos\/{video_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/videos\/:video_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/videos\/:video_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                },
-                                {
-                                    "id": "video_id",
-                                    "key": "video_id",
-                                    "value": "1",
-                                    "description": "The ID of the video."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course_id}\/sections\/{section_id}\/videos",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/videos",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/videos",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"video_id\":10}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/courses\/{course_id}\/sections\/{section_id}\/videos\/{video_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/videos\/:video_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/videos\/:video_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                },
-                                {
-                                    "id": "video_id",
-                                    "key": "video_id",
-                                    "value": "1",
-                                    "description": "The ID of the video."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"video_id\":10}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/courses\/{course_id}\/sections\/{section_id}\/pdfs",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/pdfs",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/pdfs",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/courses\/{course_id}\/sections\/{section_id}\/pdfs\/{pdf_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/pdfs\/:pdf_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/pdfs\/:pdf_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                },
-                                {
-                                    "id": "pdf_id",
-                                    "key": "pdf_id",
-                                    "value": "1",
-                                    "description": "The ID of the pdf."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course_id}\/sections\/{section_id}\/pdfs",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/pdfs",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/pdfs",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"pdf_id\":7}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/courses\/{course_id}\/sections\/{section_id}\/pdfs\/{pdf_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/sections\/:section_id\/pdfs\/:pdf_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/sections\/:section_id\/pdfs\/:pdf_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                },
-                                {
-                                    "id": "pdf_id",
-                                    "key": "pdf_id",
-                                    "value": "1",
-                                    "description": "The ID of the pdf."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"pdf_id\":7}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course}\/sections\/{section_id}\/publish",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections\/:section_id\/publish",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections\/:section_id\/publish",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course}\/sections\/{section_id}\/unpublish",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course\/sections\/:section_id\/unpublish",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course\/sections\/:section_id\/unpublish",
-                            "variable": [
-                                {
-                                    "id": "course",
-                                    "key": "course",
-                                    "value": "1",
-                                    "description": "The course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/videos",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/videos",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/videos"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course_id}\/videos",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/videos",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/videos",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"video_id\":10,\"order_index\":1}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/courses\/{course_id}\/videos\/{video}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/videos\/:video",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/videos\/:video",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "video",
-                                    "key": "video",
-                                    "value": "1",
-                                    "description": "The video."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/video-upload-sessions",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/video-upload-sessions",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/video-upload-sessions"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/video-uploads",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/video-uploads",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/video-uploads"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"center_id\":1,\"video_id\":10,\"original_filename\":\"lecture-1.mp4\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PATCH admin\/video-uploads\/{videoUploadSession_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/video-uploads\/:videoUploadSession_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/video-uploads\/:videoUploadSession_id",
-                            "variable": [
-                                {
-                                    "id": "videoUploadSession_id",
-                                    "key": "videoUploadSession_id",
-                                    "value": "1",
-                                    "description": "The ID of the videoUploadSession."
-                                }
-                            ]
-                        },
-                        "method": "PATCH",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"status\":\"READY\",\"progress_percent\":75,\"source_id\":\"bunny-video-id\",\"source_url\":\"https:\\\/\\\/example.com\\\/video.mp4\",\"duration_seconds\":180,\"error_message\":\"Transcode failed due to invalid codec\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/courses\/{course_id}\/pdfs",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/pdfs",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/pdfs",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"pdf_id\":12,\"order_index\":2}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "DELETE admin\/courses\/{course_id}\/pdfs\/{pdf}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/courses\/:course_id\/pdfs\/:pdf",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/courses\/:course_id\/pdfs\/:pdf",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "pdf",
-                                    "key": "pdf",
-                                    "value": "1",
-                                    "description": "The pdf."
-                                }
-                            ]
-                        },
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/pdfs",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/pdfs",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/pdfs"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "multipart\/form-data"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "title_translations[en]",
-                                    "value": "Lesson Notes",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "title_translations[ar]",
-                                    "value": "\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u062f\u0631\u0633",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "description_translations[en]",
-                                    "value": "Downloadable PDF for lesson 1",
-                                    "type": "text",
-                                    "description": ""
-                                },
-                                {
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "type": "text",
-                                    "description": "Optional course to attach the PDF to. The <code>id<\/code> of an existing record in the courses table."
-                                },
-                                {
-                                    "key": "section_id",
-                                    "value": "2",
-                                    "type": "text",
-                                    "description": "Optional section to attach the PDF to (must belong to the course). The <code>id<\/code> of an existing record in the sections table."
-                                },
-                                {
-                                    "key": "video_id",
-                                    "value": "3",
-                                    "type": "text",
-                                    "description": "Optional video association (must belong to the course). The <code>id<\/code> of an existing record in the videos table."
-                                },
-                                {
-                                    "key": "file",
-                                    "src": [],
-                                    "type": "file"
-                                }
-                            ]
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/centers\/{center_id}\/settings",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/centers\/:center_id\/settings",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/centers\/:center_id\/settings",
-                            "variable": [
-                                {
-                                    "id": "center_id",
-                                    "key": "center_id",
-                                    "value": "1",
-                                    "description": "The ID of the center."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "PATCH admin\/centers\/{center_id}\/settings",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/centers\/:center_id\/settings",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/centers\/:center_id\/settings",
-                            "variable": [
-                                {
-                                    "id": "center_id",
-                                    "key": "center_id",
-                                    "value": "1",
-                                    "description": "The ID of the center."
-                                }
-                            ]
-                        },
-                        "method": "PATCH",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"settings\":{\"default_view_limit\":3,\"allow_extra_view_requests\":true,\"pdf_download_permission\":true,\"device_limit\":1,\"branding\":{\"logo_url\":\"https:\\\/\\\/example.com\\\/logo.png\",\"primary_color\":\"#000000\"}}}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/settings\/preview",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/settings\/preview",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/settings\/preview"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"student_id\":1,\"video_id\":2,\"course_id\":3,\"center_id\":4}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET admin\/audit-logs",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/audit-logs",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/audit-logs"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"entity_type\":\"App\\\\Models\\\\Course\",\"entity_id\":12,\"action\":\"enrollment_created\",\"user_id\":3,\"date_from\":\"2025-01-01\",\"date_to\":\"2025-12-31\",\"per_page\":20,\"page\":1}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/extra-view-requests\/{extraViewRequest_id}\/approve",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/extra-view-requests\/:extraViewRequest_id\/approve",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/extra-view-requests\/:extraViewRequest_id\/approve",
-                            "variable": [
-                                {
-                                    "id": "extraViewRequest_id",
-                                    "key": "extraViewRequest_id",
-                                    "value": "16",
-                                    "description": "The ID of the extraViewRequest."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"granted_views\":3,\"decision_reason\":\"Verified request validity\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/extra-view-requests\/{extraViewRequest_id}\/reject",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/extra-view-requests\/:extraViewRequest_id\/reject",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/extra-view-requests\/:extraViewRequest_id\/reject",
-                            "variable": [
-                                {
-                                    "id": "extraViewRequest_id",
-                                    "key": "extraViewRequest_id",
-                                    "value": "16",
-                                    "description": "The ID of the extraViewRequest."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"decision_reason\":\"Insufficient justification provided\"}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/device-change-requests\/{deviceChangeRequest_id}\/approve",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/device-change-requests\/:deviceChangeRequest_id\/approve",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/device-change-requests\/:deviceChangeRequest_id\/approve",
-                            "variable": [
-                                {
-                                    "id": "deviceChangeRequest_id",
-                                    "key": "deviceChangeRequest_id",
-                                    "value": "16",
-                                    "description": "The ID of the deviceChangeRequest."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST admin\/device-change-requests\/{deviceChangeRequest_id}\/reject",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "admin\/device-change-requests\/:deviceChangeRequest_id\/reject",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/admin\/device-change-requests\/:deviceChangeRequest_id\/reject",
                             "variable": [
                                 {
                                     "id": "deviceChangeRequest_id",

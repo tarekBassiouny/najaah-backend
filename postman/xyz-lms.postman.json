@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v2)",
-    "_postman_id": "0ff80c66-776b-4ec7-95c8-cd4596fab898",
+    "_postman_id": "75ccd974-80aa-4150-8d18-c8a678ca0ced",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -799,6 +799,95 @@
                   "key": "video",
                   "value": "1",
                   "description": "The video."
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/courses/{course_id}/instructors",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/courses/:course_id/instructors",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/courses/:course_id/instructors",
+              "variable": [
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"instructor_id\":5,\"role\":\"assistant\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE api/v1/admin/courses/{course_id}/instructors/{instructor_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/courses/:course_id/instructors/:instructor_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/courses/:course_id/instructors/:instructor_id",
+              "variable": [
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "instructor_id",
+                  "key": "instructor_id",
+                  "value": "1",
+                  "description": "The ID of the instructor."
                 }
               ]
             },
@@ -2351,175 +2440,6 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "POST admin/extra-view-requests/{extraViewRequest_id}/approve",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "admin/extra-view-requests/:extraViewRequest_id/approve",
-              "query": [],
-              "raw": "{{baseUrl}}/admin/extra-view-requests/:extraViewRequest_id/approve",
-              "variable": [
-                {
-                  "id": "extraViewRequest_id",
-                  "key": "extraViewRequest_id",
-                  "value": "16",
-                  "description": "The ID of the extraViewRequest."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"granted_views\":3,\"decision_reason\":\"Verified request validity\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST admin/extra-view-requests/{extraViewRequest_id}/reject",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "admin/extra-view-requests/:extraViewRequest_id/reject",
-              "query": [],
-              "raw": "{{baseUrl}}/admin/extra-view-requests/:extraViewRequest_id/reject",
-              "variable": [
-                {
-                  "id": "extraViewRequest_id",
-                  "key": "extraViewRequest_id",
-                  "value": "16",
-                  "description": "The ID of the extraViewRequest."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"decision_reason\":\"Insufficient justification provided\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST admin/device-change-requests/{deviceChangeRequest_id}/approve",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "admin/device-change-requests/:deviceChangeRequest_id/approve",
-              "query": [],
-              "raw": "{{baseUrl}}/admin/device-change-requests/:deviceChangeRequest_id/approve",
-              "variable": [
-                {
-                  "id": "deviceChangeRequest_id",
-                  "key": "deviceChangeRequest_id",
-                  "value": "16",
-                  "description": "The ID of the deviceChangeRequest."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST admin/device-change-requests/{deviceChangeRequest_id}/reject",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "admin/device-change-requests/:deviceChangeRequest_id/reject",
-              "query": [],
-              "raw": "{{baseUrl}}/admin/device-change-requests/:deviceChangeRequest_id/reject",
-              "variable": [
-                {
-                  "id": "deviceChangeRequest_id",
-                  "key": "deviceChangeRequest_id",
-                  "value": "16",
-                  "description": "The ID of the deviceChangeRequest."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"decision_reason\":\"Device policy violation\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
         }
       ]
     },
@@ -2629,6 +2549,374 @@
               "mode": "raw",
               "raw": "{\"status\":\"READY\",\"progress_percent\":75,\"source_id\":\"bunny-video-id\",\"source_url\":\"https:\\/\\/example.com\\/video.mp4\",\"duration_seconds\":180,\"error_message\":\"Transcode failed due to invalid codec\"}"
             },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧑‍💼 Admin – Instructors",
+      "item": [
+        {
+          "name": "GET api/v1/admin/instructors",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/instructors",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/instructors"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/instructors",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/instructors",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/instructors"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "center_id",
+                  "value": "1",
+                  "type": "text",
+                  "description": "Optional center ID that the instructor belongs to. The <code>id</code> of an existing record in the centers table."
+                },
+                {
+                  "key": "name_translations[en]",
+                  "value": "John Doe",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "name_translations[ar]",
+                  "value": "جون دو",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "bio_translations[en]",
+                  "value": "Senior instructor",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "bio_translations[ar]",
+                  "value": "مدرب كبير",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "title_translations[en]",
+                  "value": "Professor",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "title_translations[ar]",
+                  "value": "أستاذ",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "avatar_url",
+                  "value": "https://example.com/avatar.jpg",
+                  "type": "text",
+                  "description": "Profile image URL."
+                },
+                {
+                  "key": "email",
+                  "value": "john.doe@example.com",
+                  "type": "text",
+                  "description": "Contact email for the instructor. Must be a valid email address."
+                },
+                {
+                  "key": "phone",
+                  "value": "+1234567890",
+                  "type": "text",
+                  "description": "Contact phone number."
+                },
+                {
+                  "key": "social_links[0]",
+                  "value": "architecto",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "metadata[specialization]",
+                  "value": "Math",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "metadata[languages][0]",
+                  "value": "en",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "metadata[languages][1]",
+                  "value": "ar",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "avatar",
+                  "src": [],
+                  "type": "file"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/instructors/{id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/instructors/:id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/instructors/:id",
+              "variable": [
+                {
+                  "id": "id",
+                  "key": "id",
+                  "value": "1",
+                  "description": "The ID of the instructor."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT api/v1/admin/instructors/{id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/instructors/:id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/instructors/:id",
+              "variable": [
+                {
+                  "id": "id",
+                  "key": "id",
+                  "value": "1",
+                  "description": "The ID of the instructor."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "center_id",
+                  "value": "1",
+                  "type": "text",
+                  "description": "Optional center ID for the instructor. The <code>id</code> of an existing record in the centers table."
+                },
+                {
+                  "key": "name_translations[en]",
+                  "value": "John Doe",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "name_translations[ar]",
+                  "value": "جون دو",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "bio_translations[en]",
+                  "value": "Senior instructor",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "bio_translations[ar]",
+                  "value": "مدرب كبير",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "title_translations[en]",
+                  "value": "Professor",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "title_translations[ar]",
+                  "value": "أستاذ",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "avatar_url",
+                  "value": "https://example.com/avatar.jpg",
+                  "type": "text",
+                  "description": "Profile image URL."
+                },
+                {
+                  "key": "email",
+                  "value": "john.doe@example.com",
+                  "type": "text",
+                  "description": "Contact email for the instructor. Must be a valid email address."
+                },
+                {
+                  "key": "phone",
+                  "value": "+1234567890",
+                  "type": "text",
+                  "description": "Contact phone number."
+                },
+                {
+                  "key": "social_links[0]",
+                  "value": "architecto",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "metadata[specialization]",
+                  "value": "Physics",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "avatar",
+                  "src": [],
+                  "type": "file"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE api/v1/admin/instructors/{id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/instructors/:id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/instructors/:id",
+              "variable": [
+                {
+                  "id": "id",
+                  "key": "id",
+                  "value": "1",
+                  "description": "The ID of the instructor."
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
             "description": "",
             "auth": {
               "type": "noauth"
@@ -2786,6 +3074,43 @@
               "mode": "raw",
               "raw": "{\"entity_type\":\"App\\\\Models\\\\Course\",\"entity_id\":12,\"action\":\"enrollment_created\",\"user_id\":3,\"date_from\":\"2025-01-01\",\"date_to\":\"2025-12-31\",\"per_page\":20,\"page\":1}"
             },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔔 Webhooks",
+      "item": [
+        {
+          "name": "POST api/webhooks/bunny",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/webhooks/bunny",
+              "query": [],
+              "raw": "{{baseUrl}}/api/webhooks/bunny"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
             "description": "",
             "auth": {
               "type": "noauth"
@@ -3022,95 +3347,6 @@
               ]
             },
             "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST api/v1/courses/{course_id}/instructors",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/courses/:course_id/instructors",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/courses/:course_id/instructors",
-              "variable": [
-                {
-                  "id": "course_id",
-                  "key": "course_id",
-                  "value": "1",
-                  "description": "The ID of the course."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"instructor_id\":5,\"role\":\"assistant\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "DELETE api/v1/courses/{course_id}/instructors/{instructor_id}",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/courses/:course_id/instructors/:instructor_id",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/courses/:course_id/instructors/:instructor_id",
-              "variable": [
-                {
-                  "id": "course_id",
-                  "key": "course_id",
-                  "value": "1",
-                  "description": "The ID of the course."
-                },
-                {
-                  "id": "instructor_id",
-                  "key": "instructor_id",
-                  "value": "1",
-                  "description": "The ID of the instructor."
-                }
-              ]
-            },
-            "method": "DELETE",
             "header": [
               {
                 "key": "Content-Type",
@@ -3781,349 +4017,18 @@
       ]
     },
     {
-      "name": "👨‍🏫 Instructors",
+      "name": "🎓 Student – Enrollments",
       "item": [
         {
-          "name": "GET api/v1/instructors",
+          "name": "GET api/v1/enrollments",
           "request": {
             "url": {
               "host": "{{baseUrl}}",
-              "path": "api/v1/instructors",
+              "path": "api/v1/enrollments",
               "query": [],
-              "raw": "{{baseUrl}}/api/v1/instructors"
+              "raw": "{{baseUrl}}/api/v1/enrollments"
             },
             "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST api/v1/instructors",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/instructors",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/instructors"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "multipart/form-data"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "center_id",
-                  "value": "1",
-                  "type": "text",
-                  "description": "Optional center ID that the instructor belongs to. The <code>id</code> of an existing record in the centers table."
-                },
-                {
-                  "key": "name_translations[en]",
-                  "value": "John Doe",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "name_translations[ar]",
-                  "value": "جون دو",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "bio_translations[en]",
-                  "value": "Senior instructor",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "bio_translations[ar]",
-                  "value": "مدرب كبير",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "title_translations[en]",
-                  "value": "Professor",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "title_translations[ar]",
-                  "value": "أستاذ",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "avatar_url",
-                  "value": "https://example.com/avatar.jpg",
-                  "type": "text",
-                  "description": "Profile image URL."
-                },
-                {
-                  "key": "email",
-                  "value": "john.doe@example.com",
-                  "type": "text",
-                  "description": "Contact email for the instructor. Must be a valid email address."
-                },
-                {
-                  "key": "phone",
-                  "value": "+1234567890",
-                  "type": "text",
-                  "description": "Contact phone number."
-                },
-                {
-                  "key": "social_links[0]",
-                  "value": "architecto",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "metadata[specialization]",
-                  "value": "Math",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "metadata[languages][0]",
-                  "value": "en",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "metadata[languages][1]",
-                  "value": "ar",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "avatar",
-                  "src": [],
-                  "type": "file"
-                }
-              ]
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET api/v1/instructors/{id}",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/instructors/:id",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/instructors/:id",
-              "variable": [
-                {
-                  "id": "id",
-                  "key": "id",
-                  "value": "1",
-                  "description": "The ID of the instructor."
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "PUT api/v1/instructors/{id}",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/instructors/:id",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/instructors/:id",
-              "variable": [
-                {
-                  "id": "id",
-                  "key": "id",
-                  "value": "1",
-                  "description": "The ID of the instructor."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "multipart/form-data"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "center_id",
-                  "value": "1",
-                  "type": "text",
-                  "description": "Optional center ID for the instructor. The <code>id</code> of an existing record in the centers table."
-                },
-                {
-                  "key": "name_translations[en]",
-                  "value": "John Doe",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "name_translations[ar]",
-                  "value": "جون دو",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "bio_translations[en]",
-                  "value": "Senior instructor",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "bio_translations[ar]",
-                  "value": "مدرب كبير",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "title_translations[en]",
-                  "value": "Professor",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "title_translations[ar]",
-                  "value": "أستاذ",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "avatar_url",
-                  "value": "https://example.com/avatar.jpg",
-                  "type": "text",
-                  "description": "Profile image URL."
-                },
-                {
-                  "key": "email",
-                  "value": "john.doe@example.com",
-                  "type": "text",
-                  "description": "Contact email for the instructor. Must be a valid email address."
-                },
-                {
-                  "key": "phone",
-                  "value": "+1234567890",
-                  "type": "text",
-                  "description": "Contact phone number."
-                },
-                {
-                  "key": "social_links[0]",
-                  "value": "architecto",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "metadata[specialization]",
-                  "value": "Physics",
-                  "type": "text",
-                  "description": ""
-                },
-                {
-                  "key": "avatar",
-                  "src": [],
-                  "type": "file"
-                },
-                {
-                  "key": "_method",
-                  "value": "PUT",
-                  "type": "text"
-                }
-              ]
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "DELETE api/v1/instructors/{id}",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/instructors/:id",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/instructors/:id",
-              "variable": [
-                {
-                  "id": "id",
-                  "key": "id",
-                  "value": "1",
-                  "description": "The ID of the instructor."
-                }
-              ]
-            },
-            "method": "DELETE",
             "header": [
               {
                 "key": "Content-Type",

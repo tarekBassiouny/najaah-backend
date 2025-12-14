@@ -3,12 +3,11 @@
 declare(strict_types=1);
 
 use App\Models\Instructor;
-use App\Models\User;
-use Tests\Helpers\AdminTestHelper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Tests\Helpers\AdminTestHelper;
 
 uses(RefreshDatabase::class, AdminTestHelper::class)->group('instructors');
 

@@ -413,605 +413,6 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/v1/instructors
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/v1/instructors
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: multipart/form-data
-      Accept: application/json
-      X-Locale: en
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      center_id:
-        custom: []
-        name: center_id
-        description: 'Optional center ID that the instructor belongs to. The <code>id</code> of an existing record in the centers table.'
-        required: false
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      name_translations:
-        custom: []
-        name: name_translations
-        description: 'Localized instructor name keyed by locale.'
-        required: true
-        example:
-          en: 'John Doe'
-          ar: 'جون دو'
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      bio_translations:
-        custom: []
-        name: bio_translations
-        description: 'Localized biography.'
-        required: false
-        example:
-          en: 'Senior instructor'
-          ar: 'مدرب كبير'
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      title_translations:
-        custom: []
-        name: title_translations
-        description: 'Localized title or position.'
-        required: false
-        example:
-          en: Professor
-          ar: أستاذ
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      avatar_url:
-        custom: []
-        name: avatar_url
-        description: 'Profile image URL.'
-        required: false
-        example: 'https://example.com/avatar.jpg'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      avatar:
-        custom: []
-        name: avatar
-        description: 'Must be a file. Must be an image. Must not be greater than 512000 kilobytes.'
-        required: false
-        example: null
-        type: file
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      email:
-        custom: []
-        name: email
-        description: 'Contact email for the instructor. Must be a valid email address.'
-        required: false
-        example: john.doe@example.com
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      phone:
-        custom: []
-        name: phone
-        description: 'Contact phone number.'
-        required: false
-        example: '+1234567890'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      social_links:
-        custom: []
-        name: social_links
-        description: ''
-        required: false
-        example:
-          - architecto
-        type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      metadata:
-        custom: []
-        name: metadata
-        description: 'Optional instructor metadata.'
-        required: false
-        example:
-          specialization: Math
-          languages:
-            - en
-            - ar
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      center_id: 1
-      name_translations:
-        en: 'John Doe'
-        ar: 'جون دو'
-      bio_translations:
-        en: 'Senior instructor'
-        ar: 'مدرب كبير'
-      title_translations:
-        en: Professor
-        ar: أستاذ
-      avatar_url: 'https://example.com/avatar.jpg'
-      email: john.doe@example.com
-      phone: '+1234567890'
-      social_links:
-        - architecto
-      metadata:
-        specialization: Math
-        languages:
-          - en
-          - ar
-    fileParameters:
-      avatar: null
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/instructors/{id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      id:
-        custom: []
-        name: id
-        description: 'The ID of the instructor.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PUT
-      - PATCH
-    uri: 'api/v1/instructors/{id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: multipart/form-data
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      id:
-        custom: []
-        name: id
-        description: 'The ID of the instructor.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      center_id:
-        custom: []
-        name: center_id
-        description: 'Optional center ID for the instructor. The <code>id</code> of an existing record in the centers table.'
-        required: false
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      name_translations:
-        custom: []
-        name: name_translations
-        description: 'Localized instructor name keyed by locale.'
-        required: false
-        example:
-          en: 'John Doe'
-          ar: 'جون دو'
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      bio_translations:
-        custom: []
-        name: bio_translations
-        description: 'Localized biography.'
-        required: false
-        example:
-          en: 'Senior instructor'
-          ar: 'مدرب كبير'
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      title_translations:
-        custom: []
-        name: title_translations
-        description: 'Localized title or position.'
-        required: false
-        example:
-          en: Professor
-          ar: أستاذ
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      avatar_url:
-        custom: []
-        name: avatar_url
-        description: 'Profile image URL.'
-        required: false
-        example: 'https://example.com/avatar.jpg'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      avatar:
-        custom: []
-        name: avatar
-        description: 'Must be a file. Must be an image. Must not be greater than 512000 kilobytes.'
-        required: false
-        example: null
-        type: file
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      email:
-        custom: []
-        name: email
-        description: 'Contact email for the instructor. Must be a valid email address.'
-        required: false
-        example: john.doe@example.com
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      phone:
-        custom: []
-        name: phone
-        description: 'Contact phone number.'
-        required: false
-        example: '+1234567890'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      social_links:
-        custom: []
-        name: social_links
-        description: ''
-        required: false
-        example:
-          - architecto
-        type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      metadata:
-        custom: []
-        name: metadata
-        description: 'Optional instructor metadata.'
-        required: false
-        example:
-          specialization: Physics
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      center_id: 1
-      name_translations:
-        en: 'John Doe'
-        ar: 'جون دو'
-      bio_translations:
-        en: 'Senior instructor'
-        ar: 'مدرب كبير'
-      title_translations:
-        en: Professor
-        ar: أستاذ
-      avatar_url: 'https://example.com/avatar.jpg'
-      email: john.doe@example.com
-      phone: '+1234567890'
-      social_links:
-        - architecto
-      metadata:
-        specialization: Physics
-    fileParameters:
-      avatar: null
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - DELETE
-    uri: 'api/v1/instructors/{id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      id:
-        custom: []
-        name: id
-        description: 'The ID of the instructor.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: 'api/v1/courses/{course_id}/instructors'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      instructor_id:
-        custom: []
-        name: instructor_id
-        description: 'Instructor ID to assign to the course. The <code>id</code> of an existing record in the instructors table.'
-        required: true
-        example: 5
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      role:
-        custom: []
-        name: role
-        description: 'Optional role for this instructor within the course.'
-        required: false
-        example: assistant
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      instructor_id: 5
-      role: assistant
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - DELETE
-    uri: 'api/v1/courses/{course_id}/instructors/{instructor_id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      instructor_id:
-        custom: []
-        name: instructor_id
-        description: 'The ID of the instructor.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      instructor_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
     uri: 'api/v1/courses/{course_id}/sections'
     metadata:
       custom: []
@@ -5333,6 +4734,605 @@ endpoints:
       source_url: 'https://example.com/video.mp4'
       duration_seconds: 180
       error_message: 'Transcode failed due to invalid codec'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/admin/instructors
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/instructors
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+      X-Locale: en
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Optional center ID that the instructor belongs to. The <code>id</code> of an existing record in the centers table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      name_translations:
+        custom: []
+        name: name_translations
+        description: 'Localized instructor name keyed by locale.'
+        required: true
+        example:
+          en: 'John Doe'
+          ar: 'جون دو'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      bio_translations:
+        custom: []
+        name: bio_translations
+        description: 'Localized biography.'
+        required: false
+        example:
+          en: 'Senior instructor'
+          ar: 'مدرب كبير'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      title_translations:
+        custom: []
+        name: title_translations
+        description: 'Localized title or position.'
+        required: false
+        example:
+          en: Professor
+          ar: أستاذ
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avatar_url:
+        custom: []
+        name: avatar_url
+        description: 'Profile image URL.'
+        required: false
+        example: 'https://example.com/avatar.jpg'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avatar:
+        custom: []
+        name: avatar
+        description: 'Must be a file. Must be an image. Must not be greater than 512000 kilobytes.'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Contact email for the instructor. Must be a valid email address.'
+        required: false
+        example: john.doe@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      phone:
+        custom: []
+        name: phone
+        description: 'Contact phone number.'
+        required: false
+        example: '+1234567890'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      social_links:
+        custom: []
+        name: social_links
+        description: ''
+        required: false
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      metadata:
+        custom: []
+        name: metadata
+        description: 'Optional instructor metadata.'
+        required: false
+        example:
+          specialization: Math
+          languages:
+            - en
+            - ar
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      center_id: 1
+      name_translations:
+        en: 'John Doe'
+        ar: 'جون دو'
+      bio_translations:
+        en: 'Senior instructor'
+        ar: 'مدرب كبير'
+      title_translations:
+        en: Professor
+        ar: أستاذ
+      avatar_url: 'https://example.com/avatar.jpg'
+      email: john.doe@example.com
+      phone: '+1234567890'
+      social_links:
+        - architecto
+      metadata:
+        specialization: Math
+        languages:
+          - en
+          - ar
+    fileParameters:
+      avatar: null
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/admin/instructors/{id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the instructor.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+      - PATCH
+    uri: 'api/v1/admin/instructors/{id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the instructor.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Optional center ID for the instructor. The <code>id</code> of an existing record in the centers table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      name_translations:
+        custom: []
+        name: name_translations
+        description: 'Localized instructor name keyed by locale.'
+        required: false
+        example:
+          en: 'John Doe'
+          ar: 'جون دو'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      bio_translations:
+        custom: []
+        name: bio_translations
+        description: 'Localized biography.'
+        required: false
+        example:
+          en: 'Senior instructor'
+          ar: 'مدرب كبير'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      title_translations:
+        custom: []
+        name: title_translations
+        description: 'Localized title or position.'
+        required: false
+        example:
+          en: Professor
+          ar: أستاذ
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avatar_url:
+        custom: []
+        name: avatar_url
+        description: 'Profile image URL.'
+        required: false
+        example: 'https://example.com/avatar.jpg'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      avatar:
+        custom: []
+        name: avatar
+        description: 'Must be a file. Must be an image. Must not be greater than 512000 kilobytes.'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Contact email for the instructor. Must be a valid email address.'
+        required: false
+        example: john.doe@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      phone:
+        custom: []
+        name: phone
+        description: 'Contact phone number.'
+        required: false
+        example: '+1234567890'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      social_links:
+        custom: []
+        name: social_links
+        description: ''
+        required: false
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      metadata:
+        custom: []
+        name: metadata
+        description: 'Optional instructor metadata.'
+        required: false
+        example:
+          specialization: Physics
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      center_id: 1
+      name_translations:
+        en: 'John Doe'
+        ar: 'جون دو'
+      bio_translations:
+        en: 'Senior instructor'
+        ar: 'مدرب كبير'
+      title_translations:
+        en: Professor
+        ar: أستاذ
+      avatar_url: 'https://example.com/avatar.jpg'
+      email: john.doe@example.com
+      phone: '+1234567890'
+      social_links:
+        - architecto
+      metadata:
+        specialization: Physics
+    fileParameters:
+      avatar: null
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/v1/admin/instructors/{id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the instructor.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/admin/courses/{course_id}/instructors'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      instructor_id:
+        custom: []
+        name: instructor_id
+        description: 'Instructor ID to assign to the course. The <code>id</code> of an existing record in the instructors table.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      role:
+        custom: []
+        name: role
+        description: 'Optional role for this instructor within the course.'
+        required: false
+        example: assistant
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      instructor_id: 5
+      role: assistant
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/v1/admin/courses/{course_id}/instructors/{instructor_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      instructor_id:
+        custom: []
+        name: instructor_id
+        description: 'The ID of the instructor.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      instructor_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses: []
     responseFields: []
