@@ -39,10 +39,19 @@ class OtpService implements OtpServiceInterface
 
     public function verify(string $otp, string $token): ?OtpCode
     {
-        return OtpCode::where('otp_token', $token)
+        $otpCode = OtpCode::where('otp_token', $token)
             ->where('otp_code', $otp)
             ->whereNull('consumed_at')
             ->where('expires_at', '>', now())
             ->first();
+
+        if ($otpCode === null) {
+            return null;
+        }
+
+        $otpCode->consumed_at = now();
+        $otpCode->save();
+
+        return $otpCode;
     }
 }
