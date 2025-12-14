@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "75ccd974-80aa-4150-8d18-c8a678ca0ced",
+        "_postman_id": "46ca32e3-761d-45f5-bfeb-ceca1ba13301",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -226,8 +226,15 @@
                         "url": {
                             "host": "{{baseUrl}}",
                             "path": "api\/v1\/enrollments",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/enrollments"
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/enrollments?per_page=15"
                         },
                         "method": "GET",
                         "header": [
@@ -258,8 +265,15 @@
                         "url": {
                             "host": "{{baseUrl}}",
                             "path": "api\/v1\/courses",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses"
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/courses?per_page=15"
                         },
                         "method": "GET",
                         "header": [
@@ -1244,8 +1258,27 @@
                         "url": {
                             "host": "{{baseUrl}}",
                             "path": "api\/v1\/admin\/centers",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers"
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "center-1",
+                                    "description": "Filter centers by slug.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "1",
+                                    "description": "Filter by center type.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers?per_page=15&slug=center-1&type=1"
                         },
                         "method": "GET",
                         "header": [
@@ -1592,8 +1625,15 @@
                         "url": {
                             "host": "{{baseUrl}}",
                             "path": "api\/v1\/admin\/courses",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/courses"
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/courses?per_page=15"
                         },
                         "method": "GET",
                         "header": [
@@ -2979,8 +3019,27 @@
                         "url": {
                             "host": "{{baseUrl}}",
                             "path": "api\/v1\/admin\/video-upload-sessions",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/video-upload-sessions"
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "3",
+                                    "description": "Filter by upload status (0-4).",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "Filter by center ID (admins scoped automatically).",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/video-upload-sessions?per_page=15&status=3&center_id=1"
                         },
                         "method": "GET",
                         "header": [
@@ -3089,8 +3148,15 @@
                         "url": {
                             "host": "{{baseUrl}}",
                             "path": "api\/v1\/admin\/instructors",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors"
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors?per_page=15"
                         },
                         "method": "GET",
                         "header": [
@@ -3825,8 +3891,57 @@
                         "url": {
                             "host": "{{baseUrl}}",
                             "path": "api\/v1\/admin\/audit-logs",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/audit-logs"
+                            "query": [
+                                {
+                                    "key": "entity_type",
+                                    "value": "App%5CModels%5CCourse",
+                                    "description": "Filter by entity class\/type. Must not be greater than 255 characters.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "entity_id",
+                                    "value": "12",
+                                    "description": "Filter by specific entity id.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "action",
+                                    "value": "enrollment_created",
+                                    "description": "Filter by audit action. Must not be greater than 255 characters.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "user_id",
+                                    "value": "3",
+                                    "description": "Filter by actor user id.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "date_from",
+                                    "value": "2025-01-01",
+                                    "description": "Filter logs starting from this date. Must be a valid date.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "date_to",
+                                    "value": "2025-12-31",
+                                    "description": "Filter logs up to this date. Must be a valid date.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "20",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/audit-logs?entity_type=App%5CModels%5CCourse&entity_id=12&action=enrollment_created&user_id=3&date_from=2025-01-01&date_to=2025-12-31&per_page=20&page=1"
                         },
                         "method": "GET",
                         "header": [
@@ -3843,10 +3958,7 @@
                                 "value": "en"
                             }
                         ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"entity_type\":\"App\\\\Models\\\\Course\",\"entity_id\":12,\"action\":\"enrollment_created\",\"user_id\":3,\"date_from\":\"2025-01-01\",\"date_to\":\"2025-12-31\",\"per_page\":20,\"page\":1}"
-                        },
+                        "body": null,
                         "description": "",
                         "auth": {
                             "type": "noauth"
