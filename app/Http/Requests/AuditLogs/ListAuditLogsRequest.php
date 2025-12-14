@@ -33,9 +33,9 @@ class ListAuditLogsRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<string, mixed>>
+     * @return array<string, array<string, string>>
      */
-    public function bodyParameters(): array
+    public function queryParameters(): array
     {
         return [
             'entity_type' => [
@@ -44,7 +44,7 @@ class ListAuditLogsRequest extends FormRequest
             ],
             'entity_id' => [
                 'description' => 'Filter by specific entity id.',
-                'example' => 12,
+                'example' => '12',
             ],
             'action' => [
                 'description' => 'Filter by audit action.',
@@ -52,7 +52,7 @@ class ListAuditLogsRequest extends FormRequest
             ],
             'user_id' => [
                 'description' => 'Filter by actor user id.',
-                'example' => 3,
+                'example' => '3',
             ],
             'date_from' => [
                 'description' => 'Filter logs starting from this date.',
@@ -64,11 +64,11 @@ class ListAuditLogsRequest extends FormRequest
             ],
             'per_page' => [
                 'description' => 'Items per page (max 100).',
-                'example' => 20,
+                'example' => '20',
             ],
             'page' => [
                 'description' => 'Page number to retrieve.',
-                'example' => 1,
+                'example' => '1',
             ],
         ];
     }
