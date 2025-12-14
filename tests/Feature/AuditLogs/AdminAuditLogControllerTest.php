@@ -16,7 +16,7 @@ beforeEach(function (): void {
 it('lists audit logs with pagination', function (): void {
     AuditLog::factory()->count(3)->create();
 
-    $response = $this->getJson('/admin/audit-logs?per_page=2');
+    $response = $this->getJson('/api/v1/admin/audit-logs?per_page=2');
 
     $response->assertOk()->assertJsonPath('meta.per_page', 2);
 });
@@ -34,7 +34,7 @@ it('filters by entity and action', function (): void {
         'action' => 'updated',
     ]);
 
-    $response = $this->getJson('/admin/audit-logs?entity_type='.urlencode(User::class).'&entity_id=1&action=created');
+    $response = $this->getJson('/api/v1/admin/audit-logs?entity_type='.urlencode(User::class).'&entity_id=1&action=created');
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -50,7 +50,7 @@ it('filters by user', function (): void {
     AuditLog::factory()->create(['user_id' => $actor->id]);
     AuditLog::factory()->create(['user_id' => null]);
 
-    $response = $this->getJson("/admin/audit-logs?user_id={$actor->id}");
+    $response = $this->getJson("/api/v1/admin/audit-logs?user_id={$actor->id}");
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -61,7 +61,7 @@ it('filters by date range', function (): void {
     AuditLog::factory()->create(['created_at' => now()->subDays(2)]);
     AuditLog::factory()->create(['created_at' => now()]);
 
-    $response = $this->getJson('/admin/audit-logs?date_from='.now()->toDateString());
+    $response = $this->getJson('/api/v1/admin/audit-logs?date_from='.now()->toDateString());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data');
@@ -71,7 +71,7 @@ it('requires authentication', function (): void {
     AuditLog::factory()->create();
     auth('admin')->logout();
 
-    $response = $this->getJson('/admin/audit-logs');
+    $response = $this->getJson('/api/v1/admin/audit-logs');
 
     $response->assertStatus(401);
 });

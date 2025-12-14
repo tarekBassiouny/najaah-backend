@@ -27,7 +27,7 @@ it('creates a center', function (): void {
         'settings' => ['view_limit' => 3],
     ];
 
-    $response = $this->postJson('/admin/centers', $payload);
+    $response = $this->postJson('/api/v1/admin/centers', $payload);
 
     $response->assertCreated()->assertJsonPath('data.slug', 'center-1');
     $this->assertDatabaseHas('centers', ['slug' => 'center-1']);
@@ -37,7 +37,7 @@ it('creates a center', function (): void {
 it('lists centers with pagination', function (): void {
     Center::factory()->count(3)->create();
 
-    $response = $this->getJson('/admin/centers?per_page=2');
+    $response = $this->getJson('/api/v1/admin/centers?per_page=2');
 
     $response->assertOk()->assertJsonPath('meta.per_page', 2);
 });
@@ -45,7 +45,7 @@ it('lists centers with pagination', function (): void {
 it('updates a center but keeps slug immutable', function (): void {
     $center = Center::factory()->create(['slug' => 'immutable']);
 
-    $response = $this->putJson("/admin/centers/{$center->id}", [
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}", [
         'slug' => 'new-slug',
         'primary_color' => '#654321',
     ]);
@@ -58,11 +58,11 @@ it('updates a center but keeps slug immutable', function (): void {
 it('soft deletes and restores a center', function (): void {
     $center = Center::factory()->create();
 
-    $delete = $this->deleteJson("/admin/centers/{$center->id}");
+    $delete = $this->deleteJson("/api/v1/admin/centers/{$center->id}");
     $delete->assertNoContent();
     $this->assertSoftDeleted('centers', ['id' => $center->id]);
 
-    $restore = $this->postJson("/admin/centers/{$center->id}/restore");
+    $restore = $this->postJson("/api/v1/admin/centers/{$center->id}/restore");
     $restore->assertOk()->assertJsonPath('success', true);
     $this->assertDatabaseHas('centers', ['id' => $center->id, 'deleted_at' => null]);
 });
@@ -70,7 +70,7 @@ it('soft deletes and restores a center', function (): void {
 it('rejects duplicate slug on create', function (): void {
     Center::factory()->create(['slug' => 'dupe']);
 
-    $response = $this->postJson('/admin/centers', [
+    $response = $this->postJson('/api/v1/admin/centers', [
         'slug' => 'dupe',
         'type' => 1,
         'name_translations' => ['en' => 'Center'],

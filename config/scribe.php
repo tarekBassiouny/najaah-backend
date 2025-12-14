@@ -35,7 +35,6 @@ return [
                 // Scan public API V1 routes in nested modular structure
                 'prefixes' => [
                     '/api/v1/*',
-                    '/admin/*',
                     '/api/webhooks/*',
                 ],
             ],
@@ -43,7 +42,6 @@ return [
             // Force include nested API V1 modules
             'include' => [
                 '/api/v1/*',
-                '/admin/*',
                 '/api/webhooks/*',
             ],
 

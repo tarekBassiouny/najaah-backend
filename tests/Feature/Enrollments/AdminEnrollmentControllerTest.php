@@ -14,7 +14,7 @@ it('allows admin to create enrollment', function (): void {
     $student = User::factory()->create(['is_student' => true]);
     $course = Course::factory()->create(['center_id' => $admin->center_id]);
 
-    $response = $this->postJson('/admin/enrollments', [
+    $response = $this->postJson('/api/v1/admin/enrollments', [
         'user_id' => $student->id,
         'course_id' => $course->id,
         'status' => 'ACTIVE',
@@ -39,7 +39,7 @@ it('rejects duplicate enrollments', function (): void {
         'status' => Enrollment::STATUS_ACTIVE,
     ]);
 
-    $response = $this->postJson('/admin/enrollments', [
+    $response = $this->postJson('/api/v1/admin/enrollments', [
         'user_id' => $student->id,
         'course_id' => $course->id,
         'status' => 'ACTIVE',
@@ -55,7 +55,7 @@ it('allows admin to update enrollment status', function (): void {
         'status' => Enrollment::STATUS_ACTIVE,
     ]);
 
-    $response = $this->putJson("/admin/enrollments/{$enrollment->id}", [
+    $response = $this->putJson("/api/v1/admin/enrollments/{$enrollment->id}", [
         'status' => 'CANCELLED',
     ], $this->adminHeaders());
 
@@ -72,7 +72,7 @@ it('allows admin to delete enrollment', function (): void {
         'center_id' => $admin->center_id,
     ]);
 
-    $response = $this->deleteJson("/admin/enrollments/{$enrollment->id}", [], $this->adminHeaders());
+    $response = $this->deleteJson("/api/v1/admin/enrollments/{$enrollment->id}", [], $this->adminHeaders());
 
     $response->assertNoContent();
     $this->assertSoftDeleted('enrollments', ['id' => $enrollment->id]);
@@ -83,7 +83,7 @@ it('blocks enrollment management across centers', function (): void {
     $student = User::factory()->create(['is_student' => true]);
     $course = Course::factory()->create(); // different center than admin by default
 
-    $response = $this->postJson('/admin/enrollments', [
+    $response = $this->postJson('/api/v1/admin/enrollments', [
         'user_id' => $student->id,
         'course_id' => $course->id,
         'status' => 'ACTIVE',

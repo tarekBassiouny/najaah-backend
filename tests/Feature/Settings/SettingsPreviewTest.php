@@ -69,7 +69,7 @@ it('resolves settings in correct priority order', function (): void {
         ],
     ]);
 
-    $response = $this->getJson('/admin/settings/preview?student_id='.$student->id.'&video_id='.$video->id.'&course_id='.$course->id.'&center_id='.$center->id, $this->adminHeaders());
+    $response = $this->getJson('/api/v1/admin/settings/preview?student_id='.$student->id.'&video_id='.$video->id.'&course_id='.$course->id.'&center_id='.$center->id, $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('data.view_limit', 5)
@@ -100,7 +100,7 @@ it('falls back when higher-level settings are missing', function (): void {
     $video = Video::factory()->create();
     $video->courses()->attach($course->id);
 
-    $response = $this->getJson('/admin/settings/preview?video_id='.$video->id, $this->adminHeaders());
+    $response = $this->getJson('/api/v1/admin/settings/preview?video_id='.$video->id, $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('data.view_limit', 6)
@@ -120,7 +120,7 @@ it('ignores unsupported keys', function (): void {
         ],
     ]);
 
-    $response = $this->getJson('/admin/settings/preview?center_id='.$center->id, $this->adminHeaders());
+    $response = $this->getJson('/api/v1/admin/settings/preview?center_id='.$center->id, $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonMissing(['data' => ['unknown_key' => 10]])
@@ -132,7 +132,7 @@ it('requires authentication', function (): void {
 
     auth('admin')->logout();
 
-    $response = $this->getJson('/admin/settings/preview?center_id='.$center->id);
+    $response = $this->getJson('/api/v1/admin/settings/preview?center_id='.$center->id);
 
     $response->assertStatus(401);
 });

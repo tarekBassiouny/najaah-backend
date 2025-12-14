@@ -25,7 +25,7 @@ beforeEach(function (): void {
 it('lists courses', function (): void {
     Course::factory()->count(2)->create();
 
-    $response = $this->getJson('/admin/courses');
+    $response = $this->getJson('/api/v1/admin/courses');
 
     $response->assertOk()->assertJsonPath('success', true);
 });
@@ -41,7 +41,7 @@ it('creates course', function (): void {
         'price' => 0,
     ];
 
-    $response = $this->postJson('/admin/courses', $payload);
+    $response = $this->postJson('/api/v1/admin/courses', $payload);
 
     $response->assertCreated()->assertJsonPath('success', true);
     $response->assertJsonPath('data.title', 'Sample Course');
@@ -51,7 +51,7 @@ it('creates course', function (): void {
 it('shows course', function (): void {
     $course = Course::factory()->create();
 
-    $response = $this->getJson("/admin/courses/{$course->id}");
+    $response = $this->getJson("/api/v1/admin/courses/{$course->id}");
 
     $response->assertOk()->assertJsonPath('data.id', $course->id);
 });
@@ -59,7 +59,7 @@ it('shows course', function (): void {
 it('updates course', function (): void {
     $course = Course::factory()->create();
 
-    $response = $this->putJson("/admin/courses/{$course->id}", [
+    $response = $this->putJson("/api/v1/admin/courses/{$course->id}", [
         'title' => 'Updated Title',
     ]);
 
@@ -70,7 +70,7 @@ it('updates course', function (): void {
 it('soft deletes course', function (): void {
     $course = Course::factory()->create();
 
-    $response = $this->deleteJson("/admin/courses/{$course->id}");
+    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}");
 
     $response->assertNoContent();
     $this->assertSoftDeleted('courses', ['id' => $course->id]);
@@ -79,7 +79,7 @@ it('soft deletes course', function (): void {
 it('adds section', function (): void {
     $course = Course::factory()->create();
 
-    $response = $this->postJson("/admin/courses/{$course->id}/sections", [
+    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/sections", [
         'title' => 'Section 1',
         'description' => 'Description',
     ]);
@@ -93,7 +93,7 @@ it('reorders sections', function (): void {
     $sections = Section::factory()->count(2)->create(['course_id' => $course->id]);
     $ordered = $sections->pluck('id')->reverse()->values()->all();
 
-    $response = $this->putJson("/admin/courses/{$course->id}/sections/reorder", [
+    $response = $this->putJson("/api/v1/admin/courses/{$course->id}/sections/reorder", [
         'sections' => $ordered,
     ]);
 
@@ -104,7 +104,7 @@ it('toggles section visibility', function (): void {
     $course = Course::factory()->create();
     $section = Section::factory()->create(['course_id' => $course->id, 'visible' => true]);
 
-    $response = $this->patchJson("/admin/courses/{$course->id}/sections/{$section->id}/visibility");
+    $response = $this->patchJson("/api/v1/admin/courses/{$course->id}/sections/{$section->id}/visibility");
 
     $response->assertOk()->assertJsonPath('success', true);
     $section->refresh();
@@ -119,7 +119,7 @@ it('assigns video', function (): void {
         'lifecycle_status' => 2,
     ]);
 
-    $response = $this->postJson("/admin/courses/{$course->id}/videos", [
+    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/videos", [
         'video_id' => $video->id,
     ]);
 
@@ -137,7 +137,7 @@ it('removes video', function (): void {
         'visible' => true,
     ]);
 
-    $response = $this->deleteJson("/admin/courses/{$course->id}/videos/{$video->id}");
+    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}/videos/{$video->id}");
 
     $response->assertOk()->assertJsonPath('success', true);
     $this->assertSoftDeleted('course_video', ['course_id' => $course->id, 'video_id' => $video->id]);
@@ -147,7 +147,7 @@ it('assigns pdf', function (): void {
     $course = Course::factory()->create();
     $pdf = Pdf::factory()->create(['created_by' => $course->created_by]);
 
-    $response = $this->postJson("/admin/courses/{$course->id}/pdfs", [
+    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/pdfs", [
         'pdf_id' => $pdf->id,
     ]);
 
@@ -165,7 +165,7 @@ it('removes pdf', function (): void {
         'visible' => true,
     ]);
 
-    $response = $this->deleteJson("/admin/courses/{$course->id}/pdfs/{$pdf->id}");
+    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}/pdfs/{$pdf->id}");
 
     $response->assertOk()->assertJsonPath('success', true);
     $this->assertSoftDeleted('course_pdf', ['course_id' => $course->id, 'pdf_id' => $pdf->id]);
@@ -186,7 +186,7 @@ it('publishes course', function (): void {
         'visible' => true,
     ]);
 
-    $response = $this->postJson("/admin/courses/{$course->id}/publish");
+    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/publish");
 
     $response->assertOk()->assertJsonPath('success', true);
 });
@@ -194,7 +194,7 @@ it('publishes course', function (): void {
 it('clones course', function (): void {
     $course = Course::factory()->create();
 
-    $response = $this->postJson("/admin/courses/{$course->id}/clone", [
+    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/clone", [
         'options' => [],
     ]);
 

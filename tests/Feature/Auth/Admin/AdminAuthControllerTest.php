@@ -17,7 +17,7 @@ test('admin login succeeds with valid credentials', function () {
         'is_student' => false,
     ]);
 
-    $response = $this->postJson('/admin/auth/login', [
+    $response = $this->postJson('/api/v1/admin/auth/login', [
         'email' => 'admin@example.com',
         'password' => 'secret123',
     ]);
@@ -32,7 +32,7 @@ test('admin login succeeds with valid credentials', function () {
 });
 
 test('admin login fails with invalid credentials', function () {
-    $response = $this->postJson('/admin/auth/login', [
+    $response = $this->postJson('/api/v1/admin/auth/login', [
         'email' => 'wrong@example.com',
         'password' => 'invalid',
     ]);
@@ -51,7 +51,7 @@ test('student cannot login as admin', function () {
         'is_student' => true,
     ]);
 
-    $response = $this->postJson('/admin/auth/login', [
+    $response = $this->postJson('/api/v1/admin/auth/login', [
         'email' => 'student@test.com',
         'password' => 'pass',
     ]);
@@ -70,7 +70,7 @@ test('student cannot login as admin', function () {
 test('admin can fetch their profile', function () {
     $admin = $this->asAdmin(); // generates token + stores header
 
-    $response = $this->getJson('/admin/auth/me', $this->adminHeaders());
+    $response = $this->getJson('/api/v1/admin/auth/me', $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonStructure([
@@ -84,7 +84,7 @@ test('admin can fetch their profile', function () {
 });
 
 test('unauthenticated request to me fails', function () {
-    $response = $this->getJson('/admin/auth/me');
+    $response = $this->getJson('/api/v1/admin/auth/me');
 
     $response->assertStatus(401);
 });
@@ -97,7 +97,7 @@ test('admin can refresh token', function () {
 
     $oldToken = $this->adminToken;
 
-    $response = $this->postJson('/admin/auth/refresh', [], $this->adminHeaders());
+    $response = $this->postJson('/api/v1/admin/auth/refresh', [], $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonStructure(['success', 'token'])
@@ -109,7 +109,7 @@ test('admin can refresh token', function () {
 });
 
 test('refresh fails without token', function () {
-    $response = $this->postJson('/admin/auth/refresh');
+    $response = $this->postJson('/api/v1/admin/auth/refresh');
 
     $response->assertStatus(401);
 });
@@ -120,7 +120,7 @@ test('refresh fails without token', function () {
 test('admin can logout successfully', function () {
     $admin = $this->asAdmin();
 
-    $response = $this->postJson('/admin/auth/logout', [], $this->adminHeaders());
+    $response = $this->postJson('/api/v1/admin/auth/logout', [], $this->adminHeaders());
 
     $response->assertOk()
         ->assertJson([
@@ -130,7 +130,7 @@ test('admin can logout successfully', function () {
 });
 
 test('logout fails without token', function () {
-    $response = $this->postJson('/admin/auth/logout');
+    $response = $this->postJson('/api/v1/admin/auth/logout');
 
     $response->assertStatus(401)
         ->assertJson([

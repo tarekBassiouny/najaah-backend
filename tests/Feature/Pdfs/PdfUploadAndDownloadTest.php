@@ -23,7 +23,7 @@ it('allows admin to upload a pdf to private storage', function (): void {
 
     $file = UploadedFile::fake()->create('document.pdf', 500, 'application/pdf');
 
-    $response = $this->actingAs($admin, 'admin')->postJson('/admin/pdfs', [
+    $response = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/pdfs', [
         'title_translations' => ['en' => 'Doc'],
         'description_translations' => ['en' => 'Sample'],
         'file' => $file,
