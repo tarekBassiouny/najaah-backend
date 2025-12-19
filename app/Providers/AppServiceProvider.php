@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Services\Auth\AdminAuthService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Auth\Contracts\JwtServiceInterface;
+use App\Services\Auth\Contracts\OtpSenderInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
+use App\Services\Auth\Senders\WhatsAppOtpSender;
 use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterService;
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $bindings = [
             OtpServiceInterface::class => OtpService::class,
+            OtpSenderInterface::class => WhatsAppOtpSender::class,
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,

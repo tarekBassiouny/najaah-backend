@@ -6,17 +6,23 @@ namespace App\Services\Auth;
 
 use App\Models\OtpCode;
 use App\Models\User;
+use App\Services\Auth\Contracts\OtpSenderInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use Illuminate\Support\Str;
 
 class OtpService implements OtpServiceInterface
 {
+    public function __construct(
+        private readonly OtpSenderInterface $sender
+    ) {}
+
     /**
      * @return array{token: string}
      */
     public function send(string $phone, string $countryCode): array
     {
         $token = Str::uuid()->toString();
+        $otpCode = (string) random_int(100000, 999999);
         $user = User::where('phone', $phone)
             ->where('country_code', $countryCode)->first();
 
@@ -24,11 +30,13 @@ class OtpService implements OtpServiceInterface
             'user_id' => $user?->id,
             'phone' => $phone,
             'country_code' => $countryCode,
-            'otp_code' => (string) rand(100000, 999999),
+            'otp_code' => $otpCode,
             'otp_token' => $token,
-            'provider' => 'sms',
+            'provider' => $this->sender->provider(),
             'expires_at' => now()->addMinutes(5),
         ]);
+
+        $this->sender->send($countryCode.$phone, $otpCode);
 
         return [
             'token' => $token,
