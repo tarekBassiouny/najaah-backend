@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Models\Center;
 use App\Services\Bunny\BunnyLibraryService;
+use App\Services\Logging\LogContextResolver;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,9 +32,10 @@ class CreateCenterBunnyLibrary implements ShouldQueue
         $center = Center::find($this->centerId);
 
         if (! $center instanceof Center) {
-            Log::warning('Center Bunny library creation skipped due to missing center.', [
+            Log::warning('Center Bunny library creation skipped due to missing center.', $this->resolveLogContext([
+                'source' => 'job',
                 'center_id' => $this->centerId,
-            ]);
+            ]));
 
             return;
         }
@@ -52,9 +54,19 @@ class CreateCenterBunnyLibrary implements ShouldQueue
 
     public function failed(\Throwable $exception): void
     {
-        Log::error('Center Bunny library creation failed.', [
+        Log::error('Center Bunny library creation failed.', $this->resolveLogContext([
+            'source' => 'job',
             'center_id' => $this->centerId,
             'error' => $exception->getMessage(),
-        ]);
+        ]));
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }

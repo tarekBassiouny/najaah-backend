@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Bunny;
 
+use App\Services\Logging\LogContextResolver;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use ToshY\BunnyNet\BunnyHttpClient;
@@ -53,12 +55,21 @@ class BunnyStreamService
             );
             $data = $this->decodeResponse($response->getContents());
         } catch (BunnyHttpClientResponseException $exception) {
+            Log::warning('Bunny create video request failed.', $this->resolveLogContext([
+                'source' => 'api',
+                'library_id' => $libraryIdValue,
+                'error' => $exception->getMessage(),
+            ]));
             $data = $this->decodeResponse($exception->getMessage());
         }
 
         $id = $data['guid'] ?? $data['id'] ?? null;
 
         if (! is_string($id) || $id === '') {
+            Log::error('Bunny create video returned invalid id.', $this->resolveLogContext([
+                'source' => 'api',
+                'library_id' => $libraryIdValue,
+            ]));
             throw new \RuntimeException('Failed to create Bunny video.');
         }
 
@@ -93,6 +104,13 @@ class BunnyStreamService
 
             return $this->decodeResponse($response->getContents());
         } catch (BunnyHttpClientResponseException $exception) {
+            Log::warning('Bunny get video request failed.', $this->resolveLogContext([
+                'source' => 'api',
+                'library_id' => $libraryIdValue,
+                'video_id' => $videoGuid,
+                'error' => $exception->getMessage(),
+            ]));
+
             return $this->decodeResponse($exception->getMessage());
         }
     }
@@ -127,5 +145,14 @@ class BunnyStreamService
         }
 
         return ltrim(preg_replace('/^https?:\\/\\//', '', $apiUrl) ?? $apiUrl, '/');
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }

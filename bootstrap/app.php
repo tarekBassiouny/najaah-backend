@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureActiveEnrollment;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
+use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\RequirePermission;
 use App\Http\Middleware\RequireRole;
 use App\Http\Middleware\SetRequestLocale;
@@ -72,6 +74,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Global middleware
         $middleware->use([
+            RequestIdMiddleware::class,
             HandleCors::class,
         ]);
 
@@ -91,7 +94,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.mobile' => JwtMobileMiddleware::class,
             'jwt.admin' => JwtAdminMiddleware::class,
             'setlocale' => SetRequestLocale::class,
-            'enrollment.active' => \App\Http\Middleware\EnsureActiveEnrollment::class,
+            'enrollment.active' => EnsureActiveEnrollment::class,
             'require.permission' => RequirePermission::class,
             'require.role' => RequireRole::class,
         ]);

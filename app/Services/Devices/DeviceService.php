@@ -7,8 +7,10 @@ namespace App\Services\Devices;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Logging\LogContextResolver;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DeviceService implements DeviceServiceInterface
 {
@@ -20,6 +22,11 @@ class DeviceService implements DeviceServiceInterface
             $active = $this->getActiveDevice($user);
 
             if ($active !== null && $active->device_id !== $uuid) {
+                Log::warning('Device mismatch during registration.', $this->resolveLogContext([
+                    'source' => 'api',
+                    'user_id' => $user->id,
+                    'center_id' => $user->center_id,
+                ]));
                 $this->deny('DEVICE_MISMATCH', 'A different device is already active for this user.');
             }
 
@@ -61,6 +68,11 @@ class DeviceService implements DeviceServiceInterface
         $active = $this->getActiveDevice($user);
 
         if ($active === null || $active->device_id !== $uuid) {
+            Log::warning('Device mismatch during authorization.', $this->resolveLogContext([
+                'source' => 'api',
+                'user_id' => $user->id,
+                'center_id' => $user->center_id,
+            ]));
             $this->deny('DEVICE_MISMATCH', 'Device is not authorized for this user.');
         }
 
@@ -90,5 +102,14 @@ class DeviceService implements DeviceServiceInterface
                 'message' => $message,
             ],
         ], 403));
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }

@@ -13192,7 +13192,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpm9osmuh85mrp1HFengv" </code></pre></div>
+    --form "avatar=@/tmp/phpnq6rn3c4f0p559S9WZF" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13386,7 +13386,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpm9osmuh85mrp1HFengv</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpnq6rn3c4f0p559S9WZF</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13606,7 +13606,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpvofncc4aojo96AzECsS" </code></pre></div>
+    --form "avatar=@/tmp/php8fhs5m9dqpcf1nEgjVr" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13816,7 +13816,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpvofncc4aojo96AzECsS</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php8fhs5m9dqpcf1nEgjVr</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -14674,7 +14674,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phplnoi2kgoim3kchCXvfw" </code></pre></div>
+    --form "file=@/tmp/phpkb9td3t1iouf6aAD8AF" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14825,7 +14825,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phplnoi2kgoim3kchCXvfw</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpkb9td3t1iouf6aAD8AF</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;

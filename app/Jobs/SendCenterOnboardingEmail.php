@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Models\Center;
 use App\Models\User;
 use App\Notifications\AdminCenterOnboardingNotification;
+use App\Services\Logging\LogContextResolver;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -33,24 +34,45 @@ class SendCenterOnboardingEmail implements ShouldQueue
         $owner = User::find($this->ownerId);
 
         if (! $center instanceof Center || ! $owner instanceof User) {
-            Log::warning('Center onboarding email skipped due to missing data.', [
+            Log::warning('Center onboarding email skipped due to missing data.', $this->resolveLogContext([
+                'source' => 'job',
                 'center_id' => $this->centerId,
-                'owner_id' => $this->ownerId,
-            ]);
+                'user_id' => $this->ownerId,
+            ]));
 
             return;
         }
 
         if ($owner->email === null) {
-            Log::warning('Center onboarding email skipped due to missing email.', [
+            Log::warning('Center onboarding email skipped due to missing email.', $this->resolveLogContext([
+                'source' => 'job',
                 'center_id' => $center->id,
-                'owner_id' => $owner->id,
-            ]);
+                'user_id' => $owner->id,
+            ]));
 
             return;
         }
 
         $token = Password::broker()->createToken($owner);
         $owner->notify(new AdminCenterOnboardingNotification($center, $token));
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('Center onboarding email failed.', $this->resolveLogContext([
+            'source' => 'job',
+            'center_id' => $this->centerId,
+            'user_id' => $this->ownerId,
+            'error' => $exception->getMessage(),
+        ]));
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }

@@ -13,8 +13,10 @@ use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use App\Services\Logging\LogContextResolver;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class PlaybackAuthorizationService
 {
@@ -137,6 +139,10 @@ class PlaybackAuthorizationService
      */
     private function deny(string $code, string $message): void
     {
+        Log::warning('Playback authorization denied.', $this->resolveLogContext([
+            'source' => 'api',
+            'code' => $code,
+        ]));
         throw new HttpResponseException(response()->json([
             'success' => false,
             'error' => [
@@ -144,5 +150,14 @@ class PlaybackAuthorizationService
                 'message' => $message,
             ],
         ], 403));
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }

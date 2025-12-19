@@ -24,8 +24,6 @@ class OtpService implements OtpServiceInterface
             'user_id' => $user?->id,
             'phone' => $phone,
             'country_code' => $countryCode,
-            'otp' => (string) rand(100000, 999999),
-            'token' => $token,
             'otp_code' => (string) rand(100000, 999999),
             'otp_token' => $token,
             'provider' => 'sms',

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Bunny;
 
+use App\Services\Logging\LogContextResolver;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use ToshY\BunnyNet\BunnyHttpClient;
@@ -43,12 +45,21 @@ class BunnyLibraryService
             );
             $data = $this->decodeResponse($response->getContents());
         } catch (BunnyHttpClientResponseException $exception) {
+            Log::warning('Bunny create library request failed.', $this->resolveLogContext([
+                'source' => 'api',
+                'library_name' => $name,
+                'error' => $exception->getMessage(),
+            ]));
             $data = $this->decodeResponse($exception->getMessage());
         }
 
         $id = $data['Id'] ?? $data['id'] ?? null;
 
         if (! is_numeric($id)) {
+            Log::error('Bunny create library returned invalid id.', $this->resolveLogContext([
+                'source' => 'api',
+                'library_name' => $name,
+            ]));
             throw new \RuntimeException('Failed to create Bunny library.');
         }
 
@@ -74,6 +85,11 @@ class BunnyLibraryService
 
             return $this->decodeResponse($response->getContents());
         } catch (BunnyHttpClientResponseException $exception) {
+            Log::warning('Bunny list libraries request failed.', $this->resolveLogContext([
+                'source' => 'api',
+                'error' => $exception->getMessage(),
+            ]));
+
             return $this->decodeResponse($exception->getMessage());
         }
     }
@@ -108,5 +124,14 @@ class BunnyLibraryService
         }
 
         return ltrim(preg_replace('/^https?:\\/\\//', '', $apiUrl) ?? $apiUrl, '/');
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }

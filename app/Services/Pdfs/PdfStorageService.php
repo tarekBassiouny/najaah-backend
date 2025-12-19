@@ -11,8 +11,10 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Courses\CourseAttachmentService;
+use App\Services\Logging\LogContextResolver;
 use App\Services\Sections\SectionAttachmentService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
@@ -43,6 +45,11 @@ class PdfStorageService
         $path = $file->store('pdfs', 'local');
 
         if ($path === false) {
+            Log::error('PDF storage failed.', $this->resolveLogContext([
+                'source' => 'api',
+                'user_id' => $creator?->id,
+                'center_id' => $course?->center_id ?? $creator?->center_id,
+            ]));
             throw new RuntimeException('Failed to store PDF file.');
         }
 
@@ -109,5 +116,14 @@ class PdfStorageService
                 $pivot->save();
             }
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }
