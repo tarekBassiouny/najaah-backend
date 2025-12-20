@@ -22,11 +22,11 @@ class RequestIdMiddleware
 
         try {
             $response = $next($request);
-        } catch (\Throwable $exception) {
+        } catch (\Throwable $throwable) {
             /** @var ExceptionHandler $handler */
             $handler = app(ExceptionHandler::class);
-            $handler->report($exception);
-            $response = $handler->render($request, $exception);
+            $handler->report($throwable);
+            $response = $handler->render($request, $throwable);
         }
 
         $response->headers->set('X-Request-Id', $requestId);

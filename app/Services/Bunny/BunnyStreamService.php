@@ -54,13 +54,13 @@ class BunnyStreamService
                 new CreateVideo($libraryIdValue, $payload)
             );
             $data = $this->decodeResponse($response->getContents());
-        } catch (BunnyHttpClientResponseException $exception) {
+        } catch (BunnyHttpClientResponseException $bunnyHttpClientResponseException) {
             Log::warning('Bunny create video request failed.', $this->resolveLogContext([
                 'source' => 'api',
                 'library_id' => $libraryIdValue,
-                'error' => $exception->getMessage(),
+                'error' => $bunnyHttpClientResponseException->getMessage(),
             ]));
-            $data = $this->decodeResponse($exception->getMessage());
+            $data = $this->decodeResponse($bunnyHttpClientResponseException->getMessage());
         }
 
         $id = $data['guid'] ?? $data['id'] ?? null;
@@ -74,7 +74,7 @@ class BunnyStreamService
         }
 
         $uploadUrl = $data['upload_url']
-            ?? $this->apiUrlValue."/library/{$libraryIdValue}/videos/{$id}";
+            ?? $this->apiUrlValue.sprintf('/library/%d/videos/%s', $libraryIdValue, $id);
 
         return [
             'id' => $id,
@@ -103,15 +103,15 @@ class BunnyStreamService
             );
 
             return $this->decodeResponse($response->getContents());
-        } catch (BunnyHttpClientResponseException $exception) {
+        } catch (BunnyHttpClientResponseException $bunnyHttpClientResponseException) {
             Log::warning('Bunny get video request failed.', $this->resolveLogContext([
                 'source' => 'api',
                 'library_id' => $libraryIdValue,
                 'video_id' => $videoGuid,
-                'error' => $exception->getMessage(),
+                'error' => $bunnyHttpClientResponseException->getMessage(),
             ]));
 
-            return $this->decodeResponse($exception->getMessage());
+            return $this->decodeResponse($bunnyHttpClientResponseException->getMessage());
         }
     }
 

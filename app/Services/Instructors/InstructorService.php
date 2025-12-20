@@ -71,6 +71,7 @@ class InstructorService implements InstructorServiceInterface
             if ($path === false) {
                 throw new RuntimeException('Failed to store instructor avatar.');
             }
+
             $data['avatar_url'] = Storage::disk($disk)->url($path);
         }
 

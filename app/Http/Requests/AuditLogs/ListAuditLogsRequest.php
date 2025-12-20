@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\AuditLogs;
 
+use App\Models\Course;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -40,7 +41,7 @@ class ListAuditLogsRequest extends FormRequest
         return [
             'entity_type' => [
                 'description' => 'Filter by entity class/type.',
-                'example' => 'App\\Models\\Course',
+                'example' => Course::class,
             ],
             'entity_id' => [
                 'description' => 'Filter by specific entity id.',

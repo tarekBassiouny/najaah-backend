@@ -54,10 +54,10 @@ class StoreInstructorRequest extends FormRequest
                 if (is_array($value)) {
                     $invalid = Arr::first($value, static fn ($v): bool => ! is_string($v));
                     if ($invalid !== null) {
-                        $validator->errors()->add("metadata.{$key}", 'Metadata arrays must contain only strings.');
+                        $validator->errors()->add('metadata.'.$key, 'Metadata arrays must contain only strings.');
                     }
                 } elseif (! is_string($value) && ! is_numeric($value)) {
-                    $validator->errors()->add("metadata.{$key}", 'Metadata value must be a string, number, or array of strings.');
+                    $validator->errors()->add('metadata.'.$key, 'Metadata value must be a string, number, or array of strings.');
                 }
             }
         });

@@ -21,7 +21,7 @@ class HealthController extends Controller
 
         try {
             DB::select('select 1');
-        } catch (\Throwable $exception) {
+        } catch (\Throwable $throwable) {
             $checks['db'] = false;
             $status = 503;
         }
@@ -32,7 +32,7 @@ class HealthController extends Controller
             if (! $checks['cache']) {
                 $status = 503;
             }
-        } catch (\Throwable $exception) {
+        } catch (\Throwable $throwable) {
             $checks['cache'] = false;
             $status = 503;
         }

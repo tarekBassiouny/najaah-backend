@@ -44,13 +44,13 @@ class BunnyLibraryService
                 new AddVideoLibrary(['Name' => $name])
             );
             $data = $this->decodeResponse($response->getContents());
-        } catch (BunnyHttpClientResponseException $exception) {
+        } catch (BunnyHttpClientResponseException $bunnyHttpClientResponseException) {
             Log::warning('Bunny create library request failed.', $this->resolveLogContext([
                 'source' => 'api',
                 'library_name' => $name,
-                'error' => $exception->getMessage(),
+                'error' => $bunnyHttpClientResponseException->getMessage(),
             ]));
-            $data = $this->decodeResponse($exception->getMessage());
+            $data = $this->decodeResponse($bunnyHttpClientResponseException->getMessage());
         }
 
         $id = $data['Id'] ?? $data['id'] ?? null;
@@ -84,13 +84,13 @@ class BunnyLibraryService
             );
 
             return $this->decodeResponse($response->getContents());
-        } catch (BunnyHttpClientResponseException $exception) {
+        } catch (BunnyHttpClientResponseException $bunnyHttpClientResponseException) {
             Log::warning('Bunny list libraries request failed.', $this->resolveLogContext([
                 'source' => 'api',
-                'error' => $exception->getMessage(),
+                'error' => $bunnyHttpClientResponseException->getMessage(),
             ]));
 
-            return $this->decodeResponse($exception->getMessage());
+            return $this->decodeResponse($bunnyHttpClientResponseException->getMessage());
         }
     }
 
