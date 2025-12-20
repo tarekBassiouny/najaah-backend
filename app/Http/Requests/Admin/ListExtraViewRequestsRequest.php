@@ -21,7 +21,7 @@ class ListExtraViewRequestsRequest extends FormRequest
         return [
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
-            'status' => ['sometimes', 'integer'],
+            'status' => ['sometimes', 'string', 'in:PENDING,APPROVED,REJECTED'],
             'center_id' => ['sometimes', 'integer'],
             'user_id' => ['sometimes', 'integer'],
             'date_from' => ['sometimes', 'date'],
@@ -45,7 +45,7 @@ class ListExtraViewRequestsRequest extends FormRequest
             ],
             'status' => [
                 'description' => 'Filter by request status.',
-                'example' => '1',
+                'example' => 'PENDING',
             ],
             'center_id' => [
                 'description' => 'Filter by center ID (super admin only).',

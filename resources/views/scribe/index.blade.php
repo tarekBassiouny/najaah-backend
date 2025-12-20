@@ -400,7 +400,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: December 19, 2025</li>
+        <li>Last updated: December 20, 2025</li>
     </ul>
 </div>
 
@@ -5198,7 +5198,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;page=1&amp;slug=center-1&amp;type=1" \
+    --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;page=1&amp;slug=center-1&amp;type=1&amp;search=Academy" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -5214,6 +5214,7 @@ const params = {
     "page": "1",
     "slug": "center-1",
     "type": "1",
+    "search": "Academy",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -5327,7 +5328,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="15"
                data-component="query">
     <br>
-<p>Items per page. Example: <code>15</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
@@ -5363,7 +5364,19 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="1"
                data-component="query">
     <br>
-<p>Filter by center type. Example: <code>1</code></p>
+<p>Filter centers by type. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-admin-centers"
+               value="Academy"
+               data-component="query">
+    <br>
+<p>Search centers by name. Example: <code>Academy</code></p>
             </div>
                 </form>
 
@@ -7016,7 +7029,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/courses?per_page=15" \
+    --get "http://xyz-lms.test/api/v1/admin/courses?per_page=15&amp;page=1&amp;center_id=2&amp;category_id=3&amp;primary_instructor_id=5&amp;search=Biology" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -7029,6 +7042,11 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 const params = {
     "per_page": "15",
+    "page": "1",
+    "center_id": "2",
+    "category_id": "3",
+    "primary_instructor_id": "5",
+    "search": "Biology",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -7142,7 +7160,67 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="15"
                data-component="query">
     <br>
-<p>Items per page. Example: <code>15</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-courses"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-courses"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter courses by center ID (super admin only). Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="GETapi-v1-admin-courses"
+               value="3"
+               data-component="query">
+    <br>
+<p>Filter courses by category ID. Example: <code>3</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>primary_instructor_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="primary_instructor_id"                data-endpoint="GETapi-v1-admin-courses"
+               value="5"
+               data-component="query">
+    <br>
+<p>Filter courses by primary instructor ID. Example: <code>5</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-admin-courses"
+               value="Biology"
+               data-component="query">
+    <br>
+<p>Search courses by title. Example: <code>Biology</code></p>
             </div>
                 </form>
 
@@ -12005,7 +12083,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/videos" \
+    --get "http://xyz-lms.test/api/v1/admin/videos?per_page=15&amp;page=1&amp;center_id=2&amp;course_id=10&amp;search=Intro" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -12015,6 +12093,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <pre><code class="language-javascript">const url = new URL(
     "http://xyz-lms.test/api/v1/admin/videos"
 );
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "center_id": "2",
+    "course_id": "10",
+    "search": "Intro",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
     "Content-Type": "application/json",
@@ -12114,7 +12202,68 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>Example: <code>en</code></p>
             </div>
-                        </form>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-videos"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-videos"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-videos"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter videos by center ID (super admin only). Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="GETapi-v1-admin-videos"
+               value="10"
+               data-component="query">
+    <br>
+<p>Filter videos by course ID. Example: <code>10</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-admin-videos"
+               value="Intro"
+               data-component="query">
+    <br>
+<p>Search videos by title. Example: <code>Intro</code></p>
+            </div>
+                </form>
 
                     <h2 id="endpoints-GETapi-v1-admin-video-upload-sessions">GET api/v1/admin/video-upload-sessions</h2>
 
@@ -13198,7 +13347,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpetp39rdet91m3H9MxiF" </code></pre></div>
+    --form "avatar=@/tmp/php4oifuo6gs7737B1dTiF" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13392,7 +13541,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpetp39rdet91m3H9MxiF</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php4oifuo6gs7737B1dTiF</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13612,7 +13761,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpngac0o1ttsl42T7cbdG" </code></pre></div>
+    --form "avatar=@/tmp/phperlahsh0459nfEhqBZL" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13822,7 +13971,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpngac0o1ttsl42T7cbdG</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phperlahsh0459nfEhqBZL</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -14680,7 +14829,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpdaj04ftkl7qi2D0m2Cu" </code></pre></div>
+    --form "file=@/tmp/phpe6610ctv3v7o3N6Mtcr" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14831,7 +14980,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpdaj04ftkl7qi2D0m2Cu</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpe6610ctv3v7o3N6Mtcr</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -15724,7 +15873,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/extra-view-requests?per_page=15&amp;page=1&amp;status=1&amp;center_id=2&amp;user_id=5&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
+    --get "http://xyz-lms.test/api/v1/admin/extra-view-requests?per_page=15&amp;page=1&amp;status=PENDING&amp;center_id=2&amp;user_id=5&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -15738,7 +15887,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const params = {
     "per_page": "15",
     "page": "1",
-    "status": "1",
+    "status": "PENDING",
     "center_id": "2",
     "user_id": "5",
     "date_from": "2025-01-01",
@@ -15872,15 +16021,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
+<small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="status"                data-endpoint="GETapi-v1-admin-extra-view-requests"
-               value="1"
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="PENDING"
                data-component="query">
     <br>
-<p>Filter by request status. Example: <code>1</code></p>
+<p>Filter by request status. Example: <code>PENDING</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>PENDING</code></li> <li><code>APPROVED</code></li> <li><code>REJECTED</code></li></ul>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
@@ -16277,7 +16428,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/device-change-requests?per_page=15&amp;page=1&amp;status=1&amp;center_id=2&amp;user_id=5&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
+    --get "http://xyz-lms.test/api/v1/admin/device-change-requests?per_page=15&amp;page=1&amp;status=PENDING&amp;center_id=2&amp;user_id=5&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -16291,7 +16442,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const params = {
     "per_page": "15",
     "page": "1",
-    "status": "1",
+    "status": "PENDING",
     "center_id": "2",
     "user_id": "5",
     "date_from": "2025-01-01",
@@ -16425,15 +16576,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
+<small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="status"                data-endpoint="GETapi-v1-admin-device-change-requests"
-               value="1"
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="PENDING"
                data-component="query">
     <br>
-<p>Filter by request status. Example: <code>1</code></p>
+<p>Filter by request status. Example: <code>PENDING</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>PENDING</code></li> <li><code>APPROVED</code></li> <li><code>REJECTED</code></li></ul>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;

@@ -6,7 +6,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ListCentersRequest extends FormRequest
+class ListVideosRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -21,8 +21,8 @@ class ListCentersRequest extends FormRequest
         return [
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
-            'slug' => ['sometimes', 'string'],
-            'type' => ['sometimes', 'integer'],
+            'center_id' => ['sometimes', 'integer'],
+            'course_id' => ['sometimes', 'integer'],
             'search' => ['sometimes', 'string'],
         ];
     }
@@ -41,17 +41,17 @@ class ListCentersRequest extends FormRequest
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
             ],
-            'slug' => [
-                'description' => 'Filter centers by slug.',
-                'example' => 'center-1',
+            'center_id' => [
+                'description' => 'Filter videos by center ID (super admin only).',
+                'example' => '2',
             ],
-            'type' => [
-                'description' => 'Filter centers by type.',
-                'example' => '1',
+            'course_id' => [
+                'description' => 'Filter videos by course ID.',
+                'example' => '10',
             ],
             'search' => [
-                'description' => 'Search centers by name.',
-                'example' => 'Academy',
+                'description' => 'Search videos by title.',
+                'example' => 'Intro',
             ],
         ];
     }

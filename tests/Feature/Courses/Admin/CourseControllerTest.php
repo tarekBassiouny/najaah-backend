@@ -5,13 +5,18 @@ declare(strict_types=1);
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\Course;
+use App\Models\Instructor;
 use App\Models\Pdf;
+use App\Models\Permission;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
+use App\Models\Role;
 use App\Models\Section;
+use App\Models\User;
 use App\Models\Video;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 uses(RefreshDatabase::class)->group('courses', 'admin');
@@ -28,6 +33,104 @@ it('lists courses', function (): void {
     $response = $this->getJson('/api/v1/admin/courses');
 
     $response->assertOk()->assertJsonPath('success', true);
+});
+
+it('filters courses by title search', function (): void {
+    Course::factory()->create([
+        'title_translations' => ['en' => 'Alpha Biology'],
+    ]);
+    Course::factory()->create([
+        'title_translations' => ['en' => 'Beta Physics'],
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/courses?search=Alpha');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Alpha Biology');
+});
+
+it('filters courses by category and primary instructor', function (): void {
+    $category = Category::factory()->create();
+    $instructor = Instructor::factory()->create();
+
+    Course::factory()->create([
+        'category_id' => $category->id,
+        'primary_instructor_id' => $instructor->id,
+        'title_translations' => ['en' => 'Filtered Course'],
+    ]);
+    Course::factory()->create([
+        'title_translations' => ['en' => 'Other Course'],
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/courses?category_id='.$category->id.'&primary_instructor_id='.$instructor->id);
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Filtered Course');
+});
+
+it('allows super admin to filter courses by center', function (): void {
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+
+    Course::factory()->create([
+        'center_id' => $centerA->id,
+        'title_translations' => ['en' => 'Center A Course'],
+    ]);
+    Course::factory()->create([
+        'center_id' => $centerB->id,
+        'title_translations' => ['en' => 'Center B Course'],
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/courses?center_id='.$centerA->id);
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Center A Course');
+});
+
+it('scopes courses to admin center when not super admin', function (): void {
+    $permission = Permission::firstOrCreate(['name' => 'course.manage'], [
+        'description' => 'Permission: course.manage',
+    ]);
+    $role = Role::factory()->create(['slug' => 'course_admin']);
+    $role->permissions()->sync([$permission->id]);
+
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $centerA->id,
+    ]);
+    $admin->roles()->sync([$role->id]);
+    $admin->centers()->sync([$centerA->id => ['type' => 'admin']]);
+
+    Course::factory()->create([
+        'center_id' => $centerA->id,
+        'title_translations' => ['en' => 'Center A Course'],
+    ]);
+    Course::factory()->create([
+        'center_id' => $centerB->id,
+        'title_translations' => ['en' => 'Center B Course'],
+    ]);
+
+    $token = (string) Auth::guard('admin')->attempt([
+        'email' => $admin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/courses?center_id='.$centerB->id, [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+    ]);
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Center A Course');
 });
 
 it('creates course', function (): void {

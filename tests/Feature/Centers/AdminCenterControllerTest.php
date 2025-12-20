@@ -95,6 +95,19 @@ it('lists centers with pagination', function (): void {
     $response->assertOk()->assertJsonPath('meta.per_page', 2);
 });
 
+it('searches centers by name', function (): void {
+    Center::factory()->create([
+        'name_translations' => ['en' => 'Alpha Academy'],
+    ]);
+    Center::factory()->create([
+        'name_translations' => ['en' => 'Beta Academy'],
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/centers?search=Alpha');
+
+    $response->assertOk()->assertJsonCount(1, 'data');
+});
+
 it('updates a center but keeps slug immutable', function (): void {
     $center = Center::factory()->create(['slug' => 'immutable']);
 

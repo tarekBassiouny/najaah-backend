@@ -12,6 +12,7 @@ use App\Http\Resources\Admin\AdminUserResource;
 use App\Http\Resources\CenterResource;
 use App\Models\Center;
 use App\Models\User;
+use App\Services\Admin\CenterQueryService;
 use App\Services\Centers\CenterOnboardingService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use Illuminate\Http\JsonResponse;
@@ -21,21 +22,17 @@ class CenterController extends Controller
 {
     public function __construct(
         private readonly CenterServiceInterface $centerService,
-        private readonly CenterOnboardingService $onboardingService
+        private readonly CenterOnboardingService $onboardingService,
+        private readonly CenterQueryService $queryService
     ) {}
 
-    /**
-     * @queryParam per_page int Items per page. Example: 15
-     * @queryParam slug string Filter centers by slug. Example: center-1
-     * @queryParam type int Filter by center type. Example: 1
-     */
     public function index(ListCentersRequest $request): JsonResponse
     {
         $perPage = (int) $request->integer('per_page', 15);
         /** @var array<string, mixed> $filters */
-        $filters = $request->only(['slug', 'type']);
+        $filters = $request->validated();
 
-        $paginator = $this->centerService->paginate($perPage, $filters);
+        $paginator = $this->queryService->build($filters)->paginate($perPage);
 
         return response()->json([
             'success' => true,

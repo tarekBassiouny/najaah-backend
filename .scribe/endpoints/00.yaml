@@ -1686,12 +1686,12 @@ endpoints:
       per_page:
         custom: []
         name: per_page
-        description: 'Items per page.'
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
         required: false
         example: 15
         type: integer
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
       page:
@@ -1713,18 +1713,29 @@ endpoints:
         example: center-1
         type: string
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
       type:
         custom: []
         name: type
-        description: 'Filter by center type.'
+        description: 'Filter centers by type.'
         required: false
         example: 1
         type: integer
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      search:
+        custom: []
+        name: search
+        description: 'Search centers by name.'
+        required: false
+        example: Academy
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanQueryParameters:
@@ -1732,6 +1743,7 @@ endpoints:
       page: 1
       slug: center-1
       type: 1
+      search: Academy
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -2513,16 +2525,76 @@ endpoints:
       per_page:
         custom: []
         name: per_page
-        description: 'Items per page.'
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
         required: false
         example: 15
         type: integer
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter courses by center ID (super admin only).'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      category_id:
+        custom: []
+        name: category_id
+        description: 'Filter courses by category ID.'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      primary_instructor_id:
+        custom: []
+        name: primary_instructor_id
+        description: 'Filter courses by primary instructor ID.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      search:
+        custom: []
+        name: search
+        description: 'Search courses by title.'
+        required: false
+        example: Biology
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanQueryParameters:
       per_page: 15
+      page: 1
+      center_id: 2
+      category_id: 3
+      primary_instructor_id: 5
+      search: Biology
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -4624,8 +4696,68 @@ endpoints:
       X-Locale: en
     urlParameters: []
     cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
+    queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter videos by center ID (super admin only).'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Filter videos by course ID.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      search:
+        custom: []
+        name: search
+        description: 'Search videos by title.'
+        required: false
+        example: Intro
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      per_page: 15
+      page: 1
+      center_id: 2
+      course_id: 10
+      search: Intro
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -6323,9 +6455,12 @@ endpoints:
         name: status
         description: 'Filter by request status.'
         required: false
-        example: 1
-        type: integer
-        enumValues: []
+        example: PENDING
+        type: string
+        enumValues:
+          - PENDING
+          - APPROVED
+          - REJECTED
         exampleWasSpecified: false
         nullable: false
         deprecated: false
@@ -6376,7 +6511,7 @@ endpoints:
     cleanQueryParameters:
       per_page: 15
       page: 1
-      status: 1
+      status: PENDING
       center_id: 2
       user_id: 5
       date_from: '2025-01-01'
@@ -6563,9 +6698,12 @@ endpoints:
         name: status
         description: 'Filter by request status.'
         required: false
-        example: 1
-        type: integer
-        enumValues: []
+        example: PENDING
+        type: string
+        enumValues:
+          - PENDING
+          - APPROVED
+          - REJECTED
         exampleWasSpecified: false
         nullable: false
         deprecated: false
@@ -6616,7 +6754,7 @@ endpoints:
     cleanQueryParameters:
       per_page: 15
       page: 1
-      status: 1
+      status: PENDING
       center_id: 2
       user_id: 5
       date_from: '2025-01-01'

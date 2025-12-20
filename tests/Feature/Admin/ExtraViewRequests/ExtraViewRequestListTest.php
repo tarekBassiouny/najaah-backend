@@ -70,16 +70,16 @@ it('applies filters and pagination', function (): void {
     ExtraViewRequest::factory()->create([
         'center_id' => $center->id,
         'user_id' => $user->id,
-        'status' => 2,
+        'status' => ExtraViewRequest::STATUS_APPROVED,
         'created_at' => now()->subDays(2),
     ]);
     ExtraViewRequest::factory()->create([
         'center_id' => $center->id,
-        'status' => 1,
+        'status' => ExtraViewRequest::STATUS_PENDING,
         'created_at' => now()->subDays(10),
     ]);
 
-    $response = $this->actingAs($super, 'admin')->getJson('/api/v1/admin/extra-view-requests?status=2&user_id='.$user->id.'&date_from='.now()->subDays(3)->toDateString().'&per_page=1');
+    $response = $this->actingAs($super, 'admin')->getJson('/api/v1/admin/extra-view-requests?status='.ExtraViewRequest::STATUS_APPROVED.'&user_id='.$user->id.'&date_from='.now()->subDays(3)->toDateString().'&per_page=1');
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')

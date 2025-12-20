@@ -10,7 +10,6 @@ use App\Actions\Courses\AssignVideoToCourseAction;
 use App\Actions\Courses\CloneCourseAction;
 use App\Actions\Courses\CreateCourseAction;
 use App\Actions\Courses\DeleteCourseAction;
-use App\Actions\Courses\ListCoursesAction;
 use App\Actions\Courses\PublishCourseAction;
 use App\Actions\Courses\RemovePdfFromCourseAction;
 use App\Actions\Courses\RemoveVideoFromCourseAction;
@@ -19,6 +18,7 @@ use App\Actions\Courses\ShowCourseAction;
 use App\Actions\Courses\ToggleSectionVisibilityAction;
 use App\Actions\Courses\UpdateCourseAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ListCoursesRequest;
 use App\Http\Requests\Courses\AddSectionRequest;
 use App\Http\Requests\Courses\AssignPdfRequest;
 use App\Http\Requests\Courses\AssignVideoRequest;
@@ -32,20 +32,21 @@ use App\Http\Resources\Sections\SectionResource;
 use App\Models\Course;
 use App\Models\Section;
 use App\Models\User;
+use App\Services\Admin\CourseQueryService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class CourseController extends Controller
 {
-    /**
-     * @queryParam per_page int Items per page. Example: 15
-     */
     public function index(
-        ListCoursesAction $listCoursesAction
+        ListCoursesRequest $request,
+        CourseQueryService $queryService
     ): JsonResponse {
         $admin = $this->requireAdmin();
-        $perPage = (int) request()->query('per_page', 15);
-        $paginator = $listCoursesAction->execute($admin, $perPage);
+        $perPage = (int) $request->integer('per_page', 15);
+        /** @var array<string, mixed> $filters */
+        $filters = $request->validated();
+        $paginator = $queryService->build($admin, $filters)->paginate($perPage);
 
         return response()->json([
             'success' => true,

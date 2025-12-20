@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "40df8464-ec37-4c17-9195-9d9862574456",
+        "_postman_id": "5f2469cb-82e1-426c-ac6e-1527f8803326",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -1297,7 +1297,7 @@
                                 {
                                     "key": "per_page",
                                     "value": "15",
-                                    "description": "Items per page.",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
                                     "disabled": false
                                 },
                                 {
@@ -1315,11 +1315,17 @@
                                 {
                                     "key": "type",
                                     "value": "1",
-                                    "description": "Filter by center type.",
+                                    "description": "Filter centers by type.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "Academy",
+                                    "description": "Search centers by name.",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers?per_page=15&page=1&slug=center-1&type=1"
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers?per_page=15&page=1&slug=center-1&type=1&search=Academy"
                         },
                         "method": "GET",
                         "header": [
@@ -1670,11 +1676,41 @@
                                 {
                                     "key": "per_page",
                                     "value": "15",
-                                    "description": "Items per page.",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "center_id",
+                                    "value": "2",
+                                    "description": "Filter courses by center ID (super admin only).",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": "3",
+                                    "description": "Filter courses by category ID.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "primary_instructor_id",
+                                    "value": "5",
+                                    "description": "Filter courses by primary instructor ID.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "Biology",
+                                    "description": "Search courses by title.",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/courses?per_page=15"
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/courses?per_page=15&page=1&center_id=2&category_id=3&primary_instructor_id=5&search=Biology"
                         },
                         "method": "GET",
                         "header": [
@@ -2939,8 +2975,39 @@
                         "url": {
                             "host": "{{baseUrl}}",
                             "path": "api\/v1\/admin\/videos",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/videos"
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "center_id",
+                                    "value": "2",
+                                    "description": "Filter videos by center ID (super admin only).",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "course_id",
+                                    "value": "10",
+                                    "description": "Filter videos by course ID.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "Intro",
+                                    "description": "Search videos by title.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/videos?per_page=15&page=1&center_id=2&course_id=10&search=Intro"
                         },
                         "method": "GET",
                         "header": [
@@ -4034,7 +4101,7 @@
                                 },
                                 {
                                     "key": "status",
-                                    "value": "1",
+                                    "value": "PENDING",
                                     "description": "Filter by request status.",
                                     "disabled": false
                                 },
@@ -4063,7 +4130,7 @@
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/extra-view-requests?per_page=15&page=1&status=1&center_id=2&user_id=5&date_from=2025-01-01&date_to=2025-12-31"
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/extra-view-requests?per_page=15&page=1&status=PENDING&center_id=2&user_id=5&date_from=2025-01-01&date_to=2025-12-31"
                         },
                         "method": "GET",
                         "header": [
@@ -4195,7 +4262,7 @@
                                 },
                                 {
                                     "key": "status",
-                                    "value": "1",
+                                    "value": "PENDING",
                                     "description": "Filter by request status.",
                                     "disabled": false
                                 },
@@ -4224,7 +4291,7 @@
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/device-change-requests?per_page=15&page=1&status=1&center_id=2&user_id=5&date_from=2025-01-01&date_to=2025-12-31"
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/device-change-requests?per_page=15&page=1&status=PENDING&center_id=2&user_id=5&date_from=2025-01-01&date_to=2025-12-31"
                         },
                         "method": "GET",
                         "header": [

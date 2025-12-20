@@ -6,7 +6,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ListCentersRequest extends FormRequest
+class ListCoursesRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -21,8 +21,9 @@ class ListCentersRequest extends FormRequest
         return [
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
-            'slug' => ['sometimes', 'string'],
-            'type' => ['sometimes', 'integer'],
+            'center_id' => ['sometimes', 'integer'],
+            'category_id' => ['sometimes', 'integer'],
+            'primary_instructor_id' => ['sometimes', 'integer'],
             'search' => ['sometimes', 'string'],
         ];
     }
@@ -41,17 +42,21 @@ class ListCentersRequest extends FormRequest
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
             ],
-            'slug' => [
-                'description' => 'Filter centers by slug.',
-                'example' => 'center-1',
+            'center_id' => [
+                'description' => 'Filter courses by center ID (super admin only).',
+                'example' => '2',
             ],
-            'type' => [
-                'description' => 'Filter centers by type.',
-                'example' => '1',
+            'category_id' => [
+                'description' => 'Filter courses by category ID.',
+                'example' => '3',
+            ],
+            'primary_instructor_id' => [
+                'description' => 'Filter courses by primary instructor ID.',
+                'example' => '5',
             ],
             'search' => [
-                'description' => 'Search centers by name.',
-                'example' => 'Academy',
+                'description' => 'Search courses by title.',
+                'example' => 'Biology',
             ],
         ];
     }

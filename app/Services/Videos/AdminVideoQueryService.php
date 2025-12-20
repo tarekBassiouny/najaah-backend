@@ -58,12 +58,27 @@ class AdminVideoQueryService
      */
     private function applyFilters(Builder $query, User $admin, array $filters): Builder
     {
-        if (isset($filters['center_id']) && is_numeric($filters['center_id'])) {
-            $centerId = (int) $filters['center_id'];
-            $this->centerScopeService->assertAdminCenterId($admin, $centerId);
-            $query->whereHas('creator', static function (Builder $builder) use ($centerId): void {
-                $builder->where('center_id', $centerId);
+        if (isset($filters['course_id']) && is_numeric($filters['course_id'])) {
+            $courseId = (int) $filters['course_id'];
+            $query->whereHas('courses', static function (Builder $builder) use ($courseId): void {
+                $builder->where('courses.id', $courseId);
             });
+        }
+
+        if (isset($filters['search']) && is_string($filters['search'])) {
+            $term = trim($filters['search']);
+            if ($term !== '') {
+                $query->where('title_translations', 'like', '%'.$term.'%');
+            }
+        }
+
+        if ($admin->hasRole('super_admin')) {
+            if (isset($filters['center_id']) && is_numeric($filters['center_id'])) {
+                $centerId = (int) $filters['center_id'];
+                $query->whereHas('creator', static function (Builder $builder) use ($centerId): void {
+                    $builder->where('center_id', $centerId);
+                });
+            }
         }
 
         return $query;

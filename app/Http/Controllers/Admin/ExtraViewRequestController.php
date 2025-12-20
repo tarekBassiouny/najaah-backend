@@ -12,16 +12,15 @@ use App\Http\Resources\ExtraViewRequestListResource;
 use App\Http\Resources\ExtraViewRequestResource;
 use App\Models\ExtraViewRequest;
 use App\Models\User;
-use App\Services\Centers\CenterScopeService;
+use App\Services\Admin\ExtraViewRequestQueryService;
 use App\Services\Playback\ExtraViewRequestService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Carbon;
 
 class ExtraViewRequestController extends Controller
 {
     public function __construct(
         private readonly ExtraViewRequestService $service,
-        private readonly CenterScopeService $centerScopeService
+        private readonly ExtraViewRequestQueryService $queryService
     ) {}
 
     public function index(ListExtraViewRequestsRequest $request): JsonResponse
@@ -40,37 +39,8 @@ class ExtraViewRequestController extends Controller
         }
 
         $perPage = (int) $request->integer('per_page', 15);
-        $query = ExtraViewRequest::query();
-
-        if ($request->filled('status')) {
-            $query->where('status', (int) $request->input('status'));
-        }
-
-        if ($request->filled('user_id')) {
-            $query->where('user_id', (int) $request->input('user_id'));
-        }
-
-        $dateFrom = $request->input('date_from');
-        if (is_string($dateFrom) && $dateFrom !== '') {
-            $query->where('created_at', '>=', Carbon::parse($dateFrom)->startOfDay());
-        }
-
-        $dateTo = $request->input('date_to');
-        if (is_string($dateTo) && $dateTo !== '') {
-            $query->where('created_at', '<=', Carbon::parse($dateTo)->endOfDay());
-        }
-
-        if ($admin->hasRole('super_admin')) {
-            if ($request->filled('center_id')) {
-                $query->where('center_id', (int) $request->input('center_id'));
-            }
-        } else {
-            $centerId = $admin->center_id;
-            $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);
-            $query->where('center_id', (int) $centerId);
-        }
-
-        $paginator = $query->orderByDesc('created_at')->paginate($perPage);
+        $filters = $request->validated();
+        $paginator = $this->queryService->build($admin, $filters)->paginate($perPage);
 
         return response()->json([
             'success' => true,
