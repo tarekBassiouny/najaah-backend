@@ -4,37 +4,29 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Actions\Instructors\CreateInstructorAction;
-use App\Actions\Instructors\DeleteInstructorAction;
 use App\Actions\Instructors\ShowInstructorAction;
-use App\Actions\Instructors\UpdateInstructorAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\ListInstructorsRequest;
-use App\Http\Requests\Instructor\StoreInstructorRequest;
-use App\Http\Requests\Instructor\UpdateInstructorRequest;
+use App\Http\Requests\Instructor\ListCenterInstructorsRequest;
 use App\Http\Resources\InstructorCollection;
 use App\Http\Resources\InstructorResource;
 use App\Models\Instructor;
 use App\Models\User;
-use App\Services\Admin\InstructorQueryService;
+use App\Services\Centers\CenterScopeService;
 use Illuminate\Http\JsonResponse;
 
 class InstructorController extends Controller
 {
     public function __construct(
-        private readonly CreateInstructorAction $createAction,
-        private readonly UpdateInstructorAction $updateAction,
-        private readonly DeleteInstructorAction $deleteAction,
         private readonly ShowInstructorAction $showAction,
-        private readonly InstructorQueryService $queryService
+        private readonly CenterScopeService $centerScopeService
     ) {}
 
-    public function index(ListInstructorsRequest $request): JsonResponse
+    public function index(ListCenterInstructorsRequest $request): JsonResponse
     {
-        /** @var User|null $admin */
-        $admin = $request->user();
+        /** @var User|null $student */
+        $student = $request->user();
 
-        if (! $admin instanceof User) {
+        if (! $student instanceof User) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -47,7 +39,24 @@ class InstructorController extends Controller
         $perPage = (int) $request->integer('per_page', 15);
         /** @var array<string, mixed> $filters */
         $filters = $request->validated();
-        $paginator = $this->queryService->build($admin, $filters)->paginate($perPage);
+        $centerId = is_numeric($student->center_id) ? (int) $student->center_id : null;
+        $this->centerScopeService->assertCenterId($student, $centerId);
+
+        $query = Instructor::query()
+            ->where('center_id', $centerId)
+            ->orderByDesc('id');
+
+        if (isset($filters['search']) && is_string($filters['search'])) {
+            $term = trim($filters['search']);
+            if ($term !== '') {
+                $query->where(static function ($builder) use ($term): void {
+                    $builder->where('name_translations->en', 'like', '%'.$term.'%')
+                        ->orWhere('name_translations->ar', 'like', '%'.$term.'%');
+                });
+            }
+        }
+
+        $paginator = $query->paginate($perPage);
         $items = (new InstructorCollection(collect($paginator->items())))->toArray($request);
 
         return response()->json([
@@ -62,59 +71,29 @@ class InstructorController extends Controller
         ]);
     }
 
-    public function store(StoreInstructorRequest $request): JsonResponse
-    {
-        if ($request->user() === null) {
-            abort(401);
-        }
-
-        /** @var array<string, mixed> $data */
-        $data = $request->validated();
-        $data['created_by'] = (int) $request->user()->id;
-        $data['avatar'] = $request->file('avatar');
-
-        $instructor = $this->createAction->execute($data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Instructor created successfully',
-            'data' => new InstructorResource($instructor),
-        ], 201);
-    }
-
     public function show(Instructor $instructor): JsonResponse
     {
+        /** @var User|null $student */
+        $student = request()->user();
+
+        if (! $student instanceof User) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 401);
+        }
+
+        $this->centerScopeService->assertSameCenter($student, $instructor);
+
         $instructor = $this->showAction->execute($instructor);
 
         return response()->json([
             'success' => true,
             'message' => 'Operation completed',
             'data' => new InstructorResource($instructor),
-        ]);
-    }
-
-    public function update(UpdateInstructorRequest $request, Instructor $instructor): JsonResponse
-    {
-        /** @var array<string, mixed> $data */
-        $data = $request->validated();
-        $data['avatar'] = $request->file('avatar');
-        $updated = $this->updateAction->execute($instructor, $data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Instructor updated successfully',
-            'data' => new InstructorResource($updated),
-        ]);
-    }
-
-    public function destroy(Instructor $instructor): JsonResponse
-    {
-        $this->deleteAction->execute($instructor);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Instructor deleted successfully',
-            'data' => null,
         ]);
     }
 }

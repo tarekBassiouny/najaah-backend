@@ -8,6 +8,7 @@ use App\Models\JwtToken;
 use App\Models\User;
 use App\Models\UserDevice;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -63,7 +64,7 @@ trait ApiTestHelper
                 'user_id' => $user->id,
                 'device_id' => $device->id,
                 'access_token' => $this->apiBearerToken,
-                'refresh_token' => 'test-refresh-token',
+                'refresh_token' => Str::random(40),
                 'expires_at' => now()->addMinutes(30),
                 'refresh_expires_at' => now()->addDays(30),
             ]);

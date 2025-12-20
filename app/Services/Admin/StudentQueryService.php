@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Admin;
 
-use App\Models\Instructor;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use Illuminate\Database\Eloquent\Builder;
 
-class InstructorQueryService
+class StudentQueryService
 {
     public function __construct(
         private readonly CenterScopeService $centerScopeService
@@ -17,25 +16,26 @@ class InstructorQueryService
 
     /**
      * @param  array<string, mixed>  $filters
-     * @return Builder<Instructor>
+     * @return Builder<User>
      */
     public function build(User $admin, array $filters): Builder
     {
-        $query = Instructor::query()
-            ->with(['center', 'creator'])
+        $query = User::query()
+            ->where('is_student', true)
             ->orderByDesc('created_at');
 
-        if (isset($filters['course_id']) && is_numeric($filters['course_id'])) {
-            $courseId = (int) $filters['course_id'];
-            $query->whereHas('courses', static function (Builder $builder) use ($courseId): void {
-                $builder->where('courses.id', $courseId);
-            });
+        if (isset($filters['status']) && is_numeric($filters['status'])) {
+            $query->where('status', (int) $filters['status']);
         }
 
         if (isset($filters['search']) && is_string($filters['search'])) {
             $term = trim($filters['search']);
             if ($term !== '') {
-                $query->where('name_translations', 'like', '%'.$term.'%');
+                $query->where(static function (Builder $builder) use ($term): void {
+                    $builder->where('name', 'like', '%'.$term.'%')
+                        ->orWhere('username', 'like', '%'.$term.'%')
+                        ->orWhere('email', 'like', '%'.$term.'%');
+                });
             }
         }
 

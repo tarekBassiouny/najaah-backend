@@ -123,6 +123,7 @@ it('admin approves and allowance affects view limit', function (): void {
 
     $approve->assertOk()->assertJsonPath('data.status', ExtraViewRequest::STATUS_APPROVED);
 
+    $this->asApiUser($student, null, 'device-123');
     $allowed = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $device->device_id,
     ]);

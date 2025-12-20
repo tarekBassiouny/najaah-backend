@@ -24,6 +24,7 @@ const tree = {
   adminRoles: folder("🧑‍💼 Admin – Roles"),
   adminPermissions: folder("🧑‍💼 Admin – Permissions"),
   adminUsers: folder("🧑‍💼 Admin – Users"),
+  adminStudents: folder("🧑‍💼 Admin – Students"),
   adminSettings: folder("🧑‍💼 Admin – Settings"),
   adminAudit: folder("🧑‍💼 Admin – Audit Logs"),
 
@@ -108,6 +109,9 @@ function route(item) {
 
   if (raw.includes("/api/v1/admin/users"))
     return tree.adminUsers;
+
+  if (raw.includes("/api/v1/admin/students"))
+    return tree.adminStudents;
 
   // ---- Settings  ✅ NEW
   if (raw.includes("/api/v1/admin/settings"))
@@ -206,6 +210,7 @@ const finalCollection = {
     tree.adminRoles,
     tree.adminPermissions,
     tree.adminUsers,
+    tree.adminStudents,
     tree.adminSettings,
     tree.adminAudit,
 

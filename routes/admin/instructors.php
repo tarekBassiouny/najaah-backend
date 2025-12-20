@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\Api\V1\CourseInstructorController;
-use App\Http\Controllers\Api\V1\InstructorController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('require.permission:instructor.manage')->group(function (): void {

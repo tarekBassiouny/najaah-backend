@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/courses.php';
                         require __DIR__.'/../routes/api/v1/sections.php';
                         require __DIR__.'/../routes/api/v1/videos.php';
+                        require __DIR__.'/../routes/api/v1/instructors.php';
                         require __DIR__.'/../routes/api/v1/pdfs.php';
                         require __DIR__.'/../routes/api/v1/playback.php';
                         require __DIR__.'/../routes/api/v1/extra-view-requests.php';
@@ -60,6 +61,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     require __DIR__.'/../routes/admin/roles.php';
                     require __DIR__.'/../routes/admin/permissions.php';
                     require __DIR__.'/../routes/admin/admin-users.php';
+                    require __DIR__.'/../routes/admin/students.php';
                 });
             };
 

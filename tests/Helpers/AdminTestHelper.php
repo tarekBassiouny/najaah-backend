@@ -45,6 +45,7 @@ trait AdminTestHelper
             'device_change.manage',
             'extra_view.manage',
             'instructor.manage',
+            'student.manage',
         ];
 
         $permissionIds = [];
