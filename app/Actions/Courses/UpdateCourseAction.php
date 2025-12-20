@@ -6,6 +6,7 @@ namespace App\Actions\Courses;
 
 use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Course;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseServiceInterface;
 
 class UpdateCourseAction
@@ -19,7 +20,7 @@ class UpdateCourseAction
     /**
      * @param  array<string, mixed>  $data
      */
-    public function execute(Course $course, array $data): Course
+    public function execute(User $actor, Course $course, array $data): Course
     {
         $data = $this->normalizeTranslations($data, [
             'title_translations',
@@ -31,6 +32,6 @@ class UpdateCourseAction
             'college_translations' => $course->college_translations ?? [],
         ]);
 
-        return $this->courseService->update($course, $data);
+        return $this->courseService->update($course, $data, $actor);
     }
 }

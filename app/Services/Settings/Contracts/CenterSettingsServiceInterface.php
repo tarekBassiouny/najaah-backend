@@ -6,13 +6,14 @@ namespace App\Services\Settings\Contracts;
 
 use App\Models\Center;
 use App\Models\CenterSetting;
+use App\Models\User;
 
 interface CenterSettingsServiceInterface
 {
     /**
      * @param  array<string, mixed>  $settings
      */
-    public function update(Center $center, array $settings): CenterSetting;
+    public function update(User $actor, Center $center, array $settings): CenterSetting;
 
-    public function get(Center $center): CenterSetting;
+    public function get(User $actor, Center $center): CenterSetting;
 }

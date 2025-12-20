@@ -8,14 +8,19 @@ use App\Models\Course;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
+use App\Models\User;
 use App\Models\Video;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseAttachmentServiceInterface;
 use Illuminate\Validation\ValidationException;
 
 class CourseAttachmentService implements CourseAttachmentServiceInterface
 {
-    public function assignVideo(Course $course, int $videoId): void
+    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+
+    public function assignVideo(Course $course, int $videoId, User $actor): void
     {
+        $this->centerScopeService->assertAdminSameCenter($actor, $course);
         $video = Video::findOrFail($videoId);
         $this->assertSameCenter($course, $video);
         $this->assertVideoReady($video);
@@ -51,8 +56,9 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
         ]);
     }
 
-    public function removeVideo(Course $course, int $videoId): void
+    public function removeVideo(Course $course, int $videoId, User $actor): void
     {
+        $this->centerScopeService->assertAdminSameCenter($actor, $course);
         CourseVideo::where('course_id', $course->id)
             ->where('video_id', $videoId)
             ->whereNull('deleted_at')
@@ -62,8 +68,9 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
             });
     }
 
-    public function assignPdf(Course $course, int $pdfId): void
+    public function assignPdf(Course $course, int $pdfId, User $actor): void
     {
+        $this->centerScopeService->assertAdminSameCenter($actor, $course);
         $pdf = Pdf::findOrFail($pdfId);
         $this->assertSameCenter($course, $pdf);
 
@@ -99,8 +106,9 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
         ]);
     }
 
-    public function removePdf(Course $course, int $pdfId): void
+    public function removePdf(Course $course, int $pdfId, User $actor): void
     {
+        $this->centerScopeService->assertAdminSameCenter($actor, $course);
         CoursePdf::where('course_id', $course->id)
             ->where('pdf_id', $pdfId)
             ->whereNull('deleted_at')

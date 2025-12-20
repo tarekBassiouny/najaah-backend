@@ -24,7 +24,7 @@ class JwtAdminMiddleware
 
         // must not allow students
         if ($user instanceof \App\Models\User && $user->is_student) {
-            return response()->json(['success' => false, 'error' => 'Not an admin'], 403);
+            return response()->json(['success' => false, 'error' => 'Not an admin'], 401);
         }
 
         $request->setUserResolver(fn () => $user);

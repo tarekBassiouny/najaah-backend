@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 
 uses(RefreshDatabase::class)->group('device-change-requests');
 
@@ -58,17 +57,7 @@ it('admin approves and swaps active device', function (): void {
     ]);
     $requestId = $request->json('data.id');
 
-    $admin = User::factory()->create([
-        'center_id' => $this->apiUser->center_id,
-        'is_student' => false,
-        'password' => 'secret123',
-        'phone' => '2000000000',
-    ]);
-    $this->adminToken = (string) Auth::guard('admin')->attempt([
-        'email' => $admin->email,
-        'password' => 'secret123',
-        'is_student' => false,
-    ]);
+    $this->asAdmin();
 
     $approve = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/approve", [], $this->adminHeaders());
 
@@ -91,17 +80,7 @@ it('admin can reject pending request without device changes', function (): void 
     ]);
     $requestId = $request->json('data.id');
 
-    $admin = User::factory()->create([
-        'center_id' => $this->apiUser->center_id,
-        'is_student' => false,
-        'password' => 'secret123',
-        'phone' => '3000000000',
-    ]);
-    $this->adminToken = (string) Auth::guard('admin')->attempt([
-        'email' => $admin->email,
-        'password' => 'secret123',
-        'is_student' => false,
-    ]);
+    $this->asAdmin();
 
     $reject = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/reject", [
         'decision_reason' => 'No proof',

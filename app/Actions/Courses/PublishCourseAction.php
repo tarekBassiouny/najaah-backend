@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Courses;
 
 use App\Models\Course;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseWorkflowServiceInterface;
 
 class PublishCourseAction
@@ -13,8 +14,8 @@ class PublishCourseAction
         private readonly CourseWorkflowServiceInterface $courseWorkflowService
     ) {}
 
-    public function execute(Course $course): Course
+    public function execute(User $actor, Course $course): Course
     {
-        return $this->courseWorkflowService->publishCourse($course);
+        return $this->courseWorkflowService->publishCourse($course, $actor);
     }
 }

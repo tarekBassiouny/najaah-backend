@@ -51,6 +51,37 @@ class UpdateCenterSettingsRequest extends FormRequest
                     ],
                 ],
             ],
+            'settings.default_view_limit' => [
+                'description' => 'Default view limit for videos.',
+                'example' => 3,
+            ],
+            'settings.allow_extra_view_requests' => [
+                'description' => 'Whether students can request extra views.',
+                'example' => true,
+            ],
+            'settings.pdf_download_permission' => [
+                'description' => 'Whether PDF downloads are allowed.',
+                'example' => true,
+            ],
+            'settings.device_limit' => [
+                'description' => 'Maximum active devices per student.',
+                'example' => 1,
+            ],
+            'settings.branding' => [
+                'description' => 'Branding settings payload.',
+                'example' => [
+                    'logo_url' => 'https://example.com/logo.png',
+                    'primary_color' => '#000000',
+                ],
+            ],
+            'settings.branding.logo_url' => [
+                'description' => 'Logo URL.',
+                'example' => 'https://example.com/logo.png',
+            ],
+            'settings.branding.primary_color' => [
+                'description' => 'Primary branding color.',
+                'example' => '#000000',
+            ],
         ];
     }
 

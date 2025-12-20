@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             // --- Core ---
             CenterSeeder::class,
             RoleSeeder::class,
+            PermissionSeeder::class,
+            RolePermissionSeeder::class,
             UserSeeder::class,
             UserDeviceSeeder::class,
 

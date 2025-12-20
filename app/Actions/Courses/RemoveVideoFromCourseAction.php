@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Courses;
 
 use App\Models\Course;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseAttachmentServiceInterface;
 
 class RemoveVideoFromCourseAction
@@ -13,8 +14,8 @@ class RemoveVideoFromCourseAction
         private readonly CourseAttachmentServiceInterface $courseAttachmentService
     ) {}
 
-    public function execute(Course $course, int $videoId): void
+    public function execute(User $actor, Course $course, int $videoId): void
     {
-        $this->courseAttachmentService->removeVideo($course, $videoId);
+        $this->courseAttachmentService->removeVideo($course, $videoId, $actor);
     }
 }

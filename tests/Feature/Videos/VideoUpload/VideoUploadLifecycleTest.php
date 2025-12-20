@@ -3,18 +3,31 @@
 declare(strict_types=1);
 
 use App\Models\Center;
-use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
+use App\Services\Bunny\BunnyStreamService;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('videos');
 
 it('initializes an upload session for admin', function (): void {
-    $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 123,
+    ]);
+
+    $this->mock(BunnyStreamService::class)
+        ->shouldReceive('createVideo')
+        ->once()
+        ->with(['title' => 'intro.mp4'], 123)
+        ->andReturn([
+            'id' => 'bunny-789',
+            'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-789',
+            'library_id' => 123,
+        ]);
+
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
 
     $response = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/video-uploads', [
         'center_id' => $center->id,
@@ -22,8 +35,9 @@ it('initializes an upload session for admin', function (): void {
     ]);
 
     $response->assertCreated()
-        ->assertJsonPath('data.upload_status', VideoUploadService::STATUS_PENDING)
-        ->assertJsonPath('data.upload_url', fn ($url) => ! empty($url));
+        ->assertJsonPath('data.video_id', fn ($id) => is_string($id) && $id !== '')
+        ->assertJsonPath('data.library_id', 123)
+        ->assertJsonMissing(['upload_url', 'api_key', 'token', 'signed_url', 'cdn_url']);
 
     $this->assertDatabaseHas('video_upload_sessions', [
         'center_id' => $center->id,
@@ -32,9 +46,21 @@ it('initializes an upload session for admin', function (): void {
 });
 
 it('moves upload session to ready and updates video', function (): void {
-    $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 123,
+    ]);
+
+    $this->mock(BunnyStreamService::class)
+        ->shouldReceive('createVideo')
+        ->once()
+        ->with(['title' => 'lesson.mp4'], 123)
+        ->andReturn([
+            'id' => 'bunny-abc',
+            'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-abc',
+            'library_id' => 123,
+        ]);
+
+    $admin = $this->asAdmin();
     /** @var Video $video */
     $video = Video::factory()->create([
         'lifecycle_status' => 0,
@@ -48,7 +74,12 @@ it('moves upload session to ready and updates video', function (): void {
         'original_filename' => 'lesson.mp4',
     ]);
 
-    $sessionId = $create->json('data.id');
+    /** @var VideoUploadSession $session */
+    $session = VideoUploadSession::where('center_id', $center->id)
+        ->where('uploaded_by', $admin->id)
+        ->latest()
+        ->firstOrFail();
+    $sessionId = $session->id;
 
     $update = $this->actingAs($admin, 'admin')->patchJson("/api/v1/admin/video-uploads/{$sessionId}", [
         'status' => 'READY',
@@ -67,18 +98,33 @@ it('moves upload session to ready and updates video', function (): void {
 });
 
 it('records failures and keeps video inactive', function (): void {
-    $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 123,
+    ]);
+
+    $this->mock(BunnyStreamService::class)
+        ->shouldReceive('createVideo')
+        ->once()
+        ->with(['title' => 'broken.mp4'], 123)
+        ->andReturn([
+            'id' => 'bunny-def',
+            'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-def',
+            'library_id' => 123,
+        ]);
+
+    $admin = $this->asAdmin();
 
     $create = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/video-uploads', [
         'center_id' => $center->id,
         'original_filename' => 'broken.mp4',
     ]);
 
-    $sessionId = $create->json('data.id');
     /** @var VideoUploadSession $session */
-    $session = VideoUploadSession::findOrFail($sessionId);
+    $session = VideoUploadSession::where('center_id', $center->id)
+        ->where('uploaded_by', $admin->id)
+        ->latest()
+        ->firstOrFail();
+    $sessionId = $session->id;
 
     $video = Video::factory()->create([
         'lifecycle_status' => 1,

@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property bool $allow_extra_view_requests
  * @property bool $pdf_download_permission
  * @property int $device_limit
+ * @property int|null $bunny_library_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
@@ -49,6 +50,7 @@ class Center extends Model
         'allow_extra_view_requests',
         'pdf_download_permission',
         'device_limit',
+        'bunny_library_id',
     ];
 
     protected $casts = [
@@ -58,6 +60,7 @@ class Center extends Model
         'pdf_download_permission' => 'boolean',
         'default_view_limit' => 'integer',
         'device_limit' => 'integer',
+        'bunny_library_id' => 'integer',
     ];
 
     /** @var array<int, string> */
@@ -69,7 +72,11 @@ class Center extends Model
     /** @return BelongsToMany<User, self> */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_centers');
+        return $this->belongsToMany(User::class, 'user_centers')
+            ->using(\App\Models\Pivots\UserCenter::class)
+            ->withTimestamps()
+            ->withPivot(['type'])
+            ->wherePivotNull('deleted_at');
     }
 
     /** @return HasMany<Course, self> */

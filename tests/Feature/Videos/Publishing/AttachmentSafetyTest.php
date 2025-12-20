@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 use App\Models\Course;
 use App\Models\Section;
-use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('videos');
 
 it('blocks attaching non-ready video to course', function (): void {
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false]);
+    $admin = $this->asAdmin();
     $course = Course::factory()->create(['created_by' => $admin->id]);
     $video = Video::factory()->create([
         'encoding_status' => 1,
@@ -28,8 +26,7 @@ it('blocks attaching non-ready video to course', function (): void {
 });
 
 it('blocks attaching non-ready video to section', function (): void {
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false]);
+    $admin = $this->asAdmin();
     $course = Course::factory()->create(['created_by' => $admin->id]);
     $section = Section::factory()->create(['course_id' => $course->id]);
     $video = Video::factory()->create([
@@ -46,8 +43,7 @@ it('blocks attaching non-ready video to section', function (): void {
 });
 
 it('allows attaching ready video', function (): void {
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false]);
+    $admin = $this->asAdmin();
     $course = Course::factory()->create(['created_by' => $admin->id]);
     $section = Section::factory()->create(['course_id' => $course->id]);
     $video = Video::factory()->create([

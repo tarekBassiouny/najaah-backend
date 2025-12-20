@@ -155,6 +155,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-login">
                                 <a href="#endpoints-POSTapi-v1-admin-auth-login">POST api/v1/admin/auth/login</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-password-reset">
+                                <a href="#endpoints-POSTapi-v1-admin-auth-password-reset">POST api/v1/admin/auth/password/reset</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-auth-me">
                                 <a href="#endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</a>
                             </li>
@@ -206,11 +209,11 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-courses--course_id-">
                                 <a href="#endpoints-DELETEapi-v1-admin-courses--course_id-">DELETE api/v1/admin/courses/{course_id}</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--publish">
-                                <a href="#endpoints-POSTapi-v1-admin-courses--course_id--publish">POST api/v1/admin/courses/{course_id}/publish</a>
-                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--clone">
                                 <a href="#endpoints-POSTapi-v1-admin-courses--course_id--clone">POST api/v1/admin/courses/{course_id}/clone</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--publish">
+                                <a href="#endpoints-POSTapi-v1-admin-courses--course_id--publish">POST api/v1/admin/courses/{course_id}/publish</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-courses--course_id--sections">
                                 <a href="#endpoints-GETapi-v1-admin-courses--course_id--sections">GET api/v1/admin/courses/{course_id}/sections</a>
@@ -278,14 +281,14 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-videos">
                                 <a href="#endpoints-GETapi-v1-admin-videos">GET api/v1/admin/videos</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-video-upload-sessions">
+                                <a href="#endpoints-GETapi-v1-admin-video-upload-sessions">GET api/v1/admin/video-upload-sessions</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--videos">
                                 <a href="#endpoints-POSTapi-v1-admin-courses--course_id--videos">POST api/v1/admin/courses/{course_id}/videos</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-courses--course_id--videos--video-">
                                 <a href="#endpoints-DELETEapi-v1-admin-courses--course_id--videos--video-">DELETE api/v1/admin/courses/{course_id}/videos/{video}</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-video-upload-sessions">
-                                <a href="#endpoints-GETapi-v1-admin-video-upload-sessions">GET api/v1/admin/video-upload-sessions</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-video-uploads">
                                 <a href="#endpoints-POSTapi-v1-admin-video-uploads">POST api/v1/admin/video-uploads</a>
@@ -335,17 +338,56 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-audit-logs">
                                 <a href="#endpoints-GETapi-v1-admin-audit-logs">GET api/v1/admin/audit-logs</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-extra-view-requests">
+                                <a href="#endpoints-GETapi-v1-admin-extra-view-requests">GET api/v1/admin/extra-view-requests</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve">
                                 <a href="#endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve">POST api/v1/admin/extra-view-requests/{extraViewRequest_id}/approve</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject">
                                 <a href="#endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject">POST api/v1/admin/extra-view-requests/{extraViewRequest_id}/reject</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-device-change-requests">
+                                <a href="#endpoints-GETapi-v1-admin-device-change-requests">GET api/v1/admin/device-change-requests</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve">
                                 <a href="#endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/approve</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">
                                 <a href="#endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/reject</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-roles">
+                                <a href="#endpoints-GETapi-v1-admin-roles">GET api/v1/admin/roles</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-roles">
+                                <a href="#endpoints-POSTapi-v1-admin-roles">POST api/v1/admin/roles</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-roles--role_id-">
+                                <a href="#endpoints-PUTapi-v1-admin-roles--role_id-">PUT api/v1/admin/roles/{role_id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-roles--role_id-">
+                                <a href="#endpoints-DELETEapi-v1-admin-roles--role_id-">DELETE api/v1/admin/roles/{role_id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-roles--role_id--permissions">
+                                <a href="#endpoints-PUTapi-v1-admin-roles--role_id--permissions">PUT api/v1/admin/roles/{role_id}/permissions</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-permissions">
+                                <a href="#endpoints-GETapi-v1-admin-permissions">GET api/v1/admin/permissions</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-users">
+                                <a href="#endpoints-GETapi-v1-admin-users">GET api/v1/admin/users</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-users">
+                                <a href="#endpoints-POSTapi-v1-admin-users">POST api/v1/admin/users</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-users--user_id-">
+                                <a href="#endpoints-PUTapi-v1-admin-users--user_id-">PUT api/v1/admin/users/{user_id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-users--user_id-">
+                                <a href="#endpoints-DELETEapi-v1-admin-users--user_id-">DELETE api/v1/admin/users/{user_id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-users--user_id--roles">
+                                <a href="#endpoints-PUTapi-v1-admin-users--user_id--roles">PUT api/v1/admin/users/{user_id}/roles</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -358,7 +400,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: December 14, 2025</li>
+        <li>Last updated: December 20, 2025</li>
     </ul>
 </div>
 
@@ -4597,6 +4639,180 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
+                    <h2 id="endpoints-POSTapi-v1-admin-auth-password-reset">POST api/v1/admin/auth/password/reset</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-auth-password-reset">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/auth/password/reset" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"token\": \"reset-token\",
+    \"email\": \"admin@example.com\",
+    \"password\": \"newpassword123\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/auth/password/reset"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "token": "reset-token",
+    "email": "admin@example.com",
+    "password": "newpassword123"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-auth-password-reset">
+</span>
+<span id="execution-results-POSTapi-v1-admin-auth-password-reset" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-auth-password-reset"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-auth-password-reset"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-auth-password-reset" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-auth-password-reset">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-auth-password-reset" data-method="POST"
+      data-path="api/v1/admin/auth/password/reset"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-auth-password-reset', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-auth-password-reset"
+                    onclick="tryItOut('POSTapi-v1-admin-auth-password-reset');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-auth-password-reset"
+                    onclick="cancelTryOut('POSTapi-v1-admin-auth-password-reset');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-auth-password-reset"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/auth/password/reset</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>token</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="token"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="reset-token"
+               data-component="body">
+    <br>
+<p>Password reset token. Example: <code>reset-token</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="email"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="admin@example.com"
+               data-component="body">
+    <br>
+<p>Admin email address. Must be a valid email address. Example: <code>admin@example.com</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="password"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="newpassword123"
+               data-component="body">
+    <br>
+<p>New password. Must be at least 8 characters. Example: <code>newpassword123</code></p>
+        </div>
+        </form>
+
                     <h2 id="endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</h2>
 
 <p>
@@ -4982,7 +5198,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;slug=center-1&amp;type=1" \
+    --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;page=1&amp;slug=center-1&amp;type=1&amp;search=Academy" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -4995,8 +5211,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 const params = {
     "per_page": "15",
+    "page": "1",
     "slug": "center-1",
     "type": "1",
+    "search": "Academy",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -5110,7 +5328,19 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="15"
                data-component="query">
     <br>
-<p>Items per page. Example: <code>15</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-centers"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
@@ -5134,7 +5364,19 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="1"
                data-component="query">
     <br>
-<p>Filter by center type. Example: <code>1</code></p>
+<p>Filter centers by type. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-admin-centers"
+               value="Academy"
+               data-component="query">
+    <br>
+<p>Search centers by name. Example: <code>Academy</code></p>
             </div>
                 </form>
 
@@ -5158,6 +5400,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --data "{
     \"slug\": \"center-01\",
     \"type\": 0,
+    \"name\": \"Center Name\",
     \"name_translations\": {
         \"en\": \"Center Name\",
         \"ar\": \"اسم المركز\"
@@ -5173,7 +5416,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"device_limit\": 1,
     \"settings\": {
         \"pdf_download_permission\": true
-    }
+    },
+    \"owner_user_id\": 10,
+    \"owner\": {
+        \"name\": \"Owner Name\",
+        \"email\": \"owner@example.com\",
+        \"phone\": \"+1234567890\"
+    },
+    \"owner_role\": \"center_owner\"
 }"
 </code></pre></div>
 
@@ -5192,6 +5442,7 @@ const headers = {
 let body = {
     "slug": "center-01",
     "type": 0,
+    "name": "Center Name",
     "name_translations": {
         "en": "Center Name",
         "ar": "اسم المركز"
@@ -5207,7 +5458,14 @@ let body = {
     "device_limit": 1,
     "settings": {
         "pdf_download_permission": true
-    }
+    },
+    "owner_user_id": 10,
+    "owner": {
+        "name": "Owner Name",
+        "email": "owner@example.com",
+        "phone": "+1234567890"
+    },
+    "owner_role": "center_owner"
 };
 
 fetch(url, {
@@ -5307,7 +5565,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="slug"                data-endpoint="POSTapi-v1-admin-centers"
@@ -5319,7 +5577,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="type"                data-endpoint="POSTapi-v1-admin-centers"
@@ -5329,16 +5587,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Center type identifier. Example: <code>0</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name"                data-endpoint="POSTapi-v1-admin-centers"
+               value="Center Name"
+               data-component="body">
+    <br>
+<p>Center name when translations are not provided. This field is required when <code>name_translations</code> is not present. Must not be greater than 255 characters. Example: <code>Center Name</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
 <small>object</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="name_translations"                data-endpoint="POSTapi-v1-admin-centers"
                value=""
                data-component="body">
     <br>
-<p>Localized center name.</p>
+<p>Localized center name. This field is required when <code>name</code> is not present.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
@@ -5455,6 +5725,78 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Optional center settings payload.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>owner_user_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="owner_user_id"                data-endpoint="POSTapi-v1-admin-centers"
+               value="10"
+               data-component="body">
+    <br>
+<p>Existing user ID to assign as the owner. This field is required when <code>owner</code> is not present. The <code>id</code> of an existing record in the users table. Example: <code>10</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>owner</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Owner details when creating a new owner user. This field is required when <code>owner_user_id</code> is not present.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="owner.name"                data-endpoint="POSTapi-v1-admin-centers"
+               value="Owner Name"
+               data-component="body">
+    <br>
+<p>Owner name. This field is required when <code>owner_user_id</code> is not present. Must not be greater than 255 characters. Example: <code>Owner Name</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="owner.email"                data-endpoint="POSTapi-v1-admin-centers"
+               value="owner@example.com"
+               data-component="body">
+    <br>
+<p>Owner email address. This field is required when <code>owner_user_id</code> is not present. Must be a valid email address. Must not be greater than 255 characters. Example: <code>owner@example.com</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="owner.phone"                data-endpoint="POSTapi-v1-admin-centers"
+               value="+1234567890"
+               data-component="body">
+    <br>
+<p>Owner phone number. Must not be greater than 50 characters. Example: <code>+1234567890</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>owner_role</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="owner_role"                data-endpoint="POSTapi-v1-admin-centers"
+               value="center_owner"
+               data-component="body">
+    <br>
+<p>Optional role name to assign to the owner. Example: <code>center_owner</code></p>
         </div>
         </form>
 
@@ -5613,8 +5955,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: en" \
     --data "{
-    \"slug\": \"b\",
-    \"type\": 16,
+    \"slug\": \"center-01\",
+    \"type\": 0,
     \"name_translations\": {
         \"en\": \"Updated Name\"
     },
@@ -5646,8 +5988,8 @@ const headers = {
 };
 
 let body = {
-    "slug": "b",
-    "type": 16,
+    "slug": "center-01",
+    "type": 0,
     "name_translations": {
         "en": "Updated Name"
     },
@@ -5779,10 +6121,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="slug"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="b"
+               value="center-01"
                data-component="body">
     <br>
-<p>Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters. Example: <code>b</code></p>
+<p>Unique, immutable center slug. Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters. Example: <code>center-01</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
@@ -5791,10 +6133,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="type"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="16"
+               value="0"
                data-component="body">
     <br>
-<p>Example: <code>16</code></p>
+<p>Center type identifier. Example: <code>0</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
@@ -6687,7 +7029,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/courses?per_page=15" \
+    --get "http://xyz-lms.test/api/v1/admin/courses?per_page=15&amp;page=1&amp;center_id=2&amp;category_id=3&amp;primary_instructor_id=5&amp;search=Biology" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -6700,6 +7042,11 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 const params = {
     "per_page": "15",
+    "page": "1",
+    "center_id": "2",
+    "category_id": "3",
+    "primary_instructor_id": "5",
+    "search": "Biology",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -6813,7 +7160,67 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="15"
                data-component="query">
     <br>
-<p>Items per page. Example: <code>15</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-courses"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-courses"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter courses by center ID (super admin only). Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="GETapi-v1-admin-courses"
+               value="3"
+               data-component="query">
+    <br>
+<p>Filter courses by category ID. Example: <code>3</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>primary_instructor_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="primary_instructor_id"                data-endpoint="GETapi-v1-admin-courses"
+               value="5"
+               data-component="query">
+    <br>
+<p>Filter courses by primary instructor ID. Example: <code>5</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-admin-courses"
+               value="Biology"
+               data-component="query">
+    <br>
+<p>Search courses by title. Example: <code>Biology</code></p>
             </div>
                 </form>
 
@@ -6846,10 +7253,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
         \"key\": \"value\"
     },
     \"title_translations\": [
-        \"b\"
+        \"Sample Course\"
     ],
     \"description_translations\": [
-        \"architecto\"
+        \"Intro course\"
     ],
     \"difficulty_level\": 1,
     \"created_by\": 5
@@ -6880,10 +7287,10 @@ let body = {
         "key": "value"
     },
     "title_translations": [
-        "b"
+        "Sample Course"
     ],
     "description_translations": [
-        "architecto"
+        "Intro course"
     ],
     "difficulty_level": 1,
     "created_by": 5
@@ -7093,7 +7500,7 @@ Must be one of:
                name="title_translations[1]"                data-endpoint="POSTapi-v1-admin-courses"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters.</p>
+<p>Localized title value. Must not be greater than 255 characters.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
@@ -7107,7 +7514,7 @@ Must be one of:
                name="description_translations[1]"                data-endpoint="POSTapi-v1-admin-courses"
                data-component="body">
     <br>
-
+<p>Localized description value.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>difficulty_level</code></b>&nbsp;&nbsp;
@@ -7301,10 +7708,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
         \"key\": \"value\"
     },
     \"title_translations\": [
-        \"b\"
+        \"Updated Course\"
     ],
     \"description_translations\": [
-        \"architecto\"
+        \"Updated desc\"
     ],
     \"difficulty_level\": 2,
     \"created_by\": 5
@@ -7335,10 +7742,10 @@ let body = {
         "key": "value"
     },
     "title_translations": [
-        "b"
+        "Updated Course"
     ],
     "description_translations": [
-        "architecto"
+        "Updated desc"
     ],
     "difficulty_level": 2,
     "created_by": 5
@@ -7561,7 +7968,7 @@ Must be one of:
                name="title_translations[1]"                data-endpoint="PUTapi-v1-admin-courses--course_id-"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters.</p>
+<p>Localized title value. Must not be greater than 255 characters.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
@@ -7575,7 +7982,7 @@ Must be one of:
                name="description_translations[1]"                data-endpoint="PUTapi-v1-admin-courses--course_id-"
                data-component="body">
     <br>
-
+<p>Localized description value.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>difficulty_level</code></b>&nbsp;&nbsp;
@@ -7733,143 +8140,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="course_id"                data-endpoint="DELETEapi-v1-admin-courses--course_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--publish">POST api/v1/admin/courses/{course_id}/publish</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-POSTapi-v1-admin-courses--course_id--publish">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/admin/courses/1/publish" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/courses/1/publish"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "POST",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-POSTapi-v1-admin-courses--course_id--publish">
-</span>
-<span id="execution-results-POSTapi-v1-admin-courses--course_id--publish" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-POSTapi-v1-admin-courses--course_id--publish"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-courses--course_id--publish"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-POSTapi-v1-admin-courses--course_id--publish" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-v1-admin-courses--course_id--publish">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-POSTapi-v1-admin-courses--course_id--publish" data-method="POST"
-      data-path="api/v1/admin/courses/{course_id}/publish"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-courses--course_id--publish', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-v1-admin-courses--course_id--publish"
-                    onclick="tryItOut('POSTapi-v1-admin-courses--course_id--publish');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-v1-admin-courses--course_id--publish"
-                    onclick="cancelTryOut('POSTapi-v1-admin-courses--course_id--publish');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-v1-admin-courses--course_id--publish"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-black">POST</small>
-            <b><code>api/v1/admin/courses/{course_id}/publish</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
                value="1"
                data-component="url">
     <br>
@@ -8060,7 +8330,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether to include sections in the clone. Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>include_videos</code></b>&nbsp;&nbsp;
@@ -8082,7 +8352,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether to include videos in the clone. Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>include_pdfs</code></b>&nbsp;&nbsp;
@@ -8104,11 +8374,148 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether to include PDFs in the clone. Example: <code>false</code></p>
                     </div>
                                     </details>
         </div>
         </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--publish">POST api/v1/admin/courses/{course_id}/publish</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-courses--course_id--publish">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/courses/1/publish" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/courses/1/publish"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-courses--course_id--publish">
+</span>
+<span id="execution-results-POSTapi-v1-admin-courses--course_id--publish" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-courses--course_id--publish"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-courses--course_id--publish"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-courses--course_id--publish" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-courses--course_id--publish">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-courses--course_id--publish" data-method="POST"
+      data-path="api/v1/admin/courses/{course_id}/publish"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-courses--course_id--publish', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-courses--course_id--publish"
+                    onclick="tryItOut('POSTapi-v1-admin-courses--course_id--publish');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-courses--course_id--publish"
+                    onclick="cancelTryOut('POSTapi-v1-admin-courses--course_id--publish');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-courses--course_id--publish"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/courses/{course_id}/publish</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                    </form>
 
                     <h2 id="endpoints-GETapi-v1-admin-courses--course_id--sections">GET api/v1/admin/courses/{course_id}/sections</h2>
 
@@ -8467,7 +8874,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: en" \
     --data "{
     \"sections\": [
-        16
+        2
     ]
 }"
 </code></pre></div>
@@ -8486,7 +8893,7 @@ const headers = {
 
 let body = {
     "sections": [
-        16
+        2
     ]
 };
 
@@ -8609,7 +9016,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="sections[1]"                data-endpoint="PUTapi-v1-admin-courses--course_id--sections-reorder"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the sections table.</p>
+<p>Section ID. The <code>id</code> of an existing record in the sections table.</p>
         </div>
         </form>
 
@@ -9431,10 +9838,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"description\": \"Overview of the course.\",
     \"sort_order\": 1,
     \"videos\": [
-        16
+        5
     ],
     \"pdfs\": [
-        16
+        3
     ]
 }"
 </code></pre></div>
@@ -9457,10 +9864,10 @@ let body = {
     "description": "Overview of the course.",
     "sort_order": 1,
     "videos": [
-        16
+        5
     ],
     "pdfs": [
-        16
+        3
     ]
 };
 
@@ -9631,7 +10038,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="videos[1]"                data-endpoint="POSTapi-v1-admin-courses--course--sections-structure"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the videos table.</p>
+<p>Video ID to attach. The <code>id</code> of an existing record in the videos table.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pdfs</code></b>&nbsp;&nbsp;
@@ -9645,7 +10052,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="pdfs[1]"                data-endpoint="POSTapi-v1-admin-courses--course--sections-structure"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the pdfs table.</p>
+<p>PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.</p>
         </div>
         </form>
 
@@ -9671,10 +10078,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"description\": \"Updated description.\",
     \"sort_order\": 2,
     \"videos\": [
-        16
+        5
     ],
     \"pdfs\": [
-        16
+        3
     ]
 }"
 </code></pre></div>
@@ -9696,10 +10103,10 @@ let body = {
     "description": "Updated description.",
     "sort_order": 2,
     "videos": [
-        16
+        5
     ],
     "pdfs": [
-        16
+        3
     ]
 };
 
@@ -9870,7 +10277,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="videos[1]"                data-endpoint="PUTapi-v1-admin-courses--course--sections--section_id--structure"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the videos table.</p>
+<p>Video ID to attach. The <code>id</code> of an existing record in the videos table.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pdfs</code></b>&nbsp;&nbsp;
@@ -9884,7 +10291,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="pdfs[1]"                data-endpoint="PUTapi-v1-admin-courses--course--sections--section_id--structure"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the pdfs table.</p>
+<p>PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.</p>
         </div>
         </form>
 
@@ -11676,7 +12083,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/videos" \
+    --get "http://xyz-lms.test/api/v1/admin/videos?per_page=15&amp;page=1&amp;center_id=2&amp;course_id=10&amp;search=Intro" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -11686,6 +12093,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <pre><code class="language-javascript">const url = new URL(
     "http://xyz-lms.test/api/v1/admin/videos"
 );
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "center_id": "2",
+    "course_id": "10",
+    "search": "Intro",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
     "Content-Type": "application/json",
@@ -11785,7 +12202,250 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>Example: <code>en</code></p>
             </div>
-                        </form>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-videos"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-videos"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-videos"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter videos by center ID (super admin only). Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="GETapi-v1-admin-videos"
+               value="10"
+               data-component="query">
+    <br>
+<p>Filter videos by course ID. Example: <code>10</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-admin-videos"
+               value="Intro"
+               data-component="query">
+    <br>
+<p>Search videos by title. Example: <code>Intro</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-video-upload-sessions">GET api/v1/admin/video-upload-sessions</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-video-upload-sessions">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/video-upload-sessions?per_page=15&amp;page=1&amp;status=3&amp;center_id=1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/video-upload-sessions"
+);
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "status": "3",
+    "center_id": "1",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-video-upload-sessions">
+    </span>
+<span id="execution-results-GETapi-v1-admin-video-upload-sessions" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-video-upload-sessions"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-video-upload-sessions"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-video-upload-sessions" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-video-upload-sessions">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-video-upload-sessions" data-method="GET"
+      data-path="api/v1/admin/video-upload-sessions"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-video-upload-sessions', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-video-upload-sessions"
+                    onclick="tryItOut('GETapi-v1-admin-video-upload-sessions');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-video-upload-sessions"
+                    onclick="cancelTryOut('GETapi-v1-admin-video-upload-sessions');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-video-upload-sessions"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/video-upload-sessions</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="status"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="3"
+               data-component="query">
+    <br>
+<p>Filter by upload status (0-4). Example: <code>3</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="1"
+               data-component="query">
+    <br>
+<p>Filter by center ID (admins scoped automatically). Example: <code>1</code></p>
+            </div>
+                </form>
 
                     <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--videos">POST api/v1/admin/courses/{course_id}/videos</h2>
 
@@ -12108,175 +12768,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>The video. Example: <code>1</code></p>
             </div>
                     </form>
-
-                    <h2 id="endpoints-GETapi-v1-admin-video-upload-sessions">GET api/v1/admin/video-upload-sessions</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-admin-video-upload-sessions">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/video-upload-sessions?per_page=15&amp;status=3&amp;center_id=1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/video-upload-sessions"
-);
-
-const params = {
-    "per_page": "15",
-    "status": "3",
-    "center_id": "1",
-};
-Object.keys(params)
-    .forEach(key =&gt; url.searchParams.append(key, params[key]));
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-admin-video-upload-sessions">
-    </span>
-<span id="execution-results-GETapi-v1-admin-video-upload-sessions" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-admin-video-upload-sessions"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-video-upload-sessions"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-admin-video-upload-sessions" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-admin-video-upload-sessions">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-admin-video-upload-sessions" data-method="GET"
-      data-path="api/v1/admin/video-upload-sessions"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-video-upload-sessions', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-admin-video-upload-sessions"
-                    onclick="tryItOut('GETapi-v1-admin-video-upload-sessions');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-admin-video-upload-sessions"
-                    onclick="cancelTryOut('GETapi-v1-admin-video-upload-sessions');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-admin-video-upload-sessions"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/admin/video-upload-sessions</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
-               value="15"
-               data-component="query">
-    <br>
-<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
-            </div>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="status"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
-               value="3"
-               data-component="query">
-    <br>
-<p>Filter by upload status (0-4). Example: <code>3</code></p>
-            </div>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
-               value="1"
-               data-component="query">
-    <br>
-<p>Filter by center ID (admins scoped automatically). Example: <code>1</code></p>
-            </div>
-                </form>
 
                     <h2 id="endpoints-POSTapi-v1-admin-video-uploads">POST api/v1/admin/video-uploads</h2>
 
@@ -12853,10 +13344,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "avatar_url=https://example.com/avatar.jpg"\
     --form "email=john.doe@example.com"\
     --form "phone=+1234567890"\
-    --form "social_links[]=architecto"\
+    --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/php0qi1kqo4jlcl6GlqT2r" </code></pre></div>
+    --form "avatar=@/tmp/php4oifuo6gs7737B1dTiF" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12881,7 +13372,7 @@ body.append('title_translations[ar]', 'أستاذ');
 body.append('avatar_url', 'https://example.com/avatar.jpg');
 body.append('email', 'john.doe@example.com');
 body.append('phone', '+1234567890');
-body.append('social_links[]', 'architecto');
+body.append('social_links[]', 'https://linkedin.com/in/johndoe');
 body.append('metadata[specialization]', 'Math');
 body.append('metadata[languages][]', 'en');
 body.append('avatar', document.querySelector('input[name="avatar"]').files[0]);
@@ -13050,7 +13541,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php0qi1kqo4jlcl6GlqT2r</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php4oifuo6gs7737B1dTiF</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13088,7 +13579,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="social_links[1]"                data-endpoint="POSTapi-v1-admin-instructors"
                data-component="body">
     <br>
-
+<p>Social link value.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>metadata</code></b>&nbsp;&nbsp;
@@ -13268,9 +13759,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "avatar_url=https://example.com/avatar.jpg"\
     --form "email=john.doe@example.com"\
     --form "phone=+1234567890"\
-    --form "social_links[]=architecto"\
+    --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/php7uker7rmr3rr4mRPbHa" </code></pre></div>
+    --form "avatar=@/tmp/phperlahsh0459nfEhqBZL" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13295,7 +13786,7 @@ body.append('title_translations[ar]', 'أستاذ');
 body.append('avatar_url', 'https://example.com/avatar.jpg');
 body.append('email', 'john.doe@example.com');
 body.append('phone', '+1234567890');
-body.append('social_links[]', 'architecto');
+body.append('social_links[]', 'https://linkedin.com/in/johndoe');
 body.append('metadata[specialization]', 'Physics');
 body.append('avatar', document.querySelector('input[name="avatar"]').files[0]);
 
@@ -13480,7 +13971,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php7uker7rmr3rr4mRPbHa</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phperlahsh0459nfEhqBZL</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13518,7 +14009,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="social_links[1]"                data-endpoint="PUTapi-v1-admin-instructors--id-"
                data-component="body">
     <br>
-
+<p>Social link value.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>metadata</code></b>&nbsp;&nbsp;
@@ -14338,7 +14829,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/php5qatn2lp226q1v01xra" </code></pre></div>
+    --form "file=@/tmp/phpe6610ctv3v7o3N6Mtcr" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14489,7 +14980,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php5qatn2lp226q1v01xra</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpe6610ctv3v7o3N6Mtcr</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -14849,7 +15340,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="3"
                data-component="body">
     <br>
-<p>Must be at least 0. Example: <code>3</code></p>
+<p>Default view limit for videos. Must be at least 0. Example: <code>3</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>allow_extra_view_requests</code></b>&nbsp;&nbsp;
@@ -14871,7 +15362,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether students can request extra views. Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>pdf_download_permission</code></b>&nbsp;&nbsp;
@@ -14893,7 +15384,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether PDF downloads are allowed. Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>device_limit</code></b>&nbsp;&nbsp;
@@ -14905,7 +15396,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="1"
                data-component="body">
     <br>
-<p>Must be at least 1. Example: <code>1</code></p>
+<p>Maximum active devices per student. Must be at least 1. Example: <code>1</code></p>
                     </div>
                                                                 <div style=" margin-left: 14px; clear: unset;">
         <details>
@@ -14915,7 +15406,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
  &nbsp;
 <br>
-
+<p>Branding settings payload.</p>
             </summary>
                                                 <div style="margin-left: 28px; clear: unset;">
                         <b style="line-height: 2;"><code>logo_url</code></b>&nbsp;&nbsp;
@@ -14927,7 +15418,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="https://example.com/logo.png"
                data-component="body">
     <br>
-<p>Example: <code>https://example.com/logo.png</code></p>
+<p>Logo URL. Example: <code>https://example.com/logo.png</code></p>
                     </div>
                                                                 <div style="margin-left: 28px; clear: unset;">
                         <b style="line-height: 2;"><code>primary_color</code></b>&nbsp;&nbsp;
@@ -14939,7 +15430,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="#000000"
                data-component="body">
     <br>
-<p>Example: <code>#000000</code></p>
+<p>Primary branding color. Example: <code>#000000</code></p>
                     </div>
                                     </details>
         </div>
@@ -15369,6 +15860,229 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
+                    <h2 id="endpoints-GETapi-v1-admin-extra-view-requests">GET api/v1/admin/extra-view-requests</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-extra-view-requests">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/extra-view-requests?per_page=15&amp;page=1&amp;status=PENDING&amp;center_id=2&amp;user_id=5&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/extra-view-requests"
+);
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "status": "PENDING",
+    "center_id": "2",
+    "user_id": "5",
+    "date_from": "2025-01-01",
+    "date_to": "2025-12-31",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-extra-view-requests">
+    </span>
+<span id="execution-results-GETapi-v1-admin-extra-view-requests" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-extra-view-requests"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-extra-view-requests"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-extra-view-requests" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-extra-view-requests">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-extra-view-requests" data-method="GET"
+      data-path="api/v1/admin/extra-view-requests"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-extra-view-requests', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-extra-view-requests"
+                    onclick="tryItOut('GETapi-v1-admin-extra-view-requests');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-extra-view-requests"
+                    onclick="cancelTryOut('GETapi-v1-admin-extra-view-requests');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-extra-view-requests"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/extra-view-requests</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="PENDING"
+               data-component="query">
+    <br>
+<p>Filter by request status. Example: <code>PENDING</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>PENDING</code></li> <li><code>APPROVED</code></li> <li><code>REJECTED</code></li></ul>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter by center ID (super admin only). Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="user_id"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="5"
+               data-component="query">
+    <br>
+<p>Filter by user ID. Example: <code>5</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>date_from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="date_from"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="2025-01-01"
+               data-component="query">
+    <br>
+<p>Filter requests created from this date. Must be a valid date. Example: <code>2025-01-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>date_to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="date_to"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="2025-12-31"
+               data-component="query">
+    <br>
+<p>Filter requests created up to this date. Must be a valid date. Example: <code>2025-12-31</code></p>
+            </div>
+                </form>
+
                     <h2 id="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve">POST api/v1/admin/extra-view-requests/{extraViewRequest_id}/approve</h2>
 
 <p>
@@ -15701,6 +16415,229 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
+                    <h2 id="endpoints-GETapi-v1-admin-device-change-requests">GET api/v1/admin/device-change-requests</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-device-change-requests">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/device-change-requests?per_page=15&amp;page=1&amp;status=PENDING&amp;center_id=2&amp;user_id=5&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/device-change-requests"
+);
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "status": "PENDING",
+    "center_id": "2",
+    "user_id": "5",
+    "date_from": "2025-01-01",
+    "date_to": "2025-12-31",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-device-change-requests">
+    </span>
+<span id="execution-results-GETapi-v1-admin-device-change-requests" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-device-change-requests"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-device-change-requests"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-device-change-requests" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-device-change-requests">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-device-change-requests" data-method="GET"
+      data-path="api/v1/admin/device-change-requests"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-device-change-requests', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-device-change-requests"
+                    onclick="tryItOut('GETapi-v1-admin-device-change-requests');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-device-change-requests"
+                    onclick="cancelTryOut('GETapi-v1-admin-device-change-requests');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-device-change-requests"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/device-change-requests</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="PENDING"
+               data-component="query">
+    <br>
+<p>Filter by request status. Example: <code>PENDING</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>PENDING</code></li> <li><code>APPROVED</code></li> <li><code>REJECTED</code></li></ul>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter by center ID (super admin only). Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="user_id"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="5"
+               data-component="query">
+    <br>
+<p>Filter by user ID. Example: <code>5</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>date_from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="date_from"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="2025-01-01"
+               data-component="query">
+    <br>
+<p>Filter requests created from this date. Must be a valid date. Example: <code>2025-01-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>date_to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="date_to"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="2025-12-31"
+               data-component="query">
+    <br>
+<p>Filter requests created up to this date. Must be a valid date. Example: <code>2025-12-31</code></p>
+            </div>
+                </form>
+
                     <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/approve</h2>
 
 <p>
@@ -15994,6 +16931,1830 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Optional reason for rejecting the device change. Must not be greater than 1000 characters. Example: <code>Device policy violation</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-roles">GET api/v1/admin/roles</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-roles">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/roles?per_page=15" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/roles"
+);
+
+const params = {
+    "per_page": "15",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-roles">
+    </span>
+<span id="execution-results-GETapi-v1-admin-roles" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-roles"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-roles"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-roles" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-roles">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-roles" data-method="GET"
+      data-path="api/v1/admin/roles"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-roles', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-roles"
+                    onclick="tryItOut('GETapi-v1-admin-roles');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-roles"
+                    onclick="cancelTryOut('GETapi-v1-admin-roles');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-roles"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/roles</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-roles"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-roles"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-roles"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-roles"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page. Example: <code>15</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-roles">POST api/v1/admin/roles</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-roles">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/roles" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"name\": \"Content Admin\",
+    \"slug\": \"content_admin\",
+    \"description\": \"Manages course and video content.\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/roles"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "name": "Content Admin",
+    "slug": "content_admin",
+    "description": "Manages course and video content."
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-roles">
+</span>
+<span id="execution-results-POSTapi-v1-admin-roles" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-roles"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-roles"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-roles" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-roles">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-roles" data-method="POST"
+      data-path="api/v1/admin/roles"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-roles', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-roles"
+                    onclick="tryItOut('POSTapi-v1-admin-roles');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-roles"
+                    onclick="cancelTryOut('POSTapi-v1-admin-roles');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-roles"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/roles</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-roles"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-roles"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-roles"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name"                data-endpoint="POSTapi-v1-admin-roles"
+               value="Content Admin"
+               data-component="body">
+    <br>
+<p>Role display name. Must not be greater than 100 characters. Example: <code>Content Admin</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="slug"                data-endpoint="POSTapi-v1-admin-roles"
+               value="content_admin"
+               data-component="body">
+    <br>
+<p>Unique role identifier. Must not be greater than 100 characters. Example: <code>content_admin</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description"                data-endpoint="POSTapi-v1-admin-roles"
+               value="Manages course and video content."
+               data-component="body">
+    <br>
+<p>Optional role description. Must not be greater than 255 characters. Example: <code>Manages course and video content.</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-PUTapi-v1-admin-roles--role_id-">PUT api/v1/admin/roles/{role_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PUTapi-v1-admin-roles--role_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://xyz-lms.test/api/v1/admin/roles/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"name\": \"Support Admin\",
+    \"slug\": \"support_admin\",
+    \"description\": \"Handles support workflows.\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/roles/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "name": "Support Admin",
+    "slug": "support_admin",
+    "description": "Handles support workflows."
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-v1-admin-roles--role_id-">
+</span>
+<span id="execution-results-PUTapi-v1-admin-roles--role_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-v1-admin-roles--role_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-v1-admin-roles--role_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-v1-admin-roles--role_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-v1-admin-roles--role_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-v1-admin-roles--role_id-" data-method="PUT"
+      data-path="api/v1/admin/roles/{role_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-v1-admin-roles--role_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-v1-admin-roles--role_id-"
+                    onclick="tryItOut('PUTapi-v1-admin-roles--role_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-v1-admin-roles--role_id-"
+                    onclick="cancelTryOut('PUTapi-v1-admin-roles--role_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-v1-admin-roles--role_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/v1/admin/roles/{role_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>role_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="role_id"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the role. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="Support Admin"
+               data-component="body">
+    <br>
+<p>Role display name. Must not be greater than 100 characters. Example: <code>Support Admin</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="slug"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="support_admin"
+               data-component="body">
+    <br>
+<p>Unique role identifier. Must not be greater than 100 characters. Example: <code>support_admin</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="Handles support workflows."
+               data-component="body">
+    <br>
+<p>Optional role description. Must not be greater than 255 characters. Example: <code>Handles support workflows.</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-DELETEapi-v1-admin-roles--role_id-">DELETE api/v1/admin/roles/{role_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-v1-admin-roles--role_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://xyz-lms.test/api/v1/admin/roles/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/roles/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-v1-admin-roles--role_id-">
+</span>
+<span id="execution-results-DELETEapi-v1-admin-roles--role_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-v1-admin-roles--role_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-v1-admin-roles--role_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-v1-admin-roles--role_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-v1-admin-roles--role_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-v1-admin-roles--role_id-" data-method="DELETE"
+      data-path="api/v1/admin/roles/{role_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-v1-admin-roles--role_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-v1-admin-roles--role_id-"
+                    onclick="tryItOut('DELETEapi-v1-admin-roles--role_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-v1-admin-roles--role_id-"
+                    onclick="cancelTryOut('DELETEapi-v1-admin-roles--role_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-v1-admin-roles--role_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/v1/admin/roles/{role_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-v1-admin-roles--role_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-v1-admin-roles--role_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="DELETEapi-v1-admin-roles--role_id-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>role_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="role_id"                data-endpoint="DELETEapi-v1-admin-roles--role_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the role. Example: <code>1</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="endpoints-PUTapi-v1-admin-roles--role_id--permissions">PUT api/v1/admin/roles/{role_id}/permissions</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PUTapi-v1-admin-roles--role_id--permissions">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://xyz-lms.test/api/v1/admin/roles/1/permissions" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"permission_ids\": [
+        1
+    ]
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/roles/1/permissions"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "permission_ids": [
+        1
+    ]
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-v1-admin-roles--role_id--permissions">
+</span>
+<span id="execution-results-PUTapi-v1-admin-roles--role_id--permissions" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-v1-admin-roles--role_id--permissions"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-v1-admin-roles--role_id--permissions"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-v1-admin-roles--role_id--permissions" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-v1-admin-roles--role_id--permissions">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-v1-admin-roles--role_id--permissions" data-method="PUT"
+      data-path="api/v1/admin/roles/{role_id}/permissions"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-v1-admin-roles--role_id--permissions', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-v1-admin-roles--role_id--permissions"
+                    onclick="tryItOut('PUTapi-v1-admin-roles--role_id--permissions');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-v1-admin-roles--role_id--permissions"
+                    onclick="cancelTryOut('PUTapi-v1-admin-roles--role_id--permissions');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-v1-admin-roles--role_id--permissions"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/v1/admin/roles/{role_id}/permissions</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>role_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="role_id"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the role. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>permission_ids</code></b>&nbsp;&nbsp;
+<small>integer[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="permission_ids[0]"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="permission_ids[1]"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
+               data-component="body">
+    <br>
+<p>Permission ID. The <code>id</code> of an existing record in the permissions table.</p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-permissions">GET api/v1/admin/permissions</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-permissions">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/permissions" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/permissions"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-permissions">
+    </span>
+<span id="execution-results-GETapi-v1-admin-permissions" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-permissions"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-permissions"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-permissions" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-permissions">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-permissions" data-method="GET"
+      data-path="api/v1/admin/permissions"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-permissions', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-permissions"
+                    onclick="tryItOut('GETapi-v1-admin-permissions');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-permissions"
+                    onclick="cancelTryOut('GETapi-v1-admin-permissions');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-permissions"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/permissions</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-permissions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-permissions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-permissions"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-users">GET api/v1/admin/users</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-users">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/users?per_page=15" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/users"
+);
+
+const params = {
+    "per_page": "15",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-users">
+    </span>
+<span id="execution-results-GETapi-v1-admin-users" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-users"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-users"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-users" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-users">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-users" data-method="GET"
+      data-path="api/v1/admin/users"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-users', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-users"
+                    onclick="tryItOut('GETapi-v1-admin-users');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-users"
+                    onclick="cancelTryOut('GETapi-v1-admin-users');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-users"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/users</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-users"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-users"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-users"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-users"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page. Example: <code>15</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-users">POST api/v1/admin/users</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-users">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/users" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"name\": \"Jane Admin\",
+    \"email\": \"jane.admin@example.com\",
+    \"phone\": \"19990000003\",
+    \"password\": \"secret123\",
+    \"status\": 1,
+    \"center_id\": 12
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/users"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "name": "Jane Admin",
+    "email": "jane.admin@example.com",
+    "phone": "19990000003",
+    "password": "secret123",
+    "status": 1,
+    "center_id": 12
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-users">
+</span>
+<span id="execution-results-POSTapi-v1-admin-users" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-users"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-users"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-users" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-users">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-users" data-method="POST"
+      data-path="api/v1/admin/users"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-users', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-users"
+                    onclick="tryItOut('POSTapi-v1-admin-users');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-users"
+                    onclick="cancelTryOut('POSTapi-v1-admin-users');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-users"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/users</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-users"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-users"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-users"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name"                data-endpoint="POSTapi-v1-admin-users"
+               value="Jane Admin"
+               data-component="body">
+    <br>
+<p>Admin name. Must not be greater than 100 characters. Example: <code>Jane Admin</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="email"                data-endpoint="POSTapi-v1-admin-users"
+               value="jane.admin@example.com"
+               data-component="body">
+    <br>
+<p>Admin email address. Must be a valid email address. Must not be greater than 190 characters. Example: <code>jane.admin@example.com</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="phone"                data-endpoint="POSTapi-v1-admin-users"
+               value="19990000003"
+               data-component="body">
+    <br>
+<p>Admin phone number. Must not be greater than 30 characters. Example: <code>19990000003</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="password"                data-endpoint="POSTapi-v1-admin-users"
+               value="secret123"
+               data-component="body">
+    <br>
+<p>Admin password. Must be at least 8 characters. Example: <code>secret123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="status"                data-endpoint="POSTapi-v1-admin-users"
+               value="1"
+               data-component="body">
+    <br>
+<p>Admin status (0 inactive, 1 active, 2 banned). Example: <code>1</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>0</code></li> <li><code>1</code></li> <li><code>2</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-admin-users"
+               value="12"
+               data-component="body">
+    <br>
+<p>Optional center assignment for admin. The <code>id</code> of an existing record in the centers table. Example: <code>12</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-PUTapi-v1-admin-users--user_id-">PUT api/v1/admin/users/{user_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PUTapi-v1-admin-users--user_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://xyz-lms.test/api/v1/admin/users/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"name\": \"Updated Admin\",
+    \"email\": \"updated.admin@example.com\",
+    \"phone\": \"19990000004\",
+    \"password\": \"secret123\",
+    \"status\": 1,
+    \"center_id\": 12
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/users/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "name": "Updated Admin",
+    "email": "updated.admin@example.com",
+    "phone": "19990000004",
+    "password": "secret123",
+    "status": 1,
+    "center_id": 12
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-v1-admin-users--user_id-">
+</span>
+<span id="execution-results-PUTapi-v1-admin-users--user_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-v1-admin-users--user_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-v1-admin-users--user_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-v1-admin-users--user_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-v1-admin-users--user_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-v1-admin-users--user_id-" data-method="PUT"
+      data-path="api/v1/admin/users/{user_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-v1-admin-users--user_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-v1-admin-users--user_id-"
+                    onclick="tryItOut('PUTapi-v1-admin-users--user_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-v1-admin-users--user_id-"
+                    onclick="cancelTryOut('PUTapi-v1-admin-users--user_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-v1-admin-users--user_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/v1/admin/users/{user_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="user_id"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the user. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="Updated Admin"
+               data-component="body">
+    <br>
+<p>Admin name. Must not be greater than 100 characters. Example: <code>Updated Admin</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="email"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="updated.admin@example.com"
+               data-component="body">
+    <br>
+<p>Admin email address. Must be a valid email address. Must not be greater than 190 characters. Example: <code>updated.admin@example.com</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="phone"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="19990000004"
+               data-component="body">
+    <br>
+<p>Admin phone number. Must not be greater than 30 characters. Example: <code>19990000004</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="password"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="secret123"
+               data-component="body">
+    <br>
+<p>Admin password. Must be at least 8 characters. Example: <code>secret123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="status"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="1"
+               data-component="body">
+    <br>
+<p>Admin status (0 inactive, 1 active, 2 banned). Example: <code>1</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>0</code></li> <li><code>1</code></li> <li><code>2</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="12"
+               data-component="body">
+    <br>
+<p>Optional center assignment for admin. The <code>id</code> of an existing record in the centers table. Example: <code>12</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-DELETEapi-v1-admin-users--user_id-">DELETE api/v1/admin/users/{user_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-v1-admin-users--user_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://xyz-lms.test/api/v1/admin/users/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/users/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-v1-admin-users--user_id-">
+</span>
+<span id="execution-results-DELETEapi-v1-admin-users--user_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-v1-admin-users--user_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-v1-admin-users--user_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-v1-admin-users--user_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-v1-admin-users--user_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-v1-admin-users--user_id-" data-method="DELETE"
+      data-path="api/v1/admin/users/{user_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-v1-admin-users--user_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-v1-admin-users--user_id-"
+                    onclick="tryItOut('DELETEapi-v1-admin-users--user_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-v1-admin-users--user_id-"
+                    onclick="cancelTryOut('DELETEapi-v1-admin-users--user_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-v1-admin-users--user_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/v1/admin/users/{user_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-v1-admin-users--user_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-v1-admin-users--user_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="DELETEapi-v1-admin-users--user_id-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="user_id"                data-endpoint="DELETEapi-v1-admin-users--user_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the user. Example: <code>1</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="endpoints-PUTapi-v1-admin-users--user_id--roles">PUT api/v1/admin/users/{user_id}/roles</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PUTapi-v1-admin-users--user_id--roles">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://xyz-lms.test/api/v1/admin/users/1/roles" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"role_ids\": [
+        1
+    ]
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/users/1/roles"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "role_ids": [
+        1
+    ]
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-v1-admin-users--user_id--roles">
+</span>
+<span id="execution-results-PUTapi-v1-admin-users--user_id--roles" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-v1-admin-users--user_id--roles"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-v1-admin-users--user_id--roles"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-v1-admin-users--user_id--roles" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-v1-admin-users--user_id--roles">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-v1-admin-users--user_id--roles" data-method="PUT"
+      data-path="api/v1/admin/users/{user_id}/roles"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-v1-admin-users--user_id--roles', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-v1-admin-users--user_id--roles"
+                    onclick="tryItOut('PUTapi-v1-admin-users--user_id--roles');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-v1-admin-users--user_id--roles"
+                    onclick="cancelTryOut('PUTapi-v1-admin-users--user_id--roles');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-v1-admin-users--user_id--roles"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/v1/admin/users/{user_id}/roles</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="user_id"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the user. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>role_ids</code></b>&nbsp;&nbsp;
+<small>integer[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="role_ids[0]"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="role_ids[1]"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
+               data-component="body">
+    <br>
+<p>Role ID. The <code>id</code> of an existing record in the roles table.</p>
         </div>
         </form>
 

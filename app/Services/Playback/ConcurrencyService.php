@@ -23,7 +23,7 @@ class ConcurrencyService
             return;
         }
 
-        $this->deny('CONCURRENT_PLAYBACK', 'Another playback session is active.', 409);
+        $this->deny('CONCURRENT_PLAYBACK', 'Another playback session is active.', 403);
     }
 
     /**

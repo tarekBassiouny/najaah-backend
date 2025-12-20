@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Sections;
 
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Sections\Contracts\SectionWorkflowServiceInterface;
 
 class DeleteSectionWithStructureAction
@@ -13,8 +14,8 @@ class DeleteSectionWithStructureAction
         private readonly SectionWorkflowServiceInterface $workflowService
     ) {}
 
-    public function execute(Section $section): void
+    public function execute(User $actor, Section $section): void
     {
-        $this->workflowService->deleteWithStructure($section);
+        $this->workflowService->deleteWithStructure($actor, $section);
     }
 }

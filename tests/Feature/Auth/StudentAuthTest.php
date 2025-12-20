@@ -47,7 +47,7 @@ it('returns current student on /auth/me', function (): void {
 it('rejects unauthorized /auth/me', function (): void {
     $response = $this->getJson('/api/v1/auth/me');
 
-    $response->assertStatus(401);
+    $response->assertStatus(403);
 });
 
 it('revokes token on logout and blocks reuse', function (): void {
@@ -61,5 +61,5 @@ it('revokes token on logout and blocks reuse', function (): void {
         'Authorization' => 'Bearer '.$this->token,
     ]);
 
-    $reuse->assertStatus(401);
+    $reuse->assertStatus(403);
 });

@@ -105,9 +105,17 @@ class UpdateCourseRequest extends FormRequest
                 'description' => 'Localized titles keyed by locale.',
                 'example' => ['en' => 'Updated Course', 'ar' => 'دورة محدثة'],
             ],
+            'title_translations.*' => [
+                'description' => 'Localized title value.',
+                'example' => 'Updated Course',
+            ],
             'description_translations' => [
                 'description' => 'Localized descriptions keyed by locale.',
                 'example' => ['en' => 'Updated desc', 'ar' => 'وصف محدث'],
+            ],
+            'description_translations.*' => [
+                'description' => 'Localized description value.',
+                'example' => 'Updated desc',
             ],
             'difficulty_level' => [
                 'description' => 'Mapped numeric difficulty (auto-set from difficulty).',

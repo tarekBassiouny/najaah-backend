@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Courses;
 
 use App\Models\Course;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseWorkflowServiceInterface;
 
 class CloneCourseAction
@@ -16,8 +17,8 @@ class CloneCourseAction
     /**
      * @param  array<string, mixed>  $options
      */
-    public function execute(Course $course, array $options = []): Course
+    public function execute(User $actor, Course $course, array $options = []): Course
     {
-        return $this->courseWorkflowService->cloneCourse($course, $options);
+        return $this->courseWorkflowService->cloneCourse($course, $actor, $options);
     }
 }

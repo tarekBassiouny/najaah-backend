@@ -6,6 +6,7 @@ namespace App\Actions\Sections;
 
 use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 
 class CreateSectionAction
@@ -19,13 +20,13 @@ class CreateSectionAction
     /**
      * @param  array<string, mixed>  $data
      */
-    public function execute(array $data): Section
+    public function execute(User $actor, array $data): Section
     {
         $data = $this->normalizeTranslations($data, [
             'title_translations',
             'description_translations',
         ]);
 
-        return $this->sectionService->create($data);
+        return $this->sectionService->create($data, $actor);
     }
 }

@@ -10,11 +10,14 @@ use App\Models\Enrollment;
 use App\Models\ExtraViewRequest;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Centers\CenterScopeService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Carbon;
 
 class ExtraViewRequestService
 {
+    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+
     public function create(User $student, Course $course, Video $video, ?string $reason = null): ExtraViewRequest
     {
         $this->assertStudent($student);
@@ -143,9 +146,7 @@ class ExtraViewRequestService
             $this->deny('UNAUTHORIZED', 'Only admins can perform this action.', 403);
         }
 
-        if ($admin->center_id !== null && $admin->center_id !== $request->center_id) {
-            $this->deny('FORBIDDEN', 'You are not allowed to manage this request.', 403);
-        }
+        $this->centerScopeService->assertAdminSameCenter($admin, $request);
     }
 
     /**

@@ -21,9 +21,10 @@ class StoreCenterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'slug' => ['required', 'string', 'max:255', 'alpha_dash', 'unique:centers,slug'],
-            'type' => ['required', 'integer'],
-            'name_translations' => ['required', 'array'],
+            'slug' => ['nullable', 'string', 'max:255', 'alpha_dash', 'unique:centers,slug'],
+            'type' => ['nullable', 'integer'],
+            'name' => ['required_without:name_translations', 'string', 'max:255'],
+            'name_translations' => ['required_without:name', 'array'],
             'description_translations' => ['nullable', 'array'],
             'logo_url' => ['nullable', 'string'],
             'primary_color' => ['nullable', 'string'],
@@ -32,6 +33,12 @@ class StoreCenterRequest extends FormRequest
             'pdf_download_permission' => ['boolean'],
             'device_limit' => ['nullable', 'integer', 'min:1'],
             'settings' => ['nullable', 'array'],
+            'owner_user_id' => ['required_without:owner', 'nullable', 'integer', 'exists:users,id'],
+            'owner' => ['required_without:owner_user_id', 'nullable', 'array'],
+            'owner.name' => ['required_without:owner_user_id', 'string', 'max:255'],
+            'owner.email' => ['required_without:owner_user_id', 'email', 'max:255', 'unique:users,email'],
+            'owner.phone' => ['nullable', 'string', 'max:50'],
+            'owner_role' => ['nullable', 'string'],
         ];
     }
 
@@ -48,6 +55,10 @@ class StoreCenterRequest extends FormRequest
             'type' => [
                 'description' => 'Center type identifier.',
                 'example' => 0,
+            ],
+            'name' => [
+                'description' => 'Center name when translations are not provided.',
+                'example' => 'Center Name',
             ],
             'name_translations' => [
                 'description' => 'Localized center name.',
@@ -84,6 +95,34 @@ class StoreCenterRequest extends FormRequest
             'settings' => [
                 'description' => 'Optional center settings payload.',
                 'example' => ['pdf_download_permission' => true],
+            ],
+            'owner_user_id' => [
+                'description' => 'Existing user ID to assign as the owner.',
+                'example' => 10,
+            ],
+            'owner' => [
+                'description' => 'Owner details when creating a new owner user.',
+                'example' => [
+                    'name' => 'Owner Name',
+                    'email' => 'owner@example.com',
+                    'phone' => '+1234567890',
+                ],
+            ],
+            'owner.name' => [
+                'description' => 'Owner name.',
+                'example' => 'Owner Name',
+            ],
+            'owner.email' => [
+                'description' => 'Owner email address.',
+                'example' => 'owner@example.com',
+            ],
+            'owner.phone' => [
+                'description' => 'Owner phone number.',
+                'example' => '+1234567890',
+            ],
+            'owner_role' => [
+                'description' => 'Optional role name to assign to the owner.',
+                'example' => 'center_owner',
             ],
         ];
     }

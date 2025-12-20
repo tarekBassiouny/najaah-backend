@@ -20,6 +20,7 @@ class ListVideoUploadSessionsRequest extends FormRequest
     {
         return [
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'page' => ['sometimes', 'integer', 'min:1'],
             'status' => ['sometimes', 'integer'],
             'center_id' => ['sometimes', 'integer'],
         ];
@@ -35,6 +36,10 @@ class ListVideoUploadSessionsRequest extends FormRequest
                 'description' => 'Items per page (max 100).',
                 'example' => '15',
             ],
+            'page' => [
+                'description' => 'Page number to retrieve.',
+                'example' => '1',
+            ],
             'status' => [
                 'description' => 'Filter by upload status (0-4).',
                 'example' => '3',
@@ -44,5 +49,13 @@ class ListVideoUploadSessionsRequest extends FormRequest
                 'example' => '1',
             ],
         ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
     }
 }

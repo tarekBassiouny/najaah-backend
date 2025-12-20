@@ -27,9 +27,33 @@ class AdminAuthService implements AdminAuthServiceInterface
         /** @var User $user */
         $user = Auth::guard('admin')->user();
 
+        $this->syncAdminMembership($user);
+
+        $centerAccessValid = $user->hasRole('super_admin');
+        if (! $centerAccessValid && is_numeric($user->center_id)) {
+            $centerAccessValid = $user->isAdminOfCenter((int) $user->center_id);
+        }
+
         return [
             'user' => $user,
-            'token' => $token,
+            'token' => $user->force_password_reset ? null : $token,
+            'requires_password_reset' => $user->force_password_reset,
+            'center_access_valid' => $centerAccessValid,
         ];
+    }
+
+    private function syncAdminMembership(User $user): void
+    {
+        if ($user->center_id === null) {
+            return;
+        }
+
+        if ($user->isAdminOfCenter((int) $user->center_id)) {
+            return;
+        }
+
+        $user->centers()->syncWithoutDetaching([
+            (int) $user->center_id => ['type' => 'admin'],
+        ]);
     }
 }

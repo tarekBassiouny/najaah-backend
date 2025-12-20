@@ -25,7 +25,7 @@ class ReorderSectionsRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {
@@ -33,6 +33,10 @@ class ReorderSectionsRequest extends FormRequest
             'sections' => [
                 'description' => 'Ordered list of section IDs for the course.',
                 'example' => '[1,2,3]',
+            ],
+            'sections.*' => [
+                'description' => 'Section ID.',
+                'example' => 1,
             ],
         ];
     }

@@ -2,6 +2,7 @@
 
 use App\Actions\Courses\CreateCourseAction;
 use App\Models\Course;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseServiceInterface;
 
 it('creates course via service', function (): void {
@@ -12,16 +13,17 @@ it('creates course via service', function (): void {
         'title_translations' => ['en' => 'New Course'],
     ];
     $course = new Course;
+    $actor = new User;
 
     /** @var Mockery\MockInterface&CourseServiceInterface $service */
     $service = \Mockery::mock(CourseServiceInterface::class);
     $service->allows()
-        ->create($expected)
+        ->create($expected, $actor)
         ->andReturn($course);
 
     $action = new CreateCourseAction($service);
 
-    $result = $action->execute($data);
+    $result = $action->execute($actor, $data);
 
     expect($result)->toBe($course);
     expect($result)->toBeInstanceOf(Course::class);

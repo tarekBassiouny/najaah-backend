@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Sections;
 
+use App\Models\Course;
 use App\Models\Section;
+use App\Models\User;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -12,8 +15,13 @@ use Illuminate\Support\Facades\DB;
 class SectionService implements SectionServiceInterface
 {
     /** @return Collection<int, Section> */
-    public function listForCourse(int $courseId): Collection
+    public function listForCourse(int $courseId, ?User $actor = null): Collection
     {
+        if ($actor instanceof User) {
+            $course = Course::findOrFail($courseId);
+            $this->centerScopeService->assertAdminSameCenter($actor, $course);
+        }
+
         return Section::query()
             ->where('course_id', $courseId)
             ->orderBy('order_index')
@@ -21,15 +29,27 @@ class SectionService implements SectionServiceInterface
             ->get();
     }
 
-    public function find(int $id): ?Section
+    public function find(int $id, ?User $actor = null): ?Section
     {
-        return Section::with(['videos', 'pdfs'])->find($id);
+        $section = Section::with(['videos', 'pdfs', 'course'])->find($id);
+
+        if ($section !== null && $actor instanceof User) {
+            $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
+        }
+
+        return $section;
     }
 
     /** @param array<string, mixed> $data */
-    public function create(array $data): Section
+    public function create(array $data, ?User $actor = null): Section
     {
         $courseId = isset($data['course_id']) && is_numeric($data['course_id']) ? (int) $data['course_id'] : 0;
+
+        if ($actor instanceof User) {
+            $course = Course::findOrFail($courseId);
+            $this->centerScopeService->assertAdminSameCenter($actor, $course);
+        }
+
         $nextOrder = $this->nextOrderIndex($courseId);
 
         $payload = [
@@ -43,27 +63,47 @@ class SectionService implements SectionServiceInterface
     }
 
     /** @param array<string, mixed> $data */
-    public function update(Section $section, array $data): Section
+    public function update(Section $section, array $data, ?User $actor = null): Section
     {
+        if ($actor instanceof User) {
+            $section->loadMissing('course');
+            $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
+        }
+
         $section->update($data);
 
         return $section->fresh(['videos', 'pdfs']) ?? $section;
     }
 
-    public function delete(Section $section): void
+    public function delete(Section $section, ?User $actor = null): void
     {
+        if ($actor instanceof User) {
+            $section->loadMissing('course');
+            $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
+        }
+
         $section->delete();
     }
 
-    public function restore(Section $section): Section
+    public function restore(Section $section, ?User $actor = null): Section
     {
+        if ($actor instanceof User) {
+            $section->loadMissing('course');
+            $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
+        }
+
         $section->restore();
 
         return $section->fresh(['videos', 'pdfs']) ?? $section;
     }
 
-    public function reorder(Section $section, int $newIndex): void
+    public function reorder(Section $section, int $newIndex, ?User $actor = null): void
     {
+        if ($actor instanceof User) {
+            $section->loadMissing('course');
+            $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
+        }
+
         DB::transaction(function () use ($section, $newIndex): void {
             $sections = Section::query()
                 ->where('course_id', $section->course_id)
@@ -90,4 +130,6 @@ class SectionService implements SectionServiceInterface
 
         return is_numeric($maxOrder) ? (int) $maxOrder + 1 : 1;
     }
+
+    public function __construct(private readonly CenterScopeService $centerScopeService) {}
 }

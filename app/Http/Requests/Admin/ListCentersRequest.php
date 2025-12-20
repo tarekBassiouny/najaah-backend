@@ -20,8 +20,10 @@ class ListCentersRequest extends FormRequest
     {
         return [
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'page' => ['sometimes', 'integer', 'min:1'],
             'slug' => ['sometimes', 'string'],
             'type' => ['sometimes', 'integer'],
+            'search' => ['sometimes', 'string'],
         ];
     }
 
@@ -35,6 +37,10 @@ class ListCentersRequest extends FormRequest
                 'description' => 'Items per page (max 100).',
                 'example' => '15',
             ],
+            'page' => [
+                'description' => 'Page number to retrieve.',
+                'example' => '1',
+            ],
             'slug' => [
                 'description' => 'Filter centers by slug.',
                 'example' => 'center-1',
@@ -43,6 +49,18 @@ class ListCentersRequest extends FormRequest
                 'description' => 'Filter centers by type.',
                 'example' => '1',
             ],
+            'search' => [
+                'description' => 'Search centers by name.',
+                'example' => 'Academy',
+            ],
         ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
     }
 }

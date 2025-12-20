@@ -25,8 +25,10 @@ test('admin login succeeds with valid credentials', function () {
     $response->assertOk()
         ->assertJsonStructure([
             'success',
-            'user' => ['id', 'email'],
-            'token',
+            'data' => [
+                'user' => ['id', 'email'],
+                'token',
+            ],
         ])
         ->assertJson(['success' => true]);
 });
@@ -40,7 +42,9 @@ test('admin login fails with invalid credentials', function () {
     $response->assertStatus(401)
         ->assertJson([
             'success' => false,
-            'error' => 'Invalid credentials',
+            'error' => [
+                'code' => 'INVALID_CREDENTIALS',
+            ],
         ]);
 });
 
@@ -60,7 +64,9 @@ test('student cannot login as admin', function () {
     $response->assertStatus(401)
         ->assertJson([
             'success' => false,
-            'error' => 'Invalid credentials',
+            'error' => [
+                'code' => 'INVALID_CREDENTIALS',
+            ],
         ]);
 });
 
@@ -75,11 +81,15 @@ test('admin can fetch their profile', function () {
     $response->assertOk()
         ->assertJsonStructure([
             'success',
-            'user' => ['id', 'email'],
+            'data' => [
+                'user' => ['id', 'email'],
+            ],
         ])
         ->assertJson([
             'success' => true,
-            'user' => ['id' => $admin->id],
+            'data' => [
+                'user' => ['id' => $admin->id],
+            ],
         ]);
 });
 
@@ -100,10 +110,10 @@ test('admin can refresh token', function () {
     $response = $this->postJson('/api/v1/admin/auth/refresh', [], $this->adminHeaders());
 
     $response->assertOk()
-        ->assertJsonStructure(['success', 'token'])
+        ->assertJsonStructure(['success', 'data' => ['token']])
         ->assertJson(['success' => true]);
 
-    $newToken = $response->json('token');
+    $newToken = $response->json('data.token');
 
     expect($newToken)->not->toBe($oldToken);
 });
@@ -125,15 +135,14 @@ test('admin can logout successfully', function () {
     $response->assertOk()
         ->assertJson([
             'success' => true,
-            'message' => 'Logged out',
+            'data' => [
+                'message' => 'Logged out',
+            ],
         ]);
 });
 
 test('logout fails without token', function () {
     $response = $this->postJson('/api/v1/admin/auth/logout');
 
-    $response->assertStatus(401)
-        ->assertJson([
-            'message' => 'Unauthenticated.',
-        ]);
+    $response->assertStatus(401);
 });

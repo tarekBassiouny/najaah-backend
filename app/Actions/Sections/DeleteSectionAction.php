@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Sections;
 
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 
 class DeleteSectionAction
@@ -13,8 +14,8 @@ class DeleteSectionAction
         private readonly SectionServiceInterface $sectionService
     ) {}
 
-    public function execute(Section $section): void
+    public function execute(User $actor, Section $section): void
     {
-        $this->sectionService->delete($section);
+        $this->sectionService->delete($section, $actor);
     }
 }

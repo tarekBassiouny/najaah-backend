@@ -28,6 +28,13 @@ class CenterService implements CenterServiceInterface
             $query->where('type', (int) $filters['type']);
         }
 
+        if (isset($filters['search']) && is_string($filters['search'])) {
+            $term = trim($filters['search']);
+            if ($term !== '') {
+                $query->where('name_translations', 'like', '%'.$term.'%');
+            }
+        }
+
         return $query->paginate($perPage);
     }
 

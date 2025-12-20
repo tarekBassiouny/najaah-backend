@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Sections;
 
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 
 class RestoreSectionAction
@@ -13,8 +14,8 @@ class RestoreSectionAction
         private readonly SectionServiceInterface $sectionService
     ) {}
 
-    public function execute(Section $section): Section
+    public function execute(User $actor, Section $section): Section
     {
-        return $this->sectionService->restore($section);
+        return $this->sectionService->restore($section, $actor);
     }
 }

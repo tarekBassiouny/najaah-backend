@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\Center;
-use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Videos\VideoUploadService;
@@ -15,11 +14,7 @@ it('lists upload sessions for admin center', function (): void {
     $center = Center::factory()->create();
     $otherCenter = Center::factory()->create();
 
-    /** @var User $admin */
-    $admin = User::factory()->create([
-        'is_student' => false,
-        'center_id' => $center->id,
-    ]);
+    $this->asAdmin();
 
     /** @var VideoUploadSession $session */
     $session = VideoUploadSession::factory()->create([
@@ -38,7 +33,7 @@ it('lists upload sessions for admin center', function (): void {
 
     VideoUploadSession::factory()->create(['center_id' => $otherCenter->id]);
 
-    $response = $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/video-upload-sessions?per_page=10');
+    $response = $this->getJson('/api/v1/admin/video-upload-sessions?per_page=10&center_id='.$center->id, $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('meta.total', 1)

@@ -23,11 +23,13 @@ class UserCenter extends Pivot
     protected $fillable = [
         'user_id',
         'center_id',
+        'type',
     ];
 
     protected $casts = [
         'user_id' => 'integer',
         'center_id' => 'integer',
+        'type' => 'string',
     ];
 
     /** @return BelongsTo<User, self> */

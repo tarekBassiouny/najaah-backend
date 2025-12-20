@@ -6,14 +6,20 @@ namespace App\Services\Settings;
 
 use App\Models\Center;
 use App\Models\CenterSetting;
+use App\Models\User;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use Illuminate\Support\Facades\DB;
 
 class CenterSettingsService implements CenterSettingsServiceInterface
 {
+    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+
     /** @param array<string, mixed> $settings */
-    public function update(Center $center, array $settings): CenterSetting
+    public function update(User $actor, Center $center, array $settings): CenterSetting
     {
+        $this->centerScopeService->assertAdminSameCenter($actor, $center);
+
         return DB::transaction(function () use ($center, $settings): CenterSetting {
             /** @var CenterSetting|null $existing */
             $existing = $center->setting()->withTrashed()->first();
@@ -35,8 +41,10 @@ class CenterSettingsService implements CenterSettingsServiceInterface
         });
     }
 
-    public function get(Center $center): CenterSetting
+    public function get(User $actor, Center $center): CenterSetting
     {
+        $this->centerScopeService->assertAdminSameCenter($actor, $center);
+
         /** @var CenterSetting $setting */
         $setting = $center->setting()->firstOrCreate([
             'center_id' => $center->id,

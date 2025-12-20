@@ -9,6 +9,8 @@ use App\Models\Course;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
+use App\Models\User;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseWorkflowServiceInterface;
 use App\Services\Videos\VideoPublishingService;
 use Illuminate\Support\Facades\DB;
@@ -18,13 +20,16 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
 {
     private VideoPublishingService $videoPublishingService;
 
-    public function __construct(?VideoPublishingService $videoPublishingService = null)
-    {
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        ?VideoPublishingService $videoPublishingService = null
+    ) {
         $this->videoPublishingService = $videoPublishingService ?? new VideoPublishingService;
     }
 
-    public function publishCourse(Course $course): Course
+    public function publishCourse(Course $course, User $actor): Course
     {
+        $this->centerScopeService->assertAdminSameCenter($actor, $course);
         $course->loadMissing(['sections', 'videos']);
 
         if ($course->status === 3) {
@@ -65,8 +70,10 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
     }
 
     /** @param array<string, mixed> $options */
-    public function cloneCourse(Course $course, array $options = []): Course
+    public function cloneCourse(Course $course, User $actor, array $options = []): Course
     {
+        $this->centerScopeService->assertAdminSameCenter($actor, $course);
+
         return DB::transaction(function () use ($course, $options): Course {
             $course->loadMissing(['sections', 'videos', 'pdfs']);
 

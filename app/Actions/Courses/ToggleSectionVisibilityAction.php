@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Courses;
 
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseStructureServiceInterface;
 
 class ToggleSectionVisibilityAction
@@ -13,8 +14,8 @@ class ToggleSectionVisibilityAction
         private readonly CourseStructureServiceInterface $courseStructureService
     ) {}
 
-    public function execute(Section $section): Section
+    public function execute(User $actor, Section $section): Section
     {
-        return $this->courseStructureService->toggleSectionVisibility($section);
+        return $this->courseStructureService->toggleSectionVisibility($section, $actor);
     }
 }

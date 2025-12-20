@@ -1,0 +1,87 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\Centers;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
+class CenterScopeService
+{
+    public function assertSameCenter(User $user, Model $model): void
+    {
+        if ($this->isSuperAdmin($user)) {
+            return;
+        }
+
+        $modelCenterId = $model->getAttribute('center_id');
+        if (! is_numeric($modelCenterId)) {
+            $this->deny();
+        }
+
+        $this->assertMember($user, (int) $modelCenterId);
+    }
+
+    public function assertAdminSameCenter(User $user, Model $model): void
+    {
+        if ($this->isSuperAdmin($user)) {
+            return;
+        }
+
+        $modelCenterId = $model->getAttribute('center_id');
+        if (! is_numeric($modelCenterId)) {
+            $this->deny();
+        }
+
+        $this->assertAdminCenterId($user, (int) $modelCenterId);
+    }
+
+    public function assertCenterId(User $user, ?int $centerId): void
+    {
+        if ($this->isSuperAdmin($user)) {
+            return;
+        }
+
+        $this->assertMember($user, $centerId);
+    }
+
+    public function assertAdminCenterId(User $user, ?int $centerId): void
+    {
+        if ($this->isSuperAdmin($user)) {
+            return;
+        }
+
+        if ($centerId === null) {
+            $this->deny();
+        }
+
+        if (! $user->isAdminOfCenter($centerId)) {
+            $this->deny();
+        }
+    }
+
+    private function assertMember(User $user, ?int $centerId): void
+    {
+        if ($centerId === null || ! $user->belongsToCenter($centerId)) {
+            $this->deny();
+        }
+    }
+
+    private function isSuperAdmin(User $user): bool
+    {
+        return $user->hasRole('super_admin');
+    }
+
+    private function deny(): void
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'CENTER_MISMATCH',
+                'message' => 'Resource does not belong to your center.',
+            ],
+        ], 403));
+    }
+}

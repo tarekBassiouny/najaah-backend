@@ -11,8 +11,10 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Courses\CourseAttachmentService;
+use App\Services\Logging\LogContextResolver;
 use App\Services\Sections\SectionAttachmentService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
@@ -43,6 +45,11 @@ class PdfStorageService
         $path = $file->store('pdfs', 'local');
 
         if ($path === false) {
+            Log::error('PDF storage failed.', $this->resolveLogContext([
+                'source' => 'api',
+                'user_id' => $creator?->id,
+                'center_id' => $course?->center_id ?? $creator?->center_id,
+            ]));
             throw new RuntimeException('Failed to store PDF file.');
         }
 
@@ -66,13 +73,13 @@ class PdfStorageService
         $pdf = Pdf::create($payload);
 
         if ($course !== null) {
-            $this->attachPdf($pdf, $course, $section, $video);
+            $this->attachPdf($pdf, $course, $section, $video, $creator);
         }
 
         return $pdf;
     }
 
-    private function attachPdf(Pdf $pdf, Course $course, ?Section $section, ?Video $video): void
+    private function attachPdf(Pdf $pdf, Course $course, ?Section $section, ?Video $video, ?User $creator): void
     {
         if ($section !== null && (int) $section->course_id !== (int) $course->id) {
             throw ValidationException::withMessages([
@@ -89,7 +96,13 @@ class PdfStorageService
         if ($section !== null) {
             $this->sectionAttachmentService->movePdfToSection($pdf, $section);
         } else {
-            $this->courseAttachmentService->assignPdf($course, (int) $pdf->id);
+            if (! $creator instanceof User) {
+                throw ValidationException::withMessages([
+                    'creator' => ['PDF attachments require an authenticated user.'],
+                ]);
+            }
+
+            $this->courseAttachmentService->assignPdf($course, (int) $pdf->id, $creator);
         }
 
         if ($video !== null) {
@@ -103,5 +116,14 @@ class PdfStorageService
                 $pivot->save();
             }
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }

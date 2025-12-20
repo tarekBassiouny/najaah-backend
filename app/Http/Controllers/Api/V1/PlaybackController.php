@@ -34,7 +34,7 @@ class PlaybackController extends Controller
                     'code' => 'UNAUTHORIZED',
                     'message' => 'Authentication required.',
                 ],
-            ], 401);
+            ], 403);
         }
 
         $sectionId = $request->integer('section_id');
@@ -50,8 +50,9 @@ class PlaybackController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Playback authorized',
-            'data' => $result,
+            'data' => [
+                'embed_config' => $result['embed_config'],
+            ],
         ]);
     }
 }

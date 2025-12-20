@@ -20,6 +20,7 @@ return new class extends Migration
                 ->constrained('centers')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->string('type')->default('student');
             $table->timestamps();
             $table->softDeletes();
             $table->unique(['user_id', 'center_id']); // user cannot join same center twice

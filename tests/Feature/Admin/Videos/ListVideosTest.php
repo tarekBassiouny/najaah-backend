@@ -3,11 +3,15 @@
 declare(strict_types=1);
 
 use App\Models\Center;
+use App\Models\Course;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 
 uses(RefreshDatabase::class)->group('videos');
 
@@ -15,11 +19,9 @@ it('lists videos with upload sessions for admin center', function (): void {
     $center = Center::factory()->create();
     $otherCenter = Center::factory()->create();
 
-    /** @var User $admin */
-    $admin = User::factory()->create([
-        'is_student' => false,
-        'center_id' => $center->id,
-    ]);
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
+    $admin->update(['center_id' => $center->id]);
 
     /** @var VideoUploadSession $session */
     $session = VideoUploadSession::factory()->create([
@@ -36,7 +38,6 @@ it('lists videos with upload sessions for admin center', function (): void {
         'lifecycle_status' => 1,
     ]);
 
-    /** @var User $otherAdmin */
     $otherAdmin = User::factory()->create([
         'is_student' => false,
         'center_id' => $otherCenter->id,
@@ -47,7 +48,7 @@ it('lists videos with upload sessions for admin center', function (): void {
         'created_by' => $otherAdmin->id,
     ]);
 
-    $response = $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/videos?per_page=10');
+    $response = $this->getJson('/api/v1/admin/videos?per_page=10&center_id='.$center->id, $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('meta.total', 1)
@@ -61,6 +62,93 @@ it('lists videos with upload sessions for admin center', function (): void {
     $json = $response->json();
     expect($json['data'][0])->not->toHaveKey('playback_url')
         ->and($json['data'][0])->not->toHaveKey('source_url');
+});
+
+it('filters videos by title search', function (): void {
+    $this->asAdmin();
+    Video::factory()->create([
+        'title_translations' => ['en' => 'Alpha Intro'],
+    ]);
+    Video::factory()->create([
+        'title_translations' => ['en' => 'Beta Intro'],
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/videos?search=Alpha', $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Alpha Intro');
+});
+
+it('filters videos by course', function (): void {
+    $this->asAdmin();
+    $courseA = Course::factory()->create();
+    $courseB = Course::factory()->create();
+
+    $videoA = Video::factory()->create([
+        'title_translations' => ['en' => 'Course A Video'],
+    ]);
+    $videoB = Video::factory()->create([
+        'title_translations' => ['en' => 'Course B Video'],
+    ]);
+
+    $courseA->videos()->attach($videoA->id, ['section_id' => null]);
+    $courseB->videos()->attach($videoB->id, ['section_id' => null]);
+
+    $response = $this->getJson('/api/v1/admin/videos?course_id='.$courseA->id, $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Course A Video');
+});
+
+it('scopes videos to admin center for non super admins', function (): void {
+    $permission = Permission::firstOrCreate(['name' => 'video.manage'], [
+        'description' => 'Permission: video.manage',
+    ]);
+    $role = Role::factory()->create(['slug' => 'video_admin']);
+    $role->permissions()->sync([$permission->id]);
+
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $centerA->id,
+    ]);
+    $admin->roles()->sync([$role->id]);
+    $admin->centers()->sync([$centerA->id => ['type' => 'admin']]);
+
+    Video::factory()->create([
+        'title_translations' => ['en' => 'Center A Video'],
+        'created_by' => User::factory()->create([
+            'center_id' => $centerA->id,
+            'phone' => '1000000001',
+        ])->id,
+    ]);
+    Video::factory()->create([
+        'title_translations' => ['en' => 'Center B Video'],
+        'created_by' => User::factory()->create([
+            'center_id' => $centerB->id,
+            'phone' => '1000000002',
+        ])->id,
+    ]);
+
+    $token = (string) Auth::guard('admin')->attempt([
+        'email' => $admin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/videos?center_id='.$centerB->id, [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+    ]);
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Center A Video');
 });
 
 it('requires admin authentication', function (): void {

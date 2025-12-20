@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Sections;
 
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Sections\Contracts\SectionWorkflowServiceInterface;
 
 class PublishSectionAction
@@ -13,8 +14,8 @@ class PublishSectionAction
         private readonly SectionWorkflowServiceInterface $workflowService
     ) {}
 
-    public function execute(Section $section): Section
+    public function execute(User $actor, Section $section): Section
     {
-        return $this->workflowService->publish($section);
+        return $this->workflowService->publish($actor, $section);
     }
 }

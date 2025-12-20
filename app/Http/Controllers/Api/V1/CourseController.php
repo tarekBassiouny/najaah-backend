@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Actions\Courses\ShowCourseAction;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Courses\CourseResource;
 use App\Http\Resources\Courses\CourseSummaryResource;
@@ -63,11 +62,21 @@ class CourseController extends Controller
         ]);
     }
 
-    public function show(Course $course, ShowCourseAction $showCourseAction): JsonResponse
+    public function show(Course $course): JsonResponse
     {
-        $course = $showCourseAction->execute((int) $course->id);
+        $user = request()->user();
 
-        if ($course === null || (int) $course->status !== 3) {
+        if (! ($user instanceof User) || $user->is_student === false) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Only students can access courses.',
+                ],
+            ], 403);
+        }
+
+        if ((int) $course->status !== 3) {
             return response()->json([
                 'success' => false,
                 'error' => [

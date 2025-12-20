@@ -8,15 +8,19 @@ use App\Models\AuditLog;
 use App\Models\DeviceChangeRequest;
 use App\Models\User;
 use App\Models\UserDevice;
+use App\Services\Centers\CenterScopeService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DeviceChangeService
 {
+    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+
     public function create(User $student, string $newDeviceId, string $model, string $osVersion, ?string $reason = null): DeviceChangeRequest
     {
         $this->assertStudent($student);
+        $this->centerScopeService->assertCenterId($student, $student->center_id);
 
         /** @var UserDevice|null $active */
         $active = $student->devices()
@@ -147,9 +151,7 @@ class DeviceChangeService
             $this->deny('UNAUTHORIZED', 'Only admins can perform this action.', 403);
         }
 
-        if ($admin->center_id !== null && $admin->center_id !== $request->center_id) {
-            $this->deny('FORBIDDEN', 'You are not allowed to manage this request.', 403);
-        }
+        $this->centerScopeService->assertAdminSameCenter($admin, $request);
     }
 
     /**

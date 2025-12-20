@@ -6,7 +6,6 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
-use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,8 +26,7 @@ function attachVideoToCourseForPublishing(Course $course, Video $video): void
 
 it('blocks publishing when any video is not ready', function (): void {
     $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
+    $admin = $this->asAdmin();
     $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0]);
     Section::factory()->create(['course_id' => $course->id]);
 
@@ -46,8 +44,7 @@ it('blocks publishing when any video is not ready', function (): void {
 
 it('allows publishing when videos are ready and latest session ready', function (): void {
     $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
+    $admin = $this->asAdmin();
     $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0]);
     Section::factory()->create(['course_id' => $course->id]);
 

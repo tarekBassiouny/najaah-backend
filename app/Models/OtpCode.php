@@ -18,8 +18,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $provider
  * @property \Carbon\Carbon $expires_at
  * @property \Carbon\Carbon|null $consumed_at
- * @property string|null $otp
- * @property string|null $token
  * @property-read User|null $user
  */
 class OtpCode extends Model
@@ -39,8 +37,6 @@ class OtpCode extends Model
         'country_code',
         'otp_code',
         'otp_token',
-        'otp',
-        'token',
         'provider',
         'expires_at',
         'consumed_at',

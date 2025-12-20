@@ -8,7 +8,9 @@ use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
+use App\Models\User;
 use App\Models\Video;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -16,24 +18,31 @@ use Illuminate\Validation\ValidationException;
 
 class SectionStructureService implements SectionStructureServiceInterface
 {
+    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+
     /** @return Collection<int, Video> */
-    public function listVideos(Section $section): Collection
+    public function listVideos(Section $section, ?User $actor = null): Collection
     {
+        $this->assertCenterScope($section, $actor);
+
         return $section->videos()
             ->orderBy('course_video.order_index')
             ->get();
     }
 
     /** @return Collection<int, Pdf> */
-    public function listPdfs(Section $section): Collection
+    public function listPdfs(Section $section, ?User $actor = null): Collection
     {
+        $this->assertCenterScope($section, $actor);
+
         return $section->pdfs()
             ->orderBy('course_pdf.order_index')
             ->get();
     }
 
-    public function attachVideo(Section $section, Video $video): void
+    public function attachVideo(Section $section, Video $video, ?User $actor = null): void
     {
+        $this->assertCenterScope($section, $actor);
         $this->assertVideoBelongsToCourse($section, $video);
         $this->assertVideoReady($video);
 
@@ -79,8 +88,9 @@ class SectionStructureService implements SectionStructureServiceInterface
         }
     }
 
-    public function detachVideo(Section $section, Video $video): void
+    public function detachVideo(Section $section, Video $video, ?User $actor = null): void
     {
+        $this->assertCenterScope($section, $actor);
         $pivot = CourseVideo::where('course_id', $section->course_id)
             ->where('video_id', $video->id)
             ->where('section_id', $section->id)
@@ -97,8 +107,9 @@ class SectionStructureService implements SectionStructureServiceInterface
         $this->syncVideoOrder($section, $this->currentVideoIds($section));
     }
 
-    public function attachPdf(Section $section, Pdf $pdf): void
+    public function attachPdf(Section $section, Pdf $pdf, ?User $actor = null): void
     {
+        $this->assertCenterScope($section, $actor);
         $this->assertPdfBelongsToCourse($section, $pdf);
 
         $pivot = CoursePdf::withTrashed()
@@ -145,8 +156,9 @@ class SectionStructureService implements SectionStructureServiceInterface
         }
     }
 
-    public function detachPdf(Section $section, Pdf $pdf): void
+    public function detachPdf(Section $section, Pdf $pdf, ?User $actor = null): void
     {
+        $this->assertCenterScope($section, $actor);
         $pivot = CoursePdf::where('course_id', $section->course_id)
             ->where('pdf_id', $pdf->id)
             ->where('section_id', $section->id)
@@ -328,5 +340,15 @@ class SectionStructureService implements SectionStructureServiceInterface
                 'course_id' => ['PDF is already attached to another course.'],
             ]);
         }
+    }
+
+    private function assertCenterScope(Section $section, ?User $actor): void
+    {
+        if (! $actor instanceof User) {
+            return;
+        }
+
+        $section->loadMissing('course');
+        $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
     }
 }

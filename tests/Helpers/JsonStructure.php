@@ -93,7 +93,6 @@ class JsonStructure
             'title',
             'duration',
             'type',
-            'playback_url',
         ];
     }
 

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\EnrollmentController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/enrollments', [EnrollmentController::class, 'store']);
-Route::put('/enrollments/{enrollment}', [EnrollmentController::class, 'update']);
-Route::delete('/enrollments/{enrollment}', [EnrollmentController::class, 'destroy']);
+Route::middleware('require.permission:enrollment.manage')->group(function (): void {
+    Route::post('/enrollments', [EnrollmentController::class, 'store']);
+    Route::put('/enrollments/{enrollment}', [EnrollmentController::class, 'update']);
+    Route::delete('/enrollments/{enrollment}', [EnrollmentController::class, 'destroy']);
+});

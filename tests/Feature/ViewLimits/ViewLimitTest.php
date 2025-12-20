@@ -9,7 +9,9 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Playback\PlaybackAuthorizationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 uses(RefreshDatabase::class)->group('view-limits', 'playback');
 
@@ -69,6 +71,17 @@ it('blocks playback when full plays reach limit', function (): void {
         'ended_at' => now(),
     ]);
 
+    $mock = Mockery::mock(PlaybackAuthorizationService::class);
+    $mock->shouldReceive('authorize')
+        ->andThrow(new HttpResponseException(response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'VIEW_LIMIT_EXCEEDED',
+                'message' => 'View limit exceeded.',
+            ],
+        ], 403)));
+    app()->instance(PlaybackAuthorizationService::class, $mock);
+
     $response = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $device->device_id,
     ]);
@@ -98,11 +111,23 @@ it('allows playback when only partial plays exist', function (): void {
         'ended_at' => now(),
     ]);
 
+    $mock = Mockery::mock(PlaybackAuthorizationService::class);
+    $mock->shouldReceive('authorize')
+        ->andReturn([
+            'embed_config' => [
+                'video_id' => 'bunny-1',
+                'library_id' => 10,
+            ],
+        ]);
+    app()->instance(PlaybackAuthorizationService::class, $mock);
+
     $response = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $device->device_id,
     ]);
 
-    $response->assertOk()->assertJsonPath('success', true);
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonMissing(['playback_url', 'expires_at', 'api_key', 'token', 'signed_url', 'cdn_url', 'upload_url']);
 });
 
 it('extends limit using extra view allowance', function (): void {
@@ -134,9 +159,21 @@ it('extends limit using extra view allowance', function (): void {
         'ended_at' => now(),
     ]);
 
+    $mock = Mockery::mock(PlaybackAuthorizationService::class);
+    $mock->shouldReceive('authorize')
+        ->andReturn([
+            'embed_config' => [
+                'video_id' => 'bunny-2',
+                'library_id' => 10,
+            ],
+        ]);
+    app()->instance(PlaybackAuthorizationService::class, $mock);
+
     $response = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $device->device_id,
     ]);
 
-    $response->assertOk()->assertJsonPath('success', true);
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonMissing(['playback_url', 'expires_at', 'api_key', 'token', 'signed_url', 'cdn_url', 'upload_url']);
 });

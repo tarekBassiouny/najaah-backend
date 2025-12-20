@@ -20,11 +20,23 @@ class JwtMobileMiddleware
         try {
             $user = $guard->user() ?? $guard->authenticate();
         } catch (\Throwable) {
-            return response()->json(['success' => false, 'error' => 'User not found'], 401);
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 403);
         }
 
         if (! $user) {
-            return response()->json(['success' => false, 'error' => 'User not found'], 401);
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 403);
         }
 
         // Set resolved user for controllers

@@ -6,11 +6,14 @@ namespace App\Services\Videos;
 
 use App\Models\User;
 use App\Models\VideoUploadSession;
+use App\Services\Centers\CenterScopeService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class VideoUploadSessionQueryService
 {
+    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+
     /**
      * @param  array<string, mixed>  $filters
      * @return LengthAwarePaginator<VideoUploadSession>
@@ -22,7 +25,7 @@ class VideoUploadSessionQueryService
             ->orderByDesc('created_at');
 
         $query = $this->applyScope($query, $admin);
-        $query = $this->applyFilters($query, $filters);
+        $query = $this->applyFilters($query, $admin, $filters);
 
         return $query->paginate($perPage);
     }
@@ -32,14 +35,16 @@ class VideoUploadSessionQueryService
      * @param  array<string, mixed>  $filters
      * @return Builder<VideoUploadSession>
      */
-    private function applyFilters(Builder $query, array $filters): Builder
+    private function applyFilters(Builder $query, User $admin, array $filters): Builder
     {
         if (isset($filters['status']) && is_numeric($filters['status'])) {
             $query->where('upload_status', (int) $filters['status']);
         }
 
         if (isset($filters['center_id']) && is_numeric($filters['center_id'])) {
-            $query->where('center_id', (int) $filters['center_id']);
+            $centerId = (int) $filters['center_id'];
+            $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+            $query->where('center_id', $centerId);
         }
 
         return $query;
@@ -51,9 +56,12 @@ class VideoUploadSessionQueryService
      */
     private function applyScope(Builder $query, User $admin): Builder
     {
-        if ($admin->center_id !== null) {
-            $query->where('center_id', $admin->center_id);
+        if ($admin->hasRole('super_admin')) {
+            return $query;
         }
+
+        $this->centerScopeService->assertAdminCenterId($admin, $admin->center_id);
+        $query->where('center_id', $admin->center_id);
 
         return $query;
     }

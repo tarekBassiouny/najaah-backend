@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Course;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\CourseService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -11,7 +12,7 @@ use function Pest\Laravel\assertSoftDeleted;
 uses(TestCase::class, DatabaseTransactions::class);
 
 it('creates and returns course', function (): void {
-    $service = new CourseService;
+    $service = new CourseService(new CenterScopeService);
     $course = $service->create(Course::factory()->make()->toArray());
 
     expect($course)->toBeInstanceOf(Course::class);
@@ -19,7 +20,7 @@ it('creates and returns course', function (): void {
 });
 
 it('paginates courses', function (): void {
-    $service = new CourseService;
+    $service = new CourseService(new CenterScopeService);
     Course::factory()->count(2)->create();
     $paginator = $service->paginate(15);
     expect($paginator)->toBeObject();
@@ -27,7 +28,7 @@ it('paginates courses', function (): void {
 });
 
 it('updates course', function (): void {
-    $service = new CourseService;
+    $service = new CourseService(new CenterScopeService);
     $course = Course::factory()->create();
     $updated = $service->update($course, ['title_translations' => ['en' => 'Updated']]);
 
@@ -36,7 +37,7 @@ it('updates course', function (): void {
 });
 
 it('deletes course', function (): void {
-    $service = new CourseService;
+    $service = new CourseService(new CenterScopeService);
     $course = Course::factory()->create();
     $service->delete($course);
     assertSoftDeleted('courses', ['id' => $course->id]);

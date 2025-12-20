@@ -10,23 +10,25 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\User;
 use App\Models\Video;
-use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
+use App\Services\Settings\AdminSettingsPreviewService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class SettingsPreviewController extends Controller
 {
     public function __construct(
-        private readonly SettingsResolverServiceInterface $resolver
+        private readonly AdminSettingsPreviewService $previewService
     ) {}
 
     public function __invoke(SettingsPreviewRequest $request): JsonResponse
     {
+        $admin = $this->requireAdmin();
         $student = $this->loadStudent($request->integer('student_id'));
         $video = $this->loadVideo($request->integer('video_id'));
         $course = $this->loadCourse($request->integer('course_id'));
         $center = $this->loadCenter($request->integer('center_id'));
 
-        $settings = $this->resolver->resolve($student, $video, $course, $center);
+        $settings = $this->previewService->resolve($admin, $student, $video, $course, $center);
 
         return response()->json([
             'success' => true,
@@ -50,7 +52,7 @@ class SettingsPreviewController extends Controller
             return null;
         }
 
-        return Video::with(['setting', 'courses.center.setting'])->find($id);
+        return Video::with(['creator', 'setting', 'courses.center.setting'])->find($id);
     }
 
     private function loadCourse(?int $id): ?Course
@@ -69,5 +71,22 @@ class SettingsPreviewController extends Controller
         }
 
         return Center::with('setting')->find($id);
+    }
+
+    private function requireAdmin(): User
+    {
+        $admin = request()->user();
+
+        if (! $admin instanceof User) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 401));
+        }
+
+        return $admin;
     }
 }

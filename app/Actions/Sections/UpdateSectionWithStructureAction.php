@@ -6,6 +6,7 @@ namespace App\Actions\Sections;
 
 use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Sections\Contracts\SectionWorkflowServiceInterface;
 
 class UpdateSectionWithStructureAction
@@ -21,7 +22,7 @@ class UpdateSectionWithStructureAction
      * @param  array<int, int>  $videos
      * @param  array<int, int>  $pdfs
      */
-    public function execute(Section $section, array $data, array $videos = [], array $pdfs = []): Section
+    public function execute(User $actor, Section $section, array $data, array $videos = [], array $pdfs = []): Section
     {
         $data = $this->normalizeTranslations($data, [
             'title_translations',
@@ -31,6 +32,6 @@ class UpdateSectionWithStructureAction
             'description_translations' => $section->description_translations ?? [],
         ]);
 
-        return $this->workflowService->updateWithStructure($section, $data, $videos, $pdfs);
+        return $this->workflowService->updateWithStructure($actor, $section, $data, $videos, $pdfs);
     }
 }

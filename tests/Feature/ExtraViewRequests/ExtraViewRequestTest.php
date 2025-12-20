@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\ExtraViewRequest;
@@ -11,7 +12,6 @@ use App\Models\User;
 use App\Models\Video;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 
 uses(RefreshDatabase::class)->group('extra-view-requests');
 
@@ -33,11 +33,19 @@ function makeRequestDevice(User $user, string $uuid = 'device-123')
 
 function attachCourseAndVideo(): array
 {
-    $course = Course::factory()->create(['status' => 3, 'is_published' => true]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 10,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'is_published' => true,
+        'center_id' => $center->id,
+    ]);
     /** @var Video $video */
     $video = Video::factory()->create([
         'source_url' => 'https://videos.example.com/'.$course->id.'/video.mp4',
         'lifecycle_status' => 2,
+        'encoding_status' => 3,
     ]);
 
     CourseVideo::create([
@@ -72,6 +80,12 @@ it('creates a request and blocks duplicates', function (): void {
 
 it('admin approves and allowance affects view limit', function (): void {
     [$course, $video] = attachCourseAndVideo();
+    $student = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'center_id' => $course->center_id,
+    ]);
+    $this->asApiUser($student);
     $device = makeRequestDevice($this->apiUser);
 
     Enrollment::factory()->create([
@@ -97,21 +111,15 @@ it('admin approves and allowance affects view limit', function (): void {
     $block = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $device->device_id,
     ]);
-    $block->assertStatus(403);
+    $block->assertStatus(403)->assertJsonPath('error.code', 'VIEW_LIMIT_EXCEEDED');
 
     $request = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/extra-view-requests");
     $requestId = $request->json('data.id');
 
     $admin = $this->asAdmin();
-    $admin->update(['center_id' => $course->center_id]);
-    $this->adminToken = (string) Auth::guard('admin')->attempt([
-        'email' => $admin->email,
-        'password' => 'secret123',
-        'is_student' => false,
-    ]);
-    $approve = $this->postJson("/api/v1/admin/extra-view-requests/{$requestId}/approve", [
+    $approve = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/extra-view-requests/{$requestId}/approve", [
         'granted_views' => 1,
-    ], $this->adminHeaders());
+    ]);
 
     $approve->assertOk()->assertJsonPath('data.status', ExtraViewRequest::STATUS_APPROVED);
 
@@ -119,7 +127,9 @@ it('admin approves and allowance affects view limit', function (): void {
         'device_id' => $device->device_id,
     ]);
 
-    $allowed->assertOk()->assertJsonPath('success', true);
+    $allowed->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonMissing(['playback_url', 'expires_at', 'api_key', 'token', 'signed_url', 'cdn_url', 'upload_url']);
 });
 
 it('admin can reject pending requests', function (): void {
@@ -135,15 +145,9 @@ it('admin can reject pending requests', function (): void {
     $requestId = $request->json('data.id');
 
     $admin = $this->asAdmin();
-    $admin->update(['center_id' => $course->center_id]);
-    $this->adminToken = (string) Auth::guard('admin')->attempt([
-        'email' => $admin->email,
-        'password' => 'secret123',
-        'is_student' => false,
-    ]);
-    $reject = $this->postJson("/api/v1/admin/extra-view-requests/{$requestId}/reject", [
+    $reject = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/extra-view-requests/{$requestId}/reject", [
         'decision_reason' => 'Not eligible',
-    ], $this->adminHeaders());
+    ]);
 
     $reject->assertOk()
         ->assertJsonPath('data.status', ExtraViewRequest::STATUS_REJECTED)

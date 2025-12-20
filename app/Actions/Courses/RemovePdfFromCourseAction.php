@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Courses;
 
 use App\Models\Course;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseAttachmentServiceInterface;
 
 class RemovePdfFromCourseAction
@@ -13,8 +14,8 @@ class RemovePdfFromCourseAction
         private readonly CourseAttachmentServiceInterface $courseAttachmentService
     ) {}
 
-    public function execute(Course $course, int $pdfId): void
+    public function execute(User $actor, Course $course, int $pdfId): void
     {
-        $this->courseAttachmentService->removePdf($course, $pdfId);
+        $this->courseAttachmentService->removePdf($course, $pdfId, $actor);
     }
 }

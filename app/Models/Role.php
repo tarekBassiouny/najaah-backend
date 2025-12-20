@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $slug
  * @property array<string,string>|null $description_translations
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
  */
 class Role extends Model
 {
@@ -52,5 +53,12 @@ class Role extends Model
             ->using(RoleUser::class)
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
+    }
+
+    /** @return BelongsToMany<Permission, self> */
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'role_permission')
+            ->withTimestamps();
     }
 }

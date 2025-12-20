@@ -51,9 +51,17 @@ class UpdateSectionWithStructureRequest extends FormRequest
                 'description' => 'Optional list of video IDs to attach to this section.',
                 'example' => [5, 6],
             ],
+            'videos.*' => [
+                'description' => 'Video ID to attach.',
+                'example' => 5,
+            ],
             'pdfs' => [
                 'description' => 'Optional list of PDF IDs to attach to this section.',
                 'example' => [3, 4],
+            ],
+            'pdfs.*' => [
+                'description' => 'PDF ID to attach.',
+                'example' => 3,
             ],
         ];
     }

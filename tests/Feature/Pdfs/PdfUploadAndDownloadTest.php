@@ -17,8 +17,7 @@ uses(RefreshDatabase::class)->group('pdfs');
 it('allows admin to upload a pdf to private storage', function (): void {
     Storage::fake('local');
 
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'phone' => '1000000001']);
+    $admin = $this->asAdmin();
     $course = Course::factory()->create();
 
     $file = UploadedFile::fake()->create('document.pdf', 500, 'application/pdf');

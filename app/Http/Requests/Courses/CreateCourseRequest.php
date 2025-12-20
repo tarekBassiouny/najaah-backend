@@ -105,9 +105,17 @@ class CreateCourseRequest extends FormRequest
                 'description' => 'Localized titles keyed by locale.',
                 'example' => ['en' => 'Sample Course', 'ar' => 'دورة تجريبية'],
             ],
+            'title_translations.*' => [
+                'description' => 'Localized title value.',
+                'example' => 'Sample Course',
+            ],
             'description_translations' => [
                 'description' => 'Localized descriptions keyed by locale.',
                 'example' => ['en' => 'Intro course', 'ar' => 'دورة مقدمة'],
+            ],
+            'description_translations.*' => [
+                'description' => 'Localized description value.',
+                'example' => 'Intro course',
             ],
             'difficulty_level' => [
                 'description' => 'Mapped numeric difficulty (auto-set from difficulty).',

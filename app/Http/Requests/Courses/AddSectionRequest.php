@@ -43,7 +43,7 @@ class AddSectionRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {
@@ -59,6 +59,14 @@ class AddSectionRequest extends FormRequest
             'order_index' => [
                 'description' => 'Optional order within the course.',
                 'example' => '1',
+            ],
+            'title_translations' => [
+                'description' => 'Localized titles keyed by locale.',
+                'example' => ['en' => 'Introduction', 'ar' => 'مقدمة'],
+            ],
+            'description_translations' => [
+                'description' => 'Localized descriptions keyed by locale.',
+                'example' => ['en' => 'Overview of the course', 'ar' => 'نظرة عامة على الدورة'],
             ],
         ];
     }

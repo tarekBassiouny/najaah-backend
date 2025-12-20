@@ -10,7 +10,6 @@ use App\Actions\Courses\AssignVideoToCourseAction;
 use App\Actions\Courses\CloneCourseAction;
 use App\Actions\Courses\CreateCourseAction;
 use App\Actions\Courses\DeleteCourseAction;
-use App\Actions\Courses\ListCoursesAction;
 use App\Actions\Courses\PublishCourseAction;
 use App\Actions\Courses\RemovePdfFromCourseAction;
 use App\Actions\Courses\RemoveVideoFromCourseAction;
@@ -19,6 +18,7 @@ use App\Actions\Courses\ShowCourseAction;
 use App\Actions\Courses\ToggleSectionVisibilityAction;
 use App\Actions\Courses\UpdateCourseAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ListCoursesRequest;
 use App\Http\Requests\Courses\AddSectionRequest;
 use App\Http\Requests\Courses\AssignPdfRequest;
 use App\Http\Requests\Courses\AssignVideoRequest;
@@ -31,18 +31,22 @@ use App\Http\Resources\Courses\CourseSummaryResource;
 use App\Http\Resources\Sections\SectionResource;
 use App\Models\Course;
 use App\Models\Section;
+use App\Models\User;
+use App\Services\Admin\CourseQueryService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class CourseController extends Controller
 {
-    /**
-     * @queryParam per_page int Items per page. Example: 15
-     */
     public function index(
-        ListCoursesAction $listCoursesAction
+        ListCoursesRequest $request,
+        CourseQueryService $queryService
     ): JsonResponse {
-        $perPage = (int) request()->query('per_page', 15);
-        $paginator = $listCoursesAction->execute($perPage);
+        $admin = $this->requireAdmin();
+        $perPage = (int) $request->integer('per_page', 15);
+        /** @var array<string, mixed> $filters */
+        $filters = $request->validated();
+        $paginator = $queryService->build($admin, $filters)->paginate($perPage);
 
         return response()->json([
             'success' => true,
@@ -60,9 +64,10 @@ class CourseController extends Controller
         CreateCourseRequest $request,
         CreateCourseAction $createCourseAction
     ): JsonResponse {
+        $admin = $this->requireAdmin();
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $course = $createCourseAction->execute($data);
+        $course = $createCourseAction->execute($admin, $data);
 
         return response()->json([
             'success' => true,
@@ -75,7 +80,8 @@ class CourseController extends Controller
         Course $course,
         ShowCourseAction $showCourseAction
     ): JsonResponse {
-        $course = $showCourseAction->execute((int) $course->id);
+        $admin = $this->requireAdmin();
+        $course = $showCourseAction->execute($admin, (int) $course->id);
 
         return response()->json([
             'success' => true,
@@ -89,9 +95,10 @@ class CourseController extends Controller
         Course $course,
         UpdateCourseAction $updateCourseAction
     ): JsonResponse {
+        $admin = $this->requireAdmin();
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $updated = $updateCourseAction->execute($course, $data);
+        $updated = $updateCourseAction->execute($admin, $course, $data);
 
         return response()->json([
             'success' => true,
@@ -104,7 +111,8 @@ class CourseController extends Controller
         Course $course,
         DeleteCourseAction $deleteCourseAction
     ): JsonResponse {
-        $deleteCourseAction->execute($course);
+        $admin = $this->requireAdmin();
+        $deleteCourseAction->execute($admin, $course);
 
         return response()->json([
             'success' => true,
@@ -118,9 +126,10 @@ class CourseController extends Controller
         Course $course,
         AddSectionToCourseAction $addSectionToCourseAction
     ): JsonResponse {
+        $admin = $this->requireAdmin();
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $section = $addSectionToCourseAction->execute($course, $data);
+        $section = $addSectionToCourseAction->execute($admin, $course, $data);
 
         return response()->json([
             'success' => true,
@@ -134,9 +143,10 @@ class CourseController extends Controller
         Course $course,
         ReorderSectionsAction $reorderSectionsAction
     ): JsonResponse {
+        $admin = $this->requireAdmin();
         /** @var array{sections: array<int, int>} $data */
         $data = $request->validated();
-        $reorderSectionsAction->execute($course, $data['sections']);
+        $reorderSectionsAction->execute($admin, $course, $data['sections']);
 
         return response()->json([
             'success' => true,
@@ -150,7 +160,8 @@ class CourseController extends Controller
         Section $section,
         ToggleSectionVisibilityAction $toggleSectionVisibilityAction
     ): JsonResponse {
-        $updated = $toggleSectionVisibilityAction->execute($section);
+        $admin = $this->requireAdmin();
+        $updated = $toggleSectionVisibilityAction->execute($admin, $section);
 
         return response()->json([
             'success' => true,
@@ -164,9 +175,10 @@ class CourseController extends Controller
         Course $course,
         AssignVideoToCourseAction $assignVideoToCourseAction
     ): JsonResponse {
+        $admin = $this->requireAdmin();
         /** @var array{video_id:int,order_index?:int|null} $data */
         $data = $request->validated();
-        $assignVideoToCourseAction->execute($course, (int) $data['video_id']);
+        $assignVideoToCourseAction->execute($admin, $course, (int) $data['video_id']);
 
         return response()->json([
             'success' => true,
@@ -180,7 +192,8 @@ class CourseController extends Controller
         int $video,
         RemoveVideoFromCourseAction $removeVideoFromCourseAction
     ): JsonResponse {
-        $removeVideoFromCourseAction->execute($course, $video);
+        $admin = $this->requireAdmin();
+        $removeVideoFromCourseAction->execute($admin, $course, $video);
 
         return response()->json([
             'success' => true,
@@ -194,9 +207,10 @@ class CourseController extends Controller
         Course $course,
         AssignPdfToCourseAction $assignPdfToCourseAction
     ): JsonResponse {
+        $admin = $this->requireAdmin();
         /** @var array{pdf_id:int,order_index?:int|null} $data */
         $data = $request->validated();
-        $assignPdfToCourseAction->execute($course, (int) $data['pdf_id']);
+        $assignPdfToCourseAction->execute($admin, $course, (int) $data['pdf_id']);
 
         return response()->json([
             'success' => true,
@@ -210,7 +224,8 @@ class CourseController extends Controller
         int $pdf,
         RemovePdfFromCourseAction $removePdfFromCourseAction
     ): JsonResponse {
-        $removePdfFromCourseAction->execute($course, $pdf);
+        $admin = $this->requireAdmin();
+        $removePdfFromCourseAction->execute($admin, $course, $pdf);
 
         return response()->json([
             'success' => true,
@@ -223,7 +238,8 @@ class CourseController extends Controller
         Course $course,
         PublishCourseAction $publishCourseAction
     ): JsonResponse {
-        $published = $publishCourseAction->execute($course);
+        $admin = $this->requireAdmin();
+        $published = $publishCourseAction->execute($admin, $course);
 
         return response()->json([
             'success' => true,
@@ -237,6 +253,7 @@ class CourseController extends Controller
         Course $course,
         CloneCourseAction $cloneCourseAction
     ): JsonResponse {
+        $admin = $this->requireAdmin();
         /** @var array<string, mixed> $data */
         $data = $request->validated();
         $options = $data['options'] ?? [];
@@ -245,12 +262,29 @@ class CourseController extends Controller
             $options = [];
         }
 
-        $cloned = $cloneCourseAction->execute($course, $options);
+        $cloned = $cloneCourseAction->execute($admin, $course, $options);
 
         return response()->json([
             'success' => true,
             'message' => 'Course cloned successfully',
             'data' => new CourseResource($cloned),
         ], 201);
+    }
+
+    private function requireAdmin(): User
+    {
+        $admin = request()->user();
+
+        if (! $admin instanceof User) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 401));
+        }
+
+        return $admin;
     }
 }

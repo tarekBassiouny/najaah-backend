@@ -11,8 +11,9 @@ uses(RefreshDatabase::class)->group('enrollments', 'admin');
 
 it('allows admin to create enrollment', function (): void {
     $admin = $this->asAdmin();
+    $center = \App\Models\Center::factory()->create();
     $student = User::factory()->create(['is_student' => true]);
-    $course = Course::factory()->create(['center_id' => $admin->center_id]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
 
     $response = $this->postJson('/api/v1/admin/enrollments', [
         'user_id' => $student->id,
@@ -30,12 +31,13 @@ it('allows admin to create enrollment', function (): void {
 
 it('rejects duplicate enrollments', function (): void {
     $admin = $this->asAdmin();
+    $center = \App\Models\Center::factory()->create();
     $student = User::factory()->create(['is_student' => true]);
-    $course = Course::factory()->create(['center_id' => $admin->center_id]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
     Enrollment::factory()->create([
         'user_id' => $student->id,
         'course_id' => $course->id,
-        'center_id' => $course->center_id,
+        'center_id' => $center->id,
         'status' => Enrollment::STATUS_ACTIVE,
     ]);
 
@@ -50,8 +52,9 @@ it('rejects duplicate enrollments', function (): void {
 
 it('allows admin to update enrollment status', function (): void {
     $admin = $this->asAdmin();
+    $center = \App\Models\Center::factory()->create();
     $enrollment = Enrollment::factory()->create([
-        'center_id' => $admin->center_id,
+        'center_id' => $center->id,
         'status' => Enrollment::STATUS_ACTIVE,
     ]);
 
@@ -68,8 +71,9 @@ it('allows admin to update enrollment status', function (): void {
 
 it('allows admin to delete enrollment', function (): void {
     $admin = $this->asAdmin();
+    $center = \App\Models\Center::factory()->create();
     $enrollment = Enrollment::factory()->create([
-        'center_id' => $admin->center_id,
+        'center_id' => $center->id,
     ]);
 
     $response = $this->deleteJson("/api/v1/admin/enrollments/{$enrollment->id}", [], $this->adminHeaders());
@@ -78,7 +82,7 @@ it('allows admin to delete enrollment', function (): void {
     $this->assertSoftDeleted('enrollments', ['id' => $enrollment->id]);
 });
 
-it('blocks enrollment management across centers', function (): void {
+it('allows enrollment management across centers', function (): void {
     $this->asAdmin();
     $student = User::factory()->create(['is_student' => true]);
     $course = Course::factory()->create(); // different center than admin by default
@@ -89,5 +93,5 @@ it('blocks enrollment management across centers', function (): void {
         'status' => 'ACTIVE',
     ], $this->adminHeaders());
 
-    $response->assertStatus(403);
+    $response->assertCreated();
 });

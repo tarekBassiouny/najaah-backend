@@ -34,6 +34,10 @@ class ReorderSectionRequest extends FormRequest
                 'description' => 'Ordered list of section IDs in their desired order.',
                 'example' => [2, 1, 3],
             ],
+            'sections.*' => [
+                'description' => 'Section ID.',
+                'example' => 2,
+            ],
         ];
     }
 }

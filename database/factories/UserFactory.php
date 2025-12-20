@@ -29,4 +29,18 @@ class UserFactory extends Factory
             'last_login_at' => now(),
         ];
     }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            if (! is_numeric($user->center_id)) {
+                return;
+            }
+
+            $type = $user->is_student ? 'student' : 'admin';
+            $user->centers()->syncWithoutDetaching([
+                (int) $user->center_id => ['type' => $type],
+            ]);
+        });
+    }
 }

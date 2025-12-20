@@ -6,6 +6,7 @@ namespace App\Actions\Sections;
 
 use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Sections\Contracts\SectionWorkflowServiceInterface;
 
 class CreateSectionWithStructureAction
@@ -21,13 +22,13 @@ class CreateSectionWithStructureAction
      * @param  array<int, int>  $videos
      * @param  array<int, int>  $pdfs
      */
-    public function execute(array $data, array $videos = [], array $pdfs = []): Section
+    public function execute(User $actor, array $data, array $videos = [], array $pdfs = []): Section
     {
         $data = $this->normalizeTranslations($data, [
             'title_translations',
             'description_translations',
         ]);
 
-        return $this->workflowService->createWithStructure($data, $videos, $pdfs);
+        return $this->workflowService->createWithStructure($actor, $data, $videos, $pdfs);
     }
 }

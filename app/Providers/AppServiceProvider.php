@@ -5,12 +5,13 @@ namespace App\Providers;
 use App\Services\Auth\AdminAuthService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Auth\Contracts\JwtServiceInterface;
+use App\Services\Auth\Contracts\OtpSenderInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
-use App\Services\Bunny\BunnyStreamApiClient;
-use App\Services\Bunny\BunnyStreamClientInterface;
-use App\Services\Bunny\FakeBunnyStreamClient;
+use App\Services\Auth\Senders\WhatsAppOtpSender;
+use App\Services\Bunny\BunnyLibraryService;
+use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
@@ -45,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $bindings = [
             OtpServiceInterface::class => OtpService::class,
+            OtpSenderInterface::class => WhatsAppOtpSender::class,
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,
@@ -67,28 +69,36 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ViewLimitService::class);
         $this->app->singleton(ConcurrencyService::class);
 
-        $this->app->singleton(BunnyStreamClientInterface::class, function ($app) {
-            $config = $app['config']->get('bunny', []);
-            $env = (string) $app['config']->get('app.env', 'local');
-            $driver = $config['driver'] ?? null;
-            $driver = $driver ?: ($config['environments'][$env] ?? 'fake');
+        $this->app->singleton(BunnyStreamService::class, function ($app) {
+            $apiConfig = $app['config']->get('bunny.api', []);
+            $apiKey = (string) ($apiConfig['api_key'] ?? '');
+            $apiUrl = (string) ($apiConfig['api_url'] ?? '');
+            $libraryId = (string) ($apiConfig['library_id'] ?? '');
 
-            if ($env === 'production' && $driver === 'fake') {
-                throw new RuntimeException('Fake Bunny client is not allowed in production.');
+            if ($apiKey === '' || $apiUrl === '') {
+                throw new RuntimeException('Missing Bunny Stream configuration.');
             }
 
-            if ($driver === 'api') {
-                $apiConfig = $config['api'] ?? [];
+            return new BunnyStreamService(
+                apiKey: $apiKey,
+                apiUrl: $apiUrl,
+                libraryId: $libraryId,
+            );
+        });
 
-                return new BunnyStreamApiClient(
-                    apiKey: (string) ($apiConfig['api_key'] ?? ''),
-                    libraryIdValue: $apiConfig['library_id'] ?? null,
-                    pullZoneValue: $apiConfig['pull_zone'] ?? null,
-                    drmEnabledValue: (bool) ($apiConfig['drm_enabled'] ?? false),
-                );
+        $this->app->singleton(BunnyLibraryService::class, function ($app) {
+            $apiConfig = $app['config']->get('bunny.api', []);
+            $apiKey = (string) ($apiConfig['api_key'] ?? '');
+            $apiUrl = (string) ($apiConfig['api_url'] ?? '');
+
+            if ($apiKey === '' || $apiUrl === '') {
+                throw new RuntimeException('Missing Bunny Stream configuration.');
             }
 
-            return new FakeBunnyStreamClient;
+            return new BunnyLibraryService(
+                apiKey: $apiKey,
+                apiUrl: $apiUrl,
+            );
         });
     }
 

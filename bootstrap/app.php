@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureActiveEnrollment;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
+use App\Http\Middleware\RequestIdMiddleware;
+use App\Http\Middleware\RequirePermission;
+use App\Http\Middleware\RequireRole;
 use App\Http\Middleware\SetRequestLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -53,6 +57,9 @@ return Application::configure(basePath: dirname(__DIR__))
                     require __DIR__.'/../routes/admin/audit-logs.php';
                     require __DIR__.'/../routes/admin/extra-view-requests.php';
                     require __DIR__.'/../routes/admin/device-change-requests.php';
+                    require __DIR__.'/../routes/admin/roles.php';
+                    require __DIR__.'/../routes/admin/permissions.php';
+                    require __DIR__.'/../routes/admin/admin-users.php';
                 });
             };
 
@@ -67,6 +74,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Global middleware
         $middleware->use([
+            RequestIdMiddleware::class,
             HandleCors::class,
         ]);
 
@@ -86,7 +94,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.mobile' => JwtMobileMiddleware::class,
             'jwt.admin' => JwtAdminMiddleware::class,
             'setlocale' => SetRequestLocale::class,
-            'enrollment.active' => \App\Http\Middleware\EnsureActiveEnrollment::class,
+            'enrollment.active' => EnsureActiveEnrollment::class,
+            'require.permission' => RequirePermission::class,
+            'require.role' => RequireRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

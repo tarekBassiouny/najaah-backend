@@ -10,7 +10,9 @@ function folder(name) {
 }
 
 const tree = {
-  adminAuth: folder("🔐 Admin Auth (JWT)"),
+  /* -------- ADMIN -------- */
+
+  adminAuth: folder("🔐 Admin – Auth (JWT)"),
   adminCenters: folder("🧑‍💼 Admin – Centers"),
   adminCourses: folder("🧑‍💼 Admin – Courses"),
   adminSections: folder("🧑‍💼 Admin – Sections"),
@@ -18,9 +20,20 @@ const tree = {
   adminVideos: folder("🧑‍💼 Admin – Videos"),
   adminInstructors: folder("🧑‍💼 Admin – Instructors"),
   adminPdfs: folder("🧑‍💼 Admin – PDFs"),
-  adminAudit: folder("🧑‍💼 Admin – Audit & Settings"),
+
+  adminRoles: folder("🧑‍💼 Admin – Roles"),
+  adminPermissions: folder("🧑‍💼 Admin – Permissions"),
+  adminUsers: folder("🧑‍💼 Admin – Users"),
+  adminSettings: folder("🧑‍💼 Admin – Settings"),
+  adminAudit: folder("🧑‍💼 Admin – Audit Logs"),
+
+  /* -------- WEBHOOKS -------- */
+
   webhooks: folder("🔔 Webhooks"),
-  mobileAuth: folder("📱 Mobile Auth (JWT)"),
+
+  /* -------- MOBILE / STUDENT -------- */
+
+  mobileAuth: folder("📱 Mobile – Auth (JWT)"),
   studentCourses: folder("🎓 Student – Courses"),
   studentSections: folder("🎓 Student – Sections"),
   studentPlayback: folder("🎬 Student – Playback"),
@@ -29,61 +42,130 @@ const tree = {
   studentPdfs: folder("📄 Student – PDFs"),
   studentEnrollments: folder("🎓 Student – Enrollments"),
   instructors: folder("👨‍🏫 Instructors"),
+
+  /* -------- HEALTH -------- */
+
   health: folder("🧪 Smoke & Health")
 };
 
 function route(item) {
   const raw = item.request?.url?.raw ?? "";
 
-  if (raw.includes("/api/v1/admin/auth")) return tree.adminAuth;
-  if (raw.includes("/api/v1/admin/centers")) return tree.adminCenters;
-  if (raw.includes("/api/v1/admin/courses") && raw.includes("/sections"))
+  /* ================= ADMIN ================= */
+
+  // ---- Auth
+  if (raw.includes("/api/v1/admin/auth"))
+    return tree.adminAuth;
+
+  // ---- Centers
+  if (raw.includes("/api/v1/admin/centers"))
+    return tree.adminCenters;
+
+  // ---- Sections (must be before courses)
+  if (
+    raw.includes("/api/v1/admin/courses") &&
+    raw.includes("/sections")
+  )
     return tree.adminSections;
-  if (raw.includes("/api/v1/admin/courses")) return tree.adminCourses;
+
+  // ---- Courses
+  if (raw.includes("/api/v1/admin/courses"))
+    return tree.adminCourses;
+
+  // ---- Enrollment & Requests
   if (
     raw.includes("/api/v1/admin/enrollments") ||
-    raw.includes("/device-change-requests") ||
-    raw.includes("/extra-view-requests")
+    raw.includes("/api/v1/admin/device-change-requests") ||
+    raw.includes("/api/v1/admin/extra-view-requests")
   )
     return tree.adminEnrollment;
-  if (raw.includes("/api/v1/admin/pdfs")) return tree.adminPdfs;
+
+  // ---- PDFs
+  if (raw.includes("/api/v1/admin/pdfs"))
+    return tree.adminPdfs;
+
+  // ---- Videos
   if (
     raw.includes("/api/v1/admin/videos") ||
-    raw.includes("/api/v1/admin/video-uploads")
-  ) 
+    raw.includes("/api/v1/admin/video-uploads") ||
+    raw.includes("/api/v1/admin/video-upload-sessions")
+  )
     return tree.adminVideos;
+
+  // ---- Instructors
   if (
     raw.includes("/api/v1/admin/instructors") ||
     raw.match(/\/api\/v1\/admin\/courses\/.*\/instructors/)
   )
     return tree.adminInstructors;
-  if (
-    raw.includes("/api/v1/admin/audit-logs") ||
-    raw.includes("/api/v1/admin/settings")
-  )
-    return tree.adminAudit;
-  if (raw.includes("/api/webhooks/")) return tree.webhooks;
 
-  if (raw.includes("/api/v1/auth")) return tree.mobileAuth;
-  if (raw.includes("/playback")) return tree.studentPlayback;
-  if (raw.includes("/api/v1/courses") && raw.includes("/sections"))
+  // ---- Roles / Permissions / Users  ✅ NEW
+  if (raw.includes("/api/v1/admin/roles"))
+    return tree.adminRoles;
+
+  if (raw.includes("/api/v1/admin/permissions"))
+    return tree.adminPermissions;
+
+  if (raw.includes("/api/v1/admin/users"))
+    return tree.adminUsers;
+
+  // ---- Settings  ✅ NEW
+  if (raw.includes("/api/v1/admin/settings"))
+    return tree.adminSettings;
+
+  // ---- Audit Logs (ONLY audit logs)
+  if (raw.includes("/api/v1/admin/audit-logs"))
+    return tree.adminAudit;
+
+  /* ================= WEBHOOKS ================= */
+
+  if (raw.includes("/api/webhooks/"))
+    return tree.webhooks;
+
+  /* ================= MOBILE AUTH ================= */
+
+  if (raw.includes("/api/v1/auth"))
+    return tree.mobileAuth;
+
+  /* ================= STUDENT ================= */
+
+  if (raw.includes("/api/v1/playback"))
+    return tree.studentPlayback;
+
+  if (
+    raw.includes("/api/v1/courses") &&
+    raw.includes("/sections")
+  )
     return tree.studentSections;
-  if (raw.includes("/api/v1/courses")) return tree.studentCourses;
-  if (raw.match(/\/api\/v1\/courses\/.*\/instructors/)) return tree.adminCourses;
+
+  if (raw.includes("/api/v1/courses"))
+    return tree.studentCourses;
+
   if (
     raw.includes("/api/v1/device-change-requests") ||
     raw.includes("/api/v1/extra-view-requests")
   )
     return tree.studentRequests;
-  if (raw.includes("/api/v1/pdfs")) return tree.studentPdfs;
-  if (raw.includes("/api/v1/enrollments")) return tree.studentEnrollments;
-  if (raw.includes("/api/v1/instructors")) return tree.instructors;
-  if (raw.endsWith("/up")) return tree.health;
+
+  if (raw.includes("/api/v1/pdfs"))
+    return tree.studentPdfs;
+
+  if (raw.includes("/api/v1/enrollments"))
+    return tree.studentEnrollments;
+
   if (
     raw.endsWith("/api/v1/videos") ||
-    raw.endsWith("/api/v1/video-uploads")
-  ) 
+    raw.includes("/api/v1/video-uploads")
+  )
     return tree.studentVideos;
+
+  if (raw.includes("/api/v1/instructors"))
+    return tree.instructors;
+
+  /* ================= HEALTH ================= */
+
+  if (raw.endsWith("/up"))
+    return tree.health;
 
   return null;
 }
@@ -110,6 +192,7 @@ const finalCollection = {
     name: "XYZ LMS API (v1)"
   },
   item: [
+    // ---- ADMIN
     tree.adminAuth,
     tree.adminCenters,
     tree.adminCourses,
@@ -118,8 +201,18 @@ const finalCollection = {
     tree.adminVideos,
     tree.adminInstructors,
     tree.adminPdfs,
+
+    // ✅ NEW – explicit admin management domains
+    tree.adminRoles,
+    tree.adminPermissions,
+    tree.adminUsers,
+    tree.adminSettings,
     tree.adminAudit,
+
+    // ---- SYSTEM
     tree.webhooks,
+
+    // ---- MOBILE / STUDENT
     tree.mobileAuth,
     tree.studentCourses,
     tree.studentSections,
@@ -128,6 +221,8 @@ const finalCollection = {
     tree.studentPdfs,
     tree.studentEnrollments,
     tree.studentVideos,
+
+    // ---- SHARED / MISC
     tree.instructors,
     tree.health
   ].filter(f => f.item.length > 0)

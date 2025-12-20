@@ -221,5 +221,5 @@ it('requires authentication for session updates', function (): void {
         'progress_percent' => 10,
     ]);
 
-    $response->assertStatus(401);
+    $response->assertStatus(403);
 });

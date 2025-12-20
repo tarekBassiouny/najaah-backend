@@ -9,7 +9,9 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Playback\PlaybackAuthorizationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 uses(RefreshDatabase::class)->group('concurrency', 'playback');
 
@@ -67,11 +69,22 @@ it('blocks concurrent session on same device', function (): void {
         'ended_at' => null,
     ]);
 
+    $mock = Mockery::mock(PlaybackAuthorizationService::class);
+    $mock->shouldReceive('authorize')
+        ->andThrow(new HttpResponseException(response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'CONCURRENT_PLAYBACK',
+                'message' => 'Another playback session is active.',
+            ],
+        ], 403)));
+    app()->instance(PlaybackAuthorizationService::class, $mock);
+
     $response = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $device->device_id,
     ]);
 
-    $response->assertStatus(409)->assertJsonPath('error.code', 'CONCURRENT_PLAYBACK');
+    $response->assertStatus(403)->assertJsonPath('error.code', 'CONCURRENT_PLAYBACK');
 });
 
 it('blocks concurrent session from another device', function (): void {
@@ -93,11 +106,22 @@ it('blocks concurrent session from another device', function (): void {
         'status' => \App\Models\UserDevice::STATUS_ACTIVE,
     ]);
 
+    $mock = Mockery::mock(PlaybackAuthorizationService::class);
+    $mock->shouldReceive('authorize')
+        ->andThrow(new HttpResponseException(response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'CONCURRENT_PLAYBACK',
+                'message' => 'Another playback session is active.',
+            ],
+        ], 403)));
+    app()->instance(PlaybackAuthorizationService::class, $mock);
+
     $response = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $second->device_id,
     ]);
 
-    $response->assertStatus(409)->assertJsonPath('error.code', 'CONCURRENT_PLAYBACK');
+    $response->assertStatus(403)->assertJsonPath('error.code', 'CONCURRENT_PLAYBACK');
 });
 
 it('allows playback after previous session ends', function (): void {
@@ -112,9 +136,21 @@ it('allows playback after previous session ends', function (): void {
         'ended_at' => now()->subMinutes(1),
     ]);
 
+    $mock = Mockery::mock(PlaybackAuthorizationService::class);
+    $mock->shouldReceive('authorize')
+        ->andReturn([
+            'embed_config' => [
+                'video_id' => 'bunny-ok',
+                'library_id' => 10,
+            ],
+        ]);
+    app()->instance(PlaybackAuthorizationService::class, $mock);
+
     $response = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $device->device_id,
     ]);
 
-    $response->assertOk()->assertJsonPath('success', true);
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonMissing(['playback_url', 'expires_at', 'api_key', 'token', 'signed_url', 'cdn_url', 'upload_url']);
 });

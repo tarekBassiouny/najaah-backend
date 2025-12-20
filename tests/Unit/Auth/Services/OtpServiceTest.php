@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\OtpCode;
+use App\Services\Auth\Contracts\OtpSenderInterface;
 use App\Services\Auth\OtpService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -12,7 +13,14 @@ use function Pest\Laravel\assertDatabaseHas;
 uses(TestCase::class, DatabaseTransactions::class)->group('auth', 'services');
 
 test('send creates otp record and returns token', function (): void {
-    $service = new OtpService;
+    $sender = Mockery::mock(OtpSenderInterface::class);
+    $sender->shouldReceive('provider')
+        ->once()
+        ->andReturn('whatsapp');
+    $sender->shouldReceive('send')
+        ->once();
+
+    $service = new OtpService($sender);
 
     $result = $service->send('1234567890', '+20');
 
@@ -34,7 +42,8 @@ test('verify returns otp code when valid', function (): void {
         'expires_at' => now()->addMinutes(5),
     ]);
 
-    $service = new OtpService;
+    $sender = Mockery::mock(OtpSenderInterface::class);
+    $service = new OtpService($sender);
     $result = $service->verify('123456', 'token-123');
 
     expect($result)->not()->toBeNull();
@@ -48,7 +57,8 @@ test('verify returns null when expired', function (): void {
         'expires_at' => now()->subMinute(),
     ]);
 
-    $service = new OtpService;
+    $sender = Mockery::mock(OtpSenderInterface::class);
+    $service = new OtpService($sender);
     $result = $service->verify('123456', 'token-123');
 
     expect($result)->toBeNull();

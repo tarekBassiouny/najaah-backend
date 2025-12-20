@@ -10,11 +10,13 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use App\Services\Logging\LogContextResolver;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class PlaybackAuthorizationService
 {
@@ -23,7 +25,8 @@ class PlaybackAuthorizationService
         private readonly PlaybackSessionService $sessionService,
         private readonly DeviceServiceInterface $deviceService,
         private readonly ViewLimitService $viewLimitService,
-        private readonly ConcurrencyService $concurrencyService
+        private readonly ConcurrencyService $concurrencyService,
+        private readonly CenterScopeService $centerScopeService
     ) {}
 
     /**
@@ -34,37 +37,50 @@ class PlaybackAuthorizationService
         $this->assertStudent($user);
         $enrollment = $this->enrollmentService->getActiveEnrollment($user, $course);
         if (! $enrollment instanceof Enrollment) {
-            $this->deny('ENROLLMENT_REQUIRED', 'Active enrollment is required for playback.', 403);
+            $this->deny('ENROLLMENT_REQUIRED', 'Active enrollment is required for playback.');
         }
 
         $this->assertCourseAccessible($course);
         $pivot = $this->assertVideoAttached($course, $video);
         $this->assertSectionVisible($course, $section);
+        $this->assertCenterAccess($user, $course);
+        $this->assertVideoReady($video);
         $device = $this->assertDeviceApproved($user, $deviceId);
         $this->concurrencyService->assertNoActiveSession($user, $device, $video);
         $this->viewLimitService->assertWithinLimit($user, $video, $course, $pivot->view_limit_override);
 
-        $signedUrl = $this->signPlaybackUrl($video);
-        $session = $this->sessionService->startSession($user, $video, $device);
+        $this->sessionService->startSession($user, $video, $device);
+        $course->loadMissing('center');
+        $libraryId = $course->center->bunny_library_id;
+        $videoId = $video->source_id;
+
+        if (! is_string($videoId) || $videoId === '') {
+            $this->deny('VIDEO_ID_MISSING', 'Video source identifier is required.');
+        }
+
+        if (! is_numeric($libraryId)) {
+            $this->deny('LIBRARY_ID_MISSING', 'Library identifier is required.');
+        }
 
         return [
-            'playback_url' => $signedUrl,
-            'session_id' => $session->id,
-            'expires_at' => Carbon::now()->addSeconds(120),
+            'embed_config' => [
+                'video_id' => $videoId,
+                'library_id' => (int) $libraryId,
+            ],
         ];
     }
 
     private function assertStudent(User $user): void
     {
         if (! $user->is_student) {
-            $this->deny('UNAUTHORIZED', 'Only students can play videos.', 403);
+            $this->deny('UNAUTHORIZED', 'Only students can play videos.');
         }
     }
 
     private function assertCourseAccessible(Course $course): void
     {
         if ((int) $course->status !== 3 || (bool) $course->trashed()) {
-            $this->deny('COURSE_UNAVAILABLE', 'Course is not published.', 404);
+            $this->deny('COURSE_UNAVAILABLE', 'Course is not published.');
         }
     }
 
@@ -75,7 +91,7 @@ class PlaybackAuthorizationService
         }
 
         if ((int) $section->course_id !== (int) $course->id || $section->trashed() || $section->visible === false) {
-            $this->deny('SECTION_UNAVAILABLE', 'Section is not accessible.', 404);
+            $this->deny('SECTION_UNAVAILABLE', 'Section is not accessible.');
         }
     }
 
@@ -87,7 +103,7 @@ class PlaybackAuthorizationService
             ->first();
 
         if ($attached === null) {
-            $this->deny('VIDEO_NOT_IN_COURSE', 'Video not available in this course.', 404);
+            $this->deny('VIDEO_NOT_IN_COURSE', 'Video not available in this course.');
         }
 
         /** @var Pivot $pivot */
@@ -95,10 +111,22 @@ class PlaybackAuthorizationService
 
         $visible = $pivot->getAttribute('visible');
         if ($visible === false) {
-            $this->deny('VIDEO_UNAVAILABLE', 'Video is hidden.', 404);
+            $this->deny('VIDEO_UNAVAILABLE', 'Video is hidden.');
         }
 
         return $pivot;
+    }
+
+    private function assertCenterAccess(User $user, Course $course): void
+    {
+        $this->centerScopeService->assertSameCenter($user, $course);
+    }
+
+    private function assertVideoReady(Video $video): void
+    {
+        if ((int) $video->encoding_status !== 3 || (int) $video->lifecycle_status < 2) {
+            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.');
+        }
     }
 
     private function assertDeviceApproved(User $user, string $deviceId): UserDevice
@@ -106,30 +134,30 @@ class PlaybackAuthorizationService
         return $this->deviceService->assertActiveDevice($user, $deviceId);
     }
 
-    private function signPlaybackUrl(Video $video): string
-    {
-        $expires = time() + 120;
-        $sourceUrl = $video->source_url ?? '';
-        $path = parse_url($sourceUrl, PHP_URL_PATH) ?? $sourceUrl;
-        $key = (string) config('services.bunny.signing_key', env('BUNNY_SIGNING_KEY', 'secret'));
-        $token = hash_hmac('sha256', $path.$expires, $key);
-
-        $separator = str_contains($sourceUrl, '?') ? '&' : '?';
-
-        return $sourceUrl.$separator.'token='.$token.'&expires='.$expires;
-    }
-
     /**
      * @return never
      */
-    private function deny(string $code, string $message, int $status): void
+    private function deny(string $code, string $message): void
     {
+        Log::warning('Playback authorization denied.', $this->resolveLogContext([
+            'source' => 'api',
+            'code' => $code,
+        ]));
         throw new HttpResponseException(response()->json([
             'success' => false,
             'error' => [
                 'code' => $code,
                 'message' => $message,
             ],
-        ], $status));
+        ], 403));
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function resolveLogContext(array $overrides = []): array
+    {
+        return app(LogContextResolver::class)->resolve($overrides);
     }
 }

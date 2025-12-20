@@ -12,6 +12,7 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class EnrollmentController extends Controller
@@ -22,6 +23,7 @@ class EnrollmentController extends Controller
 
     public function store(StoreEnrollmentRequest $request): JsonResponse
     {
+        $admin = $this->requireAdmin();
         /** @var array{user_id:int,course_id:int,status:string} $data */
         $data = $request->validated();
 
@@ -29,13 +31,8 @@ class EnrollmentController extends Controller
         $student = User::findOrFail((int) $data['user_id']);
         /** @var Course $course */
         $course = Course::findOrFail((int) $data['course_id']);
-        $admin = $request->user();
 
-        if ($admin?->center_id !== null && (int) $admin->center_id !== (int) $course->center_id) {
-            abort(403, 'You are not authorized to manage enrollments for this center.');
-        }
-
-        $enrollment = $this->enrollmentService->enroll($student, $course, $data['status'], $admin instanceof User ? $admin : null);
+        $enrollment = $this->enrollmentService->enroll($student, $course, $data['status'], $admin);
 
         return response()->json([
             'success' => true,
@@ -46,10 +43,7 @@ class EnrollmentController extends Controller
 
     public function update(UpdateEnrollmentStatusRequest $request, Enrollment $enrollment): JsonResponse
     {
-        $admin = $request->user();
-        if ($admin?->center_id !== null && (int) $admin->center_id !== (int) $enrollment->center_id) {
-            abort(403, 'You are not authorized to manage enrollments for this center.');
-        }
+        $admin = $this->requireAdmin();
 
         /** @var array{status:string} $data */
         $data = $request->validated();
@@ -65,17 +59,31 @@ class EnrollmentController extends Controller
 
     public function destroy(Enrollment $enrollment): JsonResponse
     {
-        $admin = request()->user();
-        if ($admin?->center_id !== null && (int) $admin->center_id !== (int) $enrollment->center_id) {
-            abort(403, 'You are not authorized to manage enrollments for this center.');
-        }
+        $admin = $this->requireAdmin();
 
-        $this->enrollmentService->remove($enrollment, $admin instanceof User ? $admin : null);
+        $this->enrollmentService->remove($enrollment, $admin);
 
         return response()->json([
             'success' => true,
             'message' => 'Enrollment removed successfully',
             'data' => null,
         ], 204);
+    }
+
+    private function requireAdmin(): User
+    {
+        $admin = request()->user();
+
+        if (! $admin instanceof User) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 401));
+        }
+
+        return $admin;
     }
 }

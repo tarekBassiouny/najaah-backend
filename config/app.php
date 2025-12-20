@@ -126,6 +126,7 @@ return [
     ],
 
     'providers' => ServiceProvider::defaultProviders()->merge([
+        App\Providers\AuthServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\CourseServiceProvider::class,
     ])->toArray(),

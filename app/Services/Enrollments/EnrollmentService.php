@@ -8,6 +8,7 @@ use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
@@ -16,10 +17,35 @@ use Illuminate\Validation\ValidationException;
 
 class EnrollmentService implements EnrollmentServiceInterface
 {
+    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+
     public function enroll(User $student, Course $course, string $status, ?User $actor = null): Enrollment
     {
         $this->assertStudent($student);
         $statusValue = $this->normalizeStatus($status);
+
+        if ($actor instanceof User) {
+            $this->centerScopeService->assertAdminSameCenter($actor, $course);
+        }
+
+        if (! is_numeric($course->center_id)) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Course center is not configured.'],
+            ]);
+        }
+
+        $centerId = (int) $course->center_id;
+
+        if (! $student->belongsToCenter($centerId)) {
+            $student->centers()->syncWithoutDetaching([
+                $centerId => ['type' => 'student'],
+            ]);
+
+            if ($student->center_id === null) {
+                $student->center_id = $centerId;
+                $student->save();
+            }
+        }
 
         return DB::transaction(function () use ($student, $course, $statusValue, $actor): Enrollment {
             $existing = Enrollment::withTrashed()
@@ -60,6 +86,10 @@ class EnrollmentService implements EnrollmentServiceInterface
     {
         $statusValue = $this->normalizeStatus($status);
 
+        if ($actor instanceof User) {
+            $this->centerScopeService->assertAdminSameCenter($actor, $enrollment);
+        }
+
         if ($enrollment->status === $statusValue) {
             return $enrollment;
         }
@@ -76,6 +106,10 @@ class EnrollmentService implements EnrollmentServiceInterface
 
     public function remove(Enrollment $enrollment, ?User $actor = null): void
     {
+        if ($actor instanceof User) {
+            $this->centerScopeService->assertAdminSameCenter($actor, $enrollment);
+        }
+
         $enrollment->delete();
 
         $this->log('enrollment_deleted', $actor, $enrollment->course, $enrollment);

@@ -10,7 +10,8 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
-        "php-open-source-saver/jwt-auth": "*"
+        "php-open-source-saver/jwt-auth": "*",
+        "toshy/bunnynet-php": "^8.0"
     },
 
     "require-dev": {
@@ -73,15 +74,15 @@
             "@postman:restructure"
         ],
 
-            "postman:scribe": [
+        "postman:scribe": [
             "php artisan scribe:generate"
         ],
 
-            "postman:download": [
+        "postman:download": [
             "curl http://xyz-lms.test/docs.postman -o postman/scribe.postman.json"
         ],
 
-            "postman:restructure": [
+        "postman:restructure": [
             "node postman/restructure.js"
         ]
     },

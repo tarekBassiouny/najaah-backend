@@ -22,13 +22,41 @@ class AdminAuthController extends Controller
         $result = $this->authService->login($data['email'], $data['password']);
 
         if ($result === null) {
-            return response()->json(['success' => false, 'error' => 'Invalid credentials'], 401);
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'INVALID_CREDENTIALS',
+                    'message' => 'Invalid credentials.',
+                ],
+            ], 401);
+        }
+
+        if ($result['requires_password_reset']) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'PASSWORD_RESET_REQUIRED',
+                    'message' => 'Password reset is required before login.',
+                ],
+            ], 403);
+        }
+
+        if (! $result['center_access_valid']) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'CENTER_ACCESS_REQUIRED',
+                    'message' => 'Admin center access is required before login.',
+                ],
+            ], 403);
         }
 
         return response()->json([
             'success' => true,
-            'user' => new AdminUserResource($result['user']),
-            'token' => $result['token'],
+            'data' => [
+                'user' => new AdminUserResource($result['user']),
+                'token' => $result['token'],
+            ],
         ]);
     }
 
@@ -41,7 +69,10 @@ class AdminAuthController extends Controller
             if (! $token) {
                 return response()->json([
                     'success' => false,
-                    'error' => 'Token not provided',
+                    'error' => [
+                        'code' => 'TOKEN_MISSING',
+                        'message' => 'Token not provided.',
+                    ],
                 ], 400);
             }
 
@@ -49,12 +80,17 @@ class AdminAuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Logged out',
+                'data' => [
+                    'message' => 'Logged out',
+                ],
             ]);
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to logout',
+                'error' => [
+                    'code' => 'LOGOUT_FAILED',
+                    'message' => 'Failed to logout.',
+                ],
             ], 500);
         }
     }
@@ -67,7 +103,9 @@ class AdminAuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'user' => new AdminUserResource($user),
+            'data' => [
+                'user' => new AdminUserResource($user),
+            ],
         ]);
     }
 
@@ -79,7 +117,9 @@ class AdminAuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'token' => $newToken,
+            'data' => [
+                'token' => $newToken,
+            ],
         ]);
     }
 }

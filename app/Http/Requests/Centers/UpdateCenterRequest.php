@@ -41,6 +41,14 @@ class UpdateCenterRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
+            'slug' => [
+                'description' => 'Unique, immutable center slug.',
+                'example' => 'center-01',
+            ],
+            'type' => [
+                'description' => 'Center type identifier.',
+                'example' => 0,
+            ],
             'name_translations' => [
                 'description' => 'Localized center name.',
                 'example' => ['en' => 'Updated Name'],

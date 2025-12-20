@@ -8,29 +8,31 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ListCentersRequest;
 use App\Http\Requests\Centers\StoreCenterRequest;
 use App\Http\Requests\Centers\UpdateCenterRequest;
+use App\Http\Resources\Admin\AdminUserResource;
 use App\Http\Resources\CenterResource;
 use App\Models\Center;
+use App\Models\User;
+use App\Services\Admin\CenterQueryService;
+use App\Services\Centers\CenterOnboardingService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 
 class CenterController extends Controller
 {
     public function __construct(
-        private readonly CenterServiceInterface $centerService
+        private readonly CenterServiceInterface $centerService,
+        private readonly CenterOnboardingService $onboardingService,
+        private readonly CenterQueryService $queryService
     ) {}
 
-    /**
-     * @queryParam per_page int Items per page. Example: 15
-     * @queryParam slug string Filter centers by slug. Example: center-1
-     * @queryParam type int Filter by center type. Example: 1
-     */
     public function index(ListCentersRequest $request): JsonResponse
     {
         $perPage = (int) $request->integer('per_page', 15);
         /** @var array<string, mixed> $filters */
-        $filters = $request->only(['slug', 'type']);
+        $filters = $request->validated();
 
-        $paginator = $this->centerService->paginate($perPage, $filters);
+        $paginator = $this->queryService->build($filters)->paginate($perPage);
 
         return response()->json([
             'success' => true,
@@ -48,13 +50,57 @@ class CenterController extends Controller
     {
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $center = $this->centerService->create($data);
+        $centerData = $this->normalizeCenterData($data);
+
+        $owner = null;
+        if (isset($data['owner_user_id']) && is_numeric($data['owner_user_id'])) {
+            $owner = User::find((int) $data['owner_user_id']);
+        }
+
+        $ownerPayload = isset($data['owner']) && is_array($data['owner']) ? $data['owner'] : null;
+        $roleSlug = isset($data['owner_role']) && is_string($data['owner_role']) ? $data['owner_role'] : 'center_owner';
+
+        $result = $this->onboardingService->onboard($centerData, $owner, $ownerPayload, $roleSlug);
 
         return response()->json([
             'success' => true,
-            'message' => 'Center created successfully',
-            'data' => new CenterResource($center),
+            'data' => [
+                'center' => new CenterResource($result['center']),
+                'owner' => new AdminUserResource($result['owner']),
+                'email_sent' => $result['email_sent'],
+            ],
         ], 201);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function normalizeCenterData(array $data): array
+    {
+        if (! isset($data['name_translations']) && isset($data['name']) && is_string($data['name'])) {
+            $data['name_translations'] = ['en' => $data['name']];
+        }
+
+        if (! isset($data['slug']) && isset($data['name']) && is_string($data['name'])) {
+            $base = Str::slug($data['name']);
+            $slug = $base !== '' ? $base : Str::random(8);
+            $candidate = $slug;
+            $counter = 1;
+
+            while (Center::where('slug', $candidate)->exists()) {
+                $candidate = $slug.'-'.$counter;
+                $counter++;
+            }
+
+            $data['slug'] = $candidate;
+        }
+
+        if (! isset($data['type'])) {
+            $data['type'] = 0;
+        }
+
+        return $data;
     }
 
     public function show(int $center): JsonResponse

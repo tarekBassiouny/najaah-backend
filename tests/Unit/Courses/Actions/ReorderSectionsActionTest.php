@@ -2,19 +2,21 @@
 
 use App\Actions\Courses\ReorderSectionsAction;
 use App\Models\Course;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseStructureServiceInterface;
 
 it('reorders sections via service', function (): void {
     $course = new Course;
+    $actor = new User;
     $orderedIds = [1, 2, 3];
 
     /** @var Mockery\MockInterface&CourseStructureServiceInterface $service */
     $service = \Mockery::mock(CourseStructureServiceInterface::class);
     $expectation = $service->shouldReceive('reorderSections');
-    $expectation->once()->with($course, $orderedIds);
+    $expectation->once()->with($course, $orderedIds, $actor);
 
     $action = new ReorderSectionsAction($service);
 
-    $action->execute($course, $orderedIds);
+    $action->execute($actor, $course, $orderedIds);
     expect(true)->toBeTrue();
 });

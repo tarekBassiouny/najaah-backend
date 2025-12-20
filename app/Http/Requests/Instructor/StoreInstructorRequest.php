@@ -89,6 +89,9 @@ class StoreInstructorRequest extends FormRequest
                 'description' => 'Profile image URL.',
                 'example' => 'https://example.com/avatar.jpg',
             ],
+            'avatar' => [
+                'description' => 'Profile image file upload.',
+            ],
             'email' => [
                 'description' => 'Contact email for the instructor.',
                 'example' => 'john.doe@example.com',
@@ -100,6 +103,10 @@ class StoreInstructorRequest extends FormRequest
             'social_links' => [
                 'description' => 'Optional social/profile links.',
                 'example' => ['linkedin' => 'https://linkedin.com/in/johndoe'],
+            ],
+            'social_links.*' => [
+                'description' => 'Social link value.',
+                'example' => 'https://linkedin.com/in/johndoe',
             ],
             'metadata' => [
                 'description' => 'Optional instructor metadata.',

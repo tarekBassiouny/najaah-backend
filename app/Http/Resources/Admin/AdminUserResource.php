@@ -23,7 +23,7 @@ class AdminUserResource extends JsonResource
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'role' => $user->roles->first()?->name,
+            'roles' => $user->roles->pluck('slug')->values(),
         ];
     }
 }

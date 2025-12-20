@@ -6,6 +6,7 @@ namespace App\Actions\Sections;
 
 use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Section;
+use App\Models\User;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 
 class UpdateSectionAction
@@ -19,7 +20,7 @@ class UpdateSectionAction
     /**
      * @param  array<string, mixed>  $data
      */
-    public function execute(Section $section, array $data): Section
+    public function execute(User $actor, Section $section, array $data): Section
     {
         $data = $this->normalizeTranslations($data, [
             'title_translations',
@@ -29,6 +30,6 @@ class UpdateSectionAction
             'description_translations' => $section->description_translations ?? [],
         ]);
 
-        return $this->sectionService->update($section, $data);
+        return $this->sectionService->update($section, $data, $actor);
     }
 }

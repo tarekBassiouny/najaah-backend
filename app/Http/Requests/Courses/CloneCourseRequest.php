@@ -54,6 +54,18 @@ class CloneCourseRequest extends FormRequest
                     'include_pdfs' => true,
                 ],
             ],
+            'options.include_sections' => [
+                'description' => 'Whether to include sections in the clone.',
+                'example' => true,
+            ],
+            'options.include_videos' => [
+                'description' => 'Whether to include videos in the clone.',
+                'example' => true,
+            ],
+            'options.include_pdfs' => [
+                'description' => 'Whether to include PDFs in the clone.',
+                'example' => true,
+            ],
         ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Courses;
 
 use App\Models\Course;
+use App\Models\User;
 use App\Services\Courses\Contracts\CourseAttachmentServiceInterface;
 
 class AssignPdfToCourseAction
@@ -13,8 +14,8 @@ class AssignPdfToCourseAction
         private readonly CourseAttachmentServiceInterface $courseAttachmentService
     ) {}
 
-    public function execute(Course $course, int $pdfId): void
+    public function execute(User $actor, Course $course, int $pdfId): void
     {
-        $this->courseAttachmentService->assignPdf($course, $pdfId);
+        $this->courseAttachmentService->assignPdf($course, $pdfId, $actor);
     }
 }
