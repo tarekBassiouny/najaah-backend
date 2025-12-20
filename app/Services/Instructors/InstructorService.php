@@ -40,7 +40,7 @@ class InstructorService implements InstructorServiceInterface
     public function update(Instructor $instructor, array $data): Instructor
     {
         $data = $this->prepareAvatar($data);
-        $data = $this->prepareMetadata($data, $instructor);
+        $data = $this->prepareMetadata($data);
 
         $instructor->update($data);
 
@@ -71,6 +71,7 @@ class InstructorService implements InstructorServiceInterface
             if ($path === false) {
                 throw new RuntimeException('Failed to store instructor avatar.');
             }
+
             $data['avatar_url'] = Storage::disk($disk)->url($path);
         }
 
@@ -83,7 +84,7 @@ class InstructorService implements InstructorServiceInterface
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    private function prepareMetadata(array $data, ?Instructor $instructor = null): array
+    private function prepareMetadata(array $data): array
     {
         $metadata = $data['metadata'] ?? null;
         unset($data['metadata']);

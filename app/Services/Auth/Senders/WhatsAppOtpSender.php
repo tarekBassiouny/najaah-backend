@@ -15,13 +15,13 @@ class WhatsAppOtpSender implements OtpSenderInterface
     {
         try {
             $this->sendViaProvider($destination, $otp);
-        } catch (\Throwable $exception) {
+        } catch (\Throwable $throwable) {
             Log::error('WhatsApp OTP send failed.', $this->resolveLogContext([
                 'provider' => $this->provider(),
-                'exception_class' => $exception::class,
-                'error' => $exception->getMessage(),
+                'exception_class' => $throwable::class,
+                'error' => $throwable->getMessage(),
             ]));
-            throw $exception;
+            throw $throwable;
         }
     }
 

@@ -84,7 +84,7 @@ class AdminAuthController extends Controller
                     'message' => 'Logged out',
                 ],
             ]);
-        } catch (\Throwable $e) {
+        } catch (\Throwable $throwable) {
             return response()->json([
                 'success' => false,
                 'error' => [

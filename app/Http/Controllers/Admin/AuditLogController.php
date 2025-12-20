@@ -33,7 +33,8 @@ class AuditLogController extends Controller
         }
 
         $perPage = (int) $request->integer('per_page', 15);
-        $filters = $request->only(['entity_type', 'entity_id', 'action', 'user_id', 'date_from', 'date_to']);
+        /** @var array<string, mixed> $filters */
+        $filters = $request->validated();
 
         $paginator = $this->queryService->paginate($admin, $perPage, $filters);
 

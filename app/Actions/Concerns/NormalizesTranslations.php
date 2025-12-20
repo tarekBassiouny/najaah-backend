@@ -14,7 +14,7 @@ trait NormalizesTranslations
      */
     protected function normalizeTranslations(array $data, array $translationFields, array $existingTranslations = [], string $languageKey = 'language'): array
     {
-        $language = is_string($data[$languageKey] ?? null) ? (string) $data[$languageKey] : 'en';
+        $language = is_string($data[$languageKey] ?? null) ? $data[$languageKey] : 'en';
 
         foreach ($translationFields as $field) {
             $baseKey = str_ends_with($field, '_translations') ? substr($field, 0, -strlen('_translations')) : $field;

@@ -13187,7 +13187,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/instructors?per_page=15" \
+    --get "http://xyz-lms.test/api/v1/admin/instructors?per_page=15&amp;page=1&amp;center_id=2&amp;course_id=10&amp;search=Sara" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -13200,6 +13200,10 @@ Must be one of:
 
 const params = {
     "per_page": "15",
+    "page": "1",
+    "center_id": "2",
+    "course_id": "10",
+    "search": "Sara",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -13313,7 +13317,55 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="15"
                data-component="query">
     <br>
-<p>Items per page. Example: <code>15</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-instructors"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-instructors"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter instructors by center ID (super admin only). Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="GETapi-v1-admin-instructors"
+               value="10"
+               data-component="query">
+    <br>
+<p>Filter instructors by course ID. Example: <code>10</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-admin-instructors"
+               value="Sara"
+               data-component="query">
+    <br>
+<p>Search instructors by name. Example: <code>Sara</code></p>
             </div>
                 </form>
 
@@ -13347,7 +13399,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/php4oifuo6gs7737B1dTiF" </code></pre></div>
+    --form "avatar=@/tmp/phpcr18t60bdpc0dkwiax9" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13541,7 +13593,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php4oifuo6gs7737B1dTiF</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpcr18t60bdpc0dkwiax9</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13761,7 +13813,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phperlahsh0459nfEhqBZL" </code></pre></div>
+    --form "avatar=@/tmp/phprdga2211h8kl1uZ3z3w" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13971,7 +14023,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phperlahsh0459nfEhqBZL</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phprdga2211h8kl1uZ3z3w</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -14829,7 +14881,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpe6610ctv3v7o3N6Mtcr" </code></pre></div>
+    --form "file=@/tmp/phpp2dc2vc7q7l5fBaLvnY" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14980,7 +15032,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpe6610ctv3v7o3N6Mtcr</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpp2dc2vc7q7l5fBaLvnY</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -15639,7 +15691,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/audit-logs?entity_type=App%5CModels%5CCourse&amp;entity_id=12&amp;action=enrollment_created&amp;user_id=3&amp;date_from=2025-01-01&amp;date_to=2025-12-31&amp;per_page=20&amp;page=1" \
+    --get "http://xyz-lms.test/api/v1/admin/audit-logs?center_id=2&amp;entity_type=App%5CModels%5CCourse&amp;entity_id=12&amp;action=enrollment_created&amp;user_id=3&amp;date_from=2025-01-01&amp;date_to=2025-12-31&amp;per_page=20&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -15651,6 +15703,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const params = {
+    "center_id": "2",
     "entity_type": "App\Models\Course",
     "entity_id": "12",
     "action": "enrollment_created",
@@ -15762,6 +15815,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Example: <code>en</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-audit-logs"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter by center ID (super admin only). Example: <code>2</code></p>
+            </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>entity_type</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;

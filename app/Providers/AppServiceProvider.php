@@ -34,6 +34,7 @@ use App\Services\Settings\CenterSettingsService;
 use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Services\Settings\SettingsResolverService;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 
@@ -69,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ViewLimitService::class);
         $this->app->singleton(ConcurrencyService::class);
 
-        $this->app->singleton(BunnyStreamService::class, function ($app) {
+        $this->app->singleton(BunnyStreamService::class, function (Application $app): BunnyStreamService {
             $apiConfig = $app['config']->get('bunny.api', []);
             $apiKey = (string) ($apiConfig['api_key'] ?? '');
             $apiUrl = (string) ($apiConfig['api_url'] ?? '');
@@ -86,7 +87,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton(BunnyLibraryService::class, function ($app) {
+        $this->app->singleton(BunnyLibraryService::class, function (Application $app): BunnyLibraryService {
             $apiConfig = $app['config']->get('bunny.api', []);
             $apiKey = (string) ($apiConfig['api_key'] ?? '');
             $apiUrl = (string) ($apiConfig['api_url'] ?? '');

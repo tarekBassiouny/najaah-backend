@@ -6,35 +6,48 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\Instructors\CreateInstructorAction;
 use App\Actions\Instructors\DeleteInstructorAction;
-use App\Actions\Instructors\ListInstructorsAction;
 use App\Actions\Instructors\ShowInstructorAction;
 use App\Actions\Instructors\UpdateInstructorAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ListInstructorsRequest;
 use App\Http\Requests\Instructor\StoreInstructorRequest;
 use App\Http\Requests\Instructor\UpdateInstructorRequest;
 use App\Http\Resources\InstructorCollection;
 use App\Http\Resources\InstructorResource;
 use App\Models\Instructor;
+use App\Models\User;
+use App\Services\Admin\InstructorQueryService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class InstructorController extends Controller
 {
     public function __construct(
-        private readonly ListInstructorsAction $listAction,
         private readonly CreateInstructorAction $createAction,
         private readonly UpdateInstructorAction $updateAction,
         private readonly DeleteInstructorAction $deleteAction,
-        private readonly ShowInstructorAction $showAction
+        private readonly ShowInstructorAction $showAction,
+        private readonly InstructorQueryService $queryService
     ) {}
 
-    /**
-     * @queryParam per_page int Items per page. Example: 15
-     */
-    public function index(Request $request): JsonResponse
+    public function index(ListInstructorsRequest $request): JsonResponse
     {
-        $perPage = max(1, (int) $request->query('per_page', 15));
-        $paginator = $this->listAction->execute($perPage);
+        /** @var User|null $admin */
+        $admin = $request->user();
+
+        if (! $admin instanceof User) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 401);
+        }
+
+        $perPage = (int) $request->integer('per_page', 15);
+        /** @var array<string, mixed> $filters */
+        $filters = $request->validated();
+        $paginator = $this->queryService->build($admin, $filters)->paginate($perPage);
         $items = (new InstructorCollection(collect($paginator->items())))->toArray($request);
 
         return response()->json([

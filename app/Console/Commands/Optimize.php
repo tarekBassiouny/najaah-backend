@@ -34,11 +34,11 @@ class Optimize extends Command
      */
     private function runArtisan(string $command, array $options = []): void
     {
-        $this->line("Artisan: {$command}");
+        $this->line('Artisan: '.$command);
         $code = $this->call($command, $options);
 
         if ($code !== self::SUCCESS) {
-            $this->error("Command failed: {$command}");
+            $this->error('Command failed: '.$command);
             exit(self::FAILURE);
         }
     }

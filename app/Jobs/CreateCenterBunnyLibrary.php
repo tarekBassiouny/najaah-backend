@@ -45,7 +45,7 @@ class CreateCenterBunnyLibrary implements ShouldQueue
         }
 
         $env = (string) config('app.env', 'local');
-        $libraryName = "{$center->slug}-{$center->id}-{$env}";
+        $libraryName = sprintf('%s-%d-%s', $center->slug, $center->id, $env);
         $created = $libraryService->createLibrary($libraryName);
 
         $center->bunny_library_id = $created['id'];

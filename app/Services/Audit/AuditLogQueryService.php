@@ -6,11 +6,16 @@ namespace App\Services\Audit;
 
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Services\Centers\CenterScopeService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class AuditLogQueryService
 {
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService
+    ) {}
+
     /**
      * @param  array<string, mixed>  $filters
      * @return LengthAwarePaginator<AuditLog>
@@ -22,6 +27,13 @@ class AuditLogQueryService
             ->orderByDesc('created_at');
 
         $query = $this->applyScope($query, $admin);
+        if ($admin->hasRole('super_admin') && isset($filters['center_id']) && is_numeric($filters['center_id'])) {
+            $centerId = (int) $filters['center_id'];
+            $query->whereHas('user', static function (Builder $builder) use ($centerId): void {
+                $builder->where('center_id', $centerId);
+            });
+        }
+
         $query = $this->applyFilters($query, $filters);
 
         return $query->paginate($perPage);
@@ -67,10 +79,15 @@ class AuditLogQueryService
      */
     private function applyScope(Builder $query, User $admin): Builder
     {
-        if ($admin->is_admin ?? false) {
+        if ($admin->hasRole('super_admin')) {
             return $query;
         }
 
-        return $query;
+        $centerId = $admin->center_id;
+        $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);
+
+        return $query->whereHas('user', static function (Builder $builder) use ($centerId): void {
+            $builder->where('center_id', (int) $centerId);
+        });
     }
 }

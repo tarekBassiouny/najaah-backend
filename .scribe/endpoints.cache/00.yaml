@@ -5187,16 +5187,64 @@ endpoints:
       per_page:
         custom: []
         name: per_page
-        description: 'Items per page.'
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
         required: false
         example: 15
         type: integer
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter instructors by center ID (super admin only).'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Filter instructors by course ID.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      search:
+        custom: []
+        name: search
+        description: 'Search instructors by name.'
+        required: false
+        example: Sara
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanQueryParameters:
       per_page: 15
+      page: 1
+      center_id: 2
+      course_id: 10
+      search: Sara
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -6302,6 +6350,17 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter by center ID (super admin only).'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       entity_type:
         custom: []
         name: entity_type
@@ -6391,6 +6450,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
+      center_id: 2
       entity_type: App\Models\Course
       entity_id: 12
       action: enrollment_created

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\AuditLog;
+use App\Models\Center;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -65,6 +66,60 @@ it('filters by date range', function (): void {
 
     $response->assertOk()
         ->assertJsonCount(1, 'data');
+});
+
+it('filters by center for super admin', function (): void {
+    $super = $this->asAdmin();
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+
+    $userA = User::factory()->create([
+        'center_id' => $centerA->id,
+        'phone' => '1000000001',
+    ]);
+    $userB = User::factory()->create([
+        'center_id' => $centerB->id,
+        'phone' => '1000000002',
+    ]);
+
+    AuditLog::factory()->create(['user_id' => $userA->id]);
+    AuditLog::factory()->create(['user_id' => $userB->id]);
+
+    $response = $this->actingAs($super, 'admin')
+        ->getJson('/api/v1/admin/audit-logs?center_id='.$centerA->id);
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.user_id', $userA->id);
+});
+
+it('scopes audit logs to admin center', function (): void {
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+
+    $admin = User::factory()->create([
+        'is_student' => false,
+        'center_id' => $centerA->id,
+    ]);
+
+    $userA = User::factory()->create([
+        'center_id' => $centerA->id,
+        'phone' => '1000000003',
+    ]);
+    $userB = User::factory()->create([
+        'center_id' => $centerB->id,
+        'phone' => '1000000004',
+    ]);
+
+    AuditLog::factory()->create(['user_id' => $userA->id]);
+    AuditLog::factory()->create(['user_id' => $userB->id]);
+
+    $response = $this->actingAs($admin, 'admin')
+        ->getJson('/api/v1/admin/audit-logs?center_id='.$centerB->id);
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.user_id', $userA->id);
 });
 
 it('requires authentication', function (): void {
