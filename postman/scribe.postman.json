@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "5f2469cb-82e1-426c-ac6e-1527f8803326",
+        "_postman_id": "7fee5fb0-c54a-4c04-aaa3-a04b5eb47813",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -3266,11 +3266,35 @@
                                 {
                                     "key": "per_page",
                                     "value": "15",
-                                    "description": "Items per page.",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "center_id",
+                                    "value": "2",
+                                    "description": "Filter instructors by center ID (super admin only).",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "course_id",
+                                    "value": "10",
+                                    "description": "Filter instructors by course ID.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "Sara",
+                                    "description": "Search instructors by name.",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors?per_page=15"
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/instructors?per_page=15&page=1&center_id=2&course_id=10&search=Sara"
                         },
                         "method": "GET",
                         "header": [
@@ -4007,6 +4031,12 @@
                             "path": "api\/v1\/admin\/audit-logs",
                             "query": [
                                 {
+                                    "key": "center_id",
+                                    "value": "2",
+                                    "description": "Filter by center ID (super admin only).",
+                                    "disabled": false
+                                },
+                                {
                                     "key": "entity_type",
                                     "value": "App%5CModels%5CCourse",
                                     "description": "Filter by entity class\/type. Must not be greater than 255 characters.",
@@ -4055,7 +4085,7 @@
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/admin\/audit-logs?entity_type=App%5CModels%5CCourse&entity_id=12&action=enrollment_created&user_id=3&date_from=2025-01-01&date_to=2025-12-31&per_page=20&page=1"
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/audit-logs?center_id=2&entity_type=App%5CModels%5CCourse&entity_id=12&action=enrollment_created&user_id=3&date_from=2025-01-01&date_to=2025-12-31&per_page=20&page=1"
                         },
                         "method": "GET",
                         "header": [

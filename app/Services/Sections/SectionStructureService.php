@@ -286,7 +286,7 @@ class SectionStructureService implements SectionStructureServiceInterface
         /** @var array<int, int> $ids */
         $ids = array_map(static fn (int|string $id): int => (int) $id, $rawIds);
 
-        $section = new Section(['id' => (int) $sectionId, 'course_id' => (int) $courseId]);
+        $section = new Section(['id' => $sectionId, 'course_id' => $courseId]);
         $this->syncVideoOrder($section, $ids);
     }
 
@@ -301,7 +301,7 @@ class SectionStructureService implements SectionStructureServiceInterface
         /** @var array<int, int> $ids */
         $ids = array_map(static fn (int|string $id): int => (int) $id, $rawIds);
 
-        $section = new Section(['id' => (int) $sectionId, 'course_id' => (int) $courseId]);
+        $section = new Section(['id' => $sectionId, 'course_id' => $courseId]);
         $this->syncPdfOrder($section, $ids);
     }
 
