@@ -9,9 +9,11 @@ use App\Models\UserDevice;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Students\StudentService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class)->group('auth', 'actions');
+uses(TestCase::class, RefreshDatabase::class)->group('auth', 'actions');
 
 test('execute returns payload when otp valid', function (): void {
 
@@ -45,7 +47,10 @@ test('execute returns payload when otp valid', function (): void {
             'refresh_token' => 'refresh',
         ]);
 
-    $action = new APILoginAction($otpService, $deviceService, $jwtService);
+    $studentService = \Mockery::mock(StudentService::class);
+    $studentService->shouldNotReceive('create');
+
+    $action = new APILoginAction($otpService, $deviceService, $jwtService, $studentService);
 
     $result = $action->execute([
         'otp' => '123456',
@@ -73,7 +78,10 @@ test('execute returns null when otp invalid', function (): void {
     $jwtService = \Mockery::mock(JwtServiceInterface::class);
     $jwtService->shouldNotReceive('create');
 
-    $action = new APILoginAction($otpService, $deviceService, $jwtService);
+    $studentService = \Mockery::mock(StudentService::class);
+    $studentService->shouldNotReceive('create');
+
+    $action = new APILoginAction($otpService, $deviceService, $jwtService, $studentService);
 
     $result = $action->execute([
         'otp' => '123456',
@@ -82,4 +90,66 @@ test('execute returns null when otp invalid', function (): void {
     ]);
 
     expect($result)->toBeNull();
+});
+
+test('execute creates student when otp has no user', function (): void {
+    $otpCode = OtpCode::factory()->create([
+        'user_id' => null,
+        'phone' => '1000000000',
+        'country_code' => '+2',
+        'otp_code' => '123456',
+        'otp_token' => 'token-123',
+    ]);
+
+    $newUser = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+        'phone' => '1000000000',
+        'country_code' => '+2',
+    ]);
+
+    $device = UserDevice::factory()->make(['user_id' => $newUser->id]);
+
+    $otpService = \Mockery::mock(OtpServiceInterface::class);
+    $otpService->shouldReceive('verify')
+        ->once()
+        ->with('123456', 'token-123')
+        ->andReturn($otpCode);
+
+    $studentService = \Mockery::mock(StudentService::class);
+    $studentService->shouldReceive('create')
+        ->once()
+        ->with(\Mockery::on(function (array $payload): bool {
+            return $payload['phone'] === '1000000000'
+                && $payload['country_code'] === '+2'
+                && $payload['center_id'] === null;
+        }))
+        ->andReturn($newUser);
+
+    $deviceService = \Mockery::mock(DeviceServiceInterface::class);
+    $deviceService->shouldReceive('register')
+        ->once()
+        ->with($newUser, 'device-1', \Mockery::type('array'))
+        ->andReturn($device);
+
+    $jwtService = \Mockery::mock(JwtServiceInterface::class);
+    $jwtService->shouldReceive('create')
+        ->once()
+        ->with($newUser, $device)
+        ->andReturn([
+            'access_token' => 'access',
+            'refresh_token' => 'refresh',
+        ]);
+
+    $action = new APILoginAction($otpService, $deviceService, $jwtService, $studentService);
+
+    $result = $action->execute([
+        'otp' => '123456',
+        'token' => 'token-123',
+        'device_uuid' => 'device-1',
+    ]);
+
+    $otpCode->refresh();
+    expect($otpCode->user_id)->toBe($newUser->id);
+    expect($result)->not()->toBeNull();
 });

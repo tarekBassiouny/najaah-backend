@@ -10,6 +10,7 @@ use Mockery\MockInterface;
 uses(RefreshDatabase::class)->group('auth');
 
 test('send returns token', function (): void {
+    config(['services.system_api_key' => 'system-key']);
     User::factory()->create([
         'phone' => '1234567890',
         'country_code' => '+20',
@@ -26,6 +27,8 @@ test('send returns token', function (): void {
     $response = $this->postJson('/api/v1/auth/send-otp', [
         'phone' => '1234567890',
         'country_code' => '+20',
+    ], [
+        'X-Api-Key' => 'system-key',
     ]);
 
     $response->assertOk()->assertJson(['token' => 'abc']);

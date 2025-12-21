@@ -29,7 +29,9 @@ class LoginController extends Controller
          */
         $data = $request->validated();
 
-        $result = $this->loginAction->execute($data);
+        $resolvedCenterId = $request->attributes->get('resolved_center_id');
+        $centerId = is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null;
+        $result = $this->loginAction->execute($data, $centerId);
 
         if ($result === null) {
             return response()->json(['error' => 'Invalid OTP'], 422);

@@ -127,6 +127,13 @@ class User extends Authenticatable implements JWTSubject
 
     public function belongsToCenter(int $centerId): bool
     {
+        if ($this->is_student && $this->center_id === null) {
+            return Center::query()
+                ->where('id', $centerId)
+                ->where('type', 0)
+                ->exists();
+        }
+
         return $this->centers()
             ->where('centers.id', $centerId)
             ->exists();

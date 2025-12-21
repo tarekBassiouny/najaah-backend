@@ -44,7 +44,7 @@ it('blocks student access when center does not match', function (): void {
     $response->assertStatus(403)->assertJsonPath('error.code', 'CENTER_MISMATCH');
 });
 
-it('rejects students without center assignment', function (): void {
+it('allows system-level students without center assignment', function (): void {
     $student = User::factory()->create([
         'is_student' => true,
         'password' => 'secret123',
@@ -56,5 +56,5 @@ it('rejects students without center assignment', function (): void {
 
     $response = $this->apiGet('/api/v1/auth/me');
 
-    $response->assertStatus(403)->assertJsonPath('error.code', 'CENTER_REQUIRED');
+    $response->assertOk()->assertJsonPath('data.center_id', null);
 });

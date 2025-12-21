@@ -31,7 +31,7 @@ it('updates upload session and video to ready', function (): void {
         'VideoLibraryId' => 123,
     ];
 
-    $response = $this->postJson('/api/webhooks/bunny', $payload);
+    $response = $this->postJson('/api/external/webhooks/bunny', $payload);
 
     $response->assertOk();
 
@@ -72,7 +72,7 @@ it('records failure without downgrading ready videos', function (): void {
         'ErrorMessage' => 'transcode failed',
     ];
 
-    $response = $this->postJson('/api/webhooks/bunny', $payload);
+    $response = $this->postJson('/api/external/webhooks/bunny', $payload);
 
     $response->assertOk();
 
@@ -105,7 +105,7 @@ it('ignores duplicate or lower-priority updates once ready', function (): void {
         'VideoLibraryId' => 77,
     ];
 
-    $this->postJson('/api/webhooks/bunny', $readyPayload)->assertOk();
+    $this->postJson('/api/external/webhooks/bunny', $readyPayload)->assertOk();
 
     $downgradePayload = [
         'Status' => 1,
@@ -113,7 +113,7 @@ it('ignores duplicate or lower-priority updates once ready', function (): void {
         'VideoLibraryId' => 77,
     ];
 
-    $this->postJson('/api/webhooks/bunny', $downgradePayload)->assertOk();
+    $this->postJson('/api/external/webhooks/bunny', $downgradePayload)->assertOk();
 
     $session->refresh();
     $video->refresh();
@@ -143,7 +143,7 @@ it('ignores cross-library payloads', function (): void {
         'VideoLibraryId' => 11,
     ];
 
-    $this->postJson('/api/webhooks/bunny', $payload)->assertOk();
+    $this->postJson('/api/external/webhooks/bunny', $payload)->assertOk();
 
     $session->refresh();
     $video->refresh();
@@ -159,7 +159,7 @@ it('logs status but does not mutate for ignored codes', function (): void {
         'VideoLibraryId' => 22,
     ];
 
-    $this->postJson('/api/webhooks/bunny', $payload)->assertOk();
+    $this->postJson('/api/external/webhooks/bunny', $payload)->assertOk();
 
     $this->assertDatabaseHas('bunny_webhook_logs', [
         'video_guid' => 'ignore-1',

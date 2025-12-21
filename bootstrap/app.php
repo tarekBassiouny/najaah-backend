@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureActiveEnrollment;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
+use App\Http\Middleware\ResolveCenterApiKey;
 use App\Http\Middleware\RequirePermission;
 use App\Http\Middleware\RequireRole;
 use App\Http\Middleware\SetRequestLocale;
@@ -97,6 +98,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.admin' => JwtAdminMiddleware::class,
             'setlocale' => SetRequestLocale::class,
             'enrollment.active' => EnsureActiveEnrollment::class,
+            'resolve.center.api-key' => ResolveCenterApiKey::class,
             'require.permission' => RequirePermission::class,
             'require.role' => RequireRole::class,
         ]);

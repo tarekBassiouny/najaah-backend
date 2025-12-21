@@ -41,6 +41,7 @@ class Center extends Model
 
     protected $fillable = [
         'slug',
+        'api_key',
         'type',
         'name_translations',
         'description_translations',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
@@ -62,6 +63,23 @@ class EnsureActiveEnrollment
                     'message' => 'Course does not belong to your center.',
                 ],
             ], 403);
+        }
+
+        if ($user->center_id === null) {
+            $isUnbranded = Center::query()
+                ->where('id', $course->center_id)
+                ->where('type', 0)
+                ->exists();
+
+            if (! $isUnbranded) {
+                return response()->json([
+                    'success' => false,
+                    'error' => [
+                        'code' => 'CENTER_MISMATCH',
+                        'message' => 'Course does not belong to your center.',
+                    ],
+                ], 403);
+            }
         }
 
         $request->attributes->set('enrollment', $enrollment);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Center;
 use App\Models\JwtToken;
 use App\Models\UserDevice;
 use Closure;
@@ -41,25 +42,45 @@ class JwtMobileMiddleware
             ], 403);
         }
 
-        if (! ($user instanceof \App\Models\User) || ! is_numeric($user->center_id)) {
+        if (! ($user instanceof \App\Models\User)) {
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'code' => 'CENTER_REQUIRED',
-                    'message' => 'Student center assignment is required.',
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
                 ],
             ], 403);
         }
 
         $requestedCenterId = $request->input('center_id');
-        if (is_numeric($requestedCenterId) && (int) $requestedCenterId !== (int) $user->center_id) {
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'CENTER_MISMATCH',
-                    'message' => 'Center mismatch.',
-                ],
-            ], 403);
+        if (is_numeric($requestedCenterId)) {
+            $requestedCenterId = (int) $requestedCenterId;
+            if (is_numeric($user->center_id) && (int) $user->center_id !== $requestedCenterId) {
+                return response()->json([
+                    'success' => false,
+                    'error' => [
+                        'code' => 'CENTER_MISMATCH',
+                        'message' => 'Center mismatch.',
+                    ],
+                ], 403);
+            }
+
+            if ($user->center_id === null) {
+                $isUnbranded = Center::query()
+                    ->where('id', $requestedCenterId)
+                    ->where('type', 0)
+                    ->exists();
+
+                if (! $isUnbranded) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'code' => 'CENTER_MISMATCH',
+                            'message' => 'Center mismatch.',
+                        ],
+                    ], 403);
+                }
+            }
         }
 
         $token = $guard->getToken();

@@ -11,6 +11,7 @@ use Mockery\MockInterface;
 uses(RefreshDatabase::class)->group('auth');
 
 test('verify issues tokens', function (): void {
+    config(['services.system_api_key' => 'system-key']);
     /** @var User $user */
     $user = User::factory()->create();
     /** @var UserDevice $device */
@@ -19,7 +20,7 @@ test('verify issues tokens', function (): void {
     /** @var MockInterface&APILoginAction $action */
     $action = Mockery::mock(APILoginAction::class);
     $action->allows()
-        ->execute(Mockery::type('array'))
+        ->execute(Mockery::type('array'), null)
         ->andReturn([
             'user' => $user,
             'device' => $device,
@@ -32,6 +33,8 @@ test('verify issues tokens', function (): void {
         'otp' => '123456',
         'token' => 'token-123',
         'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => 'system-key',
     ]);
 
     $response->assertOk();

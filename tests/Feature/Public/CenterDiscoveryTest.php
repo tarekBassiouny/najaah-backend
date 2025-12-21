@@ -25,7 +25,7 @@ it('returns public center discovery data', function (): void {
         ],
     ]);
 
-    $response = $this->getJson('/api/v1/public/centers/alpha-center');
+    $response = $this->getJson('/api/external/centers/alpha-center');
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -36,7 +36,7 @@ it('returns public center discovery data', function (): void {
 });
 
 it('returns not found for unknown center slug', function (): void {
-    $response = $this->getJson('/api/v1/public/centers/missing-center');
+    $response = $this->getJson('/api/external/centers/missing-center');
 
     $response->assertStatus(404)
         ->assertJsonPath('success', false)

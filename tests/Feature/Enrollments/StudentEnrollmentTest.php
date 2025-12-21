@@ -11,11 +11,12 @@ it('lists only the authenticated student enrollments', function (): void {
     $student = $this->makeApiUser();
     $this->asApiUser($student);
 
-    $otherStudent = $this->makeApiUser();
-
     $courseOne = $this->createCourse(['status' => 3]);
     $courseTwo = $this->createCourse(['status' => 3]);
     $otherCourse = $this->createCourse(['status' => 3]);
+    $otherStudent = $this->makeApiUser();
+    $otherStudent->center_id = $otherCourse->center_id;
+    $otherStudent->save();
 
     $this->enrollStudent($student, $courseOne, Enrollment::STATUS_ACTIVE);
     $this->enrollStudent($student, $courseTwo, Enrollment::STATUS_DEACTIVATED);

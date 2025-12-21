@@ -9,6 +9,7 @@ use App\Models\UserDevice;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Students\StudentService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class APILoginAction
@@ -16,7 +17,8 @@ class APILoginAction
     public function __construct(
         private readonly OtpServiceInterface $otpService,
         private readonly DeviceServiceInterface $deviceService,
-        private readonly JwtServiceInterface $jwtService
+        private readonly JwtServiceInterface $jwtService,
+        private readonly StudentService $studentService
     ) {}
 
     /**
@@ -30,24 +32,45 @@ class APILoginAction
      * } $data
      * @return array{user: User, device: UserDevice, tokens: array<string, mixed>}|null
      */
-    public function execute(array $data): ?array
+    public function execute(array $data, ?int $centerId = null): ?array
     {
         $otp = $this->otpService->verify($data['otp'], $data['token']);
 
-        if ($otp === null || $otp->user === null) {
+        if ($otp === null) {
             return null;
         }
 
         $user = $otp->user;
+        if (! $user instanceof User) {
+            $user = $this->studentService->create([
+                'name' => 'Student',
+                'phone' => $otp->phone,
+                'country_code' => $otp->country_code,
+                'center_id' => $centerId,
+            ]);
+            $otp->user_id = $user->id;
+            $otp->save();
+        }
 
-        if (! is_numeric($user->center_id)) {
-            throw new HttpResponseException(response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'CENTER_REQUIRED',
-                    'message' => 'Student center assignment is required.',
-                ],
-            ], 403));
+        if (is_numeric($centerId)) {
+            $centerIdValue = (int) $centerId;
+            if (is_numeric($user->center_id) && (int) $user->center_id !== $centerIdValue) {
+                throw new HttpResponseException(response()->json([
+                    'success' => false,
+                    'error' => [
+                        'code' => 'CENTER_MISMATCH',
+                        'message' => 'Center mismatch.',
+                    ],
+                ], 403));
+            }
+
+            if ($user->center_id === null) {
+                $user->center_id = $centerIdValue;
+                $user->save();
+                $user->centers()->syncWithoutDetaching([
+                    $centerIdValue => ['type' => 'student'],
+                ]);
+            }
         }
 
         $device = $this->deviceService->register($user, $data['device_uuid'], $data);

@@ -37,7 +37,7 @@ class CourseController extends Controller
             ], 403);
         }
 
-        $paginator = Course::query()
+        $query = Course::query()
             ->where('status', 3)
             ->whereIn('id', function ($query) use ($user): void {
                 $query->select('course_id')
@@ -45,8 +45,17 @@ class CourseController extends Controller
                     ->whereNull('deleted_at')
                     ->where('status', Enrollment::STATUS_ACTIVE)
                     ->where('user_id', $user->id);
-            })
-            ->paginate($perPage);
+            });
+
+        if (is_numeric($user->center_id)) {
+            $query->where('center_id', (int) $user->center_id);
+        } else {
+            $query->whereHas('center', function ($query): void {
+                $query->where('type', 0);
+            });
+        }
+
+        $paginator = $query->paginate($perPage);
 
         $collection = collect($paginator->items());
 
