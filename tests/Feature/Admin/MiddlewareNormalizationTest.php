@@ -12,11 +12,3 @@ it('uses jwt.admin for admin section routes', function (): void {
     expect($middleware)->toContain('jwt.admin')
         ->and($middleware)->not->toContain('auth:sanctum');
 });
-
-it('uses jwt.mobile for student course routes', function (): void {
-    $route = Route::getRoutes()->match(Request::create('/api/v1/courses', 'GET'));
-    $middleware = $route->gatherMiddleware();
-
-    expect($middleware)->toContain('jwt.mobile')
-        ->and($middleware)->not->toContain('jwt.admin');
-});

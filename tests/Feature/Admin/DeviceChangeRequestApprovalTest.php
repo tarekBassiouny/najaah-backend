@@ -26,12 +26,16 @@ it('admin approves and swaps active device', function (): void {
     $this->asApiUser($student, null, 'old-device');
     registerAdminDevice($student, 'old-device');
 
-    $request = $this->apiPost('/api/v1/device-change-requests', [
+    $request = DeviceChangeRequest::create([
+        'user_id' => $student->id,
+        'center_id' => $student->center_id,
+        'current_device_id' => 'old-device',
         'new_device_id' => 'new-device',
-        'model' => 'Model X',
-        'os_version' => '2.0',
+        'new_model' => 'Model X',
+        'new_os_version' => '2.0',
+        'status' => DeviceChangeRequest::STATUS_PENDING,
     ]);
-    $requestId = $request->json('data.id');
+    $requestId = $request->id;
 
     $this->asAdmin();
 
@@ -51,12 +55,16 @@ it('admin can reject pending request without device changes', function (): void 
     $this->asApiUser($student, null, 'old-device');
     registerAdminDevice($student, 'old-device');
 
-    $request = $this->apiPost('/api/v1/device-change-requests', [
+    $request = DeviceChangeRequest::create([
+        'user_id' => $student->id,
+        'center_id' => $student->center_id,
+        'current_device_id' => 'old-device',
         'new_device_id' => 'new-device',
-        'model' => 'Model X',
-        'os_version' => '2.0',
+        'new_model' => 'Model X',
+        'new_os_version' => '2.0',
+        'status' => DeviceChangeRequest::STATUS_PENDING,
     ]);
-    $requestId = $request->json('data.id');
+    $requestId = $request->id;
 
     $this->asAdmin();
 

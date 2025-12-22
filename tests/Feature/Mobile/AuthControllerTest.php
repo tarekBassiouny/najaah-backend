@@ -206,6 +206,39 @@ test('verify issues tokens using login action', function (): void {
     $response->assertJsonStructure(['success', 'data', 'token']);
 });
 
+test('verify rejects login from another device when active device exists', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '9990001111',
+        'country_code' => '+20',
+    ]);
+
+    UserDevice::factory()->create([
+        'user_id' => $user->id,
+        'device_id' => 'device-active',
+        'status' => UserDevice::STATUS_ACTIVE,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '9990001111',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-device-mismatch',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-device-mismatch',
+        'device_uuid' => 'device-new',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'DEVICE_MISMATCH');
+});
+
 test('otp cannot be reused after consumption', function (): void {
     /** @var User $user */
     $user = User::factory()->create(['phone' => '5555555555', 'country_code' => '+20']);

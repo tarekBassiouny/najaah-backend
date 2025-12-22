@@ -43,7 +43,7 @@ trait ApiTestHelper
             ]);
         }
 
-        if ($this->apiBearerToken === '') {
+        if ($this->apiBearerToken === '' || $this->apiBearerToken === null || ! $user->is_student) {
             $this->apiBearerToken = JWTAuth::fromUser($user);
         }
 

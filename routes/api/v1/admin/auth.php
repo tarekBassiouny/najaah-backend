@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminPasswordResetController;
 use App\Http\Controllers\Admin\CenterController;
-use App\Http\Controllers\Api\V1\Public\CenterDiscoveryController;
+use App\Http\Controllers\Admin\CenterDiscoveryController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AdminAuthController::class, 'login']);
