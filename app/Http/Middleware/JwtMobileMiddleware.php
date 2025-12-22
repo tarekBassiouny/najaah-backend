@@ -31,6 +31,10 @@ class JwtMobileMiddleware
             return $this->deny();
         }
 
+        if (! $user->is_student) {
+            return $this->deny('UNAUTHORIZED', 'Only students can access this endpoint.');
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Center validation

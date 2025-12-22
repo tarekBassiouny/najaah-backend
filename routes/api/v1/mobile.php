@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\CourseController;
-use App\Http\Controllers\Api\V1\DeviceChangeRequestController;
+use App\Http\Controllers\Api\V1\DeviceChangeRequestController as ApiDeviceChangeRequestController;
 use App\Http\Controllers\Api\V1\EnrollmentController;
-use App\Http\Controllers\Api\V1\ExtraViewRequestController;
+use App\Http\Controllers\Api\V1\ExtraViewRequestController as ApiExtraViewRequestController;
 use App\Http\Controllers\Api\V1\PdfDownloadController;
 use App\Http\Controllers\Api\V1\PlaybackController;
 use App\Http\Controllers\Api\V1\PlaybackSessionController;
@@ -15,8 +15,11 @@ use App\Http\Controllers\Api\V1\Sections\PublicSectionVideoController;
 use App\Http\Controllers\Mobile\AuthController;
 use App\Http\Controllers\Mobile\CategoryController;
 use App\Http\Controllers\Mobile\CentersController;
+use App\Http\Controllers\Mobile\DeviceChangeRequestController;
 use App\Http\Controllers\Mobile\EnrolledCoursesController;
+use App\Http\Controllers\Mobile\EnrollmentRequestController;
 use App\Http\Controllers\Mobile\ExploreController;
+use App\Http\Controllers\Mobile\ExtraViewRequestController;
 use App\Http\Controllers\Mobile\InstructorController;
 use App\Http\Controllers\Mobile\MeController;
 use App\Http\Controllers\Mobile\SearchController;
@@ -80,7 +83,7 @@ Route::middleware('jwt.mobile')->group(function (): void {
     |--------------------------------------------------------------------------
     */
     Route::get('/categories', [CategoryController::class, 'index']);
-    
+
     /*
     |--------------------------------------------------------------------------
     | My Courses (Enrolled)
@@ -88,10 +91,34 @@ Route::middleware('jwt.mobile')->group(function (): void {
     */
     Route::get('/courses/enrolled', [EnrolledCoursesController::class, 'index']);
 
+    /*
+    |--------------------------------------------------------------------------
+    | Extra View Requests
+    |--------------------------------------------------------------------------
+    */
+    Route::post(
+        '/centers/{center}/courses/{course}/videos/{video}/extra-view',
+        [ExtraViewRequestController::class, 'store']
+    );
 
+    /*
+    |--------------------------------------------------------------------------
+    | Device Change Requests
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/settings/device-change', [DeviceChangeRequestController::class, 'store']);
 
+    /*
+    |--------------------------------------------------------------------------
+    | Enrollment Requests
+    |--------------------------------------------------------------------------
+    */
+    Route::post(
+        '/centers/{center}/courses/{course}/enroll-request',
+        [EnrollmentRequestController::class, 'store']
+    );
 
-
+    // Codex remove all routes under this
 
     /*
     |--------------------------------------------------------------------------
@@ -163,10 +190,10 @@ Route::middleware('jwt.mobile')->group(function (): void {
     | Extra View Requests
     |--------------------------------------------------------------------------
     */
-    Route::get('/extra-view-requests', [ExtraViewRequestController::class, 'index']);
+    Route::get('/extra-view-requests', [ApiExtraViewRequestController::class, 'index']);
     Route::post(
         '/courses/{course}/videos/{video}/extra-view-requests',
-        [ExtraViewRequestController::class, 'store']
+        [ApiExtraViewRequestController::class, 'store']
     );
 
     /*
@@ -174,6 +201,6 @@ Route::middleware('jwt.mobile')->group(function (): void {
     | Device Change Requests
     |--------------------------------------------------------------------------
     */
-    Route::get('/device-change-requests', [DeviceChangeRequestController::class, 'index']);
-    Route::post('/device-change-requests', [DeviceChangeRequestController::class, 'store']);
+    Route::get('/device-change-requests', [ApiDeviceChangeRequestController::class, 'index']);
+    Route::post('/device-change-requests', [ApiDeviceChangeRequestController::class, 'store']);
 });

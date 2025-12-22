@@ -42,7 +42,7 @@ it('filters not enrolled courses in explore service', function (): void {
         'status' => Enrollment::STATUS_ACTIVE,
     ]);
 
-    $service = new ExploreCourseService();
+    $service = new ExploreCourseService;
     $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: false, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
@@ -72,7 +72,7 @@ it('scopes explore to center for branded students', function (): void {
         'is_published' => true,
     ]);
 
-    $service = new ExploreCourseService();
+    $service = new ExploreCourseService;
     $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
@@ -101,7 +101,7 @@ it('scopes explore to unbranded centers for system students', function (): void 
         'is_published' => true,
     ]);
 
-    $service = new ExploreCourseService();
+    $service = new ExploreCourseService;
     $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
@@ -129,7 +129,7 @@ it('excludes unpublished courses from explore service', function (): void {
         'is_published' => true,
     ]);
 
-    $service = new ExploreCourseService();
+    $service = new ExploreCourseService;
     $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
@@ -159,7 +159,7 @@ it('filters courses by publish date range in explore service', function (): void
         'publish_at' => now()->subDays(10),
     ]);
 
-    $service = new ExploreCourseService();
+    $service = new ExploreCourseService;
     $filters = new CourseFilters(
         page: 1,
         perPage: 15,
@@ -223,7 +223,7 @@ it('excludes courses with non-ready videos in explore service', function (): voi
         'visible' => true,
     ]);
 
-    $service = new ExploreCourseService();
+    $service = new ExploreCourseService;
     $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
@@ -246,7 +246,7 @@ it('returns not found for unpublished courses', function (): void {
         'is_published' => false,
     ]);
 
-    $service = new ExploreCourseService();
+    $service = new ExploreCourseService;
 
     $thrown = null;
     try {
@@ -272,7 +272,7 @@ it('denies system students from branded center courses', function (): void {
         'is_published' => true,
     ]);
 
-    $service = new ExploreCourseService();
+    $service = new ExploreCourseService;
 
     $thrown = null;
     try {

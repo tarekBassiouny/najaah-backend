@@ -34,11 +34,12 @@ trait ApiTestHelper
         if ($token !== null) {
             $this->apiBearerToken = $token;
         } else {
+            Auth::guard('api')->logout();
             // Otherwise generate a real JWT token using the mobile guard
             $this->apiBearerToken = (string) Auth::guard('api')->attempt([
                 'email' => $user->email,
                 'password' => 'secret123',
-                'is_student' => true,
+                'is_student' => $user->is_student,
             ]);
         }
 

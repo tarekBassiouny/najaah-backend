@@ -7,10 +7,10 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Instructor;
+use App\Models\Pivots\CourseVideo;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
-use App\Models\Pivots\CourseVideo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Helpers\ApiTestHelper;
 

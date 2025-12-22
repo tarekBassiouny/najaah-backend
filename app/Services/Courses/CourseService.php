@@ -121,7 +121,7 @@ class CourseService implements CourseServiceInterface
 
         if ($recentCourseIds->isNotEmpty()) {
             $builder->whereIn('id', $recentCourseIds)
-                ->orderByRaw('FIELD(id, ' . $recentCourseIds->implode(',') . ')');
+                ->orderByRaw('FIELD(id, '.$recentCourseIds->implode(',').')');
 
             return $builder->get();
         }
