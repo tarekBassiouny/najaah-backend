@@ -16,10 +16,7 @@ class OtpService implements OtpServiceInterface
         private readonly OtpSenderInterface $sender
     ) {}
 
-    /**
-     * @return array{token: string}
-     */
-    public function send(string $phone, string $countryCode): array
+    public function send(string $phone, string $countryCode): string
     {
         $token = Str::uuid()->toString();
         $otpCode = (string) random_int(100000, 999999);
@@ -38,9 +35,7 @@ class OtpService implements OtpServiceInterface
 
         $this->sender->send($countryCode.$phone, $otpCode);
 
-        return [
-            'token' => $token,
-        ];
+        return $token;
     }
 
     public function verify(string $otp, string $token): ?OtpCode

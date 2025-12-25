@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "7fee5fb0-c54a-4c04-aaa3-a04b5eb47813",
+    "_postman_id": "01977d73-c934-41b3-801f-1953d31634d6",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -3680,6 +3680,192 @@
       ]
     },
     {
+      "name": "🧑‍💼 Admin – Students",
+      "item": [
+        {
+          "name": "GET api/v1/admin/students",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/students",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
+                  "key": "center_id",
+                  "value": "2",
+                  "description": "Filter students by center ID (super admin only).",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "1",
+                  "description": "Filter students by status (0 inactive, 1 active, 2 banned).",
+                  "disabled": false
+                },
+                {
+                  "key": "search",
+                  "value": "Sara",
+                  "description": "Search students by name, username, or email.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/students?per_page=15&page=1&center_id=2&status=1&search=Sara"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT api/v1/admin/students/{user_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/students/:user_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/students/:user_id",
+              "variable": [
+                {
+                  "id": "user_id",
+                  "key": "user_id",
+                  "value": "1",
+                  "description": "The ID of the user."
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Student One\",\"email\":\"student@example.com\",\"status\":1}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/students",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/students",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/students"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Student One\",\"email\":\"student@example.com\",\"phone\":\"19990000001\",\"country_code\":\"+20\",\"center_id\":12}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE api/v1/admin/students/{user_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/students/:user_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/students/:user_id",
+              "variable": [
+                {
+                  "id": "user_id",
+                  "key": "user_id",
+                  "value": "1",
+                  "description": "The ID of the user."
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "🧑‍💼 Admin – Settings",
       "item": [
         {
@@ -3812,18 +3998,58 @@
       ]
     },
     {
-      "name": "🔔 Webhooks",
+      "name": "🔔 public",
       "item": [
         {
-          "name": "POST api/webhooks/bunny",
+          "name": "POST api/external/webhooks/bunny",
           "request": {
             "url": {
               "host": "{{baseUrl}}",
-              "path": "api/webhooks/bunny",
+              "path": "api/external/webhooks/bunny",
               "query": [],
-              "raw": "{{baseUrl}}/api/webhooks/bunny"
+              "raw": "{{baseUrl}}/api/external/webhooks/bunny"
             },
             "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/external/centers/{slug}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/external/centers/:slug",
+              "query": [],
+              "raw": "{{baseUrl}}/api/external/centers/:slug",
+              "variable": [
+                {
+                  "id": "slug",
+                  "key": "slug",
+                  "value": "architecto",
+                  "description": "The slug of the center."
+                }
+              ]
+            },
+            "method": "GET",
             "header": [
               {
                 "key": "Content-Type",
@@ -4922,6 +5148,102 @@
                 }
               ],
               "raw": "{{baseUrl}}/api/v1/enrollments?per_page=15"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👨‍🏫 Instructors",
+      "item": [
+        {
+          "name": "GET api/v1/instructors",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/instructors",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
+                  "key": "search",
+                  "value": "Sara",
+                  "description": "Search instructors by name.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/instructors?per_page=15&page=1&search=Sara"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/instructors/{instructor_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/instructors/:instructor_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/instructors/:instructor_id",
+              "variable": [
+                {
+                  "id": "instructor_id",
+                  "key": "instructor_id",
+                  "value": "1",
+                  "description": "The ID of the instructor."
+                }
+              ]
             },
             "method": "GET",
             "header": [

@@ -7,20 +7,14 @@ namespace Tests\Helpers;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
+use PHPUnit\Framework\Assert;
 
 trait EnrollmentTestHelper
 {
     public function enrollStudent(User $student, Course $course, int $status = Enrollment::STATUS_ACTIVE): Enrollment
     {
-        if ($course->center_id !== null) {
-            $student->centers()->syncWithoutDetaching([
-                $course->center_id => ['type' => 'student'],
-            ]);
-
-            if ($student->center_id === null) {
-                $student->center_id = $course->center_id;
-                $student->save();
-            }
+        if ($course->center_id !== null && $student->center_id !== null) {
+            Assert::assertSame($student->center_id, $course->center_id, 'Student center_id must match course center.');
         }
 
         /** @var Enrollment $enrollment */

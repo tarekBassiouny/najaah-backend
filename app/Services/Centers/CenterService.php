@@ -6,8 +6,12 @@ namespace App\Services\Centers;
 
 use App\Models\Center;
 use App\Models\CenterSetting;
+use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\User;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class CenterService implements CenterServiceInterface
@@ -99,5 +103,81 @@ class CenterService implements CenterServiceInterface
         $center->restore();
 
         return $center->fresh(['setting']) ?? $center;
+    }
+
+    /**
+     * @return LengthAwarePaginator<Center>
+     */
+    public function listUnbranded(?string $search, int $perPage = 15): LengthAwarePaginator
+    {
+        $query = Center::query()
+            ->with('setting')
+            ->where('type', 0)
+            ->orderByDesc('id');
+
+        if ($search !== null && $search !== '') {
+            $term = $search;
+            $query->where(function (Builder $query) use ($term): void {
+                $query->where('name_translations', 'like', '%'.$term.'%')
+                    ->orWhere('description_translations', 'like', '%'.$term.'%');
+            });
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * @return array{center: Center, courses: LengthAwarePaginator<Course>}
+     */
+    public function showWithCourses(User $student, Center $center, int $perPage = 15): array
+    {
+        $center->loadMissing('setting');
+
+        $courses = $this->unbrandedCourseQuery($student, $center)
+            ->paginate($perPage);
+
+        return [
+            'center' => $center,
+            'courses' => $courses,
+        ];
+    }
+
+    /**
+     * @return Builder<Course>
+     */
+    private function unbrandedCourseQuery(User $student, Center $center): Builder
+    {
+        if ((int) $center->type !== 0) {
+            $this->notFound();
+        }
+
+        return Course::query()
+            ->where('center_id', $center->id)
+            ->where('status', 3)
+            ->where('is_published', true)
+            ->with(['center', 'category', 'instructors'])
+            ->withExists([
+                'enrollments as is_enrolled' => function ($query) use ($student): void {
+                    $query->where('user_id', $student->id)
+                        ->where('status', Enrollment::STATUS_ACTIVE)
+                        ->whereNull('deleted_at');
+                },
+            ])
+            ->whereDoesntHave('videos', function ($query): void {
+                $query->where('encoding_status', '!=', 3)
+                    ->orWhere('lifecycle_status', '!=', 2)
+                    ->orWhere(function ($query): void {
+                        $query->whereNotNull('upload_session_id')
+                            ->whereHas('uploadSession', function ($query): void {
+                                $query->where('upload_status', '!=', 3);
+                            });
+                    });
+            })
+            ->orderByDesc('created_at');
+    }
+
+    private function notFound(): void
+    {
+        abort(404);
     }
 }

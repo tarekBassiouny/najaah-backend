@@ -23,7 +23,7 @@ class CourseQueryService
     {
         $query = Course::query()
             ->with(['center', 'category', 'primaryInstructor', 'instructors'])
-            ->orderByDesc('id');
+            ->orderByDesc('created_at');
 
         if (isset($filters['category_id']) && is_numeric($filters['category_id'])) {
             $query->where('category_id', (int) $filters['category_id']);

@@ -20,6 +20,15 @@ trait CourseTestHelper
      */
     public function createCourse(array $attributes = []): Course
     {
+        if (! array_key_exists('center_id', $attributes)
+            && property_exists($this, 'apiUser')
+            && $this->apiUser instanceof \App\Models\User
+            && $this->apiUser->is_student
+            && is_numeric($this->apiUser->center_id)
+        ) {
+            $attributes['center_id'] = (int) $this->apiUser->center_id;
+        }
+
         /** @var Course $course */
         $course = Course::factory()->create($attributes);
 

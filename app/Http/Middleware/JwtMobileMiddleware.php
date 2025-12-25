@@ -2,6 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Center;
+use App\Models\JwtToken;
+use App\Models\User;
+use App\Models\UserDevice;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,28 +24,98 @@ class JwtMobileMiddleware
         try {
             $user = $guard->user() ?? $guard->authenticate();
         } catch (\Throwable) {
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'UNAUTHORIZED',
-                    'message' => 'Authentication required.',
-                ],
-            ], 403);
+            return $this->deny();
         }
 
-        if (! $user) {
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'UNAUTHORIZED',
-                    'message' => 'Authentication required.',
-                ],
-            ], 403);
+        if (! $user instanceof User) {
+            return $this->deny();
         }
 
-        // Set resolved user for controllers
-        $request->setUserResolver(fn () => $user);
+        if (! $user->is_student) {
+            return $this->deny('UNAUTHORIZED', 'Only students can access this endpoint.');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Center validation
+        |--------------------------------------------------------------------------
+        */
+        $requestedCenterId = $request->input('center_id');
+
+        if (is_numeric($requestedCenterId)) {
+            $requestedCenterId = (int) $requestedCenterId;
+
+            if (is_numeric($user->center_id) && (int) $user->center_id !== $requestedCenterId) {
+                return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
+            }
+
+            if ($user->center_id === null) {
+                $isUnbranded = Center::query()
+                    ->where('id', $requestedCenterId)
+                    ->where('type', 0)
+                    ->exists();
+
+                if (! $isUnbranded) {
+                    return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Token validation
+        |--------------------------------------------------------------------------
+        */
+        $token = $guard->getToken();
+
+        if ($token === null) {
+            return $this->deny();
+        }
+
+        /** @var JwtToken|null $record */
+        $record = JwtToken::query()
+            ->where('access_token', (string) $token)
+            ->whereNull('revoked_at')
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if ($record === null) {
+            return $this->deny();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Device validation
+        |--------------------------------------------------------------------------
+        */
+        if ($record->device_id !== null) {
+            /** @var UserDevice|null $device */
+            $device = UserDevice::find($record->device_id);
+
+            if ($device === null || $device->status !== UserDevice::STATUS_ACTIVE) {
+                return $this->deny();
+            }
+        }
+
+        // Bind resolved user to request
+        $request->setUserResolver(fn (): User => $user);
 
         return $next($request);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Deny helper
+    |--------------------------------------------------------------------------
+    */
+    private function deny(string $code = 'UNAUTHORIZED', string $message = 'Authentication required.'): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'error' => [
+                'code' => $code,
+                'message' => $message,
+            ],
+        ], Response::HTTP_FORBIDDEN);
     }
 }

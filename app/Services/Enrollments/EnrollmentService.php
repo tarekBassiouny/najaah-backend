@@ -35,16 +35,24 @@ class EnrollmentService implements EnrollmentServiceInterface
         }
 
         $centerId = (int) $course->center_id;
+        $course->loadMissing('center');
 
-        if (! $student->belongsToCenter($centerId)) {
-            $student->centers()->syncWithoutDetaching([
-                $centerId => ['type' => 'student'],
+        if (is_numeric($student->center_id) && (int) $student->center_id !== $centerId) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Course does not belong to the student center.'],
             ]);
+        }
 
-            if ($student->center_id === null) {
-                $student->center_id = $centerId;
-                $student->save();
-            }
+        if (! is_numeric($student->center_id) && ($course->center?->type ?? 1) !== 0) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Course is not available for system-level students.'],
+            ]);
+        }
+
+        if (is_numeric($student->center_id) && ! $student->belongsToCenter($centerId)) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Student does not belong to this center.'],
+            ]);
         }
 
         return DB::transaction(function () use ($student, $course, $statusValue, $actor): Enrollment {
@@ -117,12 +125,23 @@ class EnrollmentService implements EnrollmentServiceInterface
 
     public function paginateForStudent(User $student, int $perPage = 15): LengthAwarePaginator
     {
-        return Enrollment::query()
+        $query = Enrollment::query()
             ->where('user_id', $student->id)
             ->whereNull('deleted_at')
             ->with(['course', 'course.category', 'course.center'])
-            ->orderByDesc('enrolled_at')
-            ->paginate($perPage);
+            ->orderByDesc('enrolled_at');
+
+        if (is_numeric($student->center_id)) {
+            $query->whereHas('course', function ($query) use ($student): void {
+                $query->where('center_id', (int) $student->center_id);
+            });
+        } else {
+            $query->whereHas('course.center', function ($query): void {
+                $query->where('type', 0);
+            });
+        }
+
+        return $query->paginate($perPage);
     }
 
     public function getActiveEnrollment(User $student, Course $course): ?Enrollment

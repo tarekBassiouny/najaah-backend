@@ -8,6 +8,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 trait AdminTestHelper
 {
@@ -45,6 +46,7 @@ trait AdminTestHelper
             'device_change.manage',
             'extra_view.manage',
             'instructor.manage',
+            'student.manage',
         ];
 
         $permissionIds = [];
@@ -78,14 +80,25 @@ trait AdminTestHelper
             'is_student' => false,
         ]);
 
+        if ($this->adminToken !== null && $this->adminToken !== '') {
+            $this->withHeader('Authorization', 'Bearer '.$this->adminToken);
+        }
+
         return $admin;
     }
 
     public function adminHeaders(array $extra = []): array
     {
+        $systemKey = (string) Config::get('services.system_api_key', '');
+        if ($systemKey === '') {
+            $systemKey = 'system-test-key';
+            Config::set('services.system_api_key', $systemKey);
+        }
+
         return array_merge([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer '.$this->adminToken,
+            'X-Api-Key' => $systemKey,
         ], $extra);
     }
 }

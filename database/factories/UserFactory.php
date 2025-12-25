@@ -19,7 +19,7 @@ class UserFactory extends Factory
             'center_id' => Center::factory(),
             'name' => 'Test User',
             'username' => 'user'.uniqid(),
-            'phone' => '1000000000',
+            'phone' => $this->faker->unique()->numerify('1#########'),
             'country_code' => '+2',
             'email' => 'user'.uniqid().'@example.com',
             'password' => Hash::make('password'),

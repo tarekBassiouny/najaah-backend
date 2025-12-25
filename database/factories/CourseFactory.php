@@ -20,7 +20,7 @@ class CourseFactory extends Factory
 
         return [
             'center_id' => $center,
-            'category_id' => Category::factory(),
+            'category_id' => Category::factory()->for($center, 'center'),
             'title_translations' => [
                 'en' => 'Sample Course',
                 'ar' => 'دورة تجريبية',

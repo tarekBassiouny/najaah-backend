@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\Center;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CategoryFactory extends Factory
@@ -14,6 +15,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
+            'center_id' => Center::factory(),
             'title_translations' => [
                 'en' => 'Category',
                 'ar' => 'فئة',

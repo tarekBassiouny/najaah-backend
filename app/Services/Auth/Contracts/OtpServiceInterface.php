@@ -8,10 +8,7 @@ use App\Models\OtpCode;
 
 interface OtpServiceInterface
 {
-    /**
-     * @return array{token: string}
-     */
-    public function send(string $phone, string $countryCode): array;
+    public function send(string $phone, string $countryCode): string;
 
     public function verify(string $otp, string $token): ?OtpCode;
 }

@@ -22,9 +22,6 @@ use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
-use App\Services\Playback\ConcurrencyService;
-use App\Services\Playback\PlaybackAuthorizationService;
-use App\Services\Playback\PlaybackSessionService;
 use App\Services\Playback\ViewLimitService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
@@ -65,10 +62,7 @@ class AppServiceProvider extends ServiceProvider
             $this->app->bind($abstract, $implementation);
         }
 
-        $this->app->singleton(PlaybackSessionService::class);
-        $this->app->singleton(PlaybackAuthorizationService::class);
         $this->app->singleton(ViewLimitService::class);
-        $this->app->singleton(ConcurrencyService::class);
 
         $this->app->singleton(BunnyStreamService::class, function (Application $app): BunnyStreamService {
             $apiConfig = $app['config']->get('bunny.api', []);

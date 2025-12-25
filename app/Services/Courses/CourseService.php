@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Services\Courses;
 
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class CourseService implements CourseServiceInterface
 {
@@ -75,5 +78,123 @@ class CourseService implements CourseServiceInterface
         }
 
         return $course;
+    }
+
+    /**
+     * @return LengthAwarePaginator<Course>
+     */
+    public function search(User $student, ?string $query, int $perPage = 15, int $page = 1): LengthAwarePaginator
+    {
+        $builder = $this->mobileBaseQuery($student);
+
+        if ($query !== null && $query !== '') {
+            $term = $query;
+            $builder->where(function (Builder $query) use ($term): void {
+                $query->where('title_translations', 'like', '%'.$term.'%')
+                    ->orWhereHas('instructors', function (Builder $query) use ($term): void {
+                        $query->where('name_translations', 'like', '%'.$term.'%');
+                    });
+            });
+        }
+
+        return $builder->paginate($perPage, ['*'], 'page', $page);
+    }
+
+    /**
+     * @return Collection<int, Course>
+     */
+    public function fallback(User $student): Collection
+    {
+        $recentCourseIds = Course::query()
+            ->selectRaw('courses.id, MAX(playback_sessions.started_at) as last_seen')
+            ->join('course_video', 'courses.id', '=', 'course_video.course_id')
+            ->join('videos', 'videos.id', '=', 'course_video.video_id')
+            ->join('playback_sessions', 'playback_sessions.video_id', '=', 'videos.id')
+            ->whereNull('course_video.deleted_at')
+            ->where('playback_sessions.user_id', $student->id)
+            ->groupBy('courses.id')
+            ->orderByDesc('last_seen')
+            ->limit(5)
+            ->pluck('courses.id');
+
+        $builder = $this->mobileBaseQuery($student);
+
+        if ($recentCourseIds->isNotEmpty()) {
+            $builder->whereIn('id', $recentCourseIds)
+                ->orderByRaw('FIELD(id, '.$recentCourseIds->implode(',').')');
+
+            return $builder->get();
+        }
+
+        return $builder->orderByDesc('created_at')->limit(5)->get();
+    }
+
+    /**
+     * @return LengthAwarePaginator<Course>
+     */
+    public function enrolled(User $student, \App\Filters\Mobile\CourseFilters $filters): LengthAwarePaginator
+    {
+        $builder = $this->mobileBaseQuery($student)
+            ->whereHas('enrollments', function (Builder $query) use ($student): void {
+                $query->where('user_id', $student->id)
+                    ->where('status', Enrollment::STATUS_ACTIVE)
+                    ->whereNull('deleted_at');
+            });
+
+        if ($filters->categoryId !== null) {
+            $builder->where('category_id', $filters->categoryId);
+        }
+
+        if ($filters->instructorId !== null) {
+            $builder->whereHas('instructors', function (Builder $query) use ($filters): void {
+                $query->where('instructors.id', $filters->instructorId);
+            });
+        }
+
+        return $builder->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
+    }
+
+    /**
+     * @return Builder<Course>
+     */
+    private function mobileBaseQuery(User $student): Builder
+    {
+        $query = Course::query()
+            ->where('status', 3)
+            ->where('is_published', true)
+            ->with(['center', 'category', 'instructors'])
+            ->withExists([
+                'enrollments as is_enrolled' => function ($query) use ($student): void {
+                    $query->where('user_id', $student->id)
+                        ->where('status', Enrollment::STATUS_ACTIVE)
+                        ->whereNull('deleted_at');
+                },
+            ]);
+
+        if (is_numeric($student->center_id)) {
+            $query->where('center_id', (int) $student->center_id);
+        } else {
+            $query->whereHas('center', function ($query): void {
+                $query->where('type', 0);
+            });
+        }
+
+        $query->whereDoesntHave('videos', function ($query): void {
+            $query->where('encoding_status', '!=', 3)
+                ->orWhere('lifecycle_status', '!=', 2)
+                ->orWhere(function ($query): void {
+                    $query->whereNotNull('upload_session_id')
+                        ->whereHas('uploadSession', function ($query): void {
+                            $query->where('upload_status', '!=', 3);
+                        });
+                });
+        });
+
+        return $query;
     }
 }

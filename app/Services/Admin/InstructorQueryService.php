@@ -23,7 +23,7 @@ class InstructorQueryService
     {
         $query = Instructor::query()
             ->with(['center', 'creator'])
-            ->orderByDesc('id');
+            ->orderByDesc('created_at');
 
         if (isset($filters['course_id']) && is_numeric($filters['course_id'])) {
             $courseId = (int) $filters['course_id'];

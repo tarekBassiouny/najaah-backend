@@ -3,11 +3,13 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\EnsureActiveEnrollment;
+use App\Http\Middleware\EnsureUnbrandedStudent;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\RequirePermission;
 use App\Http\Middleware\RequireRole;
+use App\Http\Middleware\ResolveCenterApiKey;
 use App\Http\Middleware\SetRequestLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -20,52 +22,39 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
-        api: __DIR__.'/../routes/webhooks.php',
         health: '/up',
         then: function (): void {
             // Mobile API (JWT)
             Route::prefix('api/v1')
-                ->middleware(['api'])
+                ->middleware('api')
                 ->group(function (): void {
-                    require __DIR__.'/../routes/api/v1/auth.php';
-
-                    Route::middleware(['jwt.mobile'])->group(function (): void {
-                        require __DIR__.'/../routes/api/v1/enrollments.php';
-                        require __DIR__.'/../routes/api/v1/courses.php';
-                        require __DIR__.'/../routes/api/v1/sections.php';
-                        require __DIR__.'/../routes/api/v1/videos.php';
-                        require __DIR__.'/../routes/api/v1/pdfs.php';
-                        require __DIR__.'/../routes/api/v1/playback.php';
-                        require __DIR__.'/../routes/api/v1/extra-view-requests.php';
-                        require __DIR__.'/../routes/api/v1/device-change-requests.php';
-                    });
+                    require __DIR__.'/../routes/api/v1/mobile.php';
                 });
 
             // Admin (JWT) - canonical /api/v1/admin with backward-compatible /admin alias
-            $adminRoutes = static function (): void {
-                require __DIR__.'/../routes/admin/auth.php';
-
-                Route::middleware(['jwt.admin'])->group(function (): void {
-                    require __DIR__.'/../routes/admin/enrollments.php';
-                    require __DIR__.'/../routes/admin/courses.php';
-                    require __DIR__.'/../routes/admin/sections.php';
-                    require __DIR__.'/../routes/admin/videos.php';
-                    require __DIR__.'/../routes/admin/instructors.php';
-                    require __DIR__.'/../routes/admin/pdfs.php';
-                    require __DIR__.'/../routes/admin/center-settings.php';
-                    require __DIR__.'/../routes/admin/settings.php';
-                    require __DIR__.'/../routes/admin/audit-logs.php';
-                    require __DIR__.'/../routes/admin/extra-view-requests.php';
-                    require __DIR__.'/../routes/admin/device-change-requests.php';
-                    require __DIR__.'/../routes/admin/roles.php';
-                    require __DIR__.'/../routes/admin/permissions.php';
-                    require __DIR__.'/../routes/admin/admin-users.php';
-                });
-            };
-
             Route::prefix('api/v1/admin')
-                ->middleware(['api'])
-                ->group($adminRoutes);
+                ->middleware(['api', HandleCors::class])
+                ->group(function (): void {
+                    require __DIR__.'/../routes/api/v1/admin/auth.php';
+
+                    Route::middleware(['jwt.admin'])->group(function (): void {
+                        require __DIR__.'/../routes/api/v1/admin/enrollments.php';
+                        require __DIR__.'/../routes/api/v1/admin/courses.php';
+                        require __DIR__.'/../routes/api/v1/admin/sections.php';
+                        require __DIR__.'/../routes/api/v1/admin/videos.php';
+                        require __DIR__.'/../routes/api/v1/admin/instructors.php';
+                        require __DIR__.'/../routes/api/v1/admin/pdfs.php';
+                        require __DIR__.'/../routes/api/v1/admin/center-settings.php';
+                        require __DIR__.'/../routes/api/v1/admin/settings.php';
+                        require __DIR__.'/../routes/api/v1/admin/audit-logs.php';
+                        require __DIR__.'/../routes/api/v1/admin/extra-view-requests.php';
+                        require __DIR__.'/../routes/api/v1/admin/device-change-requests.php';
+                        require __DIR__.'/../routes/api/v1/admin/roles.php';
+                        require __DIR__.'/../routes/api/v1/admin/permissions.php';
+                        require __DIR__.'/../routes/api/v1/admin/admin-users.php';
+                        require __DIR__.'/../routes/api/v1/admin/students.php';
+                    });
+                });
         }
     )
     ->withCommands([
@@ -75,16 +64,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Global middleware
         $middleware->use([
             RequestIdMiddleware::class,
-            HandleCors::class,
-        ]);
-
-        // Web middleware stack
-        $middleware->web([
-            SetRequestLocale::class,
         ]);
 
         // API middleware stack
         $middleware->api([
+            ResolveCenterApiKey::class,
             SetRequestLocale::class,
             SubstituteBindings::class,
         ]);
@@ -93,8 +77,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'jwt.mobile' => JwtMobileMiddleware::class,
             'jwt.admin' => JwtAdminMiddleware::class,
-            'setlocale' => SetRequestLocale::class,
             'enrollment.active' => EnsureActiveEnrollment::class,
+            'ensure.unbranded.student' => EnsureUnbrandedStudent::class,
             'require.permission' => RequirePermission::class,
             'require.role' => RequireRole::class,
         ]);

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
+ * @property int|null $center_id
  * @property array<string, string> $title_translations
  * @property array<string, string>|null $description_translations
  * @property int|null $parent_id
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Category|null $parent
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $children
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
+ * @property-read Center|null $center
  */
 class Category extends Model
 {
@@ -31,6 +33,7 @@ class Category extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'center_id',
         'title_translations',
         'description_translations',
         'parent_id',
@@ -43,6 +46,7 @@ class Category extends Model
         'description_translations' => 'array',
         'is_active' => 'boolean',
         'order_index' => 'integer',
+        'center_id' => 'integer',
     ];
 
     /** @var array<int, string> */
@@ -55,6 +59,12 @@ class Category extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    /** @return BelongsTo<Center, self> */
+    public function center(): BelongsTo
+    {
+        return $this->belongsTo(Center::class);
     }
 
     /** @return HasMany<Category, self> */

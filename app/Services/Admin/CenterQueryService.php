@@ -15,7 +15,7 @@ class CenterQueryService
      */
     public function build(array $filters): Builder
     {
-        $query = Center::query()->with('setting')->orderByDesc('id');
+        $query = Center::query()->with('setting')->orderByDesc('created_at');
 
         if (isset($filters['slug']) && is_string($filters['slug'])) {
             $query->where('slug', $filters['slug']);
