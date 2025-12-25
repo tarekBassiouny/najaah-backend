@@ -12,6 +12,7 @@ use App\Http\Controllers\Mobile\ExploreController;
 use App\Http\Controllers\Mobile\ExtraViewRequestController;
 use App\Http\Controllers\Mobile\InstructorController;
 use App\Http\Controllers\Mobile\MeController;
+use App\Http\Controllers\Mobile\PlaybackController;
 use App\Http\Controllers\Mobile\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -80,6 +81,20 @@ Route::middleware('jwt.mobile')->group(function (): void {
     |--------------------------------------------------------------------------
     */
     Route::get('/courses/enrolled', [EnrolledCoursesController::class, 'index']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Playback
+    |--------------------------------------------------------------------------
+    */
+    Route::post(
+        '/centers/{center}/courses/{course}/videos/{video}/request_playback',
+        [PlaybackController::class, 'requestPlayback']
+    );
+    Route::post(
+        '/centers/{center}/courses/{course}/videos/{video}/playback_progress',
+        [PlaybackController::class, 'updateProgress']
+    );
 
     /*
     |--------------------------------------------------------------------------
