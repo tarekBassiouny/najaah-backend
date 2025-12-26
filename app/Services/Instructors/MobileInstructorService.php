@@ -28,11 +28,11 @@ class MobileInstructorService
         }
 
         if ($filters->search !== null) {
-            $term = $filters->search;
-            $query->where(function ($query) use ($term): void {
-                $query->where('name_translations', 'like', '%'.$term.'%')
-                    ->orWhere('title_translations', 'like', '%'.$term.'%');
-            });
+            $query->whereTranslationLike(
+                ['name', 'title'],
+                $filters->search,
+                ['en', 'ar']
+            );
         }
 
         return $query->paginate(

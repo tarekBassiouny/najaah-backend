@@ -11,6 +11,7 @@ use App\Models\UserDevice;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\Helpers\ApiTestHelper;
 use Tests\Helpers\EnrollmentTestHelper;
 
@@ -80,18 +81,56 @@ test('it rejects multiple active playback sessions', function (): void {
 
     $device = UserDevice::where('user_id', $student->id)->where('status', UserDevice::STATUS_ACTIVE)->first();
     expect($device)->not->toBeNull();
+    $otherDevice = UserDevice::factory()->create([
+        'user_id' => $student->id,
+        'status' => UserDevice::STATUS_REVOKED,
+    ]);
+
     PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'device_id' => $otherDevice->id,
+        'is_full_play' => false,
+        'progress_percent' => 0,
+        'ended_at' => null,
+        'expires_at' => now()->addMinutes(10),
+    ]);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+
+    $response->assertStatus(409)->assertJsonPath('error.code', 'CONCURRENT_DEVICE');
+});
+
+test('it creates new session when previous one expired on same device', function (): void {
+    [$student, $center, $course, $video] = buildPlaybackContext();
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $device = UserDevice::where('user_id', $student->id)->where('status', UserDevice::STATUS_ACTIVE)->first();
+    expect($device)->not->toBeNull();
+
+    $expired = PlaybackSession::factory()->create([
         'user_id' => $student->id,
         'video_id' => $video->id,
         'device_id' => $device->id,
         'is_full_play' => false,
         'progress_percent' => 0,
         'ended_at' => null,
+        'expires_at' => now()->subMinutes(5),
     ]);
 
     $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
 
-    $response->assertStatus(409)->assertJsonPath('error.code', 'ACTIVE_SESSION_EXISTS');
+    $response->assertOk();
+
+    $expired->refresh();
+    expect($expired->ended_at)->not->toBeNull();
+
+    $this->assertDatabaseHas('playback_sessions', [
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'device_id' => $device->id,
+    ]);
 });
 
 test('it updates progress and counts view once after 50 percent', function (): void {
@@ -127,6 +166,31 @@ test('it updates progress and counts view once after 50 percent', function (): v
         ->count();
 
     expect($fullPlays)->toBe(1);
+});
+
+test('it extends session expiry on progress update', function (): void {
+    Carbon::setTestNow('2024-01-01 00:00:00');
+
+    [$student, $center, $course, $video] = buildPlaybackContext();
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+    $sessionId = (int) $response->json('data.session_id');
+
+    Carbon::setTestNow('2024-01-01 00:05:00');
+
+    $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [
+        'session_id' => $sessionId,
+        'percentage' => 20,
+    ])->assertOk();
+
+    $session = PlaybackSession::query()->find($sessionId);
+    $expectedExpiry = now()->addSeconds(config('playback.session_ttl'))->timestamp;
+
+    expect($session?->expires_at?->timestamp)->toBe($expectedExpiry);
+
+    Carbon::setTestNow();
 });
 
 test('it rejects invalid playback session', function (): void {

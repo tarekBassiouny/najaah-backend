@@ -92,6 +92,10 @@ Route::middleware('jwt.mobile')->group(function (): void {
         [PlaybackController::class, 'requestPlayback']
     );
     Route::post(
+        '/centers/{center}/courses/{course}/videos/{video}/refresh_token',
+        [PlaybackController::class, 'refreshToken']
+    );
+    Route::post(
         '/centers/{center}/courses/{course}/videos/{video}/playback_progress',
         [PlaybackController::class, 'updateProgress']
     );

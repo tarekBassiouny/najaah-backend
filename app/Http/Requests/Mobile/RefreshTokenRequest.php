@@ -31,7 +31,7 @@ class RefreshTokenRequest extends FormRequest
         return [
             'refresh_token' => [
                 'description' => 'The refresh token issued at login.',
-                'example' => 'jwt-refresh-token',
+                'example' => '{{mobile_refresh_token}}',
             ],
         ];
     }

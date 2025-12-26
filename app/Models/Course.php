@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableSearch;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CourseInstructor;
 use App\Models\Pivots\CoursePdf;
@@ -53,6 +54,7 @@ class Course extends Model
     /** @use HasFactory<\Database\Factories\CourseFactory> */
     use HasFactory;
 
+    use HasTranslatableSearch;
     use HasTranslations;
     use SoftDeletes;
 

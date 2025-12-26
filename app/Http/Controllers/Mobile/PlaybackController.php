@@ -6,19 +6,25 @@ namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mobile\PlaybackProgressRequest;
+use App\Http\Requests\Mobile\RefreshPlaybackTokenRequest;
 use App\Http\Requests\Mobile\RequestPlaybackRequest;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Bunny\BunnyEmbedTokenService;
+use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackService;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class PlaybackController extends Controller
 {
-    public function __construct(private readonly PlaybackService $playbackService) {}
+    public function __construct(
+        private readonly PlaybackService $playbackService,
+        private readonly PlaybackAuthorizationService $authorizationService,
+        private readonly BunnyEmbedTokenService $embedTokenService
+    ) {}
 
     public function requestPlayback(
         RequestPlaybackRequest $request,
@@ -51,14 +57,9 @@ class PlaybackController extends Controller
         $session = PlaybackSession::query()
             ->where('id', $data['session_id'])
             ->whereNull('deleted_at')
-            ->first();
+            ->first() ?? new PlaybackSession;
 
-        if ($session === null) {
-            $this->deny('SESSION_NOT_FOUND', 'Playback session not found.', 404);
-        }
-
-        $this->assertCourseContext($student, $center, $course, $video, $session);
-
+        $this->authorizationService->assertCanUpdateProgress($student, $center, $course, $video, $session);
         $this->playbackService->updateProgress($student, $session, $data['percentage']);
 
         return response()->json([
@@ -66,46 +67,43 @@ class PlaybackController extends Controller
         ]);
     }
 
-    private function assertCourseContext(
-        User $student,
+    public function refreshToken(
+        RefreshPlaybackTokenRequest $request,
         Center $center,
         Course $course,
-        Video $video,
-        PlaybackSession $session
-    ): void {
-        if ((int) $course->center_id !== (int) $center->id) {
-            $this->deny('NOT_FOUND', 'Course not found.', 404);
-        }
+        Video $video
+    ): JsonResponse {
+        /** @var User $student */
+        $student = $request->user();
+        /** @var array{session_id:int} $data */
+        $data = $request->validated();
 
-        $videoInCourse = $course->videos()
-            ->where('videos.id', $video->id)
-            ->wherePivotNull('deleted_at')
-            ->exists();
+        $session = PlaybackSession::query()
+            ->where('id', $data['session_id'])
+            ->whereNull('deleted_at')
+            ->first() ?? new PlaybackSession;
 
-        if (! $videoInCourse || $session->video_id !== $video->id) {
-            $this->deny('NOT_FOUND', 'Video not found.', 404);
-        }
+        $this->authorizationService->assertCanRefreshToken($student, $center, $course, $video, $session);
 
-        if (is_numeric($student->center_id)) {
-            if ((int) $student->center_id !== (int) $center->id) {
-                $this->deny('CENTER_MISMATCH', 'Center mismatch.', 403);
-            }
-        } elseif ((int) $center->type !== 0) {
-            $this->deny('CENTER_MISMATCH', 'Center mismatch.', 403);
-        }
+        $videoUuid = (string) $video->source_id;
+        $tokenPayload = $this->embedTokenService->generate($videoUuid, $student, $this->resolveEmbedTokenTtl());
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'embed_token' => $tokenPayload['token'],
+                'expires_in' => $tokenPayload['expires_in'],
+            ],
+        ]);
     }
 
-    /**
-     * @return never
-     */
-    private function deny(string $code, string $message, int $status): void
+    private function resolveEmbedTokenTtl(): int
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => $code,
-                'message' => $message,
-            ],
-        ], $status));
+        $ttl = (int) config('bunny.embed_token_ttl', 600);
+        if ($ttl <= 0) {
+            $ttl = 600;
+        }
+
+        return min(600, max(300, $ttl));
     }
 }

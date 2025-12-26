@@ -21,7 +21,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -32,7 +33,7 @@ endpoints:
         name: phone
         description: 'The full phone number including country code.'
         required: true
-        example: '01234567890'
+        example: '{{student_phone}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -43,15 +44,15 @@ endpoints:
         name: country_code
         description: 'The country dialing code. Must not be greater than 5 characters.'
         required: true
-        example: '+2'
+        example: '{{country_code}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      phone: '01234567890'
-      country_code: '+2'
+      phone: '{{student_phone}}'
+      country_code: '{{country_code}}'
     fileParameters: []
     responses: []
     responseFields: []
@@ -77,7 +78,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -88,7 +90,7 @@ endpoints:
         name: otp
         description: 'The OTP code received by the user.'
         required: true
-        example: '123456'
+        example: '{{otp_code}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -99,7 +101,7 @@ endpoints:
         name: token
         description: 'The OTP token returned from send-otp.'
         required: true
-        example: e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99
+        example: '{{otp_token}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -110,7 +112,7 @@ endpoints:
         name: device_uuid
         description: 'The unique device identifier.'
         required: true
-        example: device-123
+        example: '{{device_uuid}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -121,7 +123,7 @@ endpoints:
         name: device_name
         description: 'The human readable device name.'
         required: false
-        example: 'iPhone 15'
+        example: '{{device_name}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -132,7 +134,7 @@ endpoints:
         name: device_os
         description: 'The OS or platform info.'
         required: false
-        example: 'iOS 17'
+        example: '{{device_os}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -143,19 +145,19 @@ endpoints:
         name: device_type
         description: 'The type of device.'
         required: false
-        example: mobile
+        example: '{{device_type}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      otp: '123456'
-      token: e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99
-      device_uuid: device-123
-      device_name: 'iPhone 15'
-      device_os: 'iOS 17'
-      device_type: mobile
+      otp: '{{otp_code}}'
+      token: '{{otp_token}}'
+      device_uuid: '{{device_uuid}}'
+      device_name: '{{device_name}}'
+      device_os: '{{device_os}}'
+      device_type: '{{device_type}}'
     fileParameters: []
     responses: []
     responseFields: []
@@ -181,7 +183,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -192,14 +195,14 @@ endpoints:
         name: refresh_token
         description: 'The refresh token issued at login.'
         required: true
-        example: jwt-refresh-token
+        example: '{{mobile_refresh_token}}'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      refresh_token: jwt-refresh-token
+      refresh_token: '{{mobile_refresh_token}}'
     fileParameters: []
     responses: []
     responseFields: []
@@ -225,7 +228,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -257,7 +261,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -301,7 +306,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -333,7 +339,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -449,7 +456,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -505,7 +513,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -573,7 +582,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -641,7 +651,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -709,7 +720,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -777,7 +789,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -845,7 +858,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -925,7 +939,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -979,7 +994,7 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: 'api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress'
+    uri: 'api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/refresh_token'
     metadata:
       custom: []
       groupName: Endpoints
@@ -993,7 +1008,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1038,9 +1054,90 @@ endpoints:
       session_id:
         custom: []
         name: session_id
-        description: ''
+        description: 'Playback session identifier.'
         required: true
-        example: 16
+        example: 123
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      session_id: 123
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      video_id:
+        custom: []
+        name: video_id
+        description: 'The ID of the video.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      course_id: 1
+      video_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      session_id:
+        custom: []
+        name: session_id
+        description: 'Playback session identifier.'
+        required: true
+        example: 123
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -1049,17 +1146,17 @@ endpoints:
       percentage:
         custom: []
         name: percentage
-        description: 'Must be at least 0. Must not be greater than 100.'
+        description: 'Progress percent value (0-100). Must be at least 0. Must not be greater than 100.'
         required: true
-        example: 22
+        example: 50
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      session_id: 16
-      percentage: 22
+      session_id: 123
+      percentage: 50
     fileParameters: []
     responses: []
     responseFields: []
@@ -1085,7 +1182,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1165,7 +1263,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1209,7 +1308,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1277,7 +1377,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1333,7 +1434,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1401,7 +1503,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       slug:
         custom: []
@@ -1445,7 +1548,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1477,7 +1581,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1509,7 +1614,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1541,7 +1647,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -1633,7 +1740,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1892,7 +2000,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -1936,7 +2045,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2118,7 +2228,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2162,7 +2273,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2206,7 +2318,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -2277,7 +2390,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       enrollment_id:
         custom: []
@@ -2336,7 +2450,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       enrollment_id:
         custom: []
@@ -2380,7 +2495,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -2484,7 +2600,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -2669,7 +2786,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -2713,7 +2831,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -2910,7 +3029,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -2954,7 +3074,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3049,7 +3170,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3093,7 +3215,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3137,7 +3260,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -3229,7 +3353,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3287,7 +3412,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3343,7 +3469,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -3435,7 +3562,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -3491,7 +3619,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -3547,7 +3676,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3603,7 +3733,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -3723,7 +3854,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -3843,7 +3975,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -3899,7 +4032,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3955,7 +4089,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4023,7 +4158,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4091,7 +4227,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4171,7 +4308,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4227,7 +4365,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4295,7 +4434,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4363,7 +4503,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4443,7 +4584,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -4499,7 +4641,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course:
         custom: []
@@ -4555,7 +4698,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -4647,7 +4791,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -4727,7 +4872,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4795,7 +4941,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -4851,7 +4998,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -4919,7 +5067,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       videoUploadSession_id:
         custom: []
@@ -5040,7 +5189,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -5132,7 +5282,8 @@ endpoints:
     headers:
       Content-Type: multipart/form-data
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -5306,7 +5457,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       id:
         custom: []
@@ -5351,7 +5503,8 @@ endpoints:
     headers:
       Content-Type: multipart/form-data
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       id:
         custom: []
@@ -5531,7 +5684,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       id:
         custom: []
@@ -5575,7 +5729,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -5643,7 +5798,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -5699,7 +5855,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -5767,7 +5924,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -5823,7 +5981,8 @@ endpoints:
     headers:
       Content-Type: multipart/form-data
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -5933,7 +6092,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5977,7 +6137,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -6126,7 +6287,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -6206,7 +6368,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -6346,7 +6509,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -6465,21 +6629,22 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       extraViewRequest_id:
         custom: []
         name: extraViewRequest_id
         description: 'The ID of the extraViewRequest.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      extraViewRequest_id: 16
+      extraViewRequest_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -6533,21 +6698,22 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       extraViewRequest_id:
         custom: []
         name: extraViewRequest_id
         description: 'The ID of the extraViewRequest.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      extraViewRequest_id: 16
+      extraViewRequest_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -6589,7 +6755,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -6708,7 +6875,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       deviceChangeRequest_id:
         custom: []
@@ -6752,7 +6920,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       deviceChangeRequest_id:
         custom: []
@@ -6808,7 +6977,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -6852,7 +7022,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -6920,7 +7091,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       role_id:
         custom: []
@@ -7000,7 +7172,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       role_id:
         custom: []
@@ -7044,7 +7217,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       role_id:
         custom: []
@@ -7102,7 +7276,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -7134,7 +7309,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -7178,7 +7354,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -7285,7 +7462,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       user_id:
         custom: []
@@ -7404,7 +7582,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       user_id:
         custom: []
@@ -7448,7 +7627,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       user_id:
         custom: []
@@ -7506,7 +7686,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -7601,7 +7782,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       user_id:
         custom: []
@@ -7684,7 +7866,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -7776,7 +7959,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: en
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
     urlParameters:
       user_id:
         custom: []

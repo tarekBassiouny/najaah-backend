@@ -5,13 +5,10 @@ const OUTPUT = "postman/xyz-lms.postman.json";
 
 const source = JSON.parse(fs.readFileSync(INPUT, "utf8"));
 
-function folder(name) {
-  return { name, item: [] };
-}
+const folder = name => ({ name, item: [] });
 
 const tree = {
   /* -------- ADMIN -------- */
-
   adminAuth: folder("🔐 Admin – Auth (JWT)"),
   adminCenters: folder("🧑‍💼 Admin – Centers"),
   adminCourses: folder("🧑‍💼 Admin – Courses"),
@@ -20,7 +17,6 @@ const tree = {
   adminVideos: folder("🧑‍💼 Admin – Videos"),
   adminInstructors: folder("🧑‍💼 Admin – Instructors"),
   adminPdfs: folder("🧑‍💼 Admin – PDFs"),
-
   adminRoles: folder("🧑‍💼 Admin – Roles"),
   adminPermissions: folder("🧑‍💼 Admin – Permissions"),
   adminUsers: folder("🧑‍💼 Admin – Users"),
@@ -28,13 +24,12 @@ const tree = {
   adminSettings: folder("🧑‍💼 Admin – Settings"),
   adminAudit: folder("🧑‍💼 Admin – Audit Logs"),
 
-  /* -------- WEBHOOKS -------- */
-
+  /* -------- PUBLIC -------- */
   public: folder("🔔 public"),
 
-  /* -------- MOBILE / STUDENT -------- */
-
+  /* -------- STUDENT / MOBILE -------- */
   mobileAuth: folder("📱 Mobile – Auth (JWT)"),
+  studentCenters: folder("🏫 Student – Centers (unbranded)"),
   studentCourses: folder("🎓 Student – Courses"),
   studentSections: folder("🎓 Student – Sections"),
   studentPlayback: folder("🎬 Student – Playback"),
@@ -45,192 +40,120 @@ const tree = {
   instructors: folder("👨‍🏫 Instructors"),
 
   /* -------- HEALTH -------- */
-
   health: folder("🧪 Smoke & Health")
 };
 
+/* ---------------- HELPERS ---------------- */
+
+const normalizePath = raw =>
+  raw
+    .replace(/^{{.*?}}/, "")
+    .split("?")[0];
+
+const has = (p, v) => p.includes(v);
+
+/* ---------------- ROUTER ---------------- */
+
 function route(item) {
   const raw = item.request?.url?.raw ?? "";
+  const path = normalizePath(raw);
 
-  /* ================= ADMIN ================= */
+  /* ========= ADMIN ========= */
 
-  // ---- Auth
-  if (raw.includes("/api/v1/admin/auth"))
-    return tree.adminAuth;
-
-  // ---- Centers
-  if (raw.includes("/api/v1/admin/centers"))
-    return tree.adminCenters;
-
-  // ---- Sections (must be before courses)
+  if (has(path, "/api/v1/admin/auth")) return tree.adminAuth;
+  if (has(path, "/api/v1/admin/centers")) return tree.adminCenters;
+  if (has(path, "/api/v1/admin/courses") && has(path, "/sections")) return tree.adminSections;
+  if (has(path, "/api/v1/admin/courses")) return tree.adminCourses;
   if (
-    raw.includes("/api/v1/admin/courses") &&
-    raw.includes("/sections")
-  )
-    return tree.adminSections;
-
-  // ---- Courses
-  if (raw.includes("/api/v1/admin/courses"))
-    return tree.adminCourses;
-
-  // ---- Enrollment & Requests
+    has(path, "/api/v1/admin/enrollments") ||
+    has(path, "/api/v1/admin/device-change-requests") ||
+    has(path, "/api/v1/admin/extra-view-requests")
+  ) return tree.adminEnrollment;
+  if (has(path, "/api/v1/admin/pdfs")) return tree.adminPdfs;
   if (
-    raw.includes("/api/v1/admin/enrollments") ||
-    raw.includes("/api/v1/admin/device-change-requests") ||
-    raw.includes("/api/v1/admin/extra-view-requests")
-  )
-    return tree.adminEnrollment;
-
-  // ---- PDFs
-  if (raw.includes("/api/v1/admin/pdfs"))
-    return tree.adminPdfs;
-
-  // ---- Videos
+    has(path, "/api/v1/admin/videos") ||
+    has(path, "/api/v1/admin/video-uploads") ||
+    has(path, "/api/v1/admin/video-upload-sessions")
+  ) return tree.adminVideos;
   if (
-    raw.includes("/api/v1/admin/videos") ||
-    raw.includes("/api/v1/admin/video-uploads") ||
-    raw.includes("/api/v1/admin/video-upload-sessions")
-  )
-    return tree.adminVideos;
+    has(path, "/api/v1/admin/instructors") ||
+    path.match(/^\/api\/v1\/admin\/courses\/[^/]+\/instructors/)
+  ) return tree.adminInstructors;
+  if (has(path, "/api/v1/admin/roles")) return tree.adminRoles;
+  if (has(path, "/api/v1/admin/permissions")) return tree.adminPermissions;
+  if (has(path, "/api/v1/admin/users")) return tree.adminUsers;
+  if (has(path, "/api/v1/admin/students")) return tree.adminStudents;
+  if (has(path, "/api/v1/admin/settings")) return tree.adminSettings;
+  if (has(path, "/api/v1/admin/audit-logs")) return tree.adminAudit;
 
-  // ---- Instructors
+  /* ========= PUBLIC ========= */
+
+  if (has(path, "/api/external/")) return tree.public;
+
+  /* ========= MOBILE AUTH ========= */
+
+  if (has(path, "/api/v1/auth")) return tree.mobileAuth;
+
+  /* ========= STUDENT ========= */
+
+  // Playback
   if (
-    raw.includes("/api/v1/admin/instructors") ||
-    raw.match(/\/api\/v1\/admin\/courses\/.*\/instructors/)
-  )
-    return tree.adminInstructors;
+    path.match(/^\/api\/v1\/centers\/[^/]+\/courses\/[^/]+\/videos\/[^/]+\/(request_playback|refresh_token|playback_progress)$/)
+  ) return tree.studentPlayback;
 
-  // ---- Roles / Permissions / Users  ✅ NEW
-  if (raw.includes("/api/v1/admin/roles"))
-    return tree.adminRoles;
+  // Extra view
+  if (path.endsWith("/extra-view")) return tree.studentRequests;
 
-  if (raw.includes("/api/v1/admin/permissions"))
-    return tree.adminPermissions;
+  // Device change
+  if (path === "/api/v1/settings/device-change") return tree.studentRequests;
 
-  if (raw.includes("/api/v1/admin/users"))
-    return tree.adminUsers;
+  // Enrollment request
+  if (path.endsWith("/enroll-request")) return tree.studentEnrollments;
 
-  if (raw.includes("/api/v1/admin/students"))
-    return tree.adminStudents;
+  // Enrolled courses
+  if (path === "/api/v1/courses/enrolled") return tree.studentCourses;
 
-  // ---- Settings  ✅ NEW
-  if (raw.includes("/api/v1/admin/settings"))
-    return tree.adminSettings;
+  // Explore
+  if (path === "/api/v1/courses/explore") return tree.studentCourses;
 
-  // ---- Audit Logs (ONLY audit logs)
-  if (raw.includes("/api/v1/admin/audit-logs"))
-    return tree.adminAudit;
-
-  /* ================= external ================= */
-
-  if (raw.includes("/api/external/"))
-    return tree.public;
-
-  /* ================= MOBILE AUTH ================= */
-
-  if (raw.includes("/api/v1/auth"))
-    return tree.mobileAuth;
-
-  /* ================= STUDENT ================= */
-
-  if (raw.includes("/api/v1/playback"))
-    return tree.studentPlayback;
-
-  if (
-    raw.includes("/api/v1/courses") &&
-    raw.includes("/sections")
-  )
-    return tree.studentSections;
-
-  if (raw.includes("/api/v1/courses"))
+  // Course detail (must be BEFORE centers)
+  if (path.match(/^\/api\/v1\/centers\/[^/]+\/courses\/[^/]+$/))
     return tree.studentCourses;
 
+  // Search / categories
+  if (path === "/api/v1/search" || path === "/api/v1/categories")
+    return tree.studentCourses;
+
+  // Centers (unbranded)
   if (
-    raw.includes("/api/v1/device-change-requests") ||
-    raw.includes("/api/v1/extra-view-requests")
-  )
-    return tree.studentRequests;
+    path === "/api/v1/centers" ||
+    path.match(/^\/api\/v1\/centers\/[^/]+$/)
+  ) return tree.studentCenters;
 
-  if (raw.includes("/api/v1/pdfs"))
-    return tree.studentPdfs;
+  // Instructors
+  if (path === "/api/v1/instructors") return tree.instructors;
 
-  if (raw.includes("/api/v1/enrollments"))
-    return tree.studentEnrollments;
+  /* ========= HEALTH ========= */
 
-  if (
-    raw.endsWith("/api/v1/videos") ||
-    raw.includes("/api/v1/video-uploads")
-  )
-    return tree.studentVideos;
-
-  if (raw.includes("/api/v1/instructors"))
-    return tree.instructors;
-
-  /* ================= HEALTH ================= */
-
-  if (raw.endsWith("/up"))
-    return tree.health;
+  if (path.endsWith("/up")) return tree.health;
 
   return null;
 }
 
+/* ---------------- BUILD ---------------- */
+
 function flatten(items) {
-  const out = [];
-  for (const i of items) {
-    if (i.item) out.push(...flatten(i.item));
-    else out.push(i);
-  }
-  return out;
+  return items.flatMap(i => i.item ? flatten(i.item) : i);
 }
 
-const allRequests = flatten(source.item);
-
-for (const req of allRequests) {
+for (const req of flatten(source.item)) {
   const target = route(req);
   if (target) target.item.push(req);
 }
 
 const finalCollection = {
-  info: {
-    ...source.info,
-    name: "XYZ LMS API (v1)"
-  },
-  item: [
-    // ---- ADMIN
-    tree.adminAuth,
-    tree.adminCenters,
-    tree.adminCourses,
-    tree.adminSections,
-    tree.adminEnrollment,
-    tree.adminVideos,
-    tree.adminInstructors,
-    tree.adminPdfs,
-
-    // ✅ NEW – explicit admin management domains
-    tree.adminRoles,
-    tree.adminPermissions,
-    tree.adminUsers,
-    tree.adminStudents,
-    tree.adminSettings,
-    tree.adminAudit,
-
-    // ---- PUBLIC / WEBHOOKS
-    tree.public,
-
-    // ---- MOBILE / STUDENT
-    tree.mobileAuth,
-    tree.studentCourses,
-    tree.studentSections,
-    tree.studentPlayback,
-    tree.studentRequests,
-    tree.studentPdfs,
-    tree.studentEnrollments,
-    tree.studentVideos,
-
-    // ---- SHARED / MISC
-    tree.instructors,
-    tree.health
-  ].filter(f => f.item.length > 0)
+  info: { ...source.info, name: "XYZ LMS API (v1)" },
+  item: Object.values(tree).filter(f => f.item.length > 0)
 };
 
 fs.writeFileSync(OUTPUT, JSON.stringify(finalCollection, null, 2));

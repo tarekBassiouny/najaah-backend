@@ -6,18 +6,18 @@ namespace App\Services\Playback;
 
 use App\Models\Center;
 use App\Models\Course;
-use App\Models\Enrollment;
 use App\Models\PlaybackSession;
 use App\Models\User;
-use App\Models\UserDevice;
 use App\Models\Video;
+use App\Services\Bunny\BunnyEmbedTokenService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
 
 class PlaybackService
 {
     public function __construct(
-        private readonly ViewLimitService $viewLimitService
+        private readonly PlaybackAuthorizationService $authorizationService,
+        private readonly BunnyEmbedTokenService $embedTokenService
     ) {}
 
     /**
@@ -25,58 +25,45 @@ class PlaybackService
      */
     public function requestPlayback(User $student, Center $center, Course $course, Video $video): array
     {
-        $this->assertStudent($student);
-        $this->assertCenterAccess($student, $center);
-        $this->assertCourseInCenter($course, $center);
-
-        $pivot = $course->videos()
-            ->where('videos.id', $video->id)
-            ->wherePivotNull('deleted_at')
-            ->first();
-
-        if ($pivot === null) {
-            $this->notFound('Video not available for this course.');
-        }
-
-        if ((int) $course->status !== 3 || $course->is_published !== true) {
-            $this->notFound('Course not found.');
-        }
-
-        $this->assertVideoReady($video);
-
-        $enrolled = Enrollment::query()
-            ->where('user_id', $student->id)
-            ->where('course_id', $course->id)
-            ->where('status', Enrollment::STATUS_ACTIVE)
-            ->whereNull('deleted_at')
-            ->exists();
-
-        if (! $enrolled) {
-            $this->deny('ENROLLMENT_REQUIRED', 'Active enrollment required.', 403);
-        }
-
-        $override = $pivot->pivot?->view_limit_override;
-        $this->viewLimitService->assertWithinLimit($student, $video, $course, $override);
-
-        $activeSession = PlaybackSession::query()
-            ->where('user_id', $student->id)
-            ->where('video_id', $video->id)
-            ->whereNull('ended_at')
-            ->whereNull('deleted_at')
-            ->exists();
-
-        if ($activeSession) {
-            $this->deny('ACTIVE_SESSION_EXISTS', 'Active playback session already exists.', 409);
-        }
-
-        $device = $this->resolveActiveDevice($student);
+        $this->authorizationService->assertCanStartPlayback($student, $center, $course, $video);
+        $device = $this->authorizationService->getActiveDevice();
 
         $session = DB::transaction(function () use ($student, $video, $device): PlaybackSession {
+            $now = now();
+
+            PlaybackSession::where('user_id', $student->id)
+                ->whereNull('ended_at')
+                ->whereNull('deleted_at')
+                ->where('expires_at', '<', $now)
+                ->update(['ended_at' => $now]);
+
+            /** @var PlaybackSession|null $active */
+            $active = PlaybackSession::where('user_id', $student->id)
+                ->whereNull('ended_at')
+                ->whereNull('deleted_at')
+                ->where('expires_at', '>', $now)
+                ->first();
+
+            if ($active instanceof PlaybackSession) {
+                if ($active->device_id !== $device->id) {
+                    throw new HttpResponseException(response()->json([
+                        'success' => false,
+                        'error' => [
+                            'code' => 'CONCURRENT_DEVICE',
+                            'message' => 'Playback already active on another device.',
+                        ],
+                    ], 409));
+                }
+
+                $active->update(['ended_at' => $now]);
+            }
+
             return PlaybackSession::create([
                 'user_id' => $student->id,
                 'video_id' => $video->id,
                 'device_id' => $device->id,
-                'started_at' => now(),
+                'started_at' => $now,
+                'expires_at' => $now->copy()->addSeconds(config('playback.session_ttl')),
                 'progress_percent' => 0,
                 'is_full_play' => false,
             ]);
@@ -92,115 +79,54 @@ class PlaybackService
             $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
         }
 
+        $embedToken = $this->embedTokenService->generate(
+            $videoUuid,
+            $student,
+            $this->resolveEmbedTokenTtl()
+        );
+
         return [
             'library_id' => (string) $libraryId,
             'video_uuid' => $videoUuid,
-            'embed_token' => $this->generateEmbedToken($videoUuid, $student),
+            'embed_token' => $embedToken['token'],
             'session_id' => (string) $session->id,
         ];
     }
 
     public function updateProgress(User $student, PlaybackSession $session, int $percentage): void
     {
-        $this->assertStudent($student);
-
         if ($session->user_id !== $student->id) {
-            $this->deny('UNAUTHORIZED', 'Session does not belong to the user.', 403);
+            return;
         }
 
         if ($session->ended_at !== null) {
-            $this->deny('SESSION_ENDED', 'Playback session has ended.', 409);
+            return;
+        }
+
+        $expiresAt = $session->expires_at;
+        if ($expiresAt === null || $expiresAt->lte(now())) {
+            return;
         }
 
         if ($percentage <= $session->progress_percent) {
             return;
         }
 
-        $session->progress_percent = $percentage;
-
-        if ($percentage >= 50 && ! $session->is_full_play) {
-            $session->is_full_play = true;
-        }
-
-        $session->save();
+        $session->update([
+            'progress_percent' => $percentage,
+            'is_full_play' => $percentage >= 50 || $session->is_full_play,
+            'expires_at' => now()->addSeconds(config('playback.session_ttl')),
+        ]);
     }
 
-    private function assertStudent(User $user): void
+    private function resolveEmbedTokenTtl(): int
     {
-        if (! $user->is_student) {
-            $this->deny('UNAUTHORIZED', 'Only students can access this endpoint.', 403);
-        }
-    }
-
-    private function assertCenterAccess(User $student, Center $center): void
-    {
-        if (is_numeric($student->center_id)) {
-            if ((int) $student->center_id !== (int) $center->id) {
-                $this->deny('CENTER_MISMATCH', 'Center mismatch.', 403);
-            }
-
-            return;
+        $ttl = (int) config('bunny.embed_token_ttl', 600);
+        if ($ttl <= 0) {
+            $ttl = 600;
         }
 
-        if ((int) $center->type !== 0) {
-            $this->deny('CENTER_MISMATCH', 'Center mismatch.', 403);
-        }
-    }
-
-    private function assertCourseInCenter(Course $course, Center $center): void
-    {
-        if ((int) $course->center_id !== (int) $center->id) {
-            $this->notFound('Course not found.');
-        }
-    }
-
-    private function assertVideoReady(Video $video): void
-    {
-        if ((int) $video->encoding_status !== 3 || (int) $video->lifecycle_status !== 2) {
-            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
-        }
-
-        $session = $video->uploadSession;
-        if ($session !== null && (int) $session->upload_status !== 3) {
-            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
-        }
-    }
-
-    private function resolveActiveDevice(User $student): UserDevice
-    {
-        /** @var UserDevice|null $device */
-        $device = UserDevice::query()
-            ->where('user_id', $student->id)
-            ->where('status', UserDevice::STATUS_ACTIVE)
-            ->whereNull('deleted_at')
-            ->first();
-
-        if ($device === null) {
-            $this->deny('NO_ACTIVE_DEVICE', 'Active device required for playback.', 422);
-        }
-
-        return $device;
-    }
-
-    private function generateEmbedToken(string $videoUuid, User $student): string
-    {
-        $secret = config('bunny.api.api_key');
-        if (! is_string($secret) || $secret === '') {
-            throw new \RuntimeException('Missing Bunny Stream API key.');
-        }
-
-        $expiresAt = now()->addMinutes(10)->timestamp;
-        $payload = $videoUuid.'|'.$student->id.'|'.$expiresAt;
-        $hash = hash_hmac('sha256', $payload, $secret);
-
-        $token = base64_encode($payload.'|'.$hash);
-
-        return rtrim(strtr($token, '+/', '-_'), '=');
-    }
-
-    private function notFound(string $message): void
-    {
-        $this->deny('NOT_FOUND', $message, 404);
+        return min(600, max(300, $ttl));
     }
 
     /**
