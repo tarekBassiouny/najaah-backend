@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "7015e58b-1de7-4280-a64f-4ab3ca2a13e6",
+    "_postman_id": "329b5462-d59e-4bae-9273-5f0ef2950897",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -30,7 +30,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -65,7 +69,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -100,7 +108,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -132,7 +144,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -164,7 +180,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -209,7 +229,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -272,7 +296,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -304,7 +332,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -347,7 +379,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -387,7 +423,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -430,7 +470,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -470,7 +514,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -510,7 +558,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -550,7 +602,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -627,7 +683,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -659,7 +719,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -702,7 +766,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -742,7 +810,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -785,7 +857,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -825,7 +901,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -868,7 +948,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -908,7 +992,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -957,7 +1045,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -997,7 +1089,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1046,7 +1142,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1086,7 +1186,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1135,7 +1239,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1180,7 +1288,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1220,7 +1332,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1263,7 +1379,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1312,7 +1432,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1358,7 +1482,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1407,7 +1535,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1453,7 +1585,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1499,7 +1635,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1539,7 +1679,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1588,7 +1732,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1637,7 +1785,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1683,7 +1835,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1735,7 +1891,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1781,7 +1941,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1836,7 +2000,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -1885,7 +2053,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1937,7 +2109,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -1983,7 +2159,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2038,7 +2218,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2087,7 +2271,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2133,7 +2321,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2170,7 +2362,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2213,7 +2409,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2256,7 +2456,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2331,7 +2535,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2371,7 +2579,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2414,7 +2626,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2492,7 +2708,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2532,7 +2752,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2572,7 +2796,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2643,7 +2871,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2700,7 +2932,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2732,7 +2968,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2775,7 +3015,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -2846,7 +3090,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -2878,7 +3126,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3011,7 +3263,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3051,7 +3307,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3177,7 +3437,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3214,7 +3478,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3303,7 +3571,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3335,7 +3607,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3378,7 +3654,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3421,7 +3701,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3461,7 +3745,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3501,7 +3789,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3545,7 +3837,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3577,7 +3873,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3620,7 +3920,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3663,7 +3967,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3703,7 +4011,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3774,7 +4086,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3814,7 +4130,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3849,7 +4169,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -3892,7 +4216,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -3929,7 +4257,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -4024,7 +4356,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -4061,12 +4397,16 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"phone\":\"01234567890\",\"country_code\":\"+2\"}"
+              "raw": "{\"phone\":\"{{student_phone}}\",\"country_code\":\"{{country_code}}\"}"
             },
             "description": "",
             "auth": {
@@ -4096,12 +4436,16 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"otp\":\"123456\",\"token\":\"e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99\",\"device_uuid\":\"device-123\",\"device_name\":\"iPhone 15\",\"device_os\":\"iOS 17\",\"device_type\":\"mobile\"}"
+              "raw": "{\"otp\":\"{{otp_code}}\",\"token\":\"{{otp_token}}\",\"device_uuid\":\"{{device_uuid}}\",\"device_name\":\"{{device_name}}\",\"device_os\":\"{{device_os}}\",\"device_type\":\"{{device_type}}\"}"
             },
             "description": "",
             "auth": {
@@ -4131,12 +4475,16 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"refresh_token\":\"jwt-refresh-token\"}"
+              "raw": "{\"refresh_token\":\"{{mobile_refresh_token}}\"}"
             },
             "description": "",
             "auth": {
@@ -4166,7 +4514,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -4198,7 +4550,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": {
@@ -4233,7 +4589,128 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🏫 Student – Centers (unbranded)",
+      "item": [
+        {
+          "name": "GET api/v1/centers",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers",
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Science",
+                  "description": "Search centers by name or description.",
+                  "disabled": false
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/centers?search=Science&per_page=15&page=1"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/centers/{center_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id?per_page=15&page=1",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -4313,7 +4790,171 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/centers/{center_id}/courses/{course_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id/courses/:course_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id/courses/:course_id",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/search",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/search",
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Biology",
+                  "description": "Search term for course title or instructor name.",
+                  "disabled": false
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/search?search=Biology&per_page=15&page=1"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/categories",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/categories",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
+                  "key": "search",
+                  "value": "Science",
+                  "description": "Search by category title.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/categories?per_page=15&page=1&search=Science"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
@@ -4370,10 +5011,354 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🎬 Student – Playback",
+      "item": [
+        {
+          "name": "POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id/courses/:course_id/videos/:video_id/request_playback",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id/courses/:course_id/videos/:video_id/request_playback",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "video_id",
+                  "key": "video_id",
+                  "value": "1",
+                  "description": "The ID of the video."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/refresh_token",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id/courses/:course_id/videos/:video_id/refresh_token",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id/courses/:course_id/videos/:video_id/refresh_token",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "video_id",
+                  "key": "video_id",
+                  "value": "1",
+                  "description": "The ID of the video."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"session_id\":123}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id/courses/:course_id/videos/:video_id/playback_progress",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id/courses/:course_id/videos/:video_id/playback_progress",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "video_id",
+                  "key": "video_id",
+                  "value": "1",
+                  "description": "The ID of the video."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"session_id\":123,\"percentage\":50}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📱 Student – Requests",
+      "item": [
+        {
+          "name": "POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id/courses/:course_id/videos/:video_id/extra-view",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id/courses/:course_id/videos/:video_id/extra-view",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "video_id",
+                  "key": "video_id",
+                  "value": "1",
+                  "description": "The ID of the video."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Need more time to finish the lecture.\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/settings/device-change",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/settings/device-change",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/settings/device-change"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Lost my phone and need to register a new device.\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🎓 Student – Enrollments",
+      "item": [
+        {
+          "name": "POST api/v1/centers/{center_id}/courses/{course_id}/enroll-request",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id/courses/:course_id/enroll-request",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id/courses/:course_id/enroll-request",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Interested in joining this course.\"}"
+            },
             "description": "",
             "auth": {
               "type": "noauth"
@@ -4426,7 +5411,11 @@
               },
               {
                 "key": "X-Locale",
-                "value": "en"
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
               }
             ],
             "body": null,

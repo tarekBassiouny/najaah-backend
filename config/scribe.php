@@ -222,7 +222,8 @@ return [
             Strategies\StaticData::withSettings(data: [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'X-Locale' => 'en',
+                'X-Locale' => '{{locale}}',
+                'X-Api-Key' => '{{api_key}}',
             ]),
         ],
         'urlParameters' => [

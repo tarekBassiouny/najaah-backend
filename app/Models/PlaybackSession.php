@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $device_id
  * @property \Illuminate\Support\Carbon $started_at
  * @property \Illuminate\Support\Carbon|null $ended_at
+ * @property \Illuminate\Support\Carbon|null $expires_at
  * @property int $progress_percent
  * @property bool $is_full_play
  * @property-read User $user
@@ -35,6 +36,7 @@ class PlaybackSession extends Model
         'device_id',
         'started_at',
         'ended_at',
+        'expires_at',
         'progress_percent',
         'is_full_play',
     ];
@@ -42,6 +44,7 @@ class PlaybackSession extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
+        'expires_at' => 'datetime',
         'progress_percent' => 'integer',
         'is_full_play' => 'boolean',
     ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableSearch;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CourseInstructor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,7 @@ class Instructor extends Model
     /** @use HasFactory<\Database\Factories\InstructorFactory> */
     use HasFactory;
 
+    use HasTranslatableSearch;
     use HasTranslations;
     use SoftDeletes;
 

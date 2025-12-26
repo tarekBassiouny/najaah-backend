@@ -88,11 +88,10 @@ class CourseService implements CourseServiceInterface
         $builder = $this->mobileBaseQuery($student);
 
         if ($query !== null && $query !== '') {
-            $term = $query;
-            $builder->where(function (Builder $query) use ($term): void {
-                $query->where('title_translations', 'like', '%'.$term.'%')
-                    ->orWhereHas('instructors', function (Builder $query) use ($term): void {
-                        $query->where('name_translations', 'like', '%'.$term.'%');
+            $builder->where(function (Builder $q) use ($query): void {
+                $q->whereTranslationLike(['title'], $query, ['en', 'ar'])
+                    ->orWhereHas('instructors', function (Builder $q) use ($query): void {
+                        $q->whereTranslationLike(['name'], $query, ['en', 'ar']);
                     });
             });
         }

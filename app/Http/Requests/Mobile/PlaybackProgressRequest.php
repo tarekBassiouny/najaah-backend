@@ -23,4 +23,21 @@ class PlaybackProgressRequest extends FormRequest
             'percentage' => ['required', 'integer', 'min:0', 'max:100'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'session_id' => [
+                'description' => 'Playback session identifier.',
+                'example' => 123,
+            ],
+            'percentage' => [
+                'description' => 'Progress percent value (0-100).',
+                'example' => 50,
+            ],
+        ];
+    }
 }

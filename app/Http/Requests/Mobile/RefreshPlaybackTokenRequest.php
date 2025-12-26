@@ -6,7 +6,7 @@ namespace App\Http\Requests\Mobile;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ShowCourseRequest extends FormRequest
+class RefreshPlaybackTokenRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,11 +14,13 @@ class ShowCourseRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<int, string>|string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'session_id' => ['required', 'integer'],
+        ];
     }
 
     /**
@@ -26,6 +28,11 @@ class ShowCourseRequest extends FormRequest
      */
     public function bodyParameters(): array
     {
-        return [];
+        return [
+            'session_id' => [
+                'description' => 'Playback session identifier.',
+                'example' => 123,
+            ],
+        ];
     }
 }

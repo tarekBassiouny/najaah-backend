@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "7015e58b-1de7-4280-a64f-4ab3ca2a13e6",
+        "_postman_id": "329b5462-d59e-4bae-9273-5f0ef2950897",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -40,12 +40,16 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"phone\":\"01234567890\",\"country_code\":\"+2\"}"
+                            "raw": "{\"phone\":\"{{student_phone}}\",\"country_code\":\"{{country_code}}\"}"
                         },
                         "description": "",
                         "auth": {
@@ -75,12 +79,16 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"otp\":\"123456\",\"token\":\"e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99\",\"device_uuid\":\"device-123\",\"device_name\":\"iPhone 15\",\"device_os\":\"iOS 17\",\"device_type\":\"mobile\"}"
+                            "raw": "{\"otp\":\"{{otp_code}}\",\"token\":\"{{otp_token}}\",\"device_uuid\":\"{{device_uuid}}\",\"device_name\":\"{{device_name}}\",\"device_os\":\"{{device_os}}\",\"device_type\":\"{{device_type}}\"}"
                         },
                         "description": "",
                         "auth": {
@@ -110,12 +118,16 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"refresh_token\":\"jwt-refresh-token\"}"
+                            "raw": "{\"refresh_token\":\"{{mobile_refresh_token}}\"}"
                         },
                         "description": "",
                         "auth": {
@@ -145,7 +157,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -177,7 +193,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -212,7 +232,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -287,7 +311,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -333,7 +361,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -384,7 +416,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -435,7 +471,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -488,7 +528,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -539,7 +583,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -590,7 +638,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -647,7 +699,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -699,10 +755,73 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/v1\/centers\/{center_id}\/courses\/{course_id}\/videos\/{video_id}\/refresh_token",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/centers\/:center_id\/courses\/:course_id\/videos\/:video_id\/refresh_token",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/centers\/:center_id\/courses\/:course_id\/videos\/:video_id\/refresh_token",
+                            "variable": [
+                                {
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                },
+                                {
+                                    "id": "course_id",
+                                    "key": "course_id",
+                                    "value": "1",
+                                    "description": "The ID of the course."
+                                },
+                                {
+                                    "id": "video_id",
+                                    "key": "video_id",
+                                    "value": "1",
+                                    "description": "The ID of the video."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"session_id\":123}"
+                        },
                         "description": "",
                         "auth": {
                             "type": "noauth"
@@ -751,12 +870,16 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"session_id\":16,\"percentage\":22}"
+                            "raw": "{\"session_id\":123,\"percentage\":50}"
                         },
                         "description": "",
                         "auth": {
@@ -806,7 +929,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -841,7 +968,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -890,7 +1021,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -925,7 +1060,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -960,7 +1099,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1003,7 +1146,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1035,7 +1182,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1067,7 +1218,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1099,7 +1254,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1162,7 +1321,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1194,7 +1357,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1237,7 +1404,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1277,7 +1448,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1320,7 +1495,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1360,7 +1539,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1392,7 +1575,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1435,7 +1622,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1478,7 +1669,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1547,7 +1742,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1579,7 +1778,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1622,7 +1825,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1662,7 +1869,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1705,7 +1916,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1745,7 +1960,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1788,7 +2007,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1828,7 +2051,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -1868,7 +2095,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1911,7 +2142,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -1960,7 +2195,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2006,7 +2245,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -2055,7 +2298,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2101,7 +2348,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2147,7 +2398,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2187,7 +2442,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -2236,7 +2495,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -2285,7 +2548,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2331,7 +2598,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2383,7 +2654,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2429,7 +2704,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -2484,7 +2763,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -2533,7 +2816,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2585,7 +2872,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2631,7 +2922,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -2686,7 +2981,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -2735,7 +3034,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2781,7 +3084,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2844,7 +3151,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2901,7 +3212,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -2941,7 +3256,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -2990,7 +3309,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -3022,7 +3345,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3065,7 +3392,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3131,7 +3462,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -3163,7 +3498,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3296,7 +3635,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -3336,7 +3679,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3462,7 +3809,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -3502,7 +3853,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3551,7 +3906,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -3591,7 +3950,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3640,7 +4003,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -3672,7 +4039,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3757,7 +4128,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -3797,7 +4172,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3832,7 +4211,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -3922,7 +4305,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -3997,7 +4384,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4037,7 +4428,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4080,7 +4475,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4158,7 +4557,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4198,7 +4601,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4238,7 +4645,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4280,7 +4691,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4312,7 +4727,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4355,7 +4774,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4398,7 +4821,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4438,7 +4865,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4473,7 +4904,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4512,7 +4947,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4544,7 +4983,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4587,7 +5030,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4630,7 +5077,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4670,7 +5121,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4736,7 +5191,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,
@@ -4776,7 +5235,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4811,7 +5274,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": {
@@ -4854,7 +5321,11 @@
                             },
                             {
                                 "key": "X-Locale",
-                                "value": "en"
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
                             }
                         ],
                         "body": null,

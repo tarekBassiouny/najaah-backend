@@ -32,11 +32,11 @@ class SendOtpRequest extends FormRequest
         return [
             'phone' => [
                 'description' => 'The full phone number including country code.',
-                'example' => '01234567890',
+                'example' => '{{student_phone}}',
             ],
             'country_code' => [
                 'description' => 'The country dialing code.',
-                'example' => '+2',
+                'example' => '{{country_code}}',
             ],
         ];
     }

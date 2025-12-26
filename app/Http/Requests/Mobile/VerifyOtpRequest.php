@@ -36,27 +36,27 @@ class VerifyOtpRequest extends FormRequest
         return [
             'otp' => [
                 'description' => 'The OTP code received by the user.',
-                'example' => '123456',
+                'example' => '{{otp_code}}',
             ],
             'token' => [
                 'description' => 'The OTP token returned from send-otp.',
-                'example' => 'e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99',
+                'example' => '{{otp_token}}',
             ],
             'device_uuid' => [
                 'description' => 'The unique device identifier.',
-                'example' => 'device-123',
+                'example' => '{{device_uuid}}',
             ],
             'device_name' => [
                 'description' => 'The human readable device name.',
-                'example' => 'iPhone 15',
+                'example' => '{{device_name}}',
             ],
             'device_os' => [
                 'description' => 'The OS or platform info.',
-                'example' => 'iOS 17',
+                'example' => '{{device_os}}',
             ],
             'device_type' => [
                 'description' => 'The type of device.',
-                'example' => 'mobile',
+                'example' => '{{device_type}}',
             ],
         ];
     }

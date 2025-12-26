@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableSearch;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,6 +37,7 @@ class Center extends Model
     /** @use HasFactory<\Database\Factories\CenterFactory> */
     use HasFactory;
 
+    use HasTranslatableSearch;
     use HasTranslations;
     use SoftDeletes;
 

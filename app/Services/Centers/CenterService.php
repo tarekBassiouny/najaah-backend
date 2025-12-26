@@ -116,11 +116,12 @@ class CenterService implements CenterServiceInterface
             ->orderByDesc('id');
 
         if ($search !== null && $search !== '') {
-            $term = $search;
-            $query->where(function (Builder $query) use ($term): void {
-                $query->where('name_translations', 'like', '%'.$term.'%')
-                    ->orWhere('description_translations', 'like', '%'.$term.'%');
-            });
+
+            $query->whereTranslationLike(
+                ['name', 'description'],
+                $search,
+                ['en', 'ar']
+            );
         }
 
         return $query->paginate($perPage);

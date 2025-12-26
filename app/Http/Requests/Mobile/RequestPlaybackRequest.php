@@ -20,4 +20,12 @@ class RequestPlaybackRequest extends FormRequest
     {
         return [];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
+    }
 }

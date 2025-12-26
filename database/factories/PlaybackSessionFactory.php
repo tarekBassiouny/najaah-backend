@@ -22,6 +22,7 @@ class PlaybackSessionFactory extends Factory
             'device_id' => UserDevice::factory(),
             'started_at' => now()->subMinutes(rand(1, 500)),
             'ended_at' => now(),
+            'expires_at' => now()->subMinutes(rand(1, 500)),
             'progress_percent' => $this->faker->numberBetween(0, 100),
             'is_full_play' => $this->faker->boolean(20),
         ];

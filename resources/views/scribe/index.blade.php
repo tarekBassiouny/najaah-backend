@@ -116,6 +116,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">
                                 <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token">
+                                <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/refresh_token</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">
                                 <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress</a>
                             </li>
@@ -432,10 +435,11 @@ You can switch the language used with the tabs at the top right (or from the nav
     "http://xyz-lms.test/api/v1/auth/send-otp" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
-    \"phone\": \"01234567890\",
-    \"country_code\": \"+2\"
+    \"phone\": \"{{student_phone}}\",
+    \"country_code\": \"{{country_code}}\"
 }"
 </code></pre></div>
 
@@ -448,12 +452,13 @@ You can switch the language used with the tabs at the top right (or from the nav
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
-    "phone": "01234567890",
-    "country_code": "+2"
+    "phone": "{{student_phone}}",
+    "country_code": "{{country_code}}"
 };
 
 fetch(url, {
@@ -544,10 +549,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-auth-send-otp"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-auth-send-otp"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -557,10 +574,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="phone"                data-endpoint="POSTapi-v1-auth-send-otp"
-               value="01234567890"
+               value="{{student_phone}}"
                data-component="body">
     <br>
-<p>The full phone number including country code. Example: <code>01234567890</code></p>
+<p>The full phone number including country code. Example: <code>{{student_phone}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country_code</code></b>&nbsp;&nbsp;
@@ -569,10 +586,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="country_code"                data-endpoint="POSTapi-v1-auth-send-otp"
-               value="+2"
+               value="{{country_code}}"
                data-component="body">
     <br>
-<p>The country dialing code. Must not be greater than 5 characters. Example: <code>+2</code></p>
+<p>The country dialing code. Must not be greater than 5 characters. Example: <code>{{country_code}}</code></p>
         </div>
         </form>
 
@@ -592,14 +609,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/auth/verify" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
-    \"otp\": \"123456\",
-    \"token\": \"e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99\",
-    \"device_uuid\": \"device-123\",
-    \"device_name\": \"iPhone 15\",
-    \"device_os\": \"iOS 17\",
-    \"device_type\": \"mobile\"
+    \"otp\": \"{{otp_code}}\",
+    \"token\": \"{{otp_token}}\",
+    \"device_uuid\": \"{{device_uuid}}\",
+    \"device_name\": \"{{device_name}}\",
+    \"device_os\": \"{{device_os}}\",
+    \"device_type\": \"{{device_type}}\"
 }"
 </code></pre></div>
 
@@ -612,16 +630,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
-    "otp": "123456",
-    "token": "e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99",
-    "device_uuid": "device-123",
-    "device_name": "iPhone 15",
-    "device_os": "iOS 17",
-    "device_type": "mobile"
+    "otp": "{{otp_code}}",
+    "token": "{{otp_token}}",
+    "device_uuid": "{{device_uuid}}",
+    "device_name": "{{device_name}}",
+    "device_os": "{{device_os}}",
+    "device_type": "{{device_type}}"
 };
 
 fetch(url, {
@@ -712,10 +731,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-auth-verify"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-auth-verify"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -725,10 +756,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="otp"                data-endpoint="POSTapi-v1-auth-verify"
-               value="123456"
+               value="{{otp_code}}"
                data-component="body">
     <br>
-<p>The OTP code received by the user. Example: <code>123456</code></p>
+<p>The OTP code received by the user. Example: <code>{{otp_code}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>token</code></b>&nbsp;&nbsp;
@@ -737,10 +768,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="token"                data-endpoint="POSTapi-v1-auth-verify"
-               value="e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99"
+               value="{{otp_token}}"
                data-component="body">
     <br>
-<p>The OTP token returned from send-otp. Example: <code>e9f9c844-0e58-4aab-8db0-0c5b0aeb8d99</code></p>
+<p>The OTP token returned from send-otp. Example: <code>{{otp_token}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_uuid</code></b>&nbsp;&nbsp;
@@ -749,10 +780,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="device_uuid"                data-endpoint="POSTapi-v1-auth-verify"
-               value="device-123"
+               value="{{device_uuid}}"
                data-component="body">
     <br>
-<p>The unique device identifier. Example: <code>device-123</code></p>
+<p>The unique device identifier. Example: <code>{{device_uuid}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_name</code></b>&nbsp;&nbsp;
@@ -761,10 +792,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="device_name"                data-endpoint="POSTapi-v1-auth-verify"
-               value="iPhone 15"
+               value="{{device_name}}"
                data-component="body">
     <br>
-<p>The human readable device name. Example: <code>iPhone 15</code></p>
+<p>The human readable device name. Example: <code>{{device_name}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_os</code></b>&nbsp;&nbsp;
@@ -773,10 +804,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="device_os"                data-endpoint="POSTapi-v1-auth-verify"
-               value="iOS 17"
+               value="{{device_os}}"
                data-component="body">
     <br>
-<p>The OS or platform info. Example: <code>iOS 17</code></p>
+<p>The OS or platform info. Example: <code>{{device_os}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_type</code></b>&nbsp;&nbsp;
@@ -785,10 +816,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="device_type"                data-endpoint="POSTapi-v1-auth-verify"
-               value="mobile"
+               value="{{device_type}}"
                data-component="body">
     <br>
-<p>The type of device. Example: <code>mobile</code></p>
+<p>The type of device. Example: <code>{{device_type}}</code></p>
         </div>
         </form>
 
@@ -808,9 +839,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/auth/refresh" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
-    \"refresh_token\": \"jwt-refresh-token\"
+    \"refresh_token\": \"{{mobile_refresh_token}}\"
 }"
 </code></pre></div>
 
@@ -823,11 +855,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
-    "refresh_token": "jwt-refresh-token"
+    "refresh_token": "{{mobile_refresh_token}}"
 };
 
 fetch(url, {
@@ -918,10 +951,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-auth-refresh"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-auth-refresh"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -931,10 +976,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="refresh_token"                data-endpoint="POSTapi-v1-auth-refresh"
-               value="jwt-refresh-token"
+               value="{{mobile_refresh_token}}"
                data-component="body">
     <br>
-<p>The refresh token issued at login. Example: <code>jwt-refresh-token</code></p>
+<p>The refresh token issued at login. Example: <code>{{mobile_refresh_token}}</code></p>
         </div>
         </form>
 
@@ -954,7 +999,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/auth/me" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -965,7 +1011,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -1055,10 +1102,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-auth-me"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-auth-me"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         </form>
 
@@ -1078,7 +1137,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/auth/me" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"name\": \"John Doe\"
 }"
@@ -1093,7 +1153,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -1188,10 +1249,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-auth-me"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-auth-me"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -1224,7 +1297,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/auth/logout" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -1235,7 +1309,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -1325,10 +1400,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-auth-logout"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-auth-logout"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         </form>
 
@@ -1348,7 +1435,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -1371,7 +1459,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -1461,10 +1550,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-courses-explore"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-courses-explore"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -1579,7 +1680,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/centers/1/courses/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -1590,7 +1692,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -1680,10 +1783,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -1728,7 +1843,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/search?search=Biology&amp;per_page=15&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -1747,7 +1863,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -1837,10 +1954,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-search"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-search"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -1897,7 +2026,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/centers?search=Science&amp;per_page=15&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -1916,7 +2046,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -2006,10 +2137,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-centers"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-centers"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -2066,7 +2209,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/centers/1?per_page=15&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -2084,7 +2228,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -2174,10 +2319,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-centers--center_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-centers--center_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -2235,7 +2392,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/instructors?per_page=15&amp;page=1&amp;search=Professor" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -2254,7 +2412,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -2344,10 +2503,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-instructors"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-instructors"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -2404,7 +2575,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/categories?per_page=15&amp;page=1&amp;search=Science" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -2423,7 +2595,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -2513,10 +2686,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-categories"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-categories"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -2573,7 +2758,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/courses/enrolled?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -2593,7 +2779,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -2683,10 +2870,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-courses-enrolled"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-courses-enrolled"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -2755,7 +2954,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/request_playback" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -2766,7 +2966,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -2856,10 +3057,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -2900,6 +3113,203 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
+                    <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/refresh_token</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/refresh_token" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
+    --data "{
+    \"session_id\": 123
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/refresh_token"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+let body = {
+    "session_id": 123
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token">
+</span>
+<span id="execution-results-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token" data-method="POST"
+      data-path="api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/refresh_token"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+                    onclick="tryItOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+                    onclick="cancelTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/refresh_token</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="video_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the video. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>session_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="session_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--refresh_token"
+               value="123"
+               data-component="body">
+    <br>
+<p>Playback session identifier. Example: <code>123</code></p>
+        </div>
+        </form>
+
                     <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress</h2>
 
 <p>
@@ -2916,10 +3326,11 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/playback_progress" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
-    \"session_id\": 16,
-    \"percentage\": 22
+    \"session_id\": 123,
+    \"percentage\": 50
 }"
 </code></pre></div>
 
@@ -2932,12 +3343,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
-    "session_id": 16,
-    "percentage": 22
+    "session_id": 123,
+    "percentage": 50
 };
 
 fetch(url, {
@@ -3028,10 +3440,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -3078,10 +3502,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="session_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
-               value="16"
+               value="123"
                data-component="body">
     <br>
-<p>Example: <code>16</code></p>
+<p>Playback session identifier. Example: <code>123</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>percentage</code></b>&nbsp;&nbsp;
@@ -3090,10 +3514,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="percentage"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
-               value="22"
+               value="50"
                data-component="body">
     <br>
-<p>Must be at least 0. Must not be greater than 100. Example: <code>22</code></p>
+<p>Progress percent value (0-100). Must be at least 0. Must not be greater than 100. Example: <code>50</code></p>
         </div>
         </form>
 
@@ -3113,7 +3537,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/extra-view" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"reason\": \"Need more time to finish the lecture.\"
 }"
@@ -3128,7 +3553,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -3223,10 +3649,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -3296,7 +3734,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/settings/device-change" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"reason\": \"Lost my phone and need to register a new device.\"
 }"
@@ -3311,7 +3750,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -3406,10 +3846,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-settings-device-change"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-settings-device-change"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -3442,7 +3894,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/centers/1/courses/1/enroll-request" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"reason\": \"Interested in joining this course.\"
 }"
@@ -3457,7 +3910,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -3552,10 +4006,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -3613,7 +4079,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/auth/login" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"email\": \"admin@example.com\",
     \"password\": \"admin123\"
@@ -3629,7 +4096,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -3725,10 +4193,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-auth-login"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-auth-login"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -3773,7 +4253,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/auth/password/reset" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"token\": \"reset-token\",
     \"email\": \"admin@example.com\",
@@ -3790,7 +4271,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -3887,10 +4369,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -3947,7 +4441,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/centers/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -3958,7 +4453,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -4048,10 +4544,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--slug-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers--slug-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -4084,7 +4592,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/auth/me" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -4095,7 +4604,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -4185,10 +4695,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-auth-me"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-auth-me"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         </form>
 
@@ -4208,7 +4730,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/auth/refresh" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -4219,7 +4742,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -4309,10 +4833,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-auth-refresh"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-auth-refresh"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         </form>
 
@@ -4332,7 +4868,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/auth/logout" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -4343,7 +4880,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -4433,10 +4971,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-auth-logout"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-auth-logout"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         </form>
 
@@ -4456,7 +5006,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;page=1&amp;slug=center-1&amp;type=1&amp;search=Academy" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -4477,7 +5028,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -4567,10 +5119,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-centers"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -4651,7 +5215,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/centers" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"slug\": \"center-01\",
     \"type\": 0,
@@ -4691,7 +5256,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -4811,10 +5377,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-centers"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-centers"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -5071,7 +5649,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/centers/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -5082,7 +5661,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -5172,10 +5752,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--center-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers--center-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -5208,7 +5800,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/centers/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"slug\": \"center-01\",
     \"type\": 0,
@@ -5239,7 +5832,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -5350,10 +5944,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-centers--center-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -5539,7 +6145,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/centers/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -5550,7 +6157,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -5640,10 +6248,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-centers--center-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-centers--center-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -5676,7 +6296,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/centers/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -5687,7 +6308,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -5777,10 +6399,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-centers--center--restore"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-centers--center--restore"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -5813,7 +6447,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/enrollments" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"user_id\": 10,
     \"course_id\": 5,
@@ -5830,7 +6465,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -5927,10 +6563,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-enrollments"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-enrollments"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -5989,7 +6637,8 @@ Must be one of:
     "http://xyz-lms.test/api/v1/admin/enrollments/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"status\": \"DEACTIVATED\"
 }"
@@ -6004,7 +6653,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -6099,10 +6749,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-enrollments--enrollment_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-enrollments--enrollment_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -6150,7 +6812,8 @@ Must be one of:
     "http://xyz-lms.test/api/v1/admin/enrollments/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -6161,7 +6824,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -6251,10 +6915,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-enrollments--enrollment_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-enrollments--enrollment_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -6287,7 +6963,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/courses?per_page=15&amp;page=1&amp;center_id=2&amp;category_id=3&amp;primary_instructor_id=5&amp;search=Biology" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -6309,7 +6986,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -6399,10 +7077,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-courses"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-courses"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -6495,7 +7185,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"title\": \"Sample Course\",
     \"description\": \"This is an introductory course.\",
@@ -6527,7 +7218,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -6639,10 +7331,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -6813,7 +7517,8 @@ Must be one of:
     --get "http://xyz-lms.test/api/v1/admin/courses/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -6824,7 +7529,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -6914,10 +7620,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-courses--course_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-courses--course_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -6950,7 +7668,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"title\": \"Updated Course Title\",
     \"description\": \"Updated description.\",
@@ -6982,7 +7701,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -7094,10 +7814,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-courses--course_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-courses--course_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -7281,7 +8013,8 @@ Must be one of:
     "http://xyz-lms.test/api/v1/admin/courses/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -7292,7 +8025,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -7382,10 +8116,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-courses--course_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-courses--course_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -7418,7 +8164,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/clone" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"options\": {
         \"include_sections\": true,
@@ -7437,7 +8184,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -7536,10 +8284,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--clone"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course_id--clone"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -7651,7 +8411,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/publish" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -7662,7 +8423,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -7752,10 +8514,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course_id--publish"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -7788,7 +8562,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/courses/1/sections" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -7799,7 +8574,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -7889,10 +8665,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-courses--course_id--sections"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-courses--course_id--sections"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -7925,7 +8713,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"course_id\": 1,
     \"title\": \"Introduction\",
@@ -7943,7 +8732,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -8041,10 +8831,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course--sections"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course--sections"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -8126,7 +8928,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/reorder" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"sections\": [
         2
@@ -8143,7 +8946,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -8240,10 +9044,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-courses--course_id--sections-reorder"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-courses--course_id--sections-reorder"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -8291,7 +9107,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/courses/1/sections/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -8302,7 +9119,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -8392,10 +9210,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -8440,7 +9270,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"title\": \"Updated Section Title\",
     \"description\": \"Updated description.\",
@@ -8457,7 +9288,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -8554,10 +9386,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-courses--course--sections--section_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-courses--course--sections--section_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -8639,7 +9483,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -8650,7 +9495,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -8740,10 +9586,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-courses--course--sections--section_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-courses--course--sections--section_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -8788,7 +9646,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -8799,7 +9658,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -8889,10 +9749,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course--sections--section_id--restore"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course--sections--section_id--restore"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -8937,7 +9809,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/visibility" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -8948,7 +9821,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -9038,10 +9912,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PATCHapi-v1-admin-courses--course_id--sections--section_id--visibility"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PATCHapi-v1-admin-courses--course_id--sections--section_id--visibility"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -9086,7 +9972,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/structure" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"course_id\": 1,
     \"title\": \"Introduction\",
@@ -9110,7 +9997,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -9214,10 +10102,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course--sections-structure"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course--sections-structure"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -9327,7 +10227,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/structure" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"title\": \"Updated Section\",
     \"description\": \"Updated description.\",
@@ -9350,7 +10251,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -9453,10 +10355,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-courses--course--sections--section_id--structure"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-courses--course--sections--section_id--structure"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -9566,7 +10480,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/structure" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -9577,7 +10492,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -9667,10 +10583,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-courses--course--sections--section_id--structure"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-courses--course--sections--section_id--structure"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -9715,7 +10643,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/videos" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -9726,7 +10655,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -9816,10 +10746,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id--videos"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id--videos"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -9864,7 +10806,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/videos/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -9875,7 +10818,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -9965,10 +10909,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id--videos--video_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id--videos--video_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -10025,7 +10981,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/videos" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"video_id\": 10
 }"
@@ -10040,7 +10997,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -10135,10 +11093,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--sections--section_id--videos"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course_id--sections--section_id--videos"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -10196,7 +11166,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/videos/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"video_id\": 10
 }"
@@ -10211,7 +11182,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -10306,10 +11278,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-courses--course_id--sections--section_id--videos--video_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-courses--course_id--sections--section_id--videos--video_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -10379,7 +11363,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/pdfs" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -10390,7 +11375,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -10480,10 +11466,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id--pdfs"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id--pdfs"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -10528,7 +11526,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/pdfs/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -10539,7 +11538,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -10629,10 +11629,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id--pdfs--pdf_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-courses--course_id--sections--section_id--pdfs--pdf_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -10689,7 +11701,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/pdfs" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"pdf_id\": 7
 }"
@@ -10704,7 +11717,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -10799,10 +11813,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--sections--section_id--pdfs"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course_id--sections--section_id--pdfs"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -10860,7 +11886,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/pdfs/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"pdf_id\": 7
 }"
@@ -10875,7 +11902,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -10970,10 +11998,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-courses--course_id--sections--section_id--pdfs--pdf_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-courses--course_id--sections--section_id--pdfs--pdf_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -11043,7 +12083,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/publish" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -11054,7 +12095,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -11144,10 +12186,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course--sections--section_id--publish"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course--sections--section_id--publish"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -11192,7 +12246,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/sections/1/unpublish" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -11203,7 +12258,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -11293,10 +12349,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course--sections--section_id--unpublish"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course--sections--section_id--unpublish"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -11341,7 +12409,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/videos?per_page=15&amp;page=1&amp;center_id=2&amp;course_id=10&amp;search=Intro" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -11362,7 +12431,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -11452,10 +12522,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-videos"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-videos"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -11536,7 +12618,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/video-upload-sessions?per_page=15&amp;page=1&amp;status=3&amp;center_id=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -11556,7 +12639,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -11646,10 +12730,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -11718,7 +12814,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/videos" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"video_id\": 10,
     \"order_index\": 1
@@ -11734,7 +12831,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -11830,10 +12928,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--videos"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course_id--videos"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -11891,7 +13001,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/videos/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -11902,7 +13013,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -11992,10 +13104,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-courses--course_id--videos--video-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-courses--course_id--videos--video-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -12040,7 +13164,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/video-uploads" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"center_id\": 1,
     \"video_id\": 10,
@@ -12057,7 +13182,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -12154,10 +13280,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-video-uploads"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-video-uploads"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -12214,7 +13352,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/video-uploads/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"status\": \"READY\",
     \"progress_percent\": 75,
@@ -12234,7 +13373,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -12334,10 +13474,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -12445,7 +13597,8 @@ Must be one of:
     --get "http://xyz-lms.test/api/v1/admin/instructors?per_page=15&amp;page=1&amp;center_id=2&amp;course_id=10&amp;search=Sara" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -12466,7 +13619,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -12556,10 +13710,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-instructors"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-instructors"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -12640,7 +13806,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/instructors" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --form "center_id=1"\
     --form "name_translations[en]=John Doe"\
     --form "name_translations[ar]=جون دو"\
@@ -12654,7 +13821,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpapc977jvdghp6izy8xt" </code></pre></div>
+    --form "avatar=@/tmp/phpb86b6grcr2055w0h2uN" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12665,7 +13832,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 const body = new FormData();
@@ -12772,10 +13940,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-instructors"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-instructors"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -12848,7 +14028,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpapc977jvdghp6izy8xt</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpb86b6grcr2055w0h2uN</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -12918,7 +14098,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/instructors/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -12929,7 +14110,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -13019,10 +14201,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-instructors--id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-instructors--id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -13055,7 +14249,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/instructors/1" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --form "center_id=1"\
     --form "name_translations[en]=John Doe"\
     --form "name_translations[ar]=جون دو"\
@@ -13068,7 +14263,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phplbtlsmhleinh8SKhoqw" </code></pre></div>
+    --form "avatar=@/tmp/phpnjp19reiib7u2ArEIyF" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13079,7 +14274,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 const body = new FormData();
@@ -13189,10 +14385,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-instructors--id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-instructors--id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -13278,7 +14486,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phplbtlsmhleinh8SKhoqw</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpnjp19reiib7u2ArEIyF</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13348,7 +14556,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/instructors/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -13359,7 +14568,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -13449,10 +14659,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-instructors--id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-instructors--id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -13485,7 +14707,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/instructors" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"instructor_id\": 5,
     \"role\": \"assistant\"
@@ -13501,7 +14724,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -13597,10 +14821,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--instructors"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course_id--instructors"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -13658,7 +14894,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/instructors/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -13669,7 +14906,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -13759,10 +14997,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -13807,7 +15057,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/pdfs" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"pdf_id\": 12,
     \"order_index\": 2
@@ -13823,7 +15074,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -13919,10 +15171,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-courses--course_id--pdfs"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-courses--course_id--pdfs"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -13980,7 +15244,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/courses/1/pdfs/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -13991,7 +15256,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -14081,10 +15347,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-courses--course_id--pdfs--pdf-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-courses--course_id--pdfs--pdf-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -14129,14 +15407,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/pdfs" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --form "title_translations[en]=Lesson Notes"\
     --form "title_translations[ar]=ملاحظات الدرس"\
     --form "description_translations[en]=Downloadable PDF for lesson 1"\
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpsdhqoortgm5f95ZeS79" </code></pre></div>
+    --form "file=@/tmp/phpbv4vngh9p3510PLZ33O" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14147,7 +15426,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 const body = new FormData();
@@ -14247,10 +15527,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-pdfs"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-pdfs"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -14287,7 +15579,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpsdhqoortgm5f95ZeS79</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpbv4vngh9p3510PLZ33O</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -14343,7 +15635,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/centers/1/settings" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -14354,7 +15647,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -14444,10 +15738,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -14480,7 +15786,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/centers/1/settings" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"settings\": {
         \"default_view_limit\": 3,
@@ -14504,7 +15811,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -14608,10 +15916,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -14761,7 +16081,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/settings/preview" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"student_id\": 1,
     \"video_id\": 2,
@@ -14779,7 +16100,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -14877,10 +16199,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-settings-preview"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-settings-preview"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -14949,7 +16283,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/audit-logs?center_id=2&amp;entity_type=App%5CModels%5CCourse&amp;entity_id=12&amp;action=enrollment_created&amp;user_id=3&amp;date_from=2025-01-01&amp;date_to=2025-12-31&amp;per_page=20&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -14974,7 +16309,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -15064,10 +16400,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-audit-logs"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-audit-logs"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -15196,7 +16544,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/extra-view-requests?per_page=15&amp;page=1&amp;status=PENDING&amp;center_id=2&amp;user_id=5&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -15219,7 +16568,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -15309,10 +16659,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-extra-view-requests"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-extra-view-requests"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -15416,10 +16778,11 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/admin/extra-view-requests/16/approve" \
+    "http://xyz-lms.test/api/v1/admin/extra-view-requests/1/approve" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"granted_views\": 3,
     \"decision_reason\": \"Verified request validity\"
@@ -15429,13 +16792,14 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/extra-view-requests/16/approve"
+    "http://xyz-lms.test/api/v1/admin/extra-view-requests/1/approve"
 );
 
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -15531,10 +16895,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -15544,10 +16920,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="extraViewRequest_id"                data-endpoint="POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve"
-               value="16"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the extraViewRequest. Example: <code>16</code></p>
+<p>The ID of the extraViewRequest. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -15589,10 +16965,11 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/admin/extra-view-requests/16/reject" \
+    "http://xyz-lms.test/api/v1/admin/extra-view-requests/1/reject" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"decision_reason\": \"Insufficient justification provided\"
 }"
@@ -15601,13 +16978,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/extra-view-requests/16/reject"
+    "http://xyz-lms.test/api/v1/admin/extra-view-requests/1/reject"
 );
 
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -15702,10 +17080,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -15715,10 +17105,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="extraViewRequest_id"                data-endpoint="POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject"
-               value="16"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the extraViewRequest. Example: <code>16</code></p>
+<p>The ID of the extraViewRequest. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -15751,7 +17141,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/device-change-requests?per_page=15&amp;page=1&amp;status=PENDING&amp;center_id=2&amp;user_id=5&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -15774,7 +17165,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -15864,10 +17256,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-device-change-requests"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-device-change-requests"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -15974,7 +17378,8 @@ Must be one of:
     "http://xyz-lms.test/api/v1/admin/device-change-requests/16/approve" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -15985,7 +17390,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -16075,10 +17481,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -16111,7 +17529,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/device-change-requests/16/reject" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"decision_reason\": \"Device policy violation\"
 }"
@@ -16126,7 +17545,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -16221,10 +17641,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -16270,7 +17702,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/roles?per_page=15" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -16287,7 +17720,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -16377,10 +17811,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-roles"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-roles"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -16413,7 +17859,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/roles" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"name\": \"Content Admin\",
     \"slug\": \"content_admin\",
@@ -16430,7 +17877,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -16527,10 +17975,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-roles"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-roles"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -16587,7 +18047,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/roles/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"name\": \"Support Admin\",
     \"slug\": \"support_admin\",
@@ -16604,7 +18065,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -16701,10 +18163,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -16774,7 +18248,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/roles/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -16785,7 +18260,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -16875,10 +18351,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-roles--role_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-roles--role_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -16911,7 +18399,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/roles/1/permissions" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"permission_ids\": [
         1
@@ -16928,7 +18417,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -17025,10 +18515,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -17076,7 +18578,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/permissions" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -17087,7 +18590,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -17177,10 +18681,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-permissions"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-permissions"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         </form>
 
@@ -17200,7 +18716,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/users?per_page=15" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -17217,7 +18734,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -17307,10 +18825,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-users"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-users"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -17343,7 +18873,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/users" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"name\": \"Jane Admin\",
     \"email\": \"jane.admin@example.com\",
@@ -17363,7 +18894,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -17463,10 +18995,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-users"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-users"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -17561,7 +19105,8 @@ Must be one of:
     "http://xyz-lms.test/api/v1/admin/users/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"name\": \"Updated Admin\",
     \"email\": \"updated.admin@example.com\",
@@ -17581,7 +19126,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -17681,10 +19227,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-users--user_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-users--user_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -17792,7 +19350,8 @@ Must be one of:
     "http://xyz-lms.test/api/v1/admin/users/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -17803,7 +19362,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -17893,10 +19453,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-users--user_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-users--user_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -17929,7 +19501,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/users/1/roles" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"role_ids\": [
         1
@@ -17946,7 +19519,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -18043,10 +19617,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -18094,7 +19680,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --get "http://xyz-lms.test/api/v1/admin/students?per_page=15&amp;page=1&amp;center_id=2&amp;status=1&amp;search=Sara" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -18115,7 +19702,8 @@ Object.keys(params)
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -18205,10 +19793,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="GETapi-v1-admin-students"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-students"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -18291,7 +19891,8 @@ Must be one of:
     "http://xyz-lms.test/api/v1/admin/students/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"name\": \"Student One\",
     \"email\": \"student@example.com\",
@@ -18308,7 +19909,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -18405,10 +20007,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="PUTapi-v1-admin-students--user_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-students--user_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
@@ -18480,7 +20094,8 @@ Must be one of:
     "http://xyz-lms.test/api/v1/admin/students" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"name\": \"Student One\",
     \"email\": \"student@example.com\",
@@ -18499,7 +20114,8 @@ Must be one of:
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 let body = {
@@ -18598,10 +20214,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="POSTapi-v1-admin-students"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-students"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -18682,7 +20310,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://xyz-lms.test/api/v1/admin/students/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -18693,7 +20322,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "X-Locale": "en",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
 };
 
 fetch(url, {
@@ -18783,10 +20413,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="X-Locale"                data-endpoint="DELETEapi-v1-admin-students--user_id-"
-               value="en"
+               value="{{locale}}"
                data-component="header">
     <br>
-<p>Example: <code>en</code></p>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-students--user_id-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
