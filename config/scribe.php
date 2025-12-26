@@ -69,7 +69,7 @@ return [
 
     'laravel' => [
         // Whether to automatically create a docs route for you to view your generated docs. You can still set up routing manually.
-        'add_routes' => true,
+        'add_routes' => env('SCRIBE_ENABLED', false),
 
         // URL path to use for the docs endpoint (if `add_routes` is true).
         // By default, `/docs` opens the HTML page, `/docs.postman` opens the Postman collection, and `/docs.openapi` the OpenAPI spec.
@@ -144,7 +144,7 @@ return [
     // For 'laravel' docs, it will be generated to storage/app/scribe/collection.json.
     // Setting `laravel.add_routes` to true (above) will also add a route for the collection.
     'postman' => [
-        'enabled' => true,
+        'enabled' => env('SCRIBE_ENABLED', false),
 
         'overrides' => [
             // 'info.version' => '2.0.0',
@@ -156,7 +156,7 @@ return [
     // For 'laravel' docs, it will be generated to storage/app/scribe/openapi.yaml.
     // Setting `laravel.add_routes` to true (above) will also add a route for the spec.
     'openapi' => [
-        'enabled' => true,
+        'enabled' => env('SCRIBE_ENABLED', false),
 
         // The OpenAPI spec version to generate. Supported versions: '3.0.3', '3.1.0'.
         // OpenAPI 3.1 is more compatible with JSON Schema and is becoming the dominant version.

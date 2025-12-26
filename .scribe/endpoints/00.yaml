@@ -5,82 +5,6 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/external/webhooks/bunny
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/external/centers/{slug}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      slug:
-        custom: []
-        name: slug
-        description: 'The slug of the center.'
-        required: true
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      slug: architecto
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
     uri: api/v1/auth/send-otp
     metadata:
       custom: []
@@ -317,6 +241,50 @@ endpoints:
     custom: []
     httpMethods:
       - POST
+    uri: api/v1/auth/me
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        custom: []
+        name: name
+        description: 'The name of the user.'
+        required: true
+        example: 'John Doe'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      name: 'John Doe'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
     uri: api/v1/auth/logout
     metadata:
       custom: []
@@ -349,7 +317,7 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/v1/enrollments
+    uri: api/v1/courses/explore
     metadata:
       custom: []
       groupName: Endpoints
@@ -370,16 +338,88 @@ endpoints:
       per_page:
         custom: []
         name: per_page
-        description: 'Items per page.'
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
         required: false
         example: 15
         type: integer
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      category_id:
+        custom: []
+        name: category_id
+        description: 'Filter courses by category ID.'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      instructor_id:
+        custom: []
+        name: instructor_id
+        description: 'Filter courses by instructor ID.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      enrolled:
+        custom: []
+        name: enrolled
+        description: 'Filter by enrollment status.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      publish_from:
+        custom: []
+        name: publish_from
+        description: 'Filter courses published on or after this date. Must be a valid date.'
+        required: false
+        example: '2025-01-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      publish_to:
+        custom: []
+        name: publish_to
+        description: 'Filter courses published on or before this date. Must be a valid date.'
+        required: false
+        example: '2025-01-31'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanQueryParameters:
       per_page: 15
+      page: 1
+      category_id: 3
+      instructor_id: 5
+      enrolled: true
+      publish_from: '2025-01-01'
+      publish_to: '2025-01-31'
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -393,7 +433,63 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/v1/courses
+    uri: 'api/v1/centers/{center_id}/courses/{course_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      course_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/search
     metadata:
       custom: []
       groupName: Endpoints
@@ -411,387 +507,179 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
+      search:
+        custom: []
+        name: search
+        description: 'Search term for course title or instructor name.'
+        required: false
+        example: Biology
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       per_page:
         custom: []
         name: per_page
-        description: 'Items per page.'
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
         required: false
         example: 15
         type: integer
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      search: Biology
+      per_page: 15
+      page: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/centers
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      search:
+        custom: []
+        name: search
+        description: 'Search centers by name or description.'
+        required: false
+        example: Science
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      search: Science
+      per_page: 15
+      page: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/centers/{center_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+    queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanQueryParameters:
       per_page: 15
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/sections'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/sections/{section_id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      section_id:
-        custom: []
-        name: section_id
-        description: 'The ID of the section.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      section_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/videos'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/videos/{video_id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      video_id:
-        custom: []
-        name: video_id
-        description: 'The ID of the video.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      video_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/sections/{section_id}/videos'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      section_id:
-        custom: []
-        name: section_id
-        description: 'The ID of the section.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      section_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/sections/{section_id}/videos/{video_id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      section_id:
-        custom: []
-        name: section_id
-        description: 'The ID of the section.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      video_id:
-        custom: []
-        name: video_id
-        description: 'The ID of the video.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      section_id: 1
-      video_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
+      page: 1
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -848,9 +736,9 @@ endpoints:
       search:
         custom: []
         name: search
-        description: 'Search instructors by name.'
+        description: 'Search by instructor name or title.'
         required: false
-        example: Sara
+        example: Professor
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -859,7 +747,7 @@ endpoints:
     cleanQueryParameters:
       per_page: 15
       page: 1
-      search: Sara
+      search: Professor
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -873,7 +761,7 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: 'api/v1/instructors/{instructor_id}'
+    uri: api/v1/categories
     metadata:
       custom: []
       groupName: Endpoints
@@ -888,526 +776,126 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
       X-Locale: en
-    urlParameters:
-      instructor_id:
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      per_page:
         custom: []
-        name: instructor_id
-        description: 'The ID of the instructor.'
-        required: true
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
         example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-    cleanUrlParameters:
-      instructor_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/pdfs'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
+      search:
         custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/pdfs/{pdf_id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      pdf_id:
-        custom: []
-        name: pdf_id
-        description: 'The ID of the pdf.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      pdf_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/pdfs/{pdf_id}/download'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      pdf_id:
-        custom: []
-        name: pdf_id
-        description: 'The ID of the pdf.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      pdf_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/sections/{section_id}/pdfs'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      section_id:
-        custom: []
-        name: section_id
-        description: 'The ID of the section.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      section_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      section_id:
-        custom: []
-        name: section_id
-        description: 'The ID of the section.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      pdf_id:
-        custom: []
-        name: pdf_id
-        description: 'The ID of the pdf.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      section_id: 1
-      pdf_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: 'api/v1/courses/{course_id}/videos/{video_id}/playback/authorize'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'The ID of the course.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      video_id:
-        custom: []
-        name: video_id
-        description: 'The ID of the video.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      course_id: 1
-      video_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      device_id:
-        custom: []
-        name: device_id
-        description: 'Identifier of the requesting device.'
-        required: true
-        example: device-123
+        name: search
+        description: 'Search by category title.'
+        required: false
+        example: Science
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      section_id:
+    cleanQueryParameters:
+      per_page: 15
+      page: 1
+      search: Science
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/courses/enrolled
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      per_page:
         custom: []
-        name: section_id
-        description: 'Optional section context for the video. The <code>id</code> of an existing record in the sections table.'
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      category_id:
+        custom: []
+        name: category_id
+        description: 'Filter courses by category ID.'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      instructor_id:
+        custom: []
+        name: instructor_id
+        description: 'Filter courses by instructor ID.'
         required: false
         example: 5
         type: integer
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      device_id: device-123
-      section_id: 5
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PATCH
-    uri: 'api/v1/playback/sessions/{session}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      session:
-        custom: []
-        name: session
-        description: 'The session.'
-        required: true
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
         nullable: false
         deprecated: false
-    cleanUrlParameters:
-      session: architecto
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      progress_percent:
-        custom: []
-        name: progress_percent
-        description: 'Playback progress percentage (0-100). Must be at least 0. Must not be greater than 100.'
-        required: true
-        example: 45
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      progress_percent: 45
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: 'api/v1/playback/sessions/{session}/end'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters:
-      session:
-        custom: []
-        name: session
-        description: 'The session.'
-        required: true
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      session: architecto
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      progress_percent:
-        custom: []
-        name: progress_percent
-        description: 'Final progress percentage when ending the session. Must be at least 0. Must not be greater than 100.'
-        required: false
-        example: 100
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      progress_percent: 100
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: api/v1/extra-view-requests
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
+    cleanQueryParameters:
+      per_page: 15
+      page: 1
+      category_id: 3
+      instructor_id: 5
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -1421,7 +909,7 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: 'api/v1/courses/{course_id}/videos/{video_id}/extra-view-requests'
+    uri: 'api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback'
     metadata:
       custom: []
       groupName: Endpoints
@@ -1437,6 +925,17 @@ endpoints:
       Accept: application/json
       X-Locale: en
     urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       course_id:
         custom: []
         name: course_id
@@ -1460,52 +959,9 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
+      center_id: 1
       course_id: 1
       video_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      reason:
-        custom: []
-        name: reason
-        description: 'Optional reason for requesting extra views. Must not be greater than 1000 characters.'
-        required: false
-        example: 'Need to review before exam'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      reason: 'Need to review before exam'
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: api/v1/device-change-requests
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: en
-    urlParameters: []
-    cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -1521,7 +977,179 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/v1/device-change-requests
+    uri: 'api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      video_id:
+        custom: []
+        name: video_id
+        description: 'The ID of the video.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      course_id: 1
+      video_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      session_id:
+        custom: []
+        name: session_id
+        description: ''
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      percentage:
+        custom: []
+        name: percentage
+        description: 'Must be at least 0. Must not be greater than 100.'
+        required: true
+        example: 22
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      session_id: 16
+      percentage: 22
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      video_id:
+        custom: []
+        name: video_id
+        description: 'The ID of the video.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      course_id: 1
+      video_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      reason:
+        custom: []
+        name: reason
+        description: 'Optional reason for requesting an extra view. Must not be greater than 255 characters.'
+        required: false
+        example: 'Need more time to finish the lecture.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      reason: 'Need more time to finish the lecture.'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/settings/device-change
     metadata:
       custom: []
       groupName: Endpoints
@@ -1541,55 +1169,87 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      new_device_id:
-        custom: []
-        name: new_device_id
-        description: 'Identifier of the requested new device. Must not be greater than 255 characters.'
-        required: true
-        example: device-xyz
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      model:
-        custom: []
-        name: model
-        description: 'Device model name. Must not be greater than 255 characters.'
-        required: true
-        example: 'iPhone 15'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      os_version:
-        custom: []
-        name: os_version
-        description: 'Operating system version. Must not be greater than 255 characters.'
-        required: true
-        example: 'iOS 17'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       reason:
         custom: []
         name: reason
-        description: 'Optional reason for requesting device change. Must not be greater than 1000 characters.'
+        description: 'Optional reason for requesting a device change. Must not be greater than 255 characters.'
         required: false
-        example: 'Upgraded phone'
+        example: 'Lost my phone and need to register a new device.'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      new_device_id: device-xyz
-      model: 'iPhone 15'
-      os_version: 'iOS 17'
-      reason: 'Upgraded phone'
+      reason: 'Lost my phone and need to register a new device.'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/centers/{center_id}/courses/{course_id}/enroll-request'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      course_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      reason:
+        custom: []
+        name: reason
+        description: 'Optional reason for requesting enrollment. Must not be greater than 255 characters.'
+        required: false
+        example: 'Interested in joining this course.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      reason: 'Interested in joining this course.'
     fileParameters: []
     responses: []
     responseFields: []
@@ -1714,6 +1374,50 @@ endpoints:
       token: reset-token
       email: admin@example.com
       password: newpassword123
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/admin/centers/{slug}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      slug:
+        custom: []
+        name: slug
+        description: 'The slug of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      slug: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses: []
     responseFields: []
@@ -2193,14 +1897,14 @@ endpoints:
         name: center
         description: 'The center.'
         required: true
-        example: architecto
-        type: string
+        example: 1
+        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      center: architecto
+      center: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -2237,14 +1941,14 @@ endpoints:
         name: center
         description: 'The center.'
         required: true
-        example: architecto
-        type: string
+        example: 1
+        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      center: architecto
+      center: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -2419,14 +2123,14 @@ endpoints:
         name: center
         description: 'The center.'
         required: true
-        example: architecto
-        type: string
+        example: 1
+        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      center: architecto
+      center: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -2463,14 +2167,14 @@ endpoints:
         name: center
         description: 'The center.'
         required: true
-        example: architecto
-        type: string
+        example: 1
+        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      center: architecto
+      center: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []

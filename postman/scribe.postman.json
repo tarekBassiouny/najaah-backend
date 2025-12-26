@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "01977d73-c934-41b3-801f-1953d31634d6",
+        "_postman_id": "7015e58b-1de7-4280-a64f-4ab3ca2a13e6",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -19,78 +19,6 @@
             "name": "Endpoints",
             "description": "",
             "item": [
-                {
-                    "name": "POST api\/external\/webhooks\/bunny",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/external\/webhooks\/bunny",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/external\/webhooks\/bunny"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/external\/centers\/{slug}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/external\/centers\/:slug",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/external\/centers\/:slug",
-                            "variable": [
-                                {
-                                    "id": "slug",
-                                    "key": "slug",
-                                    "value": "architecto",
-                                    "description": "The slug of the center."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
                 {
                     "name": "POST api\/v1\/auth\/send-otp",
                     "request": {
@@ -229,6 +157,41 @@
                     "response": []
                 },
                 {
+                    "name": "POST api\/v1\/auth\/me",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/auth\/me",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/auth\/me"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"John Doe\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "POST api\/v1\/auth\/logout",
                     "request": {
                         "url": {
@@ -261,20 +224,56 @@
                     "response": []
                 },
                 {
-                    "name": "GET api\/v1\/enrollments",
+                    "name": "GET api\/v1\/courses\/explore",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/enrollments",
+                            "path": "api\/v1\/courses\/explore",
                             "query": [
                                 {
                                     "key": "per_page",
                                     "value": "15",
-                                    "description": "Items per page.",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": "3",
+                                    "description": "Filter courses by category ID.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "instructor_id",
+                                    "value": "5",
+                                    "description": "Filter courses by instructor ID.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "enrolled",
+                                    "value": "1",
+                                    "description": "Filter by enrollment status.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "publish_from",
+                                    "value": "2025-01-01",
+                                    "description": "Filter courses published on or after this date. Must be a valid date.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "publish_to",
+                                    "value": "2025-01-31",
+                                    "description": "Filter courses published on or before this date. Must be a valid date.",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/enrollments?per_page=15"
+                            "raw": "{{baseUrl}}\/api\/v1\/courses\/explore?per_page=15&page=1&category_id=3&instructor_id=5&enrolled=1&publish_from=2025-01-01&publish_to=2025-01-31"
                         },
                         "method": "GET",
                         "header": [
@@ -300,328 +299,180 @@
                     "response": []
                 },
                 {
-                    "name": "GET api\/v1\/courses",
+                    "name": "GET api\/v1\/centers\/{center_id}\/courses\/{course_id}",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses",
+                            "path": "api\/v1\/centers\/:center_id\/courses\/:course_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/centers\/:center_id\/courses\/:course_id",
+                            "variable": [
+                                {
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                },
+                                {
+                                    "id": "course_id",
+                                    "key": "course_id",
+                                    "value": "1",
+                                    "description": "The ID of the course."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/search",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/search",
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "Biology",
+                                    "description": "Search term for course title or instructor name.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/search?search=Biology&per_page=15&page=1"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/centers",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/centers",
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "Science",
+                                    "description": "Search centers by name or description.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/centers?search=Science&per_page=15&page=1"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/centers\/{center_id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/centers\/:center_id",
                             "query": [
                                 {
                                     "key": "per_page",
                                     "value": "15",
-                                    "description": "Items per page.",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses?per_page=15"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id",
+                            "raw": "{{baseUrl}}\/api\/v1\/centers\/:center_id?per_page=15&page=1",
                             "variable": [
                                 {
-                                    "id": "course_id",
-                                    "key": "course_id",
+                                    "id": "center_id",
+                                    "key": "center_id",
                                     "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/sections",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/sections",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/sections",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/sections\/{section_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/sections\/:section_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/sections\/:section_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/videos",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/videos",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/videos",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/videos\/{video_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/videos\/:video_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/videos\/:video_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "video_id",
-                                    "key": "video_id",
-                                    "value": "1",
-                                    "description": "The ID of the video."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/sections\/{section_id}\/videos",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/sections\/:section_id\/videos",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/sections\/:section_id\/videos",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/sections\/{section_id}\/videos\/{video_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/sections\/:section_id\/videos\/:video_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/sections\/:section_id\/videos\/:video_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                },
-                                {
-                                    "id": "video_id",
-                                    "key": "video_id",
-                                    "value": "1",
-                                    "description": "The ID of the video."
+                                    "description": "The ID of the center."
                                 }
                             ]
                         },
@@ -669,12 +520,12 @@
                                 },
                                 {
                                     "key": "search",
-                                    "value": "Sara",
-                                    "description": "Search instructors by name.",
+                                    "value": "Professor",
+                                    "description": "Search by instructor name or title.",
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/instructors?per_page=15&page=1&search=Sara"
+                            "raw": "{{baseUrl}}\/api\/v1\/instructors?per_page=15&page=1&search=Professor"
                         },
                         "method": "GET",
                         "header": [
@@ -700,21 +551,89 @@
                     "response": []
                 },
                 {
-                    "name": "GET api\/v1\/instructors\/{instructor_id}",
+                    "name": "GET api\/v1\/categories",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/instructors\/:instructor_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/instructors\/:instructor_id",
-                            "variable": [
+                            "path": "api\/v1\/categories",
+                            "query": [
                                 {
-                                    "id": "instructor_id",
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "Science",
+                                    "description": "Search by category title.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/categories?per_page=15&page=1&search=Science"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/courses\/enrolled",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/courses\/enrolled",
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": "3",
+                                    "description": "Filter courses by category ID.",
+                                    "disabled": false
+                                },
+                                {
                                     "key": "instructor_id",
-                                    "value": "1",
-                                    "description": "The ID of the instructor."
+                                    "value": "5",
+                                    "description": "Filter courses by instructor ID.",
+                                    "disabled": false
                                 }
-                            ]
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/courses\/enrolled?per_page=15&page=1&category_id=3&instructor_id=5"
                         },
                         "method": "GET",
                         "header": [
@@ -740,54 +659,20 @@
                     "response": []
                 },
                 {
-                    "name": "GET api\/v1\/courses\/{course_id}\/pdfs",
+                    "name": "POST api\/v1\/centers\/{center_id}\/courses\/{course_id}\/videos\/{video_id}\/request_playback",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/pdfs",
+                            "path": "api\/v1\/centers\/:center_id\/courses\/:course_id\/videos\/:video_id\/request_playback",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/pdfs",
+                            "raw": "{{baseUrl}}\/api\/v1\/centers\/:center_id\/courses\/:course_id\/videos\/:video_id\/request_playback",
                             "variable": [
                                 {
-                                    "id": "course_id",
-                                    "key": "course_id",
+                                    "id": "center_id",
+                                    "key": "center_id",
                                     "value": "1",
-                                    "description": "The ID of the course."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/pdfs\/{pdf_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/pdfs\/:pdf_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/pdfs\/:pdf_id",
-                            "variable": [
+                                    "description": "The ID of the center."
+                                },
                                 {
                                     "id": "course_id",
                                     "key": "course_id",
@@ -795,14 +680,14 @@
                                     "description": "The ID of the course."
                                 },
                                 {
-                                    "id": "pdf_id",
-                                    "key": "pdf_id",
+                                    "id": "video_id",
+                                    "key": "video_id",
                                     "value": "1",
-                                    "description": "The ID of the pdf."
+                                    "description": "The ID of the video."
                                 }
                             ]
                         },
-                        "method": "GET",
+                        "method": "POST",
                         "header": [
                             {
                                 "key": "Content-Type",
@@ -826,158 +711,20 @@
                     "response": []
                 },
                 {
-                    "name": "GET api\/v1\/courses\/{course_id}\/pdfs\/{pdf_id}\/download",
+                    "name": "POST api\/v1\/centers\/{center_id}\/courses\/{course_id}\/videos\/{video_id}\/playback_progress",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/pdfs\/:pdf_id\/download",
+                            "path": "api\/v1\/centers\/:center_id\/courses\/:course_id\/videos\/:video_id\/playback_progress",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/pdfs\/:pdf_id\/download",
+                            "raw": "{{baseUrl}}\/api\/v1\/centers\/:center_id\/courses\/:course_id\/videos\/:video_id\/playback_progress",
                             "variable": [
                                 {
-                                    "id": "course_id",
-                                    "key": "course_id",
+                                    "id": "center_id",
+                                    "key": "center_id",
                                     "value": "1",
-                                    "description": "The ID of the course."
+                                    "description": "The ID of the center."
                                 },
-                                {
-                                    "id": "pdf_id",
-                                    "key": "pdf_id",
-                                    "value": "1",
-                                    "description": "The ID of the pdf."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/sections\/{section_id}\/pdfs",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/sections\/:section_id\/pdfs",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/sections\/:section_id\/pdfs",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/courses\/{course_id}\/sections\/{section_id}\/pdfs\/{pdf_id}",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/sections\/:section_id\/pdfs\/:pdf_id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/sections\/:section_id\/pdfs\/:pdf_id",
-                            "variable": [
-                                {
-                                    "id": "course_id",
-                                    "key": "course_id",
-                                    "value": "1",
-                                    "description": "The ID of the course."
-                                },
-                                {
-                                    "id": "section_id",
-                                    "key": "section_id",
-                                    "value": "1",
-                                    "description": "The ID of the section."
-                                },
-                                {
-                                    "id": "pdf_id",
-                                    "key": "pdf_id",
-                                    "value": "1",
-                                    "description": "The ID of the pdf."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/v1\/courses\/{course_id}\/videos\/{video_id}\/playback\/authorize",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/videos\/:video_id\/playback\/authorize",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/videos\/:video_id\/playback\/authorize",
-                            "variable": [
                                 {
                                     "id": "course_id",
                                     "key": "course_id",
@@ -1009,7 +756,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"device_id\":\"device-123\",\"section_id\":5}"
+                            "raw": "{\"session_id\":16,\"percentage\":22}"
                         },
                         "description": "",
                         "auth": {
@@ -1019,132 +766,20 @@
                     "response": []
                 },
                 {
-                    "name": "PATCH api\/v1\/playback\/sessions\/{session}",
+                    "name": "POST api\/v1\/centers\/{center_id}\/courses\/{course_id}\/videos\/{video_id}\/extra-view",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/playback\/sessions\/:session",
+                            "path": "api\/v1\/centers\/:center_id\/courses\/:course_id\/videos\/:video_id\/extra-view",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/playback\/sessions\/:session",
+                            "raw": "{{baseUrl}}\/api\/v1\/centers\/:center_id\/courses\/:course_id\/videos\/:video_id\/extra-view",
                             "variable": [
                                 {
-                                    "id": "session",
-                                    "key": "session",
-                                    "value": "architecto",
-                                    "description": "The session."
-                                }
-                            ]
-                        },
-                        "method": "PATCH",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"progress_percent\":45}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/v1\/playback\/sessions\/{session}\/end",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/playback\/sessions\/:session\/end",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/playback\/sessions\/:session\/end",
-                            "variable": [
-                                {
-                                    "id": "session",
-                                    "key": "session",
-                                    "value": "architecto",
-                                    "description": "The session."
-                                }
-                            ]
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"progress_percent\":100}"
-                        },
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET api\/v1\/extra-view-requests",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/extra-view-requests",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/extra-view-requests"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/v1\/courses\/{course_id}\/videos\/{video_id}\/extra-view-requests",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/courses\/:course_id\/videos\/:video_id\/extra-view-requests",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/:course_id\/videos\/:video_id\/extra-view-requests",
-                            "variable": [
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                },
                                 {
                                     "id": "course_id",
                                     "key": "course_id",
@@ -1176,7 +811,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"reason\":\"Need to review before exam\"}"
+                            "raw": "{\"reason\":\"Need more time to finish the lecture.\"}"
                         },
                         "description": "",
                         "auth": {
@@ -1186,45 +821,13 @@
                     "response": []
                 },
                 {
-                    "name": "GET api\/v1\/device-change-requests",
+                    "name": "POST api\/v1\/settings\/device-change",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/device-change-requests",
+                            "path": "api\/v1\/settings\/device-change",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/device-change-requests"
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "X-Locale",
-                                "value": "en"
-                            }
-                        ],
-                        "body": null,
-                        "description": "",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/v1\/device-change-requests",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/device-change-requests",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/device-change-requests"
+                            "raw": "{{baseUrl}}\/api\/v1\/settings\/device-change"
                         },
                         "method": "POST",
                         "header": [
@@ -1243,7 +846,56 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"new_device_id\":\"device-xyz\",\"model\":\"iPhone 15\",\"os_version\":\"iOS 17\",\"reason\":\"Upgraded phone\"}"
+                            "raw": "{\"reason\":\"Lost my phone and need to register a new device.\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/v1\/centers\/{center_id}\/courses\/{course_id}\/enroll-request",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/centers\/:center_id\/courses\/:course_id\/enroll-request",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/centers\/:center_id\/courses\/:course_id\/enroll-request",
+                            "variable": [
+                                {
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                },
+                                {
+                                    "id": "course_id",
+                                    "key": "course_id",
+                                    "value": "1",
+                                    "description": "The ID of the course."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"reason\":\"Interested in joining this course.\"}"
                         },
                         "description": "",
                         "auth": {
@@ -1315,6 +967,46 @@
                             "mode": "raw",
                             "raw": "{\"token\":\"reset-token\",\"email\":\"admin@example.com\",\"password\":\"newpassword123\"}"
                         },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/admin\/centers\/{slug}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/centers\/:slug",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers\/:slug",
+                            "variable": [
+                                {
+                                    "id": "slug",
+                                    "key": "slug",
+                                    "value": "1",
+                                    "description": "The slug of the center."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "en"
+                            }
+                        ],
+                        "body": null,
                         "description": "",
                         "auth": {
                             "type": "noauth"
@@ -1528,7 +1220,7 @@
                                 {
                                     "id": "center",
                                     "key": "center",
-                                    "value": "architecto",
+                                    "value": "1",
                                     "description": "The center."
                                 }
                             ]
@@ -1568,7 +1260,7 @@
                                 {
                                     "id": "center",
                                     "key": "center",
-                                    "value": "architecto",
+                                    "value": "1",
                                     "description": "The center."
                                 }
                             ]
@@ -1611,7 +1303,7 @@
                                 {
                                     "id": "center",
                                     "key": "center",
-                                    "value": "architecto",
+                                    "value": "1",
                                     "description": "The center."
                                 }
                             ]
@@ -1651,7 +1343,7 @@
                                 {
                                     "id": "center",
                                     "key": "center",
-                                    "value": "architecto",
+                                    "value": "1",
                                     "description": "The center."
                                 }
                             ]

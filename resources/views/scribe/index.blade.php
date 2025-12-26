@@ -71,13 +71,7 @@
                     <a href="#endpoints">Endpoints</a>
                 </li>
                                     <ul id="tocify-subheader-endpoints" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="endpoints-POSTapi-external-webhooks-bunny">
-                                <a href="#endpoints-POSTapi-external-webhooks-bunny">POST api/external/webhooks/bunny</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-external-centers--slug-">
-                                <a href="#endpoints-GETapi-external-centers--slug-">GET api/external/centers/{slug}</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-send-otp">
+                                                    <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-send-otp">
                                 <a href="#endpoints-POSTapi-v1-auth-send-otp">POST api/v1/auth/send-otp</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-verify">
@@ -89,83 +83,59 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-auth-me">
                                 <a href="#endpoints-GETapi-v1-auth-me">GET api/v1/auth/me</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-me">
+                                <a href="#endpoints-POSTapi-v1-auth-me">POST api/v1/auth/me</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-logout">
                                 <a href="#endpoints-POSTapi-v1-auth-logout">POST api/v1/auth/logout</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-enrollments">
-                                <a href="#endpoints-GETapi-v1-enrollments">GET api/v1/enrollments</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses-explore">
+                                <a href="#endpoints-GETapi-v1-courses-explore">GET api/v1/courses/explore</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses">
-                                <a href="#endpoints-GETapi-v1-courses">GET api/v1/courses</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-centers--center_id--courses--course_id-">
+                                <a href="#endpoints-GETapi-v1-centers--center_id--courses--course_id-">GET api/v1/centers/{center_id}/courses/{course_id}</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id-">
-                                <a href="#endpoints-GETapi-v1-courses--course_id-">GET api/v1/courses/{course_id}</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-search">
+                                <a href="#endpoints-GETapi-v1-search">GET api/v1/search</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--sections">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--sections">GET api/v1/courses/{course_id}/sections</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-centers">
+                                <a href="#endpoints-GETapi-v1-centers">GET api/v1/centers</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--sections--section_id-">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--sections--section_id-">GET api/v1/courses/{course_id}/sections/{section_id}</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--videos">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--videos">GET api/v1/courses/{course_id}/videos</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--videos--video_id-">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--videos--video_id-">GET api/v1/courses/{course_id}/videos/{video_id}</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--sections--section_id--videos">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--sections--section_id--videos">GET api/v1/courses/{course_id}/sections/{section_id}/videos</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-">GET api/v1/courses/{course_id}/sections/{section_id}/videos/{video_id}</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-centers--center_id-">
+                                <a href="#endpoints-GETapi-v1-centers--center_id-">GET api/v1/centers/{center_id}</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-instructors">
                                 <a href="#endpoints-GETapi-v1-instructors">GET api/v1/instructors</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-instructors--instructor_id-">
-                                <a href="#endpoints-GETapi-v1-instructors--instructor_id-">GET api/v1/instructors/{instructor_id}</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-categories">
+                                <a href="#endpoints-GETapi-v1-categories">GET api/v1/categories</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--pdfs">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--pdfs">GET api/v1/courses/{course_id}/pdfs</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses-enrolled">
+                                <a href="#endpoints-GETapi-v1-courses-enrolled">GET api/v1/courses/enrolled</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--pdfs--pdf_id-">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--pdfs--pdf_id-">GET api/v1/courses/{course_id}/pdfs/{pdf_id}</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">
+                                <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--pdfs--pdf_id--download">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--pdfs--pdf_id--download">GET api/v1/courses/{course_id}/pdfs/{pdf_id}/download</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">
+                                <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--sections--section_id--pdfs">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--sections--section_id--pdfs">GET api/v1/courses/{course_id}/sections/{section_id}/pdfs</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">
+                                <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-">
-                                <a href="#endpoints-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-">GET api/v1/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-settings-device-change">
+                                <a href="#endpoints-POSTapi-v1-settings-device-change">POST api/v1/settings/device-change</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize">
-                                <a href="#endpoints-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize">POST api/v1/courses/{course_id}/videos/{video_id}/playback/authorize</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-PATCHapi-v1-playback-sessions--session-">
-                                <a href="#endpoints-PATCHapi-v1-playback-sessions--session-">PATCH api/v1/playback/sessions/{session}</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-playback-sessions--session--end">
-                                <a href="#endpoints-POSTapi-v1-playback-sessions--session--end">POST api/v1/playback/sessions/{session}/end</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-extra-view-requests">
-                                <a href="#endpoints-GETapi-v1-extra-view-requests">GET api/v1/extra-view-requests</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests">
-                                <a href="#endpoints-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests">POST api/v1/courses/{course_id}/videos/{video_id}/extra-view-requests</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-device-change-requests">
-                                <a href="#endpoints-GETapi-v1-device-change-requests">GET api/v1/device-change-requests</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-device-change-requests">
-                                <a href="#endpoints-POSTapi-v1-device-change-requests">POST api/v1/device-change-requests</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--enroll-request">
+                                <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--enroll-request">POST api/v1/centers/{center_id}/courses/{course_id}/enroll-request</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-login">
                                 <a href="#endpoints-POSTapi-v1-admin-auth-login">POST api/v1/admin/auth/login</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-password-reset">
                                 <a href="#endpoints-POSTapi-v1-admin-auth-password-reset">POST api/v1/admin/auth/password/reset</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--slug-">
+                                <a href="#endpoints-GETapi-v1-admin-centers--slug-">GET api/v1/admin/centers/{slug}</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-auth-me">
                                 <a href="#endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</a>
@@ -421,7 +391,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: December 20, 2025</li>
+        <li>Last updated: December 26, 2025</li>
     </ul>
 </div>
 
@@ -446,268 +416,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
     
 
-                                <h2 id="endpoints-POSTapi-external-webhooks-bunny">POST api/external/webhooks/bunny</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-POSTapi-external-webhooks-bunny">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/external/webhooks/bunny" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/external/webhooks/bunny"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "POST",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-POSTapi-external-webhooks-bunny">
-</span>
-<span id="execution-results-POSTapi-external-webhooks-bunny" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-POSTapi-external-webhooks-bunny"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-external-webhooks-bunny"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-POSTapi-external-webhooks-bunny" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-external-webhooks-bunny">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-POSTapi-external-webhooks-bunny" data-method="POST"
-      data-path="api/external/webhooks/bunny"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-external-webhooks-bunny', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-external-webhooks-bunny"
-                    onclick="tryItOut('POSTapi-external-webhooks-bunny');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-external-webhooks-bunny"
-                    onclick="cancelTryOut('POSTapi-external-webhooks-bunny');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-external-webhooks-bunny"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-black">POST</small>
-            <b><code>api/external/webhooks/bunny</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-external-webhooks-bunny"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-external-webhooks-bunny"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="POSTapi-external-webhooks-bunny"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        </form>
-
-                    <h2 id="endpoints-GETapi-external-centers--slug-">GET api/external/centers/{slug}</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-external-centers--slug-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/external/centers/architecto" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/external/centers/architecto"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-external-centers--slug-">
-    </span>
-<span id="execution-results-GETapi-external-centers--slug-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-external-centers--slug-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-external-centers--slug-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-external-centers--slug-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-external-centers--slug-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-external-centers--slug-" data-method="GET"
-      data-path="api/external/centers/{slug}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-external-centers--slug-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-external-centers--slug-"
-                    onclick="tryItOut('GETapi-external-centers--slug-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-external-centers--slug-"
-                    onclick="cancelTryOut('GETapi-external-centers--slug-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-external-centers--slug-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/external/centers/{slug}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-external-centers--slug-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-external-centers--slug-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-external-centers--slug-"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="slug"                data-endpoint="GETapi-external-centers--slug-"
-               value="architecto"
-               data-component="url">
-    <br>
-<p>The slug of the center. Example: <code>architecto</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-POSTapi-v1-auth-send-otp">POST api/v1/auth/send-otp</h2>
+                                <h2 id="endpoints-POSTapi-v1-auth-send-otp">POST api/v1/auth/send-otp</h2>
 
 <p>
 </p>
@@ -1353,6 +1062,152 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         </form>
 
+                    <h2 id="endpoints-POSTapi-v1-auth-me">POST api/v1/auth/me</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-auth-me">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/auth/me" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"name\": \"John Doe\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/auth/me"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "name": "John Doe"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-auth-me">
+</span>
+<span id="execution-results-POSTapi-v1-auth-me" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-auth-me"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-auth-me"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-auth-me" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-auth-me">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-auth-me" data-method="POST"
+      data-path="api/v1/auth/me"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-auth-me', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-auth-me"
+                    onclick="tryItOut('POSTapi-v1-auth-me');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-auth-me"
+                    onclick="cancelTryOut('POSTapi-v1-auth-me');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-auth-me"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/auth/me</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-auth-me"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-auth-me"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-auth-me"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name"                data-endpoint="POSTapi-v1-auth-me"
+               value="John Doe"
+               data-component="body">
+    <br>
+<p>The name of the user. Example: <code>John Doe</code></p>
+        </div>
+        </form>
+
                     <h2 id="endpoints-POSTapi-v1-auth-logout">POST api/v1/auth/logout</h2>
 
 <p>
@@ -1477,20 +1332,20 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         </form>
 
-                    <h2 id="endpoints-GETapi-v1-enrollments">GET api/v1/enrollments</h2>
+                    <h2 id="endpoints-GETapi-v1-courses-explore">GET api/v1/courses/explore</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-v1-enrollments">
+<span id="example-requests-GETapi-v1-courses-explore">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/enrollments?per_page=15" \
+    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -1498,11 +1353,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/enrollments"
+    "http://xyz-lms.test/api/v1/courses/explore"
 );
 
 const params = {
     "per_page": "15",
+    "page": "1",
+    "category_id": "3",
+    "instructor_id": "5",
+    "enrolled": "1",
+    "publish_from": "2025-01-01",
+    "publish_to": "2025-01-31",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -1520,45 +1381,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-GETapi-v1-enrollments">
+<span id="example-responses-GETapi-v1-courses-explore">
     </span>
-<span id="execution-results-GETapi-v1-enrollments" hidden>
+<span id="execution-results-GETapi-v1-courses-explore" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-enrollments"></span>:
+                id="execution-response-status-GETapi-v1-courses-explore"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-enrollments"
+    <pre class="json"><code id="execution-response-content-GETapi-v1-courses-explore"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-GETapi-v1-enrollments" hidden>
+<span id="execution-error-GETapi-v1-courses-explore" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-enrollments">
+    <pre><code id="execution-error-message-GETapi-v1-courses-explore">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-GETapi-v1-enrollments" data-method="GET"
-      data-path="api/v1/enrollments"
+<form id="form-GETapi-v1-courses-explore" data-method="GET"
+      data-path="api/v1/courses/explore"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-enrollments', this);">
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses-explore', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-enrollments"
-                    onclick="tryItOut('GETapi-v1-enrollments');">Try it out ⚡
+                    id="btn-tryout-GETapi-v1-courses-explore"
+                    onclick="tryItOut('GETapi-v1-courses-explore');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-enrollments"
-                    onclick="cancelTryOut('GETapi-v1-enrollments');" hidden>Cancel 🛑
+                    id="btn-canceltryout-GETapi-v1-courses-explore"
+                    onclick="cancelTryOut('GETapi-v1-courses-explore');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-enrollments"
+                    id="btn-executetryout-GETapi-v1-courses-explore"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -1566,7 +1427,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-green">GET</small>
-            <b><code>api/v1/enrollments</code></b>
+            <b><code>api/v1/courses/explore</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -1575,7 +1436,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-enrollments"
+                              name="Content-Type"                data-endpoint="GETapi-v1-courses-explore"
                value="application/json"
                data-component="header">
     <br>
@@ -1587,7 +1448,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-enrollments"
+                              name="Accept"                data-endpoint="GETapi-v1-courses-explore"
                value="application/json"
                data-component="header">
     <br>
@@ -1599,7 +1460,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-enrollments"
+                              name="X-Locale"                data-endpoint="GETapi-v1-courses-explore"
                value="en"
                data-component="header">
     <br>
@@ -1612,28 +1473,110 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="per_page"                data-endpoint="GETapi-v1-enrollments"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-courses-explore"
                value="15"
                data-component="query">
     <br>
-<p>Items per page. Example: <code>15</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-courses-explore"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="GETapi-v1-courses-explore"
+               value="3"
+               data-component="query">
+    <br>
+<p>Filter courses by category ID. Example: <code>3</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>instructor_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="instructor_id"                data-endpoint="GETapi-v1-courses-explore"
+               value="5"
+               data-component="query">
+    <br>
+<p>Filter courses by instructor ID. Example: <code>5</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>enrolled</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="GETapi-v1-courses-explore" style="display: none">
+            <input type="radio" name="enrolled"
+                   value="1"
+                   data-endpoint="GETapi-v1-courses-explore"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-v1-courses-explore" style="display: none">
+            <input type="radio" name="enrolled"
+                   value="0"
+                   data-endpoint="GETapi-v1-courses-explore"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Filter by enrollment status. Example: <code>true</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>publish_from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="publish_from"                data-endpoint="GETapi-v1-courses-explore"
+               value="2025-01-01"
+               data-component="query">
+    <br>
+<p>Filter courses published on or after this date. Must be a valid date. Example: <code>2025-01-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>publish_to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="publish_to"                data-endpoint="GETapi-v1-courses-explore"
+               value="2025-01-31"
+               data-component="query">
+    <br>
+<p>Filter courses published on or before this date. Must be a valid date. Example: <code>2025-01-31</code></p>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-courses">GET api/v1/courses</h2>
+                    <h2 id="endpoints-GETapi-v1-centers--center_id--courses--course_id-">GET api/v1/centers/{center_id}/courses/{course_id}</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-v1-courses">
+<span id="example-requests-GETapi-v1-centers--center_id--courses--course_id-">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses?per_page=15" \
+    --get "http://xyz-lms.test/api/v1/centers/1/courses/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -1641,11 +1584,162 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses"
+    "http://xyz-lms.test/api/v1/centers/1/courses/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-centers--center_id--courses--course_id-">
+    </span>
+<span id="execution-results-GETapi-v1-centers--center_id--courses--course_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-centers--center_id--courses--course_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-centers--center_id--courses--course_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-centers--center_id--courses--course_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-centers--center_id--courses--course_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-centers--center_id--courses--course_id-" data-method="GET"
+      data-path="api/v1/centers/{center_id}/courses/{course_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-centers--center_id--courses--course_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-centers--center_id--courses--course_id-"
+                    onclick="tryItOut('GETapi-v1-centers--center_id--courses--course_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-centers--center_id--courses--course_id-"
+                    onclick="cancelTryOut('GETapi-v1-centers--center_id--courses--course_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-centers--center_id--courses--course_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/centers/{center_id}/courses/{course_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="endpoints-GETapi-v1-search">GET api/v1/search</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-search">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/search?search=Biology&amp;per_page=15&amp;page=1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/search"
 );
 
 const params = {
+    "search": "Biology",
     "per_page": "15",
+    "page": "1",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -1663,45 +1757,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-GETapi-v1-courses">
+<span id="example-responses-GETapi-v1-search">
     </span>
-<span id="execution-results-GETapi-v1-courses" hidden>
+<span id="execution-results-GETapi-v1-search" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses"></span>:
+                id="execution-response-status-GETapi-v1-search"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses"
+    <pre class="json"><code id="execution-response-content-GETapi-v1-search"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-GETapi-v1-courses" hidden>
+<span id="execution-error-GETapi-v1-search" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses">
+    <pre><code id="execution-error-message-GETapi-v1-search">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-GETapi-v1-courses" data-method="GET"
-      data-path="api/v1/courses"
+<form id="form-GETapi-v1-search" data-method="GET"
+      data-path="api/v1/search"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses', this);">
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-search', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses"
-                    onclick="tryItOut('GETapi-v1-courses');">Try it out ⚡
+                    id="btn-tryout-GETapi-v1-search"
+                    onclick="tryItOut('GETapi-v1-search');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses"
-                    onclick="cancelTryOut('GETapi-v1-courses');" hidden>Cancel 🛑
+                    id="btn-canceltryout-GETapi-v1-search"
+                    onclick="cancelTryOut('GETapi-v1-search');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses"
+                    id="btn-executetryout-GETapi-v1-search"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -1709,7 +1803,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses</code></b>
+            <b><code>api/v1/search</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -1718,7 +1812,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses"
+                              name="Content-Type"                data-endpoint="GETapi-v1-search"
                value="application/json"
                data-component="header">
     <br>
@@ -1730,7 +1824,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses"
+                              name="Accept"                data-endpoint="GETapi-v1-search"
                value="application/json"
                data-component="header">
     <br>
@@ -1742,7 +1836,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses"
+                              name="X-Locale"                data-endpoint="GETapi-v1-search"
                value="en"
                data-component="header">
     <br>
@@ -1750,33 +1844,57 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-search"
+               value="Biology"
+               data-component="query">
+    <br>
+<p>Search term for course title or instructor name. Example: <code>Biology</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="per_page"                data-endpoint="GETapi-v1-courses"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-search"
                value="15"
                data-component="query">
     <br>
-<p>Items per page. Example: <code>15</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-search"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-courses--course_id-">GET api/v1/courses/{course_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-centers">GET api/v1/centers</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-v1-courses--course_id-">
+<span id="example-requests-GETapi-v1-centers">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1" \
+    --get "http://xyz-lms.test/api/v1/centers?search=Science&amp;per_page=15&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -1784,8 +1902,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1"
+    "http://xyz-lms.test/api/v1/centers"
 );
+
+const params = {
+    "search": "Science",
+    "per_page": "15",
+    "page": "1",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
     "Content-Type": "application/json",
@@ -1800,45 +1926,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-GETapi-v1-courses--course_id-">
+<span id="example-responses-GETapi-v1-centers">
     </span>
-<span id="execution-results-GETapi-v1-courses--course_id-" hidden>
+<span id="execution-results-GETapi-v1-centers" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id-"></span>:
+                id="execution-response-status-GETapi-v1-centers"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id-"
+    <pre class="json"><code id="execution-response-content-GETapi-v1-centers"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-GETapi-v1-courses--course_id-" hidden>
+<span id="execution-error-GETapi-v1-centers" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id-">
+    <pre><code id="execution-error-message-GETapi-v1-centers">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-GETapi-v1-courses--course_id-" data-method="GET"
-      data-path="api/v1/courses/{course_id}"
+<form id="form-GETapi-v1-centers" data-method="GET"
+      data-path="api/v1/centers"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id-', this);">
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-centers', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id-"
-                    onclick="tryItOut('GETapi-v1-courses--course_id-');">Try it out ⚡
+                    id="btn-tryout-GETapi-v1-centers"
+                    onclick="tryItOut('GETapi-v1-centers');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id-"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id-');" hidden>Cancel 🛑
+                    id="btn-canceltryout-GETapi-v1-centers"
+                    onclick="cancelTryOut('GETapi-v1-centers');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id-"
+                    id="btn-executetryout-GETapi-v1-centers"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -1846,7 +1972,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}</code></b>
+            <b><code>api/v1/centers</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -1855,7 +1981,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id-"
+                              name="Content-Type"                data-endpoint="GETapi-v1-centers"
                value="application/json"
                data-component="header">
     <br>
@@ -1867,7 +1993,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id-"
+                              name="Accept"                data-endpoint="GETapi-v1-centers"
                value="application/json"
                data-component="header">
     <br>
@@ -1879,41 +2005,65 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id-"
+                              name="X-Locale"                data-endpoint="GETapi-v1-centers"
                value="en"
                data-component="header">
     <br>
 <p>Example: <code>en</code></p>
             </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-centers"
+               value="Science"
+               data-component="query">
+    <br>
+<p>Search centers by name or description. Example: <code>Science</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id-"
-               value="1"
-               data-component="url">
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-centers"
+               value="15"
+               data-component="query">
     <br>
-<p>The ID of the course. Example: <code>1</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
             </div>
-                    </form>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-centers"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                </form>
 
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--sections">GET api/v1/courses/{course_id}/sections</h2>
+                    <h2 id="endpoints-GETapi-v1-centers--center_id-">GET api/v1/centers/{center_id}</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-v1-courses--course_id--sections">
+<span id="example-requests-GETapi-v1-centers--center_id-">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/sections" \
+    --get "http://xyz-lms.test/api/v1/centers/1?per_page=15&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -1921,8 +2071,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/sections"
+    "http://xyz-lms.test/api/v1/centers/1"
 );
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
     "Content-Type": "application/json",
@@ -1937,45 +2094,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-GETapi-v1-courses--course_id--sections">
+<span id="example-responses-GETapi-v1-centers--center_id-">
     </span>
-<span id="execution-results-GETapi-v1-courses--course_id--sections" hidden>
+<span id="execution-results-GETapi-v1-centers--center_id-" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--sections"></span>:
+                id="execution-response-status-GETapi-v1-centers--center_id-"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--sections"
+    <pre class="json"><code id="execution-response-content-GETapi-v1-centers--center_id-"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-GETapi-v1-courses--course_id--sections" hidden>
+<span id="execution-error-GETapi-v1-centers--center_id-" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--sections">
+    <pre><code id="execution-error-message-GETapi-v1-centers--center_id-">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-GETapi-v1-courses--course_id--sections" data-method="GET"
-      data-path="api/v1/courses/{course_id}/sections"
+<form id="form-GETapi-v1-centers--center_id-" data-method="GET"
+      data-path="api/v1/centers/{center_id}"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--sections', this);">
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-centers--center_id-', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--sections"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--sections');">Try it out ⚡
+                    id="btn-tryout-GETapi-v1-centers--center_id-"
+                    onclick="tryItOut('GETapi-v1-centers--center_id-');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--sections"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--sections');" hidden>Cancel 🛑
+                    id="btn-canceltryout-GETapi-v1-centers--center_id-"
+                    onclick="cancelTryOut('GETapi-v1-centers--center_id-');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--sections"
+                    id="btn-executetryout-GETapi-v1-centers--center_id-"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -1983,7 +2140,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/sections</code></b>
+            <b><code>api/v1/centers/{center_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -1992,7 +2149,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--sections"
+                              name="Content-Type"                data-endpoint="GETapi-v1-centers--center_id-"
                value="application/json"
                data-component="header">
     <br>
@@ -2004,7 +2161,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--sections"
+                              name="Accept"                data-endpoint="GETapi-v1-centers--center_id-"
                value="application/json"
                data-component="header">
     <br>
@@ -2016,7 +2173,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--sections"
+                              name="X-Locale"                data-endpoint="GETapi-v1-centers--center_id-"
                value="en"
                data-component="header">
     <br>
@@ -2024,763 +2181,43 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--sections"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-centers--center_id-"
                value="1"
                data-component="url">
     <br>
-<p>The ID of the course. Example: <code>1</code></p>
+<p>The ID of the center. Example: <code>1</code></p>
             </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--sections--section_id-">GET api/v1/courses/{course_id}/sections/{section_id}</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--sections--section_id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/sections/1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/sections/1"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--sections--section_id-">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--sections--section_id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--sections--section_id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--sections--section_id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--sections--section_id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--sections--section_id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--sections--section_id-" data-method="GET"
-      data-path="api/v1/courses/{course_id}/sections/{section_id}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--sections--section_id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--sections--section_id-"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--sections--section_id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--sections--section_id-"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--sections--section_id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--sections--section_id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/sections/{section_id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id-"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id-"
-               value="1"
-               data-component="url">
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-centers--center_id-"
+               value="15"
+               data-component="query">
     <br>
-<p>The ID of the course. Example: <code>1</code></p>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
             </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id-"
+               step="any"               name="page"                data-endpoint="GETapi-v1-centers--center_id-"
                value="1"
-               data-component="url">
+               data-component="query">
     <br>
-<p>The ID of the section. Example: <code>1</code></p>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
             </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--videos">GET api/v1/courses/{course_id}/videos</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--videos">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/videos" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/videos"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--videos">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--videos" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--videos"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--videos"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--videos" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--videos">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--videos" data-method="GET"
-      data-path="api/v1/courses/{course_id}/videos"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--videos', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--videos"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--videos');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--videos"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--videos');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--videos"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/videos</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--videos"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--videos"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--videos"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--videos"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--videos--video_id-">GET api/v1/courses/{course_id}/videos/{video_id}</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--videos--video_id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/videos/1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/videos/1"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--videos--video_id-">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--videos--video_id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--videos--video_id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--videos--video_id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--videos--video_id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--videos--video_id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--videos--video_id-" data-method="GET"
-      data-path="api/v1/courses/{course_id}/videos/{video_id}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--videos--video_id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--videos--video_id-"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--videos--video_id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--videos--video_id-"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--videos--video_id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--videos--video_id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/videos/{video_id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--videos--video_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--videos--video_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--videos--video_id-"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--videos--video_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="video_id"                data-endpoint="GETapi-v1-courses--course_id--videos--video_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the video. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--sections--section_id--videos">GET api/v1/courses/{course_id}/sections/{section_id}/videos</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--sections--section_id--videos">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/sections/1/videos" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/sections/1/videos"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--sections--section_id--videos">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--sections--section_id--videos" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--sections--section_id--videos"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--sections--section_id--videos"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--sections--section_id--videos" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--sections--section_id--videos">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--sections--section_id--videos" data-method="GET"
-      data-path="api/v1/courses/{course_id}/sections/{section_id}/videos"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--sections--section_id--videos', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--sections--section_id--videos"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--sections--section_id--videos');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--sections--section_id--videos"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--sections--section_id--videos');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--sections--section_id--videos"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/sections/{section_id}/videos</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the section. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-">GET api/v1/courses/{course_id}/sections/{section_id}/videos/{video_id}</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/sections/1/videos/1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/sections/1/videos/1"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-" data-method="GET"
-      data-path="api/v1/courses/{course_id}/sections/{section_id}/videos/{video_id}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--sections--section_id--videos--video_id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--sections--section_id--videos--video_id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--sections--section_id--videos--video_id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/sections/{section_id}/videos/{video_id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the section. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="video_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--videos--video_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the video. Example: <code>1</code></p>
-            </div>
-                    </form>
+                </form>
 
                     <h2 id="endpoints-GETapi-v1-instructors">GET api/v1/instructors</h2>
 
@@ -2795,7 +2232,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/instructors?per_page=15&amp;page=1&amp;search=Sara" \
+    --get "http://xyz-lms.test/api/v1/instructors?per_page=15&amp;page=1&amp;search=Professor" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -2809,7 +2246,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const params = {
     "per_page": "15",
     "page": "1",
-    "search": "Sara",
+    "search": "Professor",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -2944,27 +2381,27 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="search"                data-endpoint="GETapi-v1-instructors"
-               value="Sara"
+               value="Professor"
                data-component="query">
     <br>
-<p>Search instructors by name. Example: <code>Sara</code></p>
+<p>Search by instructor name or title. Example: <code>Professor</code></p>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-instructors--instructor_id-">GET api/v1/instructors/{instructor_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-categories">GET api/v1/categories</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-v1-instructors--instructor_id-">
+<span id="example-requests-GETapi-v1-categories">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/instructors/1" \
+    --get "http://xyz-lms.test/api/v1/categories?per_page=15&amp;page=1&amp;search=Science" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -2972,8 +2409,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/instructors/1"
+    "http://xyz-lms.test/api/v1/categories"
 );
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "search": "Science",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
     "Content-Type": "application/json",
@@ -2988,45 +2433,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-GETapi-v1-instructors--instructor_id-">
+<span id="example-responses-GETapi-v1-categories">
     </span>
-<span id="execution-results-GETapi-v1-instructors--instructor_id-" hidden>
+<span id="execution-results-GETapi-v1-categories" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-instructors--instructor_id-"></span>:
+                id="execution-response-status-GETapi-v1-categories"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-instructors--instructor_id-"
+    <pre class="json"><code id="execution-response-content-GETapi-v1-categories"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-GETapi-v1-instructors--instructor_id-" hidden>
+<span id="execution-error-GETapi-v1-categories" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-instructors--instructor_id-">
+    <pre><code id="execution-error-message-GETapi-v1-categories">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-GETapi-v1-instructors--instructor_id-" data-method="GET"
-      data-path="api/v1/instructors/{instructor_id}"
+<form id="form-GETapi-v1-categories" data-method="GET"
+      data-path="api/v1/categories"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-instructors--instructor_id-', this);">
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-categories', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-instructors--instructor_id-"
-                    onclick="tryItOut('GETapi-v1-instructors--instructor_id-');">Try it out ⚡
+                    id="btn-tryout-GETapi-v1-categories"
+                    onclick="tryItOut('GETapi-v1-categories');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-instructors--instructor_id-"
-                    onclick="cancelTryOut('GETapi-v1-instructors--instructor_id-');" hidden>Cancel 🛑
+                    id="btn-canceltryout-GETapi-v1-categories"
+                    onclick="cancelTryOut('GETapi-v1-categories');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-instructors--instructor_id-"
+                    id="btn-executetryout-GETapi-v1-categories"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -3034,7 +2479,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-green">GET</small>
-            <b><code>api/v1/instructors/{instructor_id}</code></b>
+            <b><code>api/v1/categories</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -3043,7 +2488,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-instructors--instructor_id-"
+                              name="Content-Type"                data-endpoint="GETapi-v1-categories"
                value="application/json"
                data-component="header">
     <br>
@@ -3055,7 +2500,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-instructors--instructor_id-"
+                              name="Accept"                data-endpoint="GETapi-v1-categories"
                value="application/json"
                data-component="header">
     <br>
@@ -3067,799 +2512,255 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-instructors--instructor_id-"
+                              name="X-Locale"                data-endpoint="GETapi-v1-categories"
                value="en"
                data-component="header">
     <br>
 <p>Example: <code>en</code></p>
             </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-categories"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-categories"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-categories"
+               value="Science"
+               data-component="query">
+    <br>
+<p>Search by category title. Example: <code>Science</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-GETapi-v1-courses-enrolled">GET api/v1/courses/enrolled</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-courses-enrolled">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/courses/enrolled?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/courses/enrolled"
+);
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "category_id": "3",
+    "instructor_id": "5",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-courses-enrolled">
+    </span>
+<span id="execution-results-GETapi-v1-courses-enrolled" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-courses-enrolled"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-courses-enrolled"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-courses-enrolled" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-courses-enrolled">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-courses-enrolled" data-method="GET"
+      data-path="api/v1/courses/enrolled"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses-enrolled', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-courses-enrolled"
+                    onclick="tryItOut('GETapi-v1-courses-enrolled');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-courses-enrolled"
+                    onclick="cancelTryOut('GETapi-v1-courses-enrolled');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-courses-enrolled"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/courses/enrolled</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-courses-enrolled"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-courses-enrolled"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-courses-enrolled"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-courses-enrolled"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-courses-enrolled"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="GETapi-v1-courses-enrolled"
+               value="3"
+               data-component="query">
+    <br>
+<p>Filter courses by category ID. Example: <code>3</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>instructor_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="instructor_id"                data-endpoint="GETapi-v1-instructors--instructor_id-"
-               value="1"
-               data-component="url">
+               step="any"               name="instructor_id"                data-endpoint="GETapi-v1-courses-enrolled"
+               value="5"
+               data-component="query">
     <br>
-<p>The ID of the instructor. Example: <code>1</code></p>
+<p>Filter courses by instructor ID. Example: <code>5</code></p>
             </div>
-                    </form>
+                </form>
 
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--pdfs">GET api/v1/courses/{course_id}/pdfs</h2>
+                    <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-v1-courses--course_id--pdfs">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/pdfs" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/pdfs"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--pdfs">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--pdfs" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--pdfs"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--pdfs"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--pdfs" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--pdfs">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--pdfs" data-method="GET"
-      data-path="api/v1/courses/{course_id}/pdfs"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--pdfs', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--pdfs"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--pdfs');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--pdfs"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--pdfs');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--pdfs"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/pdfs</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--pdfs"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--pdfs"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--pdfs"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--pdfs"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--pdfs--pdf_id-">GET api/v1/courses/{course_id}/pdfs/{pdf_id}</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--pdfs--pdf_id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/pdfs/1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/pdfs/1"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--pdfs--pdf_id-">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--pdfs--pdf_id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--pdfs--pdf_id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--pdfs--pdf_id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--pdfs--pdf_id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--pdfs--pdf_id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--pdfs--pdf_id-" data-method="GET"
-      data-path="api/v1/courses/{course_id}/pdfs/{pdf_id}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--pdfs--pdf_id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--pdfs--pdf_id-"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--pdfs--pdf_id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--pdfs--pdf_id-"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--pdfs--pdf_id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--pdfs--pdf_id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/pdfs/{pdf_id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id-"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>pdf_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="pdf_id"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the pdf. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--pdfs--pdf_id--download">GET api/v1/courses/{course_id}/pdfs/{pdf_id}/download</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--pdfs--pdf_id--download">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/pdfs/1/download" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/pdfs/1/download"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--pdfs--pdf_id--download">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--pdfs--pdf_id--download" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--pdfs--pdf_id--download"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--pdfs--pdf_id--download" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--pdfs--pdf_id--download">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--pdfs--pdf_id--download" data-method="GET"
-      data-path="api/v1/courses/{course_id}/pdfs/{pdf_id}/download"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--pdfs--pdf_id--download', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--pdfs--pdf_id--download');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--pdfs--pdf_id--download');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/pdfs/{pdf_id}/download</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>pdf_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="pdf_id"                data-endpoint="GETapi-v1-courses--course_id--pdfs--pdf_id--download"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the pdf. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--sections--section_id--pdfs">GET api/v1/courses/{course_id}/sections/{section_id}/pdfs</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--sections--section_id--pdfs">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/sections/1/pdfs" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/sections/1/pdfs"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--sections--section_id--pdfs">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--sections--section_id--pdfs" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--sections--section_id--pdfs"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--sections--section_id--pdfs"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--sections--section_id--pdfs" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--sections--section_id--pdfs">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--sections--section_id--pdfs" data-method="GET"
-      data-path="api/v1/courses/{course_id}/sections/{section_id}/pdfs"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--sections--section_id--pdfs', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--sections--section_id--pdfs"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--sections--section_id--pdfs');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--sections--section_id--pdfs"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--sections--section_id--pdfs');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--sections--section_id--pdfs"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/sections/{section_id}/pdfs</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the section. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-">GET api/v1/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/1/sections/1/pdfs/1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/sections/1/pdfs/1"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-">
-    </span>
-<span id="execution-results-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-" data-method="GET"
-      data-path="api/v1/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-                    onclick="tryItOut('GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-                    onclick="cancelTryOut('GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the section. Example: <code>1</code></p>
-            </div>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>pdf_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="pdf_id"                data-endpoint="GETapi-v1-courses--course_id--sections--section_id--pdfs--pdf_id-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the pdf. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize">POST api/v1/courses/{course_id}/videos/{video_id}/playback/authorize</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize">
+<span id="example-requests-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/courses/1/videos/1/playback/authorize" \
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/request_playback" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
-    --data "{
-    \"device_id\": \"device-123\",
-    \"section_id\": 5
-}"
-</code></pre></div>
+    --header "X-Locale: en"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/videos/1/playback/authorize"
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/request_playback"
 );
 
 const headers = {
@@ -3868,58 +2769,52 @@ const headers = {
     "X-Locale": "en",
 };
 
-let body = {
-    "device_id": "device-123",
-    "section_id": 5
-};
-
 fetch(url, {
     method: "POST",
     headers,
-    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
 
-<span id="example-responses-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize">
+<span id="example-responses-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">
 </span>
-<span id="execution-results-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize" hidden>
+<span id="execution-results-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"></span>:
+                id="execution-response-status-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize" hidden>
+<span id="execution-error-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize">
+    <pre><code id="execution-error-message-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize" data-method="POST"
-      data-path="api/v1/courses/{course_id}/videos/{video_id}/playback/authorize"
+<form id="form-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback" data-method="POST"
+      data-path="api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-courses--course_id--videos--video_id--playback-authorize', this);">
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
-                    onclick="tryItOut('POSTapi-v1-courses--course_id--videos--video_id--playback-authorize');">Try it out ⚡
+                    id="btn-tryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
+                    onclick="tryItOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
-                    onclick="cancelTryOut('POSTapi-v1-courses--course_id--videos--video_id--playback-authorize');" hidden>Cancel 🛑
+                    id="btn-canceltryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
+                    onclick="cancelTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
+                    id="btn-executetryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -3927,7 +2822,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-black">POST</small>
-            <b><code>api/v1/courses/{course_id}/videos/{video_id}/playback/authorize</code></b>
+            <b><code>api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -3936,7 +2831,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
                value="application/json"
                data-component="header">
     <br>
@@ -3948,7 +2843,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
+                              name="Accept"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
                value="application/json"
                data-component="header">
     <br>
@@ -3960,7 +2855,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
                value="en"
                data-component="header">
     <br>
@@ -3968,12 +2863,24 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
+               step="any"               name="course_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
                value="1"
                data-component="url">
     <br>
@@ -3985,7 +2892,179 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="video_id"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
+               step="any"               name="video_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the video. Example: <code>1</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/playback_progress" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"session_id\": 16,
+    \"percentage\": 22
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/playback_progress"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "session_id": 16,
+    "percentage": 22
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">
+</span>
+<span id="execution-results-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress" data-method="POST"
+      data-path="api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+                    onclick="tryItOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+                    onclick="cancelTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="video_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
                value="1"
                data-component="url">
     <br>
@@ -3993,216 +3072,57 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>device_id</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+            <b style="line-height: 2;"><code>session_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="device_id"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
-               value="device-123"
+                <input type="number" style="display: none"
+               step="any"               name="session_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+               value="16"
                data-component="body">
     <br>
-<p>Identifier of the requesting device. Example: <code>device-123</code></p>
+<p>Example: <code>16</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
+            <b style="line-height: 2;"><code>percentage</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
+ &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--playback-authorize"
-               value="5"
+               step="any"               name="percentage"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress"
+               value="22"
                data-component="body">
     <br>
-<p>Optional section context for the video. The <code>id</code> of an existing record in the sections table. Example: <code>5</code></p>
+<p>Must be at least 0. Must not be greater than 100. Example: <code>22</code></p>
         </div>
         </form>
 
-                    <h2 id="endpoints-PATCHapi-v1-playback-sessions--session-">PATCH api/v1/playback/sessions/{session}</h2>
+                    <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-PATCHapi-v1-playback-sessions--session-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request PATCH \
-    "http://xyz-lms.test/api/v1/playback/sessions/architecto" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en" \
-    --data "{
-    \"progress_percent\": 45
-}"
-</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/playback/sessions/architecto"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-let body = {
-    "progress_percent": 45
-};
-
-fetch(url, {
-    method: "PATCH",
-    headers,
-    body: JSON.stringify(body),
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-PATCHapi-v1-playback-sessions--session-">
-</span>
-<span id="execution-results-PATCHapi-v1-playback-sessions--session-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-PATCHapi-v1-playback-sessions--session-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-PATCHapi-v1-playback-sessions--session-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-PATCHapi-v1-playback-sessions--session-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-PATCHapi-v1-playback-sessions--session-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-PATCHapi-v1-playback-sessions--session-" data-method="PATCH"
-      data-path="api/v1/playback/sessions/{session}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('PATCHapi-v1-playback-sessions--session-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-PATCHapi-v1-playback-sessions--session-"
-                    onclick="tryItOut('PATCHapi-v1-playback-sessions--session-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-PATCHapi-v1-playback-sessions--session-"
-                    onclick="cancelTryOut('PATCHapi-v1-playback-sessions--session-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-PATCHapi-v1-playback-sessions--session-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-purple">PATCH</small>
-            <b><code>api/v1/playback/sessions/{session}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="PATCHapi-v1-playback-sessions--session-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="PATCHapi-v1-playback-sessions--session-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="PATCHapi-v1-playback-sessions--session-"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>session</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="session"                data-endpoint="PATCHapi-v1-playback-sessions--session-"
-               value="architecto"
-               data-component="url">
-    <br>
-<p>The session. Example: <code>architecto</code></p>
-            </div>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>progress_percent</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="progress_percent"                data-endpoint="PATCHapi-v1-playback-sessions--session-"
-               value="45"
-               data-component="body">
-    <br>
-<p>Playback progress percentage (0-100). Must be at least 0. Must not be greater than 100. Example: <code>45</code></p>
-        </div>
-        </form>
-
-                    <h2 id="endpoints-POSTapi-v1-playback-sessions--session--end">POST api/v1/playback/sessions/{session}/end</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-POSTapi-v1-playback-sessions--session--end">
+<span id="example-requests-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/playback/sessions/architecto/end" \
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/extra-view" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en" \
     --data "{
-    \"progress_percent\": 100
+    \"reason\": \"Need more time to finish the lecture.\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/playback/sessions/architecto/end"
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/extra-view"
 );
 
 const headers = {
@@ -4212,7 +3132,7 @@ const headers = {
 };
 
 let body = {
-    "progress_percent": 100
+    "reason": "Need more time to finish the lecture."
 };
 
 fetch(url, {
@@ -4223,45 +3143,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-POSTapi-v1-playback-sessions--session--end">
+<span id="example-responses-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">
 </span>
-<span id="execution-results-POSTapi-v1-playback-sessions--session--end" hidden>
+<span id="execution-results-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-POSTapi-v1-playback-sessions--session--end"></span>:
+                id="execution-response-status-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-v1-playback-sessions--session--end"
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-POSTapi-v1-playback-sessions--session--end" hidden>
+<span id="execution-error-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-v1-playback-sessions--session--end">
+    <pre><code id="execution-error-message-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-POSTapi-v1-playback-sessions--session--end" data-method="POST"
-      data-path="api/v1/playback/sessions/{session}/end"
+<form id="form-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view" data-method="POST"
+      data-path="api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-playback-sessions--session--end', this);">
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-v1-playback-sessions--session--end"
-                    onclick="tryItOut('POSTapi-v1-playback-sessions--session--end');">Try it out ⚡
+                    id="btn-tryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
+                    onclick="tryItOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-v1-playback-sessions--session--end"
-                    onclick="cancelTryOut('POSTapi-v1-playback-sessions--session--end');" hidden>Cancel 🛑
+                    id="btn-canceltryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
+                    onclick="cancelTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-v1-playback-sessions--session--end"
+                    id="btn-executetryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -4269,7 +3189,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-black">POST</small>
-            <b><code>api/v1/playback/sessions/{session}/end</code></b>
+            <b><code>api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -4278,7 +3198,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-v1-playback-sessions--session--end"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
                value="application/json"
                data-component="header">
     <br>
@@ -4290,7 +3210,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-v1-playback-sessions--session--end"
+                              name="Accept"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
                value="application/json"
                data-component="header">
     <br>
@@ -4302,7 +3222,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="POSTapi-v1-playback-sessions--session--end"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
                value="en"
                data-component="header">
     <br>
@@ -4310,295 +3230,24 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>session</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="session"                data-endpoint="POSTapi-v1-playback-sessions--session--end"
-               value="architecto"
-               data-component="url">
-    <br>
-<p>The session. Example: <code>architecto</code></p>
-            </div>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>progress_percent</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
+ &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="progress_percent"                data-endpoint="POSTapi-v1-playback-sessions--session--end"
-               value="100"
-               data-component="body">
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
+               value="1"
+               data-component="url">
     <br>
-<p>Final progress percentage when ending the session. Must be at least 0. Must not be greater than 100. Example: <code>100</code></p>
-        </div>
-        </form>
-
-                    <h2 id="endpoints-GETapi-v1-extra-view-requests">GET api/v1/extra-view-requests</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-extra-view-requests">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/extra-view-requests" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/extra-view-requests"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-extra-view-requests">
-    </span>
-<span id="execution-results-GETapi-v1-extra-view-requests" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-extra-view-requests"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-extra-view-requests"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-extra-view-requests" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-extra-view-requests">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-extra-view-requests" data-method="GET"
-      data-path="api/v1/extra-view-requests"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-extra-view-requests', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-extra-view-requests"
-                    onclick="tryItOut('GETapi-v1-extra-view-requests');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-extra-view-requests"
-                    onclick="cancelTryOut('GETapi-v1-extra-view-requests');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-extra-view-requests"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/extra-view-requests</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-extra-view-requests"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
+<p>The ID of the center. Example: <code>1</code></p>
             </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-extra-view-requests"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-extra-view-requests"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        </form>
-
-                    <h2 id="endpoints-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests">POST api/v1/courses/{course_id}/videos/{video_id}/extra-view-requests</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/courses/1/videos/1/extra-view-requests" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en" \
-    --data "{
-    \"reason\": \"Need to review before exam\"
-}"
-</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/courses/1/videos/1/extra-view-requests"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-let body = {
-    "reason": "Need to review before exam"
-};
-
-fetch(url, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body),
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests">
-</span>
-<span id="execution-results-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests" data-method="POST"
-      data-path="api/v1/courses/{course_id}/videos/{video_id}/extra-view-requests"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
-                    onclick="tryItOut('POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
-                    onclick="cancelTryOut('POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-black">POST</small>
-            <b><code>api/v1/courses/{course_id}/videos/{video_id}/extra-view-requests</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
+               step="any"               name="course_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
                value="1"
                data-component="url">
     <br>
@@ -4610,7 +3259,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="video_id"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
+               step="any"               name="video_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
                value="1"
                data-component="url">
     <br>
@@ -4623,167 +3272,40 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="reason"                data-endpoint="POSTapi-v1-courses--course_id--videos--video_id--extra-view-requests"
-               value="Need to review before exam"
+                              name="reason"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view"
+               value="Need more time to finish the lecture."
                data-component="body">
     <br>
-<p>Optional reason for requesting extra views. Must not be greater than 1000 characters. Example: <code>Need to review before exam</code></p>
+<p>Optional reason for requesting an extra view. Must not be greater than 255 characters. Example: <code>Need more time to finish the lecture.</code></p>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-device-change-requests">GET api/v1/device-change-requests</h2>
+                    <h2 id="endpoints-POSTapi-v1-settings-device-change">POST api/v1/settings/device-change</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-GETapi-v1-device-change-requests">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/device-change-requests" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: en"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/device-change-requests"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "en",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-device-change-requests">
-    </span>
-<span id="execution-results-GETapi-v1-device-change-requests" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-device-change-requests"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-device-change-requests"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-device-change-requests" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-device-change-requests">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-device-change-requests" data-method="GET"
-      data-path="api/v1/device-change-requests"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-device-change-requests', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-device-change-requests"
-                    onclick="tryItOut('GETapi-v1-device-change-requests');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-device-change-requests"
-                    onclick="cancelTryOut('GETapi-v1-device-change-requests');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-device-change-requests"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/device-change-requests</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-device-change-requests"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-device-change-requests"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-device-change-requests"
-               value="en"
-               data-component="header">
-    <br>
-<p>Example: <code>en</code></p>
-            </div>
-                        </form>
-
-                    <h2 id="endpoints-POSTapi-v1-device-change-requests">POST api/v1/device-change-requests</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-POSTapi-v1-device-change-requests">
+<span id="example-requests-POSTapi-v1-settings-device-change">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/device-change-requests" \
+    "http://xyz-lms.test/api/v1/settings/device-change" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en" \
     --data "{
-    \"new_device_id\": \"device-xyz\",
-    \"model\": \"iPhone 15\",
-    \"os_version\": \"iOS 17\",
-    \"reason\": \"Upgraded phone\"
+    \"reason\": \"Lost my phone and need to register a new device.\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/device-change-requests"
+    "http://xyz-lms.test/api/v1/settings/device-change"
 );
 
 const headers = {
@@ -4793,10 +3315,7 @@ const headers = {
 };
 
 let body = {
-    "new_device_id": "device-xyz",
-    "model": "iPhone 15",
-    "os_version": "iOS 17",
-    "reason": "Upgraded phone"
+    "reason": "Lost my phone and need to register a new device."
 };
 
 fetch(url, {
@@ -4807,45 +3326,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-POSTapi-v1-device-change-requests">
+<span id="example-responses-POSTapi-v1-settings-device-change">
 </span>
-<span id="execution-results-POSTapi-v1-device-change-requests" hidden>
+<span id="execution-results-POSTapi-v1-settings-device-change" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-POSTapi-v1-device-change-requests"></span>:
+                id="execution-response-status-POSTapi-v1-settings-device-change"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-v1-device-change-requests"
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-settings-device-change"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-POSTapi-v1-device-change-requests" hidden>
+<span id="execution-error-POSTapi-v1-settings-device-change" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-v1-device-change-requests">
+    <pre><code id="execution-error-message-POSTapi-v1-settings-device-change">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-POSTapi-v1-device-change-requests" data-method="POST"
-      data-path="api/v1/device-change-requests"
+<form id="form-POSTapi-v1-settings-device-change" data-method="POST"
+      data-path="api/v1/settings/device-change"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-device-change-requests', this);">
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-settings-device-change', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-v1-device-change-requests"
-                    onclick="tryItOut('POSTapi-v1-device-change-requests');">Try it out ⚡
+                    id="btn-tryout-POSTapi-v1-settings-device-change"
+                    onclick="tryItOut('POSTapi-v1-settings-device-change');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-v1-device-change-requests"
-                    onclick="cancelTryOut('POSTapi-v1-device-change-requests');" hidden>Cancel 🛑
+                    id="btn-canceltryout-POSTapi-v1-settings-device-change"
+                    onclick="cancelTryOut('POSTapi-v1-settings-device-change');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-v1-device-change-requests"
+                    id="btn-executetryout-POSTapi-v1-settings-device-change"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -4853,7 +3372,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-black">POST</small>
-            <b><code>api/v1/device-change-requests</code></b>
+            <b><code>api/v1/settings/device-change</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -4862,7 +3381,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-v1-device-change-requests"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-settings-device-change"
                value="application/json"
                data-component="header">
     <br>
@@ -4874,7 +3393,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-v1-device-change-requests"
+                              name="Accept"                data-endpoint="POSTapi-v1-settings-device-change"
                value="application/json"
                data-component="header">
     <br>
@@ -4886,7 +3405,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="POSTapi-v1-device-change-requests"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-settings-device-change"
                value="en"
                data-component="header">
     <br>
@@ -4894,52 +3413,187 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>new_device_id</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="new_device_id"                data-endpoint="POSTapi-v1-device-change-requests"
-               value="device-xyz"
-               data-component="body">
-    <br>
-<p>Identifier of the requested new device. Must not be greater than 255 characters. Example: <code>device-xyz</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>model</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="model"                data-endpoint="POSTapi-v1-device-change-requests"
-               value="iPhone 15"
-               data-component="body">
-    <br>
-<p>Device model name. Must not be greater than 255 characters. Example: <code>iPhone 15</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>os_version</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="os_version"                data-endpoint="POSTapi-v1-device-change-requests"
-               value="iOS 17"
-               data-component="body">
-    <br>
-<p>Operating system version. Must not be greater than 255 characters. Example: <code>iOS 17</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>reason</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="reason"                data-endpoint="POSTapi-v1-device-change-requests"
-               value="Upgraded phone"
+                              name="reason"                data-endpoint="POSTapi-v1-settings-device-change"
+               value="Lost my phone and need to register a new device."
                data-component="body">
     <br>
-<p>Optional reason for requesting device change. Must not be greater than 1000 characters. Example: <code>Upgraded phone</code></p>
+<p>Optional reason for requesting a device change. Must not be greater than 255 characters. Example: <code>Lost my phone and need to register a new device.</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--enroll-request">POST api/v1/centers/{center_id}/courses/{course_id}/enroll-request</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-centers--center_id--courses--course_id--enroll-request">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/enroll-request" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"reason\": \"Interested in joining this course.\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/enroll-request"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "reason": "Interested in joining this course."
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-centers--center_id--courses--course_id--enroll-request">
+</span>
+<span id="execution-results-POSTapi-v1-centers--center_id--courses--course_id--enroll-request" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-centers--center_id--courses--course_id--enroll-request"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-centers--center_id--courses--course_id--enroll-request" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-centers--center_id--courses--course_id--enroll-request">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-centers--center_id--courses--course_id--enroll-request" data-method="POST"
+      data-path="api/v1/centers/{center_id}/courses/{course_id}/enroll-request"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-centers--center_id--courses--course_id--enroll-request', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+                    onclick="tryItOut('POSTapi-v1-centers--center_id--courses--course_id--enroll-request');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+                    onclick="cancelTryOut('POSTapi-v1-centers--center_id--courses--course_id--enroll-request');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/centers/{center_id}/courses/{course_id}/enroll-request</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>reason</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="reason"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--enroll-request"
+               value="Interested in joining this course."
+               data-component="body">
+    <br>
+<p>Optional reason for requesting enrollment. Must not be greater than 255 characters. Example: <code>Interested in joining this course.</code></p>
         </div>
         </form>
 
@@ -5276,6 +3930,143 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>New password. Must be at least 8 characters. Example: <code>newpassword123</code></p>
         </div>
         </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-centers--slug-">GET api/v1/admin/centers/{slug}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-centers--slug-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/centers/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-centers--slug-">
+    </span>
+<span id="execution-results-GETapi-v1-admin-centers--slug-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-centers--slug-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-centers--slug-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-centers--slug-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-centers--slug-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-centers--slug-" data-method="GET"
+      data-path="api/v1/admin/centers/{slug}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-centers--slug-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-centers--slug-"
+                    onclick="tryItOut('GETapi-v1-admin-centers--slug-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-centers--slug-"
+                    onclick="cancelTryOut('GETapi-v1-admin-centers--slug-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-centers--slug-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/centers/{slug}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-centers--slug-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-centers--slug-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--slug-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="slug"                data-endpoint="GETapi-v1-admin-centers--slug-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The slug of the center. Example: <code>1</code></p>
+            </div>
+                    </form>
 
                     <h2 id="endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</h2>
 
@@ -6277,7 +5068,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/centers/architecto" \
+    --get "http://xyz-lms.test/api/v1/admin/centers/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -6285,7 +5076,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/centers/architecto"
+    "http://xyz-lms.test/api/v1/admin/centers/1"
 );
 
 const headers = {
@@ -6389,15 +5180,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>center</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="center"                data-endpoint="GETapi-v1-admin-centers--center-"
-               value="architecto"
+                <input type="number" style="display: none"
+               step="any"               name="center"                data-endpoint="GETapi-v1-admin-centers--center-"
+               value="1"
                data-component="url">
     <br>
-<p>The center. Example: <code>architecto</code></p>
+<p>The center. Example: <code>1</code></p>
             </div>
                     </form>
 
@@ -6414,7 +5205,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://xyz-lms.test/api/v1/admin/centers/architecto" \
+    "http://xyz-lms.test/api/v1/admin/centers/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en" \
@@ -6442,7 +5233,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/centers/architecto"
+    "http://xyz-lms.test/api/v1/admin/centers/1"
 );
 
 const headers = {
@@ -6567,15 +5358,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>center</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="center"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="architecto"
+                <input type="number" style="display: none"
+               step="any"               name="center"                data-endpoint="PUTapi-v1-admin-centers--center-"
+               value="1"
                data-component="url">
     <br>
-<p>The center. Example: <code>architecto</code></p>
+<p>The center. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -6745,7 +5536,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://xyz-lms.test/api/v1/admin/centers/architecto" \
+    "http://xyz-lms.test/api/v1/admin/centers/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -6753,7 +5544,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/centers/architecto"
+    "http://xyz-lms.test/api/v1/admin/centers/1"
 );
 
 const headers = {
@@ -6857,15 +5648,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>center</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="center"                data-endpoint="DELETEapi-v1-admin-centers--center-"
-               value="architecto"
+                <input type="number" style="display: none"
+               step="any"               name="center"                data-endpoint="DELETEapi-v1-admin-centers--center-"
+               value="1"
                data-component="url">
     <br>
-<p>The center. Example: <code>architecto</code></p>
+<p>The center. Example: <code>1</code></p>
             </div>
                     </form>
 
@@ -6882,7 +5673,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/admin/centers/architecto/restore" \
+    "http://xyz-lms.test/api/v1/admin/centers/1/restore" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -6890,7 +5681,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/centers/architecto/restore"
+    "http://xyz-lms.test/api/v1/admin/centers/1/restore"
 );
 
 const headers = {
@@ -6994,15 +5785,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>center</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="center"                data-endpoint="POSTapi-v1-admin-centers--center--restore"
-               value="architecto"
+                <input type="number" style="display: none"
+               step="any"               name="center"                data-endpoint="POSTapi-v1-admin-centers--center--restore"
+               value="1"
                data-component="url">
     <br>
-<p>The center. Example: <code>architecto</code></p>
+<p>The center. Example: <code>1</code></p>
             </div>
                     </form>
 
@@ -13863,7 +12654,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpaom0p03bmk5o7fJJUHz" </code></pre></div>
+    --form "avatar=@/tmp/phpapc977jvdghp6izy8xt" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14057,7 +12848,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpaom0p03bmk5o7fJJUHz</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpapc977jvdghp6izy8xt</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -14277,7 +13068,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpsookr1c9jce56L8RGJx" </code></pre></div>
+    --form "avatar=@/tmp/phplbtlsmhleinh8SKhoqw" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14487,7 +13278,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpsookr1c9jce56L8RGJx</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phplbtlsmhleinh8SKhoqw</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -15345,7 +14136,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phprj2lfa1on07c17NbL38" </code></pre></div>
+    --form "file=@/tmp/phpsdhqoortgm5f95ZeS79" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -15496,7 +14287,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phprj2lfa1on07c17NbL38</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpsdhqoortgm5f95ZeS79</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
