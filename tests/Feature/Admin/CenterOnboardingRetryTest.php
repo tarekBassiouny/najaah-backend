@@ -2,16 +2,20 @@
 
 declare(strict_types=1);
 
+use App\Jobs\CreateBunnyLibraryJob;
+use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Centers\CenterOnboardingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Bus;
 
 uses(RefreshDatabase::class)->group('centers', 'onboarding', 'admin');
 
 it('retries onboarding without duplicating the owner user', function (): void {
     Role::factory()->create(['slug' => 'center_owner']);
+    Bus::fake();
 
     $service = app(CenterOnboardingService::class);
 
@@ -47,4 +51,7 @@ it('retries onboarding without duplicating the owner user', function (): void {
 
     expect($after)->toBe($before)
         ->and($center?->fresh()?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
+
+    Bus::assertDispatched(CreateBunnyLibraryJob::class);
+    Bus::assertDispatched(SendAdminInvitationEmailJob::class);
 });

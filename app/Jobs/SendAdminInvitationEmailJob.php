@@ -16,17 +16,16 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 
-class SendCenterOnboardingEmail implements ShouldQueue
+class SendAdminInvitationEmailJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    public function __construct(
-        private readonly int $centerId,
-        private readonly int $ownerId
-    ) {}
+    public int $tries = 3;
+
+    public function __construct(public readonly int $centerId, public readonly int $ownerId) {}
 
     public function handle(): void
     {
@@ -34,7 +33,7 @@ class SendCenterOnboardingEmail implements ShouldQueue
         $owner = User::find($this->ownerId);
 
         if (! $center instanceof Center || ! $owner instanceof User) {
-            Log::warning('Center onboarding email skipped due to missing data.', $this->resolveLogContext([
+            Log::warning('Admin invitation email skipped due to missing data.', $this->resolveLogContext([
                 'source' => 'job',
                 'center_id' => $this->centerId,
                 'user_id' => $this->ownerId,
@@ -43,8 +42,12 @@ class SendCenterOnboardingEmail implements ShouldQueue
             return;
         }
 
+        if ($owner->invitation_sent_at !== null) {
+            return;
+        }
+
         if ($owner->email === null) {
-            Log::warning('Center onboarding email skipped due to missing email.', $this->resolveLogContext([
+            Log::warning('Admin invitation email skipped due to missing email.', $this->resolveLogContext([
                 'source' => 'job',
                 'center_id' => $center->id,
                 'user_id' => $owner->id,
@@ -55,11 +58,20 @@ class SendCenterOnboardingEmail implements ShouldQueue
 
         $token = Password::broker()->createToken($owner);
         $owner->notify(new AdminCenterOnboardingNotification($center, $token));
+
+        $owner->invitation_sent_at = now();
+        $owner->save();
     }
 
     public function failed(\Throwable $exception): void
     {
-        Log::error('Center onboarding email failed.', $this->resolveLogContext([
+        $center = Center::find($this->centerId);
+        if ($center instanceof Center) {
+            $center->onboarding_status = Center::ONBOARDING_FAILED;
+            $center->save();
+        }
+
+        Log::error('Admin invitation email failed.', $this->resolveLogContext([
             'source' => 'job',
             'center_id' => $this->centerId,
             'user_id' => $this->ownerId,

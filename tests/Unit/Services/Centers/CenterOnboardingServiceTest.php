@@ -7,12 +7,14 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\Centers\CenterOnboardingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class)->group('center', 'services', 'onboarding', 'admin');
 
 it('marks onboarding as active and applies storage defaults', function (): void {
+    Bus::fake();
     Role::factory()->create([
         'slug' => 'center_owner',
     ]);
@@ -42,6 +44,7 @@ it('marks onboarding as active and applies storage defaults', function (): void 
 });
 
 it('marks onboarding as failed when a step throws', function (): void {
+    Bus::fake();
     Role::factory()->create([
         'slug' => 'center_owner',
     ]);
@@ -78,6 +81,7 @@ it('marks onboarding as failed when a step throws', function (): void {
 });
 
 it('is idempotent when resuming onboarding', function (): void {
+    Bus::fake();
     Role::factory()->create([
         'slug' => 'center_owner',
     ]);

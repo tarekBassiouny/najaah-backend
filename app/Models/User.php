@@ -29,6 +29,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property bool $is_student
  * @property string|null $avatar_url
  * @property \Carbon\Carbon|null $last_login_at
+ * @property \Carbon\Carbon|null $invitation_sent_at
  * @property-read Center|null $center
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Center> $centers
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Role> $roles
@@ -66,6 +67,7 @@ class User extends Authenticatable implements JWTSubject
         'is_student',
         'avatar_url',
         'last_login_at',
+        'invitation_sent_at',
     ];
 
     protected $casts = [
@@ -73,6 +75,7 @@ class User extends Authenticatable implements JWTSubject
         'is_student' => 'boolean',
         'force_password_reset' => 'boolean',
         'last_login_at' => 'datetime',
+        'invitation_sent_at' => 'datetime',
     ];
 
     /** @return BelongsTo<Center, self> */

@@ -14,7 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class CreateCenterBunnyLibrary implements ShouldQueue
+class CreateBunnyLibraryJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -23,16 +23,14 @@ class CreateCenterBunnyLibrary implements ShouldQueue
 
     public int $tries = 3;
 
-    public function __construct(
-        private readonly int $centerId
-    ) {}
+    public function __construct(public readonly int $centerId) {}
 
     public function handle(BunnyLibraryService $libraryService): void
     {
         $center = Center::find($this->centerId);
 
         if (! $center instanceof Center) {
-            Log::warning('Center Bunny library creation skipped due to missing center.', $this->resolveLogContext([
+            Log::warning('Bunny library creation skipped due to missing center.', $this->resolveLogContext([
                 'source' => 'job',
                 'center_id' => $this->centerId,
             ]));
@@ -54,7 +52,13 @@ class CreateCenterBunnyLibrary implements ShouldQueue
 
     public function failed(\Throwable $exception): void
     {
-        Log::error('Center Bunny library creation failed.', $this->resolveLogContext([
+        $center = Center::find($this->centerId);
+        if ($center instanceof Center) {
+            $center->onboarding_status = Center::ONBOARDING_FAILED;
+            $center->save();
+        }
+
+        Log::error('Bunny library creation failed.', $this->resolveLogContext([
             'source' => 'job',
             'center_id' => $this->centerId,
             'error' => $exception->getMessage(),

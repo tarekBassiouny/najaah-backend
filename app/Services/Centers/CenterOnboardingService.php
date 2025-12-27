@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
+use App\Jobs\CreateBunnyLibraryJob;
+use App\Jobs\ProcessCenterLogoJob;
+use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\CenterSetting;
 use App\Models\Role;
@@ -49,6 +52,7 @@ class CenterOnboardingService
     {
         if ($center->onboarding_status === Center::ONBOARDING_ACTIVE) {
             $owner = $this->resolveExistingOwner($center, $existingOwner);
+            $this->dispatchAsyncJobs($center, $owner);
 
             return [
                 'center' => $center->fresh(['setting']) ?? $center,
@@ -65,6 +69,7 @@ class CenterOnboardingService
             $owner = $this->resolveOwner($center, $existingOwner, $ownerPayload, $roleSlug);
 
             $this->markOnboardingStatus($center, Center::ONBOARDING_ACTIVE);
+            $this->dispatchAsyncJobs($center, $owner);
 
             return [
                 'center' => $center->fresh(['setting']) ?? $center,
@@ -104,6 +109,42 @@ class CenterOnboardingService
             $center->fill($updates);
             $center->save();
         }
+    }
+
+    private function dispatchAsyncJobs(Center $center, User $owner): void
+    {
+        if (! (bool) config('onboarding.async_enabled', true)) {
+            return;
+        }
+
+        if (! is_numeric($center->bunny_library_id)) {
+            CreateBunnyLibraryJob::dispatch($center->id);
+        }
+
+        if ($owner->invitation_sent_at === null) {
+            SendAdminInvitationEmailJob::dispatch($center->id, $owner->id);
+        }
+
+        if ($this->shouldProcessLogo($center)) {
+            ProcessCenterLogoJob::dispatch($center->id, (string) $center->logo_url);
+        }
+    }
+
+    private function shouldProcessLogo(Center $center): bool
+    {
+        if (! is_string($center->logo_url) || $center->logo_url === '') {
+            return false;
+        }
+
+        $metadata = is_array($center->branding_metadata) ? $center->branding_metadata : [];
+        $source = $metadata['logo_source'] ?? null;
+        $processedAt = $metadata['logo_processed_at'] ?? null;
+
+        if ($source === $center->logo_url && is_string($processedAt) && $processedAt !== '') {
+            return false;
+        }
+
+        return true;
     }
 
     /**

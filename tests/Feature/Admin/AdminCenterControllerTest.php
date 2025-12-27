@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Jobs\CreateBunnyLibraryJob;
+use App\Jobs\ProcessCenterLogoJob;
+use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Bus;
 
 uses(RefreshDatabase::class)->group('centers', 'admin');
 
@@ -15,6 +19,7 @@ beforeEach(function (): void {
 });
 
 it('creates a center', function (): void {
+    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $payload = [
@@ -54,9 +59,13 @@ it('creates a center', function (): void {
     expect($owner)->not->toBeNull();
     $center = Center::where('slug', 'center-1')->first();
     expect($center?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
+    Bus::assertDispatched(CreateBunnyLibraryJob::class);
+    Bus::assertDispatched(SendAdminInvitationEmailJob::class);
+    Bus::assertDispatched(ProcessCenterLogoJob::class);
 });
 
 it('rejects branded center creation without branding metadata', function (): void {
+    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $payload = [
@@ -75,6 +84,7 @@ it('rejects branded center creation without branding metadata', function (): voi
 });
 
 it('allows unbranded center creation without branding metadata', function (): void {
+    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $payload = [
@@ -93,6 +103,7 @@ it('allows unbranded center creation without branding metadata', function (): vo
 });
 
 it('creates a center with an existing owner', function (): void {
+    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $owner = User::factory()->create([
@@ -116,6 +127,8 @@ it('creates a center with an existing owner', function (): void {
     ]);
     $center = Center::find($response->json('data.center.id'));
     expect($center?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
+    Bus::assertDispatched(CreateBunnyLibraryJob::class);
+    Bus::assertDispatched(SendAdminInvitationEmailJob::class);
 });
 
 it('lists centers with pagination', function (): void {
