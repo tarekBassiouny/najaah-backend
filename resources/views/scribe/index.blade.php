@@ -131,14 +131,14 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--enroll-request">
                                 <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--enroll-request">POST api/v1/centers/{center_id}/courses/{course_id}/enroll-request</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-resolve-centers--slug-">
+                                <a href="#endpoints-GETapi-v1-resolve-centers--slug-">GET api/v1/resolve/centers/{slug}</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-login">
                                 <a href="#endpoints-POSTapi-v1-admin-auth-login">POST api/v1/admin/auth/login</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-password-reset">
                                 <a href="#endpoints-POSTapi-v1-admin-auth-password-reset">POST api/v1/admin/auth/password/reset</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--slug-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--slug-">GET api/v1/admin/centers/{slug}</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-auth-me">
                                 <a href="#endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</a>
@@ -166,6 +166,18 @@
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center--restore">
                                 <a href="#endpoints-POSTapi-v1-admin-centers--center--restore">POST api/v1/admin/centers/{center}/restore</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center--onboarding-retry">
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center--onboarding-retry">POST api/v1/admin/centers/{center}/onboarding/retry</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center--branding-logo">
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center--branding-logo">POST api/v1/admin/centers/{center}/branding/logo</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--settings">
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--settings">GET api/v1/admin/centers/{center_id}/settings</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PATCHapi-v1-admin-centers--center_id--settings">
+                                <a href="#endpoints-PATCHapi-v1-admin-centers--center_id--settings">PATCH api/v1/admin/centers/{center_id}/settings</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-enrollments">
                                 <a href="#endpoints-POSTapi-v1-admin-enrollments">POST api/v1/admin/enrollments</a>
@@ -308,12 +320,6 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-pdfs">
                                 <a href="#endpoints-POSTapi-v1-admin-pdfs">POST api/v1/admin/pdfs</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--settings">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--settings">GET api/v1/admin/centers/{center_id}/settings</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-PATCHapi-v1-admin-centers--center_id--settings">
-                                <a href="#endpoints-PATCHapi-v1-admin-centers--center_id--settings">PATCH api/v1/admin/centers/{center_id}/settings</a>
-                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-settings-preview">
                                 <a href="#endpoints-GETapi-v1-admin-settings-preview">GET api/v1/admin/settings/preview</a>
                             </li>
@@ -394,7 +400,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: December 26, 2025</li>
+        <li>Last updated: December 27, 2025</li>
     </ul>
 </div>
 
@@ -4063,6 +4069,157 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
+                    <h2 id="endpoints-GETapi-v1-resolve-centers--slug-">GET api/v1/resolve/centers/{slug}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-resolve-centers--slug-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/resolve/centers/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/resolve/centers/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-resolve-centers--slug-">
+    </span>
+<span id="execution-results-GETapi-v1-resolve-centers--slug-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-resolve-centers--slug-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-resolve-centers--slug-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-resolve-centers--slug-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-resolve-centers--slug-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-resolve-centers--slug-" data-method="GET"
+      data-path="api/v1/resolve/centers/{slug}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-resolve-centers--slug-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-resolve-centers--slug-"
+                    onclick="tryItOut('GETapi-v1-resolve-centers--slug-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-resolve-centers--slug-"
+                    onclick="cancelTryOut('GETapi-v1-resolve-centers--slug-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-resolve-centers--slug-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/resolve/centers/{slug}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-resolve-centers--slug-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-resolve-centers--slug-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-resolve-centers--slug-"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-resolve-centers--slug-"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="slug"                data-endpoint="GETapi-v1-resolve-centers--slug-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The slug of the center. Example: <code>1</code></p>
+            </div>
+                    </form>
+
                     <h2 id="endpoints-POSTapi-v1-admin-auth-login">POST api/v1/admin/auth/login</h2>
 
 <p>
@@ -4424,157 +4581,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>New password. Must be at least 8 characters. Example: <code>newpassword123</code></p>
         </div>
         </form>
-
-                    <h2 id="endpoints-GETapi-v1-admin-centers--slug-">GET api/v1/admin/centers/{slug}</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-admin-centers--slug-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/centers/1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: {{locale}}" \
-    --header "X-Api-Key: {{api_key}}"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/centers/1"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "{{locale}}",
-    "X-Api-Key": "{{api_key}}",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-admin-centers--slug-">
-    </span>
-<span id="execution-results-GETapi-v1-admin-centers--slug-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-admin-centers--slug-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-centers--slug-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-admin-centers--slug-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-admin-centers--slug-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-admin-centers--slug-" data-method="GET"
-      data-path="api/v1/admin/centers/{slug}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-centers--slug-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-admin-centers--slug-"
-                    onclick="tryItOut('GETapi-v1-admin-centers--slug-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-admin-centers--slug-"
-                    onclick="cancelTryOut('GETapi-v1-admin-centers--slug-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-admin-centers--slug-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/admin/centers/{slug}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-admin-centers--slug-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-admin-centers--slug-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--slug-"
-               value="{{locale}}"
-               data-component="header">
-    <br>
-<p>Example: <code>{{locale}}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers--slug-"
-               value="{{api_key}}"
-               data-component="header">
-    <br>
-<p>Example: <code>{{api_key}}</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="slug"                data-endpoint="GETapi-v1-admin-centers--slug-"
-               value="1"
-               data-component="url">
-    <br>
-<p>The slug of the center. Example: <code>1</code></p>
-            </div>
-                    </form>
 
                     <h2 id="endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</h2>
 
@@ -5003,7 +5009,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;page=1&amp;slug=center-1&amp;type=1&amp;search=Academy" \
+    --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;page=1&amp;slug=center-1&amp;type=1&amp;tier=1&amp;is_featured=1&amp;onboarding_status=ACTIVE&amp;search=Academy&amp;created_from=2024-01-01&amp;created_to=2024-12-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
@@ -5020,7 +5026,12 @@ const params = {
     "page": "1",
     "slug": "center-1",
     "type": "1",
+    "tier": "1",
+    "is_featured": "1",
+    "onboarding_status": "ACTIVE",
     "search": "Academy",
+    "created_from": "2024-01-01",
+    "created_to": "2024-12-31",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -5186,6 +5197,52 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Filter centers by type. Example: <code>1</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>tier</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="tier"                data-endpoint="GETapi-v1-admin-centers"
+               value="1"
+               data-component="query">
+    <br>
+<p>Filter centers by tier. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>is_featured</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="GETapi-v1-admin-centers" style="display: none">
+            <input type="radio" name="is_featured"
+                   value="1"
+                   data-endpoint="GETapi-v1-admin-centers"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-v1-admin-centers" style="display: none">
+            <input type="radio" name="is_featured"
+                   value="0"
+                   data-endpoint="GETapi-v1-admin-centers"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Filter centers by featured flag. Example: <code>true</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>onboarding_status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="onboarding_status"                data-endpoint="GETapi-v1-admin-centers"
+               value="ACTIVE"
+               data-component="query">
+    <br>
+<p>Filter centers by onboarding status. Example: <code>ACTIVE</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
@@ -5196,6 +5253,30 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="query">
     <br>
 <p>Search centers by name. Example: <code>Academy</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>created_from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="created_from"                data-endpoint="GETapi-v1-admin-centers"
+               value="2024-01-01"
+               data-component="query">
+    <br>
+<p>Filter centers created from the given date. Must be a valid date. Example: <code>2024-01-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>created_to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="created_to"                data-endpoint="GETapi-v1-admin-centers"
+               value="2024-12-31"
+               data-component="query">
+    <br>
+<p>Filter centers created up to the given date. Must be a valid date. Example: <code>2024-12-31</code></p>
             </div>
                 </form>
 
@@ -5219,31 +5300,19 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Api-Key: {{api_key}}" \
     --data "{
     \"slug\": \"center-01\",
-    \"type\": 0,
-    \"name\": \"Center Name\",
-    \"name_translations\": {
-        \"en\": \"Center Name\",
-        \"ar\": \"اسم المركز\"
+    \"type\": \"branded\",
+    \"tier\": \"premium\",
+    \"is_featured\": false,
+    \"name_translations\": [
+        \"b\"
+    ],
+    \"branding_metadata\": {
+        \"primary_color\": \"#000000\"
     },
-    \"description_translations\": {
-        \"en\": \"Description\"
-    },
-    \"logo_url\": \"https:\\/\\/example.com\\/logo.png\",
-    \"primary_color\": \"#000000\",
-    \"default_view_limit\": 3,
-    \"allow_extra_view_requests\": false,
-    \"pdf_download_permission\": false,
-    \"device_limit\": 1,
-    \"settings\": {
-        \"pdf_download_permission\": true
-    },
-    \"owner_user_id\": 10,
-    \"owner\": {
-        \"name\": \"Owner Name\",
-        \"email\": \"owner@example.com\",
-        \"phone\": \"+1234567890\"
-    },
-    \"owner_role\": \"center_owner\"
+    \"admin\": {
+        \"name\": \"Admin Name\",
+        \"email\": \"admin@example.com\"
+    }
 }"
 </code></pre></div>
 
@@ -5262,31 +5331,19 @@ const headers = {
 
 let body = {
     "slug": "center-01",
-    "type": 0,
-    "name": "Center Name",
-    "name_translations": {
-        "en": "Center Name",
-        "ar": "اسم المركز"
+    "type": "branded",
+    "tier": "premium",
+    "is_featured": false,
+    "name_translations": [
+        "b"
+    ],
+    "branding_metadata": {
+        "primary_color": "#000000"
     },
-    "description_translations": {
-        "en": "Description"
-    },
-    "logo_url": "https:\/\/example.com\/logo.png",
-    "primary_color": "#000000",
-    "default_view_limit": 3,
-    "allow_extra_view_requests": false,
-    "pdf_download_permission": false,
-    "device_limit": 1,
-    "settings": {
-        "pdf_download_permission": true
-    },
-    "owner_user_id": 10,
-    "owner": {
-        "name": "Owner Name",
-        "email": "owner@example.com",
-        "phone": "+1234567890"
-    },
-    "owner_role": "center_owner"
+    "admin": {
+        "name": "Admin Name",
+        "email": "admin@example.com"
+    }
 };
 
 fetch(url, {
@@ -5398,7 +5455,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
-<i>optional</i> &nbsp;
+ &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="slug"                data-endpoint="POSTapi-v1-admin-centers"
@@ -5409,15 +5466,127 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
+<small>string</small>&nbsp;
  &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="type"                data-endpoint="POSTapi-v1-admin-centers"
-               value="0"
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="type"                data-endpoint="POSTapi-v1-admin-centers"
+               value="branded"
                data-component="body">
     <br>
-<p>Center type identifier. Example: <code>0</code></p>
+<p>Center type. Example: <code>branded</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>branded</code></li> <li><code>unbranded</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>tier</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="tier"                data-endpoint="POSTapi-v1-admin-centers"
+               value="premium"
+               data-component="body">
+    <br>
+<p>Center tier. Example: <code>premium</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>standard</code></li> <li><code>premium</code></li> <li><code>vip</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>is_featured</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-v1-admin-centers" style="display: none">
+            <input type="radio" name="is_featured"
+                   value="true"
+                   data-endpoint="POSTapi-v1-admin-centers"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-v1-admin-centers" style="display: none">
+            <input type="radio" name="is_featured"
+                   value="false"
+                   data-endpoint="POSTapi-v1-admin-centers"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Whether the center is featured. Example: <code>false</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name_translations[0]"                data-endpoint="POSTapi-v1-admin-centers"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="name_translations[1]"                data-endpoint="POSTapi-v1-admin-centers"
+               data-component="body">
+    <br>
+<p>Must not be greater than 255 characters.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>branding_metadata</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Branding metadata for branded centers. This field is required when <code>type</code> is <code>branded</code>.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>primary_color</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="branding_metadata.primary_color"                data-endpoint="POSTapi-v1-admin-centers"
+               value="#000000"
+               data-component="body">
+    <br>
+<p>This field is required when <code>type</code> is <code>branded</code>. Example: <code>#000000</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>admin</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>Initial admin user details.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="admin.name"                data-endpoint="POSTapi-v1-admin-centers"
+               value="Admin Name"
+               data-component="body">
+    <br>
+<p>Admin name. Must not be greater than 255 characters. Example: <code>Admin Name</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="admin.email"                data-endpoint="POSTapi-v1-admin-centers"
+               value="admin@example.com"
+               data-component="body">
+    <br>
+<p>Admin email address. Must be a valid email address. Must not be greater than 255 characters. Example: <code>admin@example.com</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
@@ -5426,34 +5595,24 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="name"                data-endpoint="POSTapi-v1-admin-centers"
-               value="Center Name"
-               data-component="body">
-    <br>
-<p>Center name when translations are not provided. This field is required when <code>name_translations</code> is not present. Must not be greater than 255 characters. Example: <code>Center Name</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
-<small>object</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="name_translations"                data-endpoint="POSTapi-v1-admin-centers"
                value=""
                data-component="body">
     <br>
-<p>Localized center name. This field is required when <code>name</code> is not present.</p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>object</small>&nbsp;
+<small>string[]</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="POSTapi-v1-admin-centers"
-               value=""
+                              name="description_translations[0]"                data-endpoint="POSTapi-v1-admin-centers"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="description_translations[1]"                data-endpoint="POSTapi-v1-admin-centers"
                data-component="body">
     <br>
-<p>Localized center description.</p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>logo_url</code></b>&nbsp;&nbsp;
@@ -5462,10 +5621,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="logo_url"                data-endpoint="POSTapi-v1-admin-centers"
-               value="https://example.com/logo.png"
+               value=""
                data-component="body">
     <br>
-<p>Logo URL for the center. Example: <code>https://example.com/logo.png</code></p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>primary_color</code></b>&nbsp;&nbsp;
@@ -5474,82 +5633,62 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="primary_color"                data-endpoint="POSTapi-v1-admin-centers"
-               value="#000000"
+               value=""
                data-component="body">
     <br>
-<p>Primary branding color. Example: <code>#000000</code></p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>default_view_limit</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
+<small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="default_view_limit"                data-endpoint="POSTapi-v1-admin-centers"
-               value="3"
+                <input type="text" style="display: none"
+                              name="default_view_limit"                data-endpoint="POSTapi-v1-admin-centers"
+               value=""
                data-component="body">
     <br>
-<p>Default view limit for videos. Must be at least 0. Example: <code>3</code></p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>allow_extra_view_requests</code></b>&nbsp;&nbsp;
-<small>boolean</small>&nbsp;
+<small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
-                <label data-endpoint="POSTapi-v1-admin-centers" style="display: none">
-            <input type="radio" name="allow_extra_view_requests"
-                   value="true"
-                   data-endpoint="POSTapi-v1-admin-centers"
-                   data-component="body"             >
-            <code>true</code>
-        </label>
-        <label data-endpoint="POSTapi-v1-admin-centers" style="display: none">
-            <input type="radio" name="allow_extra_view_requests"
-                   value="false"
-                   data-endpoint="POSTapi-v1-admin-centers"
-                   data-component="body"             >
-            <code>false</code>
-        </label>
+                <input type="text" style="display: none"
+                              name="allow_extra_view_requests"                data-endpoint="POSTapi-v1-admin-centers"
+               value=""
+               data-component="body">
     <br>
-<p>Whether students can request extra views. Example: <code>false</code></p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pdf_download_permission</code></b>&nbsp;&nbsp;
-<small>boolean</small>&nbsp;
+<small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
-                <label data-endpoint="POSTapi-v1-admin-centers" style="display: none">
-            <input type="radio" name="pdf_download_permission"
-                   value="true"
-                   data-endpoint="POSTapi-v1-admin-centers"
-                   data-component="body"             >
-            <code>true</code>
-        </label>
-        <label data-endpoint="POSTapi-v1-admin-centers" style="display: none">
-            <input type="radio" name="pdf_download_permission"
-                   value="false"
-                   data-endpoint="POSTapi-v1-admin-centers"
-                   data-component="body"             >
-            <code>false</code>
-        </label>
+                <input type="text" style="display: none"
+                              name="pdf_download_permission"                data-endpoint="POSTapi-v1-admin-centers"
+               value=""
+               data-component="body">
     <br>
-<p>Whether PDF downloads are allowed by default. Example: <code>false</code></p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_limit</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
+<small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="device_limit"                data-endpoint="POSTapi-v1-admin-centers"
-               value="1"
+                <input type="text" style="display: none"
+                              name="device_limit"                data-endpoint="POSTapi-v1-admin-centers"
+               value=""
                data-component="body">
     <br>
-<p>Maximum active devices per student. Must be at least 1. Example: <code>1</code></p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>settings</code></b>&nbsp;&nbsp;
-<small>object</small>&nbsp;
+<small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
@@ -5557,67 +5696,31 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Optional center settings payload.</p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>owner_user_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
+<small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="owner_user_id"                data-endpoint="POSTapi-v1-admin-centers"
-               value="10"
+                <input type="text" style="display: none"
+                              name="owner_user_id"                data-endpoint="POSTapi-v1-admin-centers"
+               value=""
                data-component="body">
     <br>
-<p>Existing user ID to assign as the owner. This field is required when <code>owner</code> is not present. The <code>id</code> of an existing record in the users table. Example: <code>10</code></p>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-        <details>
-            <summary style="padding-bottom: 10px;">
-                <b style="line-height: 2;"><code>owner</code></b>&nbsp;&nbsp;
-<small>object</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-<br>
-<p>Owner details when creating a new owner user. This field is required when <code>owner_user_id</code> is not present.</p>
-            </summary>
-                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+            <b style="line-height: 2;"><code>owner</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="owner.name"                data-endpoint="POSTapi-v1-admin-centers"
-               value="Owner Name"
+                              name="owner"                data-endpoint="POSTapi-v1-admin-centers"
+               value=""
                data-component="body">
     <br>
-<p>Owner name. This field is required when <code>owner_user_id</code> is not present. Must not be greater than 255 characters. Example: <code>Owner Name</code></p>
-                    </div>
-                                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="owner.email"                data-endpoint="POSTapi-v1-admin-centers"
-               value="owner@example.com"
-               data-component="body">
-    <br>
-<p>Owner email address. This field is required when <code>owner_user_id</code> is not present. Must be a valid email address. Must not be greater than 255 characters. Example: <code>owner@example.com</code></p>
-                    </div>
-                                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="owner.phone"                data-endpoint="POSTapi-v1-admin-centers"
-               value="+1234567890"
-               data-component="body">
-    <br>
-<p>Owner phone number. Must not be greater than 50 characters. Example: <code>+1234567890</code></p>
-                    </div>
-                                    </details>
+
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>owner_role</code></b>&nbsp;&nbsp;
@@ -5626,10 +5729,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="owner_role"                data-endpoint="POSTapi-v1-admin-centers"
-               value="center_owner"
+               value=""
                data-component="body">
     <br>
-<p>Optional role name to assign to the owner. Example: <code>center_owner</code></p>
+
         </div>
         </form>
 
@@ -5803,22 +5906,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
     --data "{
-    \"slug\": \"center-01\",
-    \"type\": 0,
-    \"name_translations\": {
-        \"en\": \"Updated Name\"
-    },
-    \"description_translations\": {
-        \"en\": \"Updated description\"
-    },
-    \"logo_url\": \"https:\\/\\/example.com\\/logo.png\",
-    \"primary_color\": \"#123456\",
-    \"default_view_limit\": 5,
-    \"allow_extra_view_requests\": false,
-    \"pdf_download_permission\": false,
-    \"device_limit\": 2,
-    \"settings\": {
-        \"pdf_download_permission\": false
+    \"name_translations\": [
+        \"b\"
+    ],
+    \"tier\": 1,
+    \"is_featured\": false,
+    \"branding_metadata\": {
+        \"primary_color\": \"#123456\"
     }
 }"
 </code></pre></div>
@@ -5837,22 +5931,13 @@ const headers = {
 };
 
 let body = {
-    "slug": "center-01",
-    "type": 0,
-    "name_translations": {
-        "en": "Updated Name"
-    },
-    "description_translations": {
-        "en": "Updated description"
-    },
-    "logo_url": "https:\/\/example.com\/logo.png",
-    "primary_color": "#123456",
-    "default_view_limit": 5,
-    "allow_extra_view_requests": false,
-    "pdf_download_permission": false,
-    "device_limit": 2,
-    "settings": {
-        "pdf_download_permission": false
+    "name_translations": [
+        "b"
+    ],
+    "tier": 1,
+    "is_featured": false,
+    "branding_metadata": {
+        "primary_color": "#123456"
     }
 };
 
@@ -5976,156 +6061,64 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="slug"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="center-01"
-               data-component="body">
-    <br>
-<p>Unique, immutable center slug. Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters. Example: <code>center-01</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="type"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="0"
-               data-component="body">
-    <br>
-<p>Center type identifier. Example: <code>0</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
-<small>object</small>&nbsp;
+<small>string[]</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="name_translations"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value=""
+                              name="name_translations[0]"                data-endpoint="PUTapi-v1-admin-centers--center-"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="name_translations[1]"                data-endpoint="PUTapi-v1-admin-centers--center-"
                data-component="body">
     <br>
-<p>Localized center name.</p>
+<p>Must not be greater than 255 characters.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>object</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value=""
-               data-component="body">
-    <br>
-<p>Localized description.</p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>logo_url</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="logo_url"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="https://example.com/logo.png"
-               data-component="body">
-    <br>
-<p>Logo URL. Example: <code>https://example.com/logo.png</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>primary_color</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="primary_color"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="#123456"
-               data-component="body">
-    <br>
-<p>Primary branding color. Example: <code>#123456</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>default_view_limit</code></b>&nbsp;&nbsp;
+            <b style="line-height: 2;"><code>tier</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="default_view_limit"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="5"
+               step="any"               name="tier"                data-endpoint="PUTapi-v1-admin-centers--center-"
+               value="1"
                data-component="body">
     <br>
-<p>Default view limit for videos. Must be at least 0. Example: <code>5</code></p>
+<p>Center tier identifier. Example: <code>1</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>allow_extra_view_requests</code></b>&nbsp;&nbsp;
+            <b style="line-height: 2;"><code>is_featured</code></b>&nbsp;&nbsp;
 <small>boolean</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <label data-endpoint="PUTapi-v1-admin-centers--center-" style="display: none">
-            <input type="radio" name="allow_extra_view_requests"
+            <input type="radio" name="is_featured"
                    value="true"
                    data-endpoint="PUTapi-v1-admin-centers--center-"
                    data-component="body"             >
             <code>true</code>
         </label>
         <label data-endpoint="PUTapi-v1-admin-centers--center-" style="display: none">
-            <input type="radio" name="allow_extra_view_requests"
+            <input type="radio" name="is_featured"
                    value="false"
                    data-endpoint="PUTapi-v1-admin-centers--center-"
                    data-component="body"             >
             <code>false</code>
         </label>
     <br>
-<p>Whether extra view requests are allowed. Example: <code>false</code></p>
+<p>Whether the center is featured. Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>pdf_download_permission</code></b>&nbsp;&nbsp;
-<small>boolean</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <label data-endpoint="PUTapi-v1-admin-centers--center-" style="display: none">
-            <input type="radio" name="pdf_download_permission"
-                   value="true"
-                   data-endpoint="PUTapi-v1-admin-centers--center-"
-                   data-component="body"             >
-            <code>true</code>
-        </label>
-        <label data-endpoint="PUTapi-v1-admin-centers--center-" style="display: none">
-            <input type="radio" name="pdf_download_permission"
-                   value="false"
-                   data-endpoint="PUTapi-v1-admin-centers--center-"
-                   data-component="body"             >
-            <code>false</code>
-        </label>
-    <br>
-<p>Whether PDF downloads are allowed by default. Example: <code>false</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>device_limit</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="device_limit"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="2"
-               data-component="body">
-    <br>
-<p>Maximum active devices per student. Must be at least 1. Example: <code>2</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>settings</code></b>&nbsp;&nbsp;
+            <b style="line-height: 2;"><code>branding_metadata</code></b>&nbsp;&nbsp;
 <small>object</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="settings"                data-endpoint="PUTapi-v1-admin-centers--center-"
+                              name="branding_metadata"                data-endpoint="PUTapi-v1-admin-centers--center-"
                value=""
                data-component="body">
     <br>
-<p>Optional settings overrides.</p>
+<p>Branding metadata for branded centers.</p>
         </div>
         </form>
 
@@ -6430,6 +6423,772 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>The center. Example: <code>1</code></p>
             </div>
                     </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center--onboarding-retry">POST api/v1/admin/centers/{center}/onboarding/retry</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-centers--center--onboarding-retry">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/centers/1/onboarding/retry" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/onboarding/retry"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-centers--center--onboarding-retry">
+</span>
+<span id="execution-results-POSTapi-v1-admin-centers--center--onboarding-retry" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-centers--center--onboarding-retry"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-centers--center--onboarding-retry"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-centers--center--onboarding-retry" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-centers--center--onboarding-retry">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-centers--center--onboarding-retry" data-method="POST"
+      data-path="api/v1/admin/centers/{center}/onboarding/retry"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-centers--center--onboarding-retry', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-centers--center--onboarding-retry"
+                    onclick="tryItOut('POSTapi-v1-admin-centers--center--onboarding-retry');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-centers--center--onboarding-retry"
+                    onclick="cancelTryOut('POSTapi-v1-admin-centers--center--onboarding-retry');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-centers--center--onboarding-retry"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/centers/{center}/onboarding/retry</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-centers--center--onboarding-retry"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-centers--center--onboarding-retry"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-centers--center--onboarding-retry"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-centers--center--onboarding-retry"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center"                data-endpoint="POSTapi-v1-admin-centers--center--onboarding-retry"
+               value="1"
+               data-component="url">
+    <br>
+<p>The center. Example: <code>1</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center--branding-logo">POST api/v1/admin/centers/{center}/branding/logo</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-centers--center--branding-logo">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/centers/1/branding/logo" \
+    --header "Content-Type: multipart/form-data" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
+    --form "logo=@/tmp/phppgotu7ag83d3cE0tc4u" </code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/branding/logo"
+);
+
+const headers = {
+    "Content-Type": "multipart/form-data",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+const body = new FormData();
+body.append('logo', document.querySelector('input[name="logo"]').files[0]);
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-centers--center--branding-logo">
+</span>
+<span id="execution-results-POSTapi-v1-admin-centers--center--branding-logo" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-centers--center--branding-logo"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-centers--center--branding-logo"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-centers--center--branding-logo" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-centers--center--branding-logo">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-centers--center--branding-logo" data-method="POST"
+      data-path="api/v1/admin/centers/{center}/branding/logo"
+      data-authed="0"
+      data-hasfiles="1"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-centers--center--branding-logo', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-centers--center--branding-logo"
+                    onclick="tryItOut('POSTapi-v1-admin-centers--center--branding-logo');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-centers--center--branding-logo"
+                    onclick="cancelTryOut('POSTapi-v1-admin-centers--center--branding-logo');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-centers--center--branding-logo"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/centers/{center}/branding/logo</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-centers--center--branding-logo"
+               value="multipart/form-data"
+               data-component="header">
+    <br>
+<p>Example: <code>multipart/form-data</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-centers--center--branding-logo"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-centers--center--branding-logo"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-centers--center--branding-logo"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center"                data-endpoint="POSTapi-v1-admin-centers--center--branding-logo"
+               value="1"
+               data-component="url">
+    <br>
+<p>The center. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>logo</code></b>&nbsp;&nbsp;
+<small>file</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="file" style="display: none"
+                              name="logo"                data-endpoint="POSTapi-v1-admin-centers--center--branding-logo"
+               value=""
+               data-component="body">
+    <br>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phppgotu7ag83d3cE0tc4u</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--settings">GET api/v1/admin/centers/{center_id}/settings</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-centers--center_id--settings">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/centers/1/settings" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/settings"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-centers--center_id--settings">
+    </span>
+<span id="execution-results-GETapi-v1-admin-centers--center_id--settings" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-centers--center_id--settings"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-centers--center_id--settings"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-centers--center_id--settings" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-centers--center_id--settings">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-centers--center_id--settings" data-method="GET"
+      data-path="api/v1/admin/centers/{center_id}/settings"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-centers--center_id--settings', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-centers--center_id--settings"
+                    onclick="tryItOut('GETapi-v1-admin-centers--center_id--settings');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-centers--center_id--settings"
+                    onclick="cancelTryOut('GETapi-v1-admin-centers--center_id--settings');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-centers--center_id--settings"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/centers/{center_id}/settings</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="endpoints-PATCHapi-v1-admin-centers--center_id--settings">PATCH api/v1/admin/centers/{center_id}/settings</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PATCHapi-v1-admin-centers--center_id--settings">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PATCH \
+    "http://xyz-lms.test/api/v1/admin/centers/1/settings" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
+    --data "{
+    \"settings\": {
+        \"default_view_limit\": 3,
+        \"allow_extra_view_requests\": true,
+        \"pdf_download_permission\": true,
+        \"device_limit\": 1,
+        \"branding\": {
+            \"logo_url\": \"https:\\/\\/example.com\\/logo.png\",
+            \"primary_color\": \"#000000\"
+        }
+    }
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/settings"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+let body = {
+    "settings": {
+        "default_view_limit": 3,
+        "allow_extra_view_requests": true,
+        "pdf_download_permission": true,
+        "device_limit": 1,
+        "branding": {
+            "logo_url": "https:\/\/example.com\/logo.png",
+            "primary_color": "#000000"
+        }
+    }
+};
+
+fetch(url, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PATCHapi-v1-admin-centers--center_id--settings">
+</span>
+<span id="execution-results-PATCHapi-v1-admin-centers--center_id--settings" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PATCHapi-v1-admin-centers--center_id--settings"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PATCHapi-v1-admin-centers--center_id--settings"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PATCHapi-v1-admin-centers--center_id--settings" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PATCHapi-v1-admin-centers--center_id--settings">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PATCHapi-v1-admin-centers--center_id--settings" data-method="PATCH"
+      data-path="api/v1/admin/centers/{center_id}/settings"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PATCHapi-v1-admin-centers--center_id--settings', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PATCHapi-v1-admin-centers--center_id--settings"
+                    onclick="tryItOut('PATCHapi-v1-admin-centers--center_id--settings');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PATCHapi-v1-admin-centers--center_id--settings"
+                    onclick="cancelTryOut('PATCHapi-v1-admin-centers--center_id--settings');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PATCHapi-v1-admin-centers--center_id--settings"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>api/v1/admin/centers/{center_id}/settings</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>settings</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>Center settings payload.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>default_view_limit</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="settings.default_view_limit"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="3"
+               data-component="body">
+    <br>
+<p>Default view limit for videos. Must be at least 0. Example: <code>3</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>allow_extra_view_requests</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="PATCHapi-v1-admin-centers--center_id--settings" style="display: none">
+            <input type="radio" name="settings.allow_extra_view_requests"
+                   value="true"
+                   data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="PATCHapi-v1-admin-centers--center_id--settings" style="display: none">
+            <input type="radio" name="settings.allow_extra_view_requests"
+                   value="false"
+                   data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Whether students can request extra views. Example: <code>false</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>pdf_download_permission</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="PATCHapi-v1-admin-centers--center_id--settings" style="display: none">
+            <input type="radio" name="settings.pdf_download_permission"
+                   value="true"
+                   data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="PATCHapi-v1-admin-centers--center_id--settings" style="display: none">
+            <input type="radio" name="settings.pdf_download_permission"
+                   value="false"
+                   data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Whether PDF downloads are allowed. Example: <code>false</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>device_limit</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="settings.device_limit"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="1"
+               data-component="body">
+    <br>
+<p>Maximum active devices per student. Must be at least 1. Example: <code>1</code></p>
+                    </div>
+                                                                <div style=" margin-left: 14px; clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>branding</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Branding settings payload.</p>
+            </summary>
+                                                <div style="margin-left: 28px; clear: unset;">
+                        <b style="line-height: 2;"><code>logo_url</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="settings.branding.logo_url"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="https://example.com/logo.png"
+               data-component="body">
+    <br>
+<p>Logo URL. Example: <code>https://example.com/logo.png</code></p>
+                    </div>
+                                                                <div style="margin-left: 28px; clear: unset;">
+                        <b style="line-height: 2;"><code>primary_color</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="settings.branding.primary_color"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
+               value="#000000"
+               data-component="body">
+    <br>
+<p>Primary branding color. Example: <code>#000000</code></p>
+                    </div>
+                                    </details>
+        </div>
+                                        </details>
+        </div>
+        </form>
 
                     <h2 id="endpoints-POSTapi-v1-admin-enrollments">POST api/v1/admin/enrollments</h2>
 
@@ -13821,7 +14580,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpb86b6grcr2055w0h2uN" </code></pre></div>
+    --form "avatar=@/tmp/phpsq2qb5b1m1o13v3Cn7G" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14028,7 +14787,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpb86b6grcr2055w0h2uN</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpsq2qb5b1m1o13v3Cn7G</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -14263,7 +15022,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpnjp19reiib7u2ArEIyF" </code></pre></div>
+    --form "avatar=@/tmp/phpmg4dkv5mut997Ce0bvc" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14486,7 +15245,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpnjp19reiib7u2ArEIyF</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpmg4dkv5mut997Ce0bvc</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -15415,7 +16174,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpbv4vngh9p3510PLZ33O" </code></pre></div>
+    --form "file=@/tmp/phpls2foaladbkecoVaRPq" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -15579,7 +16338,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpbv4vngh9p3510PLZ33O</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpls2foaladbkecoVaRPq</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -15616,452 +16375,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Optional video association (must belong to the course). The <code>id</code> of an existing record in the videos table. Example: <code>3</code></p>
-        </div>
-        </form>
-
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--settings">GET api/v1/admin/centers/{center_id}/settings</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-admin-centers--center_id--settings">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/centers/1/settings" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: {{locale}}" \
-    --header "X-Api-Key: {{api_key}}"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/centers/1/settings"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "{{locale}}",
-    "X-Api-Key": "{{api_key}}",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-admin-centers--center_id--settings">
-    </span>
-<span id="execution-results-GETapi-v1-admin-centers--center_id--settings" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-admin-centers--center_id--settings"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-centers--center_id--settings"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-admin-centers--center_id--settings" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-admin-centers--center_id--settings">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-admin-centers--center_id--settings" data-method="GET"
-      data-path="api/v1/admin/centers/{center_id}/settings"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-centers--center_id--settings', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-admin-centers--center_id--settings"
-                    onclick="tryItOut('GETapi-v1-admin-centers--center_id--settings');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-admin-centers--center_id--settings"
-                    onclick="cancelTryOut('GETapi-v1-admin-centers--center_id--settings');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-admin-centers--center_id--settings"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/admin/centers/{center_id}/settings</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
-               value="{{locale}}"
-               data-component="header">
-    <br>
-<p>Example: <code>{{locale}}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
-               value="{{api_key}}"
-               data-component="header">
-    <br>
-<p>Example: <code>{{api_key}}</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-centers--center_id--settings"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the center. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-PATCHapi-v1-admin-centers--center_id--settings">PATCH api/v1/admin/centers/{center_id}/settings</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-PATCHapi-v1-admin-centers--center_id--settings">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request PATCH \
-    "http://xyz-lms.test/api/v1/admin/centers/1/settings" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: {{locale}}" \
-    --header "X-Api-Key: {{api_key}}" \
-    --data "{
-    \"settings\": {
-        \"default_view_limit\": 3,
-        \"allow_extra_view_requests\": true,
-        \"pdf_download_permission\": true,
-        \"device_limit\": 1,
-        \"branding\": {
-            \"logo_url\": \"https:\\/\\/example.com\\/logo.png\",
-            \"primary_color\": \"#000000\"
-        }
-    }
-}"
-</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/centers/1/settings"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "{{locale}}",
-    "X-Api-Key": "{{api_key}}",
-};
-
-let body = {
-    "settings": {
-        "default_view_limit": 3,
-        "allow_extra_view_requests": true,
-        "pdf_download_permission": true,
-        "device_limit": 1,
-        "branding": {
-            "logo_url": "https:\/\/example.com\/logo.png",
-            "primary_color": "#000000"
-        }
-    }
-};
-
-fetch(url, {
-    method: "PATCH",
-    headers,
-    body: JSON.stringify(body),
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-PATCHapi-v1-admin-centers--center_id--settings">
-</span>
-<span id="execution-results-PATCHapi-v1-admin-centers--center_id--settings" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-PATCHapi-v1-admin-centers--center_id--settings"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-PATCHapi-v1-admin-centers--center_id--settings"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-PATCHapi-v1-admin-centers--center_id--settings" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-PATCHapi-v1-admin-centers--center_id--settings">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-PATCHapi-v1-admin-centers--center_id--settings" data-method="PATCH"
-      data-path="api/v1/admin/centers/{center_id}/settings"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('PATCHapi-v1-admin-centers--center_id--settings', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-PATCHapi-v1-admin-centers--center_id--settings"
-                    onclick="tryItOut('PATCHapi-v1-admin-centers--center_id--settings');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-PATCHapi-v1-admin-centers--center_id--settings"
-                    onclick="cancelTryOut('PATCHapi-v1-admin-centers--center_id--settings');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-PATCHapi-v1-admin-centers--center_id--settings"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-purple">PATCH</small>
-            <b><code>api/v1/admin/centers/{center_id}/settings</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="{{locale}}"
-               data-component="header">
-    <br>
-<p>Example: <code>{{locale}}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Api-Key"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="{{api_key}}"
-               data-component="header">
-    <br>
-<p>Example: <code>{{api_key}}</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="center_id"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the center. Example: <code>1</code></p>
-            </div>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-        <details>
-            <summary style="padding-bottom: 10px;">
-                <b style="line-height: 2;"><code>settings</code></b>&nbsp;&nbsp;
-<small>object</small>&nbsp;
- &nbsp;
- &nbsp;
-<br>
-<p>Center settings payload.</p>
-            </summary>
-                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>default_view_limit</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="settings.default_view_limit"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="3"
-               data-component="body">
-    <br>
-<p>Default view limit for videos. Must be at least 0. Example: <code>3</code></p>
-                    </div>
-                                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>allow_extra_view_requests</code></b>&nbsp;&nbsp;
-<small>boolean</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <label data-endpoint="PATCHapi-v1-admin-centers--center_id--settings" style="display: none">
-            <input type="radio" name="settings.allow_extra_view_requests"
-                   value="true"
-                   data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-                   data-component="body"             >
-            <code>true</code>
-        </label>
-        <label data-endpoint="PATCHapi-v1-admin-centers--center_id--settings" style="display: none">
-            <input type="radio" name="settings.allow_extra_view_requests"
-                   value="false"
-                   data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-                   data-component="body"             >
-            <code>false</code>
-        </label>
-    <br>
-<p>Whether students can request extra views. Example: <code>false</code></p>
-                    </div>
-                                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>pdf_download_permission</code></b>&nbsp;&nbsp;
-<small>boolean</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <label data-endpoint="PATCHapi-v1-admin-centers--center_id--settings" style="display: none">
-            <input type="radio" name="settings.pdf_download_permission"
-                   value="true"
-                   data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-                   data-component="body"             >
-            <code>true</code>
-        </label>
-        <label data-endpoint="PATCHapi-v1-admin-centers--center_id--settings" style="display: none">
-            <input type="radio" name="settings.pdf_download_permission"
-                   value="false"
-                   data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-                   data-component="body"             >
-            <code>false</code>
-        </label>
-    <br>
-<p>Whether PDF downloads are allowed. Example: <code>false</code></p>
-                    </div>
-                                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>device_limit</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="settings.device_limit"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="1"
-               data-component="body">
-    <br>
-<p>Maximum active devices per student. Must be at least 1. Example: <code>1</code></p>
-                    </div>
-                                                                <div style=" margin-left: 14px; clear: unset;">
-        <details>
-            <summary style="padding-bottom: 10px;">
-                <b style="line-height: 2;"><code>branding</code></b>&nbsp;&nbsp;
-<small>object</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-<br>
-<p>Branding settings payload.</p>
-            </summary>
-                                                <div style="margin-left: 28px; clear: unset;">
-                        <b style="line-height: 2;"><code>logo_url</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="settings.branding.logo_url"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="https://example.com/logo.png"
-               data-component="body">
-    <br>
-<p>Logo URL. Example: <code>https://example.com/logo.png</code></p>
-                    </div>
-                                                                <div style="margin-left: 28px; clear: unset;">
-                        <b style="line-height: 2;"><code>primary_color</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="settings.branding.primary_color"                data-endpoint="PATCHapi-v1-admin-centers--center_id--settings"
-               value="#000000"
-               data-component="body">
-    <br>
-<p>Primary branding color. Example: <code>#000000</code></p>
-                    </div>
-                                    </details>
-        </div>
-                                        </details>
         </div>
         </form>
 

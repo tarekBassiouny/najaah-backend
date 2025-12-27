@@ -11,6 +11,11 @@ class StoragePathResolver
         return $this->centerScoped($centerId, 'branding/logo/'.$filename);
     }
 
+    public function defaultCenterLogo(): string
+    {
+        return 'centers/defaults/logo.png';
+    }
+
     public function userAvatar(int $centerId, int $userId, string $filename): string
     {
         return $this->centerScoped($centerId, sprintf('users/%d/avatar/%s', $userId, $filename));
@@ -38,6 +43,13 @@ class StoragePathResolver
 
     private function centerScoped(int $centerId, string $path): string
     {
-        return sprintf('centers/%d/', $centerId).ltrim($path, '/');
+        $prefix = trim((string) config('storage.root_prefix', ''), '/');
+        $base = sprintf('centers/%d/', $centerId).ltrim($path, '/');
+
+        if ($prefix === '') {
+            return $base;
+        }
+
+        return $prefix.'/'.$base;
     }
 }

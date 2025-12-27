@@ -10,6 +10,7 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "php-open-source-saver/jwt-auth": "*",
         "toshy/bunnynet-php": "^8.0"
     },

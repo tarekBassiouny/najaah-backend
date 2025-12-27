@@ -3,5 +3,5 @@
 declare(strict_types=1);
 
 return [
-    'disk' => env('STORAGE_DISK', 'spaces'),
+    'root_prefix' => env('STORAGE_ROOT_PREFIX', ''),
 ];

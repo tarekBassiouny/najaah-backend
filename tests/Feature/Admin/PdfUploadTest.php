@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 uses(RefreshDatabase::class)->group('pdfs', 'admin');
 
 it('allows admin to upload a pdf to private storage', function (): void {
-    Config::set('storage.disk', 'local');
+    Config::set('filesystems.default', 'local');
     Storage::fake('local');
 
     $admin = $this->asAdmin();

@@ -16,6 +16,8 @@ class CenterFactory extends Factory
         return [
             'slug' => 'center-'.uniqid(),
             'type' => 0,
+            'tier' => Center::TIER_STANDARD,
+            'is_featured' => false,
             'name_translations' => [
                 'en' => 'Center Name',
                 'ar' => 'مركز تجريبي',

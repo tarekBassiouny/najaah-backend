@@ -24,12 +24,13 @@ it('dispatches onboarding jobs after center creation', function (): void {
 
     $payload = [
         'slug' => 'center-dispatch',
-        'type' => 1,
+        'type' => 'branded',
         'name_translations' => ['en' => 'Center Dispatch'],
-        'logo_url' => 'https://example.com/logo.png',
-        'primary_color' => '#123456',
-        'owner' => [
-            'name' => 'Owner User',
+        'branding_metadata' => [
+            'primary_color' => '#123456',
+        ],
+        'admin' => [
+            'name' => 'Admin User',
             'email' => 'owner-dispatch@example.com',
         ],
     ];

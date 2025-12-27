@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "329b5462-d59e-4bae-9273-5f0ef2950897",
+    "_postman_id": "cb6273f1-e326-42c8-b777-a6b5b0dfd553",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -201,50 +201,6 @@
       "name": "🧑‍💼 Admin – Centers",
       "item": [
         {
-          "name": "GET api/v1/admin/centers/{slug}",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/centers/:slug",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/centers/:slug",
-              "variable": [
-                {
-                  "id": "slug",
-                  "key": "slug",
-                  "value": "1",
-                  "description": "The slug of the center."
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
           "name": "GET api/v1/admin/centers",
           "request": {
             "url": {
@@ -276,13 +232,43 @@
                   "disabled": false
                 },
                 {
+                  "key": "tier",
+                  "value": "1",
+                  "description": "Filter centers by tier.",
+                  "disabled": false
+                },
+                {
+                  "key": "is_featured",
+                  "value": "1",
+                  "description": "Filter centers by featured flag.",
+                  "disabled": false
+                },
+                {
+                  "key": "onboarding_status",
+                  "value": "ACTIVE",
+                  "description": "Filter centers by onboarding status.",
+                  "disabled": false
+                },
+                {
                   "key": "search",
                   "value": "Academy",
                   "description": "Search centers by name.",
                   "disabled": false
+                },
+                {
+                  "key": "created_from",
+                  "value": "2024-01-01",
+                  "description": "Filter centers created from the given date. Must be a valid date.",
+                  "disabled": false
+                },
+                {
+                  "key": "created_to",
+                  "value": "2024-12-31",
+                  "description": "Filter centers created up to the given date. Must be a valid date.",
+                  "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/admin/centers?per_page=15&page=1&slug=center-1&type=1&search=Academy"
+              "raw": "{{baseUrl}}/api/v1/admin/centers?per_page=15&page=1&slug=center-1&type=1&tier=1&is_featured=1&onboarding_status=ACTIVE&search=Academy&created_from=2024-01-01&created_to=2024-12-31"
             },
             "method": "GET",
             "header": [
@@ -341,7 +327,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"slug\":\"center-01\",\"type\":0,\"name\":\"Center Name\",\"name_translations\":{\"en\":\"Center Name\",\"ar\":\"اسم المركز\"},\"description_translations\":{\"en\":\"Description\"},\"logo_url\":\"https:\\/\\/example.com\\/logo.png\",\"primary_color\":\"#000000\",\"default_view_limit\":3,\"allow_extra_view_requests\":false,\"pdf_download_permission\":false,\"device_limit\":1,\"settings\":{\"pdf_download_permission\":true},\"owner_user_id\":10,\"owner\":{\"name\":\"Owner Name\",\"email\":\"owner@example.com\",\"phone\":\"+1234567890\"},\"owner_role\":\"center_owner\"}"
+              "raw": "{\"slug\":\"center-01\",\"type\":\"branded\",\"tier\":\"premium\",\"is_featured\":false,\"name_translations\":[\"b\"],\"branding_metadata\":{\"primary_color\":\"#000000\"},\"admin\":{\"name\":\"Admin Name\",\"email\":\"admin@example.com\"}}"
             },
             "description": "",
             "auth": {
@@ -432,7 +418,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"slug\":\"center-01\",\"type\":0,\"name_translations\":{\"en\":\"Updated Name\"},\"description_translations\":{\"en\":\"Updated description\"},\"logo_url\":\"https:\\/\\/example.com\\/logo.png\",\"primary_color\":\"#123456\",\"default_view_limit\":5,\"allow_extra_view_requests\":false,\"pdf_download_permission\":false,\"device_limit\":2,\"settings\":{\"pdf_download_permission\":false}}"
+              "raw": "{\"name_translations\":[\"b\"],\"tier\":1,\"is_featured\":false,\"branding_metadata\":{\"primary_color\":\"#123456\"}}"
             },
             "description": "",
             "auth": {
@@ -522,6 +508,103 @@
               }
             ],
             "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/centers/{center}/onboarding/retry",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center/onboarding/retry",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center/onboarding/retry",
+              "variable": [
+                {
+                  "id": "center",
+                  "key": "center",
+                  "value": "1",
+                  "description": "The center."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/centers/{center}/branding/logo",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center/branding/logo",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center/branding/logo",
+              "variable": [
+                {
+                  "id": "center",
+                  "key": "center",
+                  "value": "1",
+                  "description": "The center."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "logo",
+                  "src": [],
+                  "type": "file"
+                }
+              ]
+            },
             "description": "",
             "auth": {
               "type": "noauth"
@@ -2562,7 +2645,7 @@
                 {
                   "id": "extraViewRequest_id",
                   "key": "extraViewRequest_id",
-                  "value": "16",
+                  "value": "1",
                   "description": "The ID of the extraViewRequest."
                 }
               ]
@@ -2609,7 +2692,7 @@
                 {
                   "id": "extraViewRequest_id",
                   "key": "extraViewRequest_id",
-                  "value": "16",
+                  "value": "1",
                   "description": "The ID of the extraViewRequest."
                 }
               ]
@@ -4343,6 +4426,55 @@
                 }
               ],
               "raw": "{{baseUrl}}/api/v1/admin/audit-logs?center_id=2&entity_type=App%5CModels%5CCourse&entity_id=12&action=enrollment_created&user_id=3&date_from=2025-01-01&date_to=2025-12-31&per_page=20&page=1"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔔 public",
+      "item": [
+        {
+          "name": "GET api/v1/resolve/centers/{slug}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/resolve/centers/:slug",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/resolve/centers/:slug",
+              "variable": [
+                {
+                  "id": "slug",
+                  "key": "slug",
+                  "value": "1",
+                  "description": "The slug of the center."
+                }
+              ]
             },
             "method": "GET",
             "header": [

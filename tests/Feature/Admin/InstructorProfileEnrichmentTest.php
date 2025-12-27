@@ -14,7 +14,7 @@ uses(RefreshDatabase::class, AdminTestHelper::class)->group('instructors');
 
 beforeEach(function (): void {
     Config::set('filesystems.default', 'public');
-    Config::set('storage.disk', 'local');
+    Config::set('filesystems.default', 'local');
     Config::set('filesystems.disks.local.url', 'https://storage.test');
     Storage::fake('local');
 });

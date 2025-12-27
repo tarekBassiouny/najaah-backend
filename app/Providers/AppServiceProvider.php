@@ -66,7 +66,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(ViewLimitService::class);
         $this->app->singleton(StorageServiceInterface::class, function (Application $app): StorageServiceInterface {
-            $disk = (string) $app['config']->get('storage.disk', 'spaces');
+            $disk = (string) $app['config']->get('filesystems.default', 'local');
 
             return new SpacesStorageService($app['filesystem']->disk($disk));
         });

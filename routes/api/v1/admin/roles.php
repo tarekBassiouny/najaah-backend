@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\Roles\PermissionController;
+use App\Http\Controllers\Admin\Roles\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('require.permission:role.manage')->group(function (): void {
@@ -10,3 +11,6 @@ Route::middleware('require.permission:role.manage')->group(function (): void {
     Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
     Route::put('/roles/{role}/permissions', [RoleController::class, 'syncPermissions']);
 });
+
+Route::get('/permissions', [PermissionController::class, 'index'])
+    ->middleware('require.permission:permission.view');

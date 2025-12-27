@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\ListStudentsRequest;
-use App\Http\Requests\Admin\StoreStudentRequest;
-use App\Http\Requests\Admin\UpdateStudentRequest;
-use App\Http\Resources\Admin\StudentResource;
+use App\Http\Requests\Admin\Students\ListStudentsRequest;
+use App\Http\Requests\Admin\Students\StoreStudentRequest;
+use App\Http\Requests\Admin\Students\UpdateStudentRequest;
+use App\Http\Resources\Admin\Users\StudentResource;
 use App\Models\User;
 use App\Services\Admin\StudentQueryService;
 use App\Services\Students\StudentService;

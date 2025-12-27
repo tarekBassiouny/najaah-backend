@@ -46,6 +46,12 @@ class Center extends Model
 
     public const ONBOARDING_ACTIVE = 'ACTIVE';
 
+    public const TIER_STANDARD = 0;
+
+    public const TIER_PREMIUM = 1;
+
+    public const TIER_VIP = 2;
+
     /** @use HasFactory<\Database\Factories\CenterFactory> */
     use HasFactory;
 
@@ -57,6 +63,8 @@ class Center extends Model
         'slug',
         'api_key',
         'type',
+        'tier',
+        'is_featured',
         'name_translations',
         'description_translations',
         'logo_url',
@@ -79,6 +87,8 @@ class Center extends Model
         'branding_metadata' => 'array',
         'storage_driver' => 'string',
         'storage_root' => 'string',
+        'tier' => 'integer',
+        'is_featured' => 'boolean',
         'allow_extra_view_requests' => 'boolean',
         'pdf_download_permission' => 'boolean',
         'default_view_limit' => 'integer',

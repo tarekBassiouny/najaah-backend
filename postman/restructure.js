@@ -88,7 +88,7 @@ function route(item) {
 
   /* ========= PUBLIC ========= */
 
-  if (has(path, "/api/external/")) return tree.public;
+  if (has(path, "/api/v1/resolve")) return tree.public;
 
   /* ========= MOBILE AUTH ========= */
 

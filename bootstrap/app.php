@@ -29,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->middleware('api')
                 ->group(function (): void {
                     require __DIR__.'/../routes/api/v1/mobile.php';
+                    require __DIR__.'/../routes/api/v1/resolve.php';
                 });
 
             // Admin (JWT) - canonical /api/v1/admin with backward-compatible /admin alias
@@ -38,19 +39,20 @@ return Application::configure(basePath: dirname(__DIR__))
                     require __DIR__.'/../routes/api/v1/admin/auth.php';
 
                     Route::middleware(['jwt.admin'])->group(function (): void {
+                        require __DIR__.'/../routes/api/v1/admin/centers.php';
+
+                        // Other admin routes needs to be reviewed
                         require __DIR__.'/../routes/api/v1/admin/enrollments.php';
                         require __DIR__.'/../routes/api/v1/admin/courses.php';
                         require __DIR__.'/../routes/api/v1/admin/sections.php';
                         require __DIR__.'/../routes/api/v1/admin/videos.php';
                         require __DIR__.'/../routes/api/v1/admin/instructors.php';
                         require __DIR__.'/../routes/api/v1/admin/pdfs.php';
-                        require __DIR__.'/../routes/api/v1/admin/center-settings.php';
                         require __DIR__.'/../routes/api/v1/admin/settings.php';
                         require __DIR__.'/../routes/api/v1/admin/audit-logs.php';
                         require __DIR__.'/../routes/api/v1/admin/extra-view-requests.php';
                         require __DIR__.'/../routes/api/v1/admin/device-change-requests.php';
                         require __DIR__.'/../routes/api/v1/admin/roles.php';
-                        require __DIR__.'/../routes/api/v1/admin/permissions.php';
                         require __DIR__.'/../routes/api/v1/admin/admin-users.php';
                         require __DIR__.'/../routes/api/v1/admin/students.php';
                     });

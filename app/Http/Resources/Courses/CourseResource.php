@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Courses;
 
+use App\Http\Resources\Admin\Centers\CenterResource;
 use App\Http\Resources\CategoryResource;
-use App\Http\Resources\CenterResource;
 use App\Http\Resources\InstructorResource;
 use App\Http\Resources\Sections\SectionResource;
 use App\Models\Course;

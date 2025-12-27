@@ -10,10 +10,10 @@ use App\Actions\AdminUsers\ListAdminUsersAction;
 use App\Actions\AdminUsers\SyncAdminUserRolesAction;
 use App\Actions\AdminUsers\UpdateAdminUserAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AdminUsers\StoreAdminUserRequest;
-use App\Http\Requests\AdminUsers\SyncAdminUserRolesRequest;
-use App\Http\Requests\AdminUsers\UpdateAdminUserRequest;
-use App\Http\Resources\Admin\AdminUserResource;
+use App\Http\Requests\Admin\Users\StoreAdminUserRequest;
+use App\Http\Requests\Admin\Users\SyncAdminUserRolesRequest;
+use App\Http\Requests\Admin\Users\UpdateAdminUserRequest;
+use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 

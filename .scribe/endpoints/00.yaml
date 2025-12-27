@@ -1360,6 +1360,51 @@ endpoints:
   -
     custom: []
     httpMethods:
+      - GET
+    uri: 'api/v1/resolve/centers/{slug}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters:
+      slug:
+        custom: []
+        name: slug
+        description: 'The slug of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      slug: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
       - POST
     uri: api/v1/admin/auth/login
     metadata:
@@ -1476,51 +1521,6 @@ endpoints:
       token: reset-token
       email: admin@example.com
       password: newpassword123
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/admin/centers/{slug}'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
-    urlParameters:
-      slug:
-        custom: []
-        name: slug
-        description: 'The slug of the center.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      slug: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
     fileParameters: []
     responses: []
     responseFields: []
@@ -1694,6 +1694,39 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      tier:
+        custom: []
+        name: tier
+        description: 'Filter centers by tier.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      is_featured:
+        custom: []
+        name: is_featured
+        description: 'Filter centers by featured flag.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      onboarding_status:
+        custom: []
+        name: onboarding_status
+        description: 'Filter centers by onboarding status.'
+        required: false
+        example: ACTIVE
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       search:
         custom: []
         name: search
@@ -1705,12 +1738,39 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      created_from:
+        custom: []
+        name: created_from
+        description: 'Filter centers created from the given date. Must be a valid date.'
+        required: false
+        example: '2024-01-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      created_to:
+        custom: []
+        name: created_to
+        description: 'Filter centers created up to the given date. Must be a valid date.'
+        required: false
+        example: '2024-12-31'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
     cleanQueryParameters:
       per_page: 15
       page: 1
       slug: center-1
       type: 1
+      tier: 1
+      is_featured: true
+      onboarding_status: ACTIVE
       search: Academy
+      created_from: '2024-01-01'
+      created_to: '2024-12-31'
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -1749,31 +1809,47 @@ endpoints:
         custom: []
         name: slug
         description: 'Unique, immutable center slug. Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters.'
-        required: false
+        required: true
         example: center-01
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
       type:
         custom: []
         name: type
-        description: 'Center type identifier.'
-        required: false
-        example: 0
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      name:
-        custom: []
-        name: name
-        description: 'Center name when translations are not provided. This field is required when <code>name_translations</code> is not present. Must not be greater than 255 characters.'
-        required: false
-        example: 'Center Name'
+        description: 'Center type.'
+        required: true
+        example: branded
         type: string
+        enumValues:
+          - branded
+          - unbranded
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      tier:
+        custom: []
+        name: tier
+        description: 'Center tier.'
+        required: false
+        example: premium
+        type: string
+        enumValues:
+          - standard
+          - premium
+          - vip
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      is_featured:
+        custom: []
+        name: is_featured
+        description: 'Whether the center is featured.'
+        required: false
+        example: false
+        type: boolean
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -1781,12 +1857,80 @@ endpoints:
       name_translations:
         custom: []
         name: name_translations
-        description: 'Localized center name. This field is required when <code>name</code> is not present.'
+        description: 'Must not be greater than 255 characters.'
         required: false
         example:
-          en: 'Center Name'
-          ar: 'اسم المركز'
+          - b
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      branding_metadata:
+        custom: []
+        name: branding_metadata
+        description: 'Branding metadata for branded centers. This field is required when <code>type</code> is <code>branded</code>.'
+        required: false
+        example:
+          primary_color: '#000000'
         type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      branding_metadata.primary_color:
+        custom: []
+        name: branding_metadata.primary_color
+        description: 'This field is required when <code>type</code> is <code>branded</code>.'
+        required: false
+        example: '#000000'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      admin:
+        custom: []
+        name: admin
+        description: 'Initial admin user details.'
+        required: true
+        example:
+          name: 'Admin Name'
+          email: admin@example.com
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      admin.name:
+        custom: []
+        name: admin.name
+        description: 'Admin name. Must not be greater than 255 characters.'
+        required: true
+        example: 'Admin Name'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      admin.email:
+        custom: []
+        name: admin.email
+        description: 'Admin email address. Must be a valid email address. Must not be greater than 255 characters.'
+        required: true
+        example: admin@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      name:
+        custom: []
+        name: name
+        description: ''
+        required: false
+        example: null
+        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -1794,55 +1938,54 @@ endpoints:
       description_translations:
         custom: []
         name: description_translations
-        description: 'Localized center description.'
+        description: ''
         required: false
-        example:
-          en: Description
-        type: object
+        example: null
+        type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
       logo_url:
         custom: []
         name: logo_url
-        description: 'Logo URL for the center.'
+        description: ''
         required: false
-        example: 'https://example.com/logo.png'
+        example: null
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
       primary_color:
         custom: []
         name: primary_color
-        description: 'Primary branding color.'
+        description: ''
         required: false
-        example: '#000000'
+        example: null
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
       default_view_limit:
         custom: []
         name: default_view_limit
-        description: 'Default view limit for videos. Must be at least 0.'
+        description: ''
         required: false
-        example: 3
-        type: integer
+        example: null
+        type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
       allow_extra_view_requests:
         custom: []
         name: allow_extra_view_requests
-        description: 'Whether students can request extra views.'
+        description: ''
         required: false
-        example: false
-        type: boolean
+        example: null
+        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -1850,10 +1993,10 @@ endpoints:
       pdf_download_permission:
         custom: []
         name: pdf_download_permission
-        description: 'Whether PDF downloads are allowed by default.'
+        description: ''
         required: false
-        example: false
-        type: boolean
+        example: null
+        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -1861,118 +2004,70 @@ endpoints:
       device_limit:
         custom: []
         name: device_limit
-        description: 'Maximum active devices per student. Must be at least 1.'
+        description: ''
         required: false
-        example: 1
-        type: integer
+        example: null
+        type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
       settings:
         custom: []
         name: settings
-        description: 'Optional center settings payload.'
+        description: ''
         required: false
-        example:
-          pdf_download_permission: true
-        type: object
+        example: null
+        type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
       owner_user_id:
         custom: []
         name: owner_user_id
-        description: 'Existing user ID to assign as the owner. This field is required when <code>owner</code> is not present. The <code>id</code> of an existing record in the users table.'
+        description: ''
         required: false
-        example: 10
-        type: integer
+        example: null
+        type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
       owner:
         custom: []
         name: owner
-        description: 'Owner details when creating a new owner user. This field is required when <code>owner_user_id</code> is not present.'
+        description: ''
         required: false
-        example:
-          name: 'Owner Name'
-          email: owner@example.com
-          phone: '+1234567890'
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      owner.name:
-        custom: []
-        name: owner.name
-        description: 'Owner name. This field is required when <code>owner_user_id</code> is not present. Must not be greater than 255 characters.'
-        required: false
-        example: 'Owner Name'
+        example: null
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
-        deprecated: false
-      owner.email:
-        custom: []
-        name: owner.email
-        description: 'Owner email address. This field is required when <code>owner_user_id</code> is not present. Must be a valid email address. Must not be greater than 255 characters.'
-        required: false
-        example: owner@example.com
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      owner.phone:
-        custom: []
-        name: owner.phone
-        description: 'Owner phone number. Must not be greater than 50 characters.'
-        required: false
-        example: '+1234567890'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
         deprecated: false
       owner_role:
         custom: []
         name: owner_role
-        description: 'Optional role name to assign to the owner.'
+        description: ''
         required: false
-        example: center_owner
+        example: null
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       slug: center-01
-      type: 0
-      name: 'Center Name'
+      type: branded
+      tier: premium
+      is_featured: false
       name_translations:
-        en: 'Center Name'
-        ar: 'اسم المركز'
-      description_translations:
-        en: Description
-      logo_url: 'https://example.com/logo.png'
-      primary_color: '#000000'
-      default_view_limit: 3
-      allow_extra_view_requests: false
-      pdf_download_permission: false
-      device_limit: 1
-      settings:
-        pdf_download_permission: true
-      owner_user_id: 10
-      owner:
-        name: 'Owner Name'
-        email: owner@example.com
-        phone: '+1234567890'
-      owner_role: center_owner
+        - b
+      branding_metadata:
+        primary_color: '#000000'
+      admin:
+        name: 'Admin Name'
+        email: admin@example.com
     fileParameters: []
     responses: []
     responseFields: []
@@ -2062,89 +2157,33 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      slug:
-        custom: []
-        name: slug
-        description: 'Unique, immutable center slug. Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters.'
-        required: false
-        example: center-01
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      type:
-        custom: []
-        name: type
-        description: 'Center type identifier.'
-        required: false
-        example: 0
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       name_translations:
         custom: []
         name: name_translations
-        description: 'Localized center name.'
+        description: 'Must not be greater than 255 characters.'
         required: false
         example:
-          en: 'Updated Name'
-        type: object
+          - b
+        type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      description_translations:
+      tier:
         custom: []
-        name: description_translations
-        description: 'Localized description.'
+        name: tier
+        description: 'Center tier identifier.'
         required: false
-        example:
-          en: 'Updated description'
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      logo_url:
-        custom: []
-        name: logo_url
-        description: 'Logo URL.'
-        required: false
-        example: 'https://example.com/logo.png'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      primary_color:
-        custom: []
-        name: primary_color
-        description: 'Primary branding color.'
-        required: false
-        example: '#123456'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      default_view_limit:
-        custom: []
-        name: default_view_limit
-        description: 'Default view limit for videos. Must be at least 0.'
-        required: false
-        example: 5
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
-      allow_extra_view_requests:
+      is_featured:
         custom: []
-        name: allow_extra_view_requests
-        description: 'Whether extra view requests are allowed.'
+        name: is_featured
+        description: 'Whether the center is featured.'
         required: false
         example: false
         type: boolean
@@ -2152,55 +2191,25 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      pdf_download_permission:
+      branding_metadata:
         custom: []
-        name: pdf_download_permission
-        description: 'Whether PDF downloads are allowed by default.'
-        required: false
-        example: false
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      device_limit:
-        custom: []
-        name: device_limit
-        description: 'Maximum active devices per student. Must be at least 1.'
-        required: false
-        example: 2
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      settings:
-        custom: []
-        name: settings
-        description: 'Optional settings overrides.'
+        name: branding_metadata
+        description: 'Branding metadata for branded centers.'
         required: false
         example:
-          pdf_download_permission: false
+          primary_color: '#123456'
         type: object
         enumValues: []
         exampleWasSpecified: false
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
-      slug: center-01
-      type: 0
       name_translations:
-        en: 'Updated Name'
-      description_translations:
-        en: 'Updated description'
-      logo_url: 'https://example.com/logo.png'
-      primary_color: '#123456'
-      default_view_limit: 5
-      allow_extra_view_requests: false
-      pdf_download_permission: false
-      device_limit: 2
-      settings:
-        pdf_download_permission: false
+        - b
+      tier: 1
+      is_featured: false
+      branding_metadata:
+        primary_color: '#123456'
     fileParameters: []
     responses: []
     responseFields: []
@@ -2291,6 +2300,303 @@ endpoints:
     cleanQueryParameters: []
     bodyParameters: []
     cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/admin/centers/{center}/onboarding/retry'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters:
+      center:
+        custom: []
+        name: center
+        description: 'The center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/admin/centers/{center}/branding/logo'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters:
+      center:
+        custom: []
+        name: center
+        description: 'The center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      logo:
+        custom: []
+        name: logo
+        description: 'Center logo image file. Must be an image. Must not be greater than 5120 kilobytes.'
+        required: true
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters: []
+    fileParameters:
+      logo: null
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/admin/centers/{center_id}/settings'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/v1/admin/centers/{center_id}/settings'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      settings:
+        custom: []
+        name: settings
+        description: 'Center settings payload.'
+        required: true
+        example:
+          default_view_limit: 3
+          allow_extra_view_requests: true
+          pdf_download_permission: true
+          device_limit: 1
+          branding:
+            logo_url: 'https://example.com/logo.png'
+            primary_color: '#000000'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      settings.default_view_limit:
+        custom: []
+        name: settings.default_view_limit
+        description: 'Default view limit for videos. Must be at least 0.'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      settings.allow_extra_view_requests:
+        custom: []
+        name: settings.allow_extra_view_requests
+        description: 'Whether students can request extra views.'
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      settings.pdf_download_permission:
+        custom: []
+        name: settings.pdf_download_permission
+        description: 'Whether PDF downloads are allowed.'
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      settings.device_limit:
+        custom: []
+        name: settings.device_limit
+        description: 'Maximum active devices per student. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      settings.branding:
+        custom: []
+        name: settings.branding
+        description: 'Branding settings payload.'
+        required: false
+        example:
+          logo_url: 'https://example.com/logo.png'
+          primary_color: '#000000'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      settings.branding.logo_url:
+        custom: []
+        name: settings.branding.logo_url
+        description: 'Logo URL.'
+        required: false
+        example: 'https://example.com/logo.png'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      settings.branding.primary_color:
+        custom: []
+        name: settings.branding.primary_color
+        description: 'Primary branding color.'
+        required: false
+        example: '#000000'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      settings:
+        default_view_limit: 3
+        allow_extra_view_requests: true
+        pdf_download_permission: true
+        device_limit: 1
+        branding:
+          logo_url: 'https://example.com/logo.png'
+          primary_color: '#000000'
     fileParameters: []
     responses: []
     responseFields: []
@@ -6066,201 +6372,6 @@ endpoints:
       video_id: 3
     fileParameters:
       file: null
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/v1/admin/centers/{center_id}/settings'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
-    urlParameters:
-      center_id:
-        custom: []
-        name: center_id
-        description: 'The ID of the center.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      center_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PATCH
-    uri: 'api/v1/admin/centers/{center_id}/settings'
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
-    urlParameters:
-      center_id:
-        custom: []
-        name: center_id
-        description: 'The ID of the center.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      center_id: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      settings:
-        custom: []
-        name: settings
-        description: 'Center settings payload.'
-        required: true
-        example:
-          default_view_limit: 3
-          allow_extra_view_requests: true
-          pdf_download_permission: true
-          device_limit: 1
-          branding:
-            logo_url: 'https://example.com/logo.png'
-            primary_color: '#000000'
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      settings.default_view_limit:
-        custom: []
-        name: settings.default_view_limit
-        description: 'Default view limit for videos. Must be at least 0.'
-        required: false
-        example: 3
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      settings.allow_extra_view_requests:
-        custom: []
-        name: settings.allow_extra_view_requests
-        description: 'Whether students can request extra views.'
-        required: false
-        example: false
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      settings.pdf_download_permission:
-        custom: []
-        name: settings.pdf_download_permission
-        description: 'Whether PDF downloads are allowed.'
-        required: false
-        example: false
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      settings.device_limit:
-        custom: []
-        name: settings.device_limit
-        description: 'Maximum active devices per student. Must be at least 1.'
-        required: false
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      settings.branding:
-        custom: []
-        name: settings.branding
-        description: 'Branding settings payload.'
-        required: false
-        example:
-          logo_url: 'https://example.com/logo.png'
-          primary_color: '#000000'
-        type: object
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      settings.branding.logo_url:
-        custom: []
-        name: settings.branding.logo_url
-        description: 'Logo URL.'
-        required: false
-        example: 'https://example.com/logo.png'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      settings.branding.primary_color:
-        custom: []
-        name: settings.branding.primary_color
-        description: 'Primary branding color.'
-        required: false
-        example: '#000000'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      settings:
-        default_view_limit: 3
-        allow_extra_view_requests: true
-        pdf_download_permission: true
-        device_limit: 1
-        branding:
-          logo_url: 'https://example.com/logo.png'
-          primary_color: '#000000'
-    fileParameters: []
     responses: []
     responseFields: []
     auth: []
