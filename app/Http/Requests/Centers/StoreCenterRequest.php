@@ -7,6 +7,7 @@ namespace App\Http\Requests\Centers;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Arr;
 
 class StoreCenterRequest extends FormRequest
 {
@@ -28,6 +29,10 @@ class StoreCenterRequest extends FormRequest
             'description_translations' => ['nullable', 'array'],
             'logo_url' => ['nullable', 'string'],
             'primary_color' => ['nullable', 'string'],
+            'onboarding_status' => ['nullable', 'string'],
+            'branding_metadata' => ['nullable', 'array'],
+            'storage_driver' => ['nullable', 'string'],
+            'storage_root' => ['nullable', 'string'],
             'default_view_limit' => ['nullable', 'integer', 'min:0'],
             'allow_extra_view_requests' => ['boolean'],
             'pdf_download_permission' => ['boolean'],
@@ -40,6 +45,36 @@ class StoreCenterRequest extends FormRequest
             'owner.phone' => ['nullable', 'string', 'max:50'],
             'owner_role' => ['nullable', 'string'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $type = (int) ($this->input('type') ?? 0);
+
+            if ($type !== 1) {
+                return;
+            }
+
+            $logo = $this->input('logo_url');
+            $primaryColor = $this->input('primary_color');
+            $branding = $this->input('branding_metadata');
+
+            $brandingLogo = is_array($branding) ? Arr::get($branding, 'logo_url') : null;
+            $brandingColor = is_array($branding) ? Arr::get($branding, 'primary_color') : null;
+
+            if (! is_string($logo) || $logo === '') {
+                if (! is_string($brandingLogo) || $brandingLogo === '') {
+                    $validator->errors()->add('logo_url', 'Branding logo is required for branded centers.');
+                }
+            }
+
+            if (! is_string($primaryColor) || $primaryColor === '') {
+                if (! is_string($brandingColor) || $brandingColor === '') {
+                    $validator->errors()->add('primary_color', 'Primary color is required for branded centers.');
+                }
+            }
+        });
     }
 
     /**
