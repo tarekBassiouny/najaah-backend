@@ -9,7 +9,7 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\User;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
-use Illuminate\Support\Facades\Storage;
+use App\Services\Storage\Contracts\StorageServiceInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -18,7 +18,8 @@ class PdfAccessService
 {
     public function __construct(
         private readonly EnrollmentServiceInterface $enrollmentService,
-        private readonly SettingsResolverServiceInterface $settingsResolverService
+        private readonly SettingsResolverServiceInterface $settingsResolverService,
+        private readonly StorageServiceInterface $storageService
     ) {}
 
     public function download(User $student, Course $course, int $pdfId): StreamedResponse
@@ -43,13 +44,13 @@ class PdfAccessService
 
         $path = $pdf->source_id;
 
-        if (! is_string($path) || ! Storage::disk('local')->exists($path)) {
+        if (! is_string($path) || ! $this->storageService->exists($path)) {
             throw new NotFoundHttpException('PDF file not found.');
         }
 
         $filename = ($pdf->title ?? 'document').'.'.$pdf->file_extension;
 
-        return Storage::disk('local')->download($path, $filename);
+        return $this->storageService->download($path, $filename);
     }
 
     private function enforceEnrollment(User $student, Course $course): void

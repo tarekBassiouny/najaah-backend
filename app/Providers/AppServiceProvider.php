@@ -31,6 +31,8 @@ use App\Services\Settings\CenterSettingsService;
 use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Services\Settings\SettingsResolverService;
+use App\Services\Storage\Contracts\StorageServiceInterface;
+use App\Services\Storage\SpacesStorageService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
@@ -63,6 +65,11 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(ViewLimitService::class);
+        $this->app->singleton(StorageServiceInterface::class, function (Application $app): StorageServiceInterface {
+            $disk = (string) $app['config']->get('storage.disk', 'spaces');
+
+            return new SpacesStorageService($app['filesystem']->disk($disk));
+        });
 
         $this->app->singleton(BunnyStreamService::class, function (Application $app): BunnyStreamService {
             $apiConfig = $app['config']->get('bunny.api', []);

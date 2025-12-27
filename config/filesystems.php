@@ -15,6 +15,8 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
+    'signed_url_ttl' => (int) env('SIGNED_URL_TTL', 900),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
@@ -43,6 +45,19 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
+        'spaces' => [
+            'driver' => 's3',
+            'key' => env('SPACES_KEY'),
+            'secret' => env('SPACES_SECRET'),
+            'region' => env('SPACES_REGION', 'us-east-1'),
+            'bucket' => env('SPACES_BUCKET'),
+            'endpoint' => env('SPACES_ENDPOINT'),
+            'url' => env('SPACES_URL'),
+            'visibility' => 'private',
             'throw' => false,
             'report' => false,
         ],

@@ -6,11 +6,13 @@ use App\Models\Course;
 use App\Models\Pdf;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class)->group('pdfs', 'admin');
 
 it('allows admin to upload a pdf to private storage', function (): void {
+    Config::set('storage.disk', 'local');
     Storage::fake('local');
 
     $admin = $this->asAdmin();
@@ -30,7 +32,7 @@ it('allows admin to upload a pdf to private storage', function (): void {
     $pdf = Pdf::first();
     expect($pdf)->not->toBeNull()
         ->and($pdf?->source_type)->toBe(1)
-        ->and($pdf?->source_provider)->toBe('local');
+        ->and($pdf?->source_provider)->toBe('spaces');
 
     Storage::disk('local')->assertExists($pdf->source_id);
 });

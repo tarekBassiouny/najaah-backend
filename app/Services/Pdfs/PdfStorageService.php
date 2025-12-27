@@ -13,6 +13,8 @@ use App\Models\Video;
 use App\Services\Courses\CourseAttachmentService;
 use App\Services\Logging\LogContextResolver;
 use App\Services\Sections\SectionAttachmentService;
+use App\Services\Storage\Contracts\StorageServiceInterface;
+use App\Services\Storage\StoragePathResolver;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -29,6 +31,8 @@ class PdfStorageService
     public function __construct(
         private readonly CourseAttachmentService $courseAttachmentService,
         private readonly SectionAttachmentService $sectionAttachmentService,
+        private readonly StorageServiceInterface $storageService,
+        private readonly StoragePathResolver $pathResolver
     ) {}
 
     /**
@@ -42,9 +46,20 @@ class PdfStorageService
         ?Section $section = null,
         ?Video $video = null
     ): Pdf {
-        $path = $file->store('pdfs', 'local');
+        $centerId = $course?->center_id ?? $creator?->center_id;
+        if (! is_numeric($centerId)) {
+            Log::error('PDF storage failed due to missing center context.', $this->resolveLogContext([
+                'source' => 'api',
+                'user_id' => $creator?->id,
+                'center_id' => $course?->center_id ?? $creator?->center_id,
+            ]));
+            throw new RuntimeException('Failed to resolve PDF storage location.');
+        }
 
-        if ($path === false) {
+        $path = $this->pathResolver->pdf((int) $centerId, $file->hashName());
+        $storedPath = $this->storageService->upload($path, $file);
+
+        if ($storedPath === '') {
             Log::error('PDF storage failed.', $this->resolveLogContext([
                 'source' => 'api',
                 'user_id' => $creator?->id,
@@ -62,8 +77,8 @@ class PdfStorageService
         ]);
 
         $payload['source_type'] = self::SOURCE_TYPE_NATIVE;
-        $payload['source_provider'] = 'local';
-        $payload['source_id'] = $path;
+        $payload['source_provider'] = 'spaces';
+        $payload['source_id'] = $storedPath;
         $payload['source_url'] = null;
         $payload['file_size_kb'] = $fileSize;
         $payload['file_extension'] = $extension;

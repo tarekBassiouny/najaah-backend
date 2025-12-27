@@ -6,13 +6,19 @@ namespace App\Services\Instructors;
 
 use App\Models\Instructor;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
+use App\Services\Storage\Contracts\StorageServiceInterface;
+use App\Services\Storage\StoragePathResolver;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
 class InstructorService implements InstructorServiceInterface
 {
+    public function __construct(
+        private readonly StorageServiceInterface $storageService,
+        private readonly StoragePathResolver $pathResolver
+    ) {}
+
     /**
      * @return LengthAwarePaginator<Instructor>
      */
@@ -39,7 +45,7 @@ class InstructorService implements InstructorServiceInterface
      */
     public function update(Instructor $instructor, array $data): Instructor
     {
-        $data = $this->prepareAvatar($data);
+        $data = $this->prepareAvatar($data, $instructor);
         $data = $this->prepareMetadata($data);
 
         $instructor->update($data);
@@ -61,18 +67,19 @@ class InstructorService implements InstructorServiceInterface
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    private function prepareAvatar(array $data): array
+    private function prepareAvatar(array $data, ?Instructor $instructor = null): array
     {
         $avatar = $data['avatar'] ?? null;
 
         if ($avatar instanceof UploadedFile) {
-            $disk = config('filesystems.default', 'public');
-            $path = Storage::disk($disk)->putFile('instructors/avatars', $avatar);
-            if ($path === false) {
-                throw new RuntimeException('Failed to store instructor avatar.');
-            }
+            $centerId = $this->resolveCenterId($data, $instructor);
+            $path = $this->pathResolver->instructorAvatar($centerId, $avatar->hashName());
+            $storedPath = $this->storageService->upload($path, $avatar);
 
-            $data['avatar_url'] = Storage::disk($disk)->url($path);
+            $data['avatar_url'] = $this->storageService->temporaryUrl(
+                $storedPath,
+                (int) config('filesystems.signed_url_ttl', 900)
+            );
         }
 
         unset($data['avatar']);
@@ -115,5 +122,23 @@ class InstructorService implements InstructorServiceInterface
         $data['metadata'] = $clean;
 
         return $data;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function resolveCenterId(array $data, ?Instructor $instructor = null): int
+    {
+        $centerId = $data['center_id'] ?? null;
+
+        if (is_numeric($centerId)) {
+            return (int) $centerId;
+        }
+
+        if ($instructor instanceof Instructor && is_numeric($instructor->center_id)) {
+            return (int) $instructor->center_id;
+        }
+
+        throw new RuntimeException('Center id is required to store instructor avatar.');
     }
 }
