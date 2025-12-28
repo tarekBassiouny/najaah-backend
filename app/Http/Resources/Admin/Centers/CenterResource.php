@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin\Centers;
 
 use App\Models\Center;
+use App\Services\Branding\CenterLogoUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,6 +21,7 @@ class CenterResource extends JsonResource
     {
         /** @var Center $center */
         $center = $this->resource;
+        $logoUrlResolver = app(CenterLogoUrlResolver::class);
 
         return [
             'id' => $center->id,
@@ -29,7 +31,7 @@ class CenterResource extends JsonResource
             'is_featured' => $center->is_featured,
             'name' => $center->name,
             'description' => $center->description,
-            'logo_url' => $center->logo_url,
+            'logo_url' => $logoUrlResolver->resolve($center->logo_url),
             'primary_color' => $center->primary_color,
             'onboarding_status' => $center->onboarding_status,
             'branding_metadata' => $center->branding_metadata,

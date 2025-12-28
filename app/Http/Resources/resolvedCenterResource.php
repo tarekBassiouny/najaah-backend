@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources;
 
 use App\Models\Center;
+use App\Services\Branding\CenterLogoUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,6 +23,7 @@ class resolvedCenterResource extends JsonResource
         $center = $this->resource;
         $settings = $center->setting?->settings ?? [];
         $branding = is_array($settings['branding'] ?? null) ? $settings['branding'] : [];
+        $logoUrlResolver = app(CenterLogoUrlResolver::class);
 
         $logoUrl = $branding['logo_url'] ?? $center->logo_url;
         $primaryColor = $branding['primary_color'] ?? $center->primary_color;
@@ -33,7 +35,7 @@ class resolvedCenterResource extends JsonResource
             'type' => $this->resolveType($center->type),
             'tier' => $this->resolveTier($center->tier),
             'branding' => [
-                'logo_url' => $logoUrl,
+                'logo_url' => $logoUrlResolver->resolve($logoUrl),
                 'primary_color' => $primaryColor,
             ],
         ];

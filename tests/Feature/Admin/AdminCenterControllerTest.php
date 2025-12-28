@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class)->group('centers', 'admin');
 
@@ -138,6 +139,8 @@ it('updates a center but keeps slug immutable', function (): void {
 it('defaults logo path on create when missing', function (): void {
     Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
+    Storage::fake();
+    Storage::put('centers/defaults/logo.png', 'logo');
 
     $payload = [
         'slug' => 'default-logo',
@@ -151,7 +154,11 @@ it('defaults logo path on create when missing', function (): void {
 
     $response = $this->postJson('/api/v1/admin/centers', $payload);
 
-    $response->assertCreated()->assertJsonPath('data.center.logo_url', 'centers/defaults/logo.png');
+    $response->assertCreated();
+    $logoUrl = (string) $response->json('data.center.logo_url');
+    expect($logoUrl)
+        ->not->toBe('centers/defaults/logo.png')
+        ->toContain('centers/defaults/logo.png');
 });
 
 it('does not expose api key in center show', function (): void {

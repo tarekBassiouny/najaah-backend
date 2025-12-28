@@ -13,6 +13,8 @@ interface StorageServiceInterface
 
     public function temporaryUrl(string $path, int $expiresInSeconds): string;
 
+    public function url(string $path): string;
+
     public function exists(string $path): bool;
 
     public function download(string $path, string $filename): StreamedResponse;

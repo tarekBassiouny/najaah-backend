@@ -46,6 +46,11 @@ class SpacesStorageService implements StorageServiceInterface
         return $this->disk->exists($path);
     }
 
+    public function url(string $path): string
+    {
+        return $this->disk->url($path);
+    }
+
     public function download(string $path, string $filename): StreamedResponse
     {
         return $this->disk->download($path, $filename);

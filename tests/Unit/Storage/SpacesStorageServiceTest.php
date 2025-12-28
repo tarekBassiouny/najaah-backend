@@ -58,3 +58,12 @@ it('checks file existence via the storage disk', function (): void {
 
     expect($service->exists('centers/1/file.pdf'))->toBeTrue();
 });
+
+it('returns public urls using the storage disk', function (): void {
+    $disk = \Mockery::mock(Filesystem::class);
+    $disk->shouldReceive('url')->once()->with('centers/1/file.pdf')->andReturn('https://cdn.test/file.pdf');
+
+    $service = new SpacesStorageService($disk);
+
+    expect($service->url('centers/1/file.pdf'))->toBe('https://cdn.test/file.pdf');
+});
