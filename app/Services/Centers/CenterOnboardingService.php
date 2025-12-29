@@ -82,6 +82,13 @@ class CenterOnboardingService
         }
     }
 
+    public function ensureSettingsAndStorage(Center $center): void
+    {
+        $center->refresh();
+        $this->initializeSettings($center);
+        $this->applyStorageDefaults($center);
+    }
+
     private function initializeSettings(Center $center): void
     {
         CenterSetting::firstOrCreate([
