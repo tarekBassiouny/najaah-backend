@@ -21,6 +21,7 @@ class WhatsAppOtpSender implements OtpSenderInterface
                 'exception_class' => $throwable::class,
                 'error' => $throwable->getMessage(),
             ]));
+            throw $throwable;
         }
     }
 

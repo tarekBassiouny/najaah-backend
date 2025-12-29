@@ -43,7 +43,7 @@ it('filters not enrolled courses in explore service', function (): void {
     ]);
 
     $service = new ExploreCourseService;
-    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: false, publishFrom: null, publishTo: null);
+    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: false, isFeatured: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
     $items = $paginator->items();
@@ -73,7 +73,7 @@ it('scopes explore to center for branded students', function (): void {
     ]);
 
     $service = new ExploreCourseService;
-    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, publishFrom: null, publishTo: null);
+    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, isFeatured: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
     $items = $paginator->items();
@@ -102,7 +102,7 @@ it('scopes explore to unbranded centers for system students', function (): void 
     ]);
 
     $service = new ExploreCourseService;
-    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, publishFrom: null, publishTo: null);
+    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, isFeatured: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
     $items = $paginator->items();
@@ -130,7 +130,7 @@ it('excludes unpublished courses from explore service', function (): void {
     ]);
 
     $service = new ExploreCourseService;
-    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, publishFrom: null, publishTo: null);
+    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, isFeatured: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
     $items = $paginator->items();
@@ -166,6 +166,7 @@ it('filters courses by publish date range in explore service', function (): void
         categoryId: null,
         instructorId: null,
         enrolled: null,
+        isFeatured: null,
         publishFrom: now()->subDays(5)->toDateString(),
         publishTo: now()->toDateString()
     );
@@ -224,7 +225,7 @@ it('excludes courses with non-ready videos in explore service', function (): voi
     ]);
 
     $service = new ExploreCourseService;
-    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, publishFrom: null, publishTo: null);
+    $filters = new CourseFilters(page: 1, perPage: 15, categoryId: null, instructorId: null, enrolled: null, isFeatured: null, publishFrom: null, publishTo: null);
 
     $paginator = $service->explore($student, $filters);
     $items = $paginator->items();

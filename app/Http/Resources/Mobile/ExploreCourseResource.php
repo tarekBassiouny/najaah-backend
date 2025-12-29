@@ -37,7 +37,7 @@ class ExploreCourseResource extends JsonResource
             'category' => new CategoryResource($this->whenLoaded('category')),
             'center' => new CenterResource($this->whenLoaded('center')),
             'instructors' => InstructorResource::collection($this->whenLoaded('instructors')),
-            
+
         ];
     }
 }

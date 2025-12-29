@@ -39,6 +39,7 @@ class ExploreCoursesRequest extends FormRequest
         if (array_key_exists('enrolled', $data)) {
             $enrolled = filter_var($data['enrolled'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         }
+
         if (array_key_exists('is_featured', $data)) {
             $isFeatured = filter_var($data['is_featured'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         }

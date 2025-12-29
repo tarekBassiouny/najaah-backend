@@ -38,6 +38,7 @@ class EnrolledCoursesRequest extends FormRequest
             categoryId: isset($data['category_id']) ? (int) $data['category_id'] : null,
             instructorId: isset($data['instructor_id']) ? (int) $data['instructor_id'] : null,
             enrolled: true,
+            isFeatured: null,
             publishFrom: null,
             publishTo: null
         );

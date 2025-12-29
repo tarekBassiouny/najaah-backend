@@ -32,8 +32,10 @@ class OtpService implements OtpServiceInterface
             'provider' => $this->sender->provider(),
             'expires_at' => now()->addMinutes(5),
         ]);
-
-        $this->sender->send($countryCode.$phone, $otpCode);
+        try {
+            $this->sender->send($countryCode.$phone, $otpCode);
+        } catch (\Throwable $throwable) {
+        }
 
         return $token;
     }
