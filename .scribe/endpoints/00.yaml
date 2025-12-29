@@ -397,6 +397,17 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      is_featured:
+        custom: []
+        name: is_featured
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       publish_from:
         custom: []
         name: publish_from
@@ -425,6 +436,7 @@ endpoints:
       category_id: 3
       instructor_id: 5
       enrolled: true
+      is_featured: false
       publish_from: '2025-01-01'
       publish_to: '2025-01-31'
     bodyParameters: []
@@ -596,6 +608,17 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      is_featured:
+        custom: []
+        name: is_featured
+        description: 'Filter centers by featured status.'
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       per_page:
         custom: []
         name: per_page
@@ -620,6 +643,7 @@ endpoints:
         deprecated: false
     cleanQueryParameters:
       search: Science
+      is_featured: false
       per_page: 15
       page: 1
     bodyParameters: []

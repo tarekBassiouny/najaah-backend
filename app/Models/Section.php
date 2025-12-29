@@ -38,6 +38,7 @@ class Section extends Model
         'description_translations',
         'order_index',
         'visible',
+        'is_demo',
     ];
 
     protected $casts = [
@@ -45,6 +46,7 @@ class Section extends Model
         'description_translations' => 'array',
         'order_index' => 'integer',
         'visible' => 'boolean',
+        'is_demo' => 'boolean',
     ];
 
     /** @var array<int, string> */

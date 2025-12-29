@@ -43,6 +43,7 @@ class Pdf extends Model
         'source_url',
         'file_size_kb',
         'file_extension',
+        'is_demo',
         'created_by',
     ];
 
@@ -51,6 +52,7 @@ class Pdf extends Model
         'description_translations' => 'array',
         'file_size_kb' => 'integer',
         'source_type' => 'integer',
+        'is_demo' => 'boolean',
     ];
 
     /** @var array<int, string> */

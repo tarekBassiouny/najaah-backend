@@ -400,7 +400,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: December 27, 2025</li>
+        <li>Last updated: December 29, 2025</li>
     </ul>
 </div>
 
@@ -1438,7 +1438,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
+    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;is_featured=&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
@@ -1456,6 +1456,7 @@ const params = {
     "category_id": "3",
     "instructor_id": "5",
     "enrolled": "1",
+    "is_featured": "0",
     "publish_from": "2025-01-01",
     "publish_to": "2025-01-31",
 };
@@ -1643,6 +1644,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </label>
     <br>
 <p>Filter by enrollment status. Example: <code>true</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>is_featured</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="GETapi-v1-courses-explore" style="display: none">
+            <input type="radio" name="is_featured"
+                   value="1"
+                   data-endpoint="GETapi-v1-courses-explore"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-v1-courses-explore" style="display: none">
+            <input type="radio" name="is_featured"
+                   value="0"
+                   data-endpoint="GETapi-v1-courses-explore"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>false</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>publish_from</code></b>&nbsp;&nbsp;
@@ -2029,7 +2052,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/centers?search=Science&amp;per_page=15&amp;page=1" \
+    --get "http://xyz-lms.test/api/v1/centers?search=Science&amp;is_featured=&amp;per_page=15&amp;page=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
@@ -2043,6 +2066,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 const params = {
     "search": "Science",
+    "is_featured": "0",
     "per_page": "15",
     "page": "1",
 };
@@ -2172,6 +2196,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="query">
     <br>
 <p>Search centers by name or description. Example: <code>Science</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>is_featured</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="GETapi-v1-centers" style="display: none">
+            <input type="radio" name="is_featured"
+                   value="1"
+                   data-endpoint="GETapi-v1-centers"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-v1-centers" style="display: none">
+            <input type="radio" name="is_featured"
+                   value="0"
+                   data-endpoint="GETapi-v1-centers"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Filter centers by featured status. Example: <code>false</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
@@ -6593,7 +6639,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
-    --form "logo=@/tmp/phppgotu7ag83d3cE0tc4u" </code></pre></div>
+    --form "logo=@/tmp/phpvfukq8jjr7kt6s094AM" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -6740,7 +6786,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phppgotu7ag83d3cE0tc4u</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpvfukq8jjr7kt6s094AM</code></p>
         </div>
         </form>
 
@@ -14580,7 +14626,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpsq2qb5b1m1o13v3Cn7G" </code></pre></div>
+    --form "avatar=@/tmp/phpf0c720nvts3l51XlpEN" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14787,7 +14833,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpsq2qb5b1m1o13v3Cn7G</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpf0c720nvts3l51XlpEN</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -15022,7 +15068,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpmg4dkv5mut997Ce0bvc" </code></pre></div>
+    --form "avatar=@/tmp/phpi1fgblqnff7s5RYD92N" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -15245,7 +15291,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpmg4dkv5mut997Ce0bvc</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpi1fgblqnff7s5RYD92N</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -16174,7 +16220,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpls2foaladbkecoVaRPq" </code></pre></div>
+    --form "file=@/tmp/php57fluaqk2de0bcAhgrr" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16338,7 +16384,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpls2foaladbkecoVaRPq</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php57fluaqk2de0bcAhgrr</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;

@@ -61,6 +61,7 @@ class Video extends Model
         'upload_session_id',
         'original_filename',
         'encoding_status',
+        'is_demo',
         'thumbnail_url',
         'thumbnail_urls',
     ];
@@ -73,6 +74,7 @@ class Video extends Model
         'lifecycle_status' => 'integer',
         'source_type' => 'integer',
         'encoding_status' => 'integer',
+        'is_demo' => 'boolean',
         'library_id' => 'integer',
         'thumbnail_urls' => 'array',
     ];
