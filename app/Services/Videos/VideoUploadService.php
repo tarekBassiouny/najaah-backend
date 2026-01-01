@@ -95,15 +95,24 @@ class VideoUploadService
 
     private function resolveTitle(int $centerId, ?int $courseId, ?Video $video, string $originalFilename): string
     {
-        if ($video instanceof Video && $courseId !== null) {
-            return sprintf('center_%d/course_%d/video_%d', $centerId, $courseId, $video->id);
+        if ($video instanceof Video && $video->section_id !== null && is_numeric($courseId)) {
+            return sprintf(
+                'center_%d/course_%d/section_%d/video_%d/%s',
+                $centerId,
+                $courseId,
+                $video->section_id,
+                $video->id,
+                $originalFilename
+            );
         }
 
-        if ($video instanceof Video) {
-            return sprintf('center_%d/video_%d', $centerId, $video->id);
-        }
-
-        return $originalFilename;
+        return sprintf(
+                'center_%d_course_%d_video_%d_%s',
+                $centerId,
+                $courseId,
+                $video->id ?? 0,
+                $originalFilename
+            );
     }
 
     /**

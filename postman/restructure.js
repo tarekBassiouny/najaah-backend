@@ -31,10 +31,8 @@ const tree = {
   mobileAuth: folder("📱 Mobile – Auth (JWT)"),
   studentCenters: folder("🏫 Student – Centers (unbranded)"),
   studentCourses: folder("🎓 Student – Courses"),
-  studentSections: folder("🎓 Student – Sections"),
   studentPlayback: folder("🎬 Student – Playback"),
   studentRequests: folder("📱 Student – Requests"),
-  studentVideos: folder("📱 Student – Videos"),
   studentPdfs: folder("📄 Student – PDFs"),
   studentEnrollments: folder("🎓 Student – Enrollments"),
   instructors: folder("👨‍🏫 Instructors"),
@@ -116,6 +114,13 @@ function route(item) {
   // Explore
   if (path === "/api/v1/courses/explore") return tree.studentCourses;
 
+  // PDFs
+  if (path.match(/^\/api\/v1\/centers\/[^/]+\/courses\/[^/]+\/pdfs\/[^/]+\/signed-url$/))
+    return tree.studentPdfs;
+
+  // Explore
+  if (path === "/api/v1/courses/explore") return tree.studentCourses;
+  
   // Course detail (must be BEFORE centers)
   if (path.match(/^\/api\/v1\/centers\/[^/]+\/courses\/[^/]+$/))
     return tree.studentCourses;

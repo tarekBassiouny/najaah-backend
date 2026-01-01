@@ -12,6 +12,7 @@ use App\Http\Controllers\Mobile\ExploreController;
 use App\Http\Controllers\Mobile\ExtraViewRequestController;
 use App\Http\Controllers\Mobile\InstructorController;
 use App\Http\Controllers\Mobile\MeController;
+use App\Http\Controllers\Mobile\PdfController;
 use App\Http\Controllers\Mobile\PlaybackController;
 use App\Http\Controllers\Mobile\SearchController;
 use Illuminate\Support\Facades\Route;
@@ -98,6 +99,16 @@ Route::middleware('jwt.mobile')->group(function (): void {
     Route::post(
         '/centers/{center}/courses/{course}/videos/{video}/playback_progress',
         [PlaybackController::class, 'updateProgress']
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | PDFs
+    |--------------------------------------------------------------------------
+    */
+    Route::get(
+        '/centers/{center}/courses/{course}/pdfs/{pdf}/signed-url',
+        [PdfController::class, 'signedUrl']
     );
 
     /*
