@@ -20,7 +20,7 @@ it('initializes an upload session for admin', function (): void {
         ->shouldReceive('createVideo')
         ->once()
         ->with([
-            'title' => 'intro.mp4',
+            'title' => 'center_'.$center->id.'_course_0_video_0_intro.mp4',
             'meta' => [
                 'center_id' => $center->id,
                 'course_id' => null,
@@ -69,7 +69,7 @@ it('moves upload session to ready and updates video', function (): void {
         ->shouldReceive('createVideo')
         ->once()
         ->with([
-            'title' => 'center_'.$center->id.'/video_'.$video->id,
+            'title' => 'center_'.$center->id.'_course_0_video_'.$video->id.'_lesson.mp4',
             'meta' => [
                 'center_id' => $center->id,
                 'course_id' => null,
@@ -120,7 +120,7 @@ it('records failures and keeps video inactive', function (): void {
         ->shouldReceive('createVideo')
         ->once()
         ->with([
-            'title' => 'broken.mp4',
+            'title' => 'center_'.$center->id.'_course_0_video_0_broken.mp4',
             'meta' => [
                 'center_id' => $center->id,
                 'course_id' => null,

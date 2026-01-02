@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Jobs\ProcessCenterLogoJob;
 use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\Role;
@@ -45,19 +44,13 @@ it('dispatches onboarding jobs after center creation', function (): void {
     expect($center?->getAttribute('bunny_library_id'))->toBeNull();
 
     Bus::assertDispatched(SendAdminInvitationEmailJob::class, fn ($job) => $job->centerId === $centerId && $job->ownerId === $ownerId);
-    Bus::assertDispatched(ProcessCenterLogoJob::class, fn ($job) => $job->centerId === $centerId);
 });
 
-it('re-running onboarding does not dispatch completed jobs', function (): void {
+it('re-running onboarding does not dispatch invitation when already sent', function (): void {
     Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $center = Center::factory()->create([
-        'logo_url' => 'https://example.com/logo.png',
-        'branding_metadata' => [
-            'logo_source' => 'https://example.com/logo.png',
-            'logo_processed_at' => now()->toISOString(),
-        ],
         'onboarding_status' => Center::ONBOARDING_ACTIVE,
     ]);
 
@@ -71,9 +64,9 @@ it('re-running onboarding does not dispatch completed jobs', function (): void {
         $owner->id => ['type' => 'owner'],
     ]);
 
-    $service = app(\App\Services\Centers\CenterOnboardingService::class);
-    $service->resume($center, $owner, null, 'center_owner');
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/onboarding/retry");
+
+    $response->assertOk();
 
     Bus::assertNotDispatched(SendAdminInvitationEmailJob::class);
-    Bus::assertNotDispatched(ProcessCenterLogoJob::class);
 });

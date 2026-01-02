@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
+use App\Filters\Admin\CenterFilters as AdminCenterFilters;
 use App\Filters\Mobile\CenterFilters;
 use App\Models\Center;
 use App\Models\CenterSetting;
@@ -13,34 +14,17 @@ use App\Models\User;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class CenterService implements CenterServiceInterface
 {
     /**
-     * @param  array<string, mixed>  $filters
      * @return LengthAwarePaginator<Center>
      */
-    public function paginate(int $perPage = 15, array $filters = []): LengthAwarePaginator
+    public function listAdmin(AdminCenterFilters $filters): LengthAwarePaginator
     {
-        $query = Center::query()->with('setting')->orderByDesc('id');
-
-        if (isset($filters['slug']) && is_string($filters['slug'])) {
-            $query->where('slug', $filters['slug']);
-        }
-
-        if (isset($filters['type']) && is_numeric($filters['type'])) {
-            $query->where('type', (int) $filters['type']);
-        }
-
-        if (isset($filters['search']) && is_string($filters['search'])) {
-            $term = trim($filters['search']);
-            if ($term !== '') {
-                $query->where('name_translations', 'like', '%'.$term.'%');
-            }
-        }
-
-        return $query->paginate($perPage);
+        return $this->adminQuery($filters)->paginate($filters->perPage);
     }
 
     /** @param array<string, mixed> $data */
@@ -73,7 +57,6 @@ class CenterService implements CenterServiceInterface
 
             if (! empty($data)) {
                 $center->update($data);
-                $center->save();
             }
 
             if (is_array($settings)) {
@@ -129,6 +112,51 @@ class CenterService implements CenterServiceInterface
         }
 
         return $query->paginate($filters->perPage);
+    }
+
+    /**
+     * @return Builder<Center>
+     */
+    private function adminQuery(AdminCenterFilters $filters): Builder
+    {
+        $query = Center::query()
+            ->with('setting')
+            // ->orderByDesc('is_featured')
+            ->orderByDesc('created_at');
+
+        if ($filters->slug !== null) {
+            $query->where('slug', $filters->slug);
+        }
+
+        if ($filters->type !== null) {
+            $query->where('type', $filters->type);
+        }
+
+        if ($filters->tier !== null) {
+            $query->where('tier', $filters->tier);
+        }
+
+        if ($filters->isFeatured !== null) {
+            $query->where('is_featured', $filters->isFeatured);
+        }
+
+        if ($filters->onboardingStatus !== null) {
+            $query->where('onboarding_status', $filters->onboardingStatus);
+        }
+
+        if ($filters->search !== null && $filters->search !== '') {
+            $query->where('name_translations', 'like', '%'.$filters->search.'%');
+        }
+
+        if ($filters->createdFrom !== null) {
+            $query->where('created_at', '>=', Carbon::parse($filters->createdFrom)->startOfDay());
+        }
+
+        if ($filters->createdTo !== null) {
+            $query->where('created_at', '<=', Carbon::parse($filters->createdTo)->endOfDay());
+        }
+
+        return $query;
     }
 
     /**

@@ -53,6 +53,46 @@ class PdfAccessService
         return $this->storageService->download($path, $filename);
     }
 
+    /**
+     * @return array{url:string,expires_in:int}
+     */
+    public function signedUrl(User $student, Course $course, int $pdfId, int $expiresInSeconds): array
+    {
+        $this->enforceEnrollment($student, $course);
+
+        $pivot = CoursePdf::where('course_id', $course->id)
+            ->where('pdf_id', $pdfId)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if ($pivot === null) {
+            throw new NotFoundHttpException('PDF not found for this course.');
+        }
+
+        if ($pivot->visible === false) {
+            throw new AccessDeniedHttpException('PDF download is not permitted.');
+        }
+
+        if (! $this->canDownload($student, $course, $pivot)) {
+            throw new AccessDeniedHttpException('PDF download is not permitted.');
+        }
+
+        /** @var \App\Models\Pdf $pdf */
+        $pdf = $pivot->pdf()->first();
+
+        $path = $pdf->source_id;
+        if (! is_string($path) || ! $this->storageService->exists($path)) {
+            throw new NotFoundHttpException('PDF file not found.');
+        }
+
+        $expires = max(60, min(3600, $expiresInSeconds));
+
+        return [
+            'url' => $this->storageService->temporaryUrl($path, $expires),
+            'expires_in' => $expires,
+        ];
+    }
+
     private function enforceEnrollment(User $student, Course $course): void
     {
         $enrollment = $this->enrollmentService->getActiveEnrollment($student, $course);

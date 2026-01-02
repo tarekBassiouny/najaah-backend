@@ -24,17 +24,38 @@ class UpdateCenterRequest extends FormRequest
         return [
             'name_translations' => ['sometimes', 'array', 'min:1'],
             'name_translations.*' => ['string', 'max:255'],
-            'tier' => ['sometimes', 'integer'],
+            'tier' => ['sometimes', 'string', 'in:standard,premium,vip'],
             'is_featured' => ['sometimes', 'boolean'],
             'branding_metadata' => ['sometimes', 'array'],
+            'branding_metadata.primary_color' => ['sometimes', 'string'],
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function validated($key = null, $default = null)
+    {
+        /** @var array<string, mixed> $data */
+        $data = parent::validated();
+
+        $tier = $data['tier'] ?? null;
+        if (is_string($tier)) {
+            $data['tier'] = $this->resolveTier($tier);
+        }
+
+        if ($key !== null) {
+            return data_get($data, $key, $default);
+        }
+
+        return $data;
     }
 
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            /** @var \App\Models\Center|null $center */
-            $center = $this->route('center');
+            $centerId = $this->route('center');
+            $center = is_numeric($centerId) ? \App\Models\Center::find((int) $centerId) : null;
             $type = (int) ($center?->type ?? 0);
 
             if ($type !== 1) {
@@ -66,7 +87,7 @@ class UpdateCenterRequest extends FormRequest
             ],
             'tier' => [
                 'description' => 'Center tier identifier.',
-                'example' => 1,
+                'example' => 'premium',
             ],
             'is_featured' => [
                 'description' => 'Whether the center is featured.',
@@ -76,7 +97,20 @@ class UpdateCenterRequest extends FormRequest
                 'description' => 'Branding metadata for branded centers.',
                 'example' => ['primary_color' => '#123456'],
             ],
+            'branding_metadata.primary_color' => [
+                'description' => 'Primary branding color.',
+                'example' => '#123456',
+            ],
         ];
+    }
+
+    private function resolveTier(string $tier): int
+    {
+        return match ($tier) {
+            'premium' => \App\Models\Center::TIER_PREMIUM,
+            'vip' => \App\Models\Center::TIER_VIP,
+            default => \App\Models\Center::TIER_STANDARD,
+        };
     }
 
     protected function failedValidation(Validator $validator): void

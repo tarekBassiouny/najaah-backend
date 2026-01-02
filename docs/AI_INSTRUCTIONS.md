@@ -112,6 +112,8 @@ All responses MUST follow these rules unless explicitly overridden.
 ## 6.3 PDFs
 - Stored in backend storage (e.g., S3).
 - Download permission controlled by settings.
+- Mobile clients request short-lived signed storage URLs via:
+  `/api/v1/centers/{center}/courses/{course}/pdfs/{pdf}/signed-url`
 
 ---
 
@@ -131,14 +133,18 @@ Before providing video URL, backend MUST verify:
 - Backend checks rules → generates **short-lived signed Bunny URL**
 - Bunny credentials must NEVER be exposed to clients.
 
-## 7.3 View Limits
+## 7.3 PDF Access & Signing
+- Backend MUST verify enrollment and permissions before issuing URLs.
+- PDFs use storage signed URLs (Spaces/S3), not Bunny.
+
+## 7.4 View Limits
 - Default limit: **2 full plays**.  
 - A "full play" = **≥ 95% watched**.
 - Students may request extra views.
 - Admin approves extra plays PER video PER student.
 - Final limit = `default|override + extra`.
 
-## 7.4 Concurrency Rules
+## 7.5 Concurrency Rules
 - Block:
   - Web + mobile simultaneous playback.
   - Two mobile devices.
@@ -365,4 +371,3 @@ Logs must be **permanent** (soft deletable but not physically removed).
 
 ### When generating frontend:
 - MUST follow Next.js + Tailwind + React Query patterns.
-

@@ -19,7 +19,7 @@ it('creates bunny video and returns upload url', function (): void {
         ->shouldReceive('createVideo')
         ->once()
         ->with([
-            'title' => 'sample.mp4',
+            'title' => 'center_'.$center->id.'_course_0_video_0_sample.mp4',
             'meta' => [
                 'center_id' => $center->id,
                 'course_id' => null,
@@ -68,7 +68,7 @@ it('ties existing video to new upload session', function (): void {
         ->shouldReceive('createVideo')
         ->once()
         ->with([
-            'title' => 'center_'.$center->id.'/video_'.$video->id,
+            'title' => 'center_'.$center->id.'_course_0_video_'.$video->id.'_sample.mp4',
             'meta' => [
                 'center_id' => $center->id,
                 'course_id' => null,

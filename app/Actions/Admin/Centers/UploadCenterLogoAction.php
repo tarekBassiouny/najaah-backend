@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Admin\Centers;
 
+use App\Jobs\ProcessCenterLogoJob;
 use App\Models\Center;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use App\Services\Storage\StoragePathResolver;
@@ -23,6 +24,8 @@ class UploadCenterLogoAction
 
         $center->logo_url = $storedPath;
         $center->save();
+
+        ProcessCenterLogoJob::dispatch($center->id, (string) $center->logo_url);
 
         return $center->fresh(['setting']) ?? $center;
     }

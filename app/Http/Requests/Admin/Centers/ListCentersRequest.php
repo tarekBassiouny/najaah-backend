@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Centers;
 
+use App\Filters\Admin\CenterFilters;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ListCentersRequest extends FormRequest
@@ -30,6 +31,31 @@ class ListCentersRequest extends FormRequest
             'created_from' => ['sometimes', 'date'],
             'created_to' => ['sometimes', 'date'],
         ];
+    }
+
+    public function filters(): CenterFilters
+    {
+        /** @var array<string, mixed> $data */
+        $data = $this->validated();
+        $term = isset($data['search']) ? trim((string) $data['search']) : null;
+
+        $isFeatured = null;
+        if (array_key_exists('is_featured', $data)) {
+            $isFeatured = filter_var($data['is_featured'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        }
+
+        return new CenterFilters(
+            page: (int) ($data['page'] ?? 1),
+            perPage: (int) ($data['per_page'] ?? 15),
+            slug: isset($data['slug']) ? (string) $data['slug'] : null,
+            type: isset($data['type']) ? (int) $data['type'] : null,
+            tier: isset($data['tier']) ? (int) $data['tier'] : null,
+            isFeatured: $isFeatured,
+            onboardingStatus: isset($data['onboarding_status']) ? (string) $data['onboarding_status'] : null,
+            search: $term !== '' ? $term : null,
+            createdFrom: isset($data['created_from']) ? (string) $data['created_from'] : null,
+            createdTo: isset($data['created_to']) ? (string) $data['created_to'] : null
+        );
     }
 
     /**

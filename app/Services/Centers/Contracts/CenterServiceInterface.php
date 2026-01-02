@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Centers\Contracts;
 
+use App\Filters\Admin\CenterFilters as AdminCenterFilters;
 use App\Filters\Mobile\CenterFilters;
 use App\Models\Center;
 use App\Models\User;
@@ -11,12 +12,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface CenterServiceInterface
 {
-    /**
-     * @param  array<string, mixed>  $filters
-     * @return LengthAwarePaginator<Center>
-     */
-    public function paginate(int $perPage = 15, array $filters = []): LengthAwarePaginator;
-
     /** @param array<string, mixed> $data */
     public function create(array $data): Center;
 
@@ -26,6 +21,11 @@ interface CenterServiceInterface
     public function delete(Center $center): void;
 
     public function restore(int $id): ?Center;
+
+    /**
+     * @return LengthAwarePaginator<Center>
+     */
+    public function listAdmin(AdminCenterFilters $filters): LengthAwarePaginator;
 
     /**
      * @return LengthAwarePaginator<Center>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Auth\AdminPasswordResetRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 class AdminPasswordResetController extends Controller
@@ -37,7 +38,7 @@ class AdminPasswordResetController extends Controller
                 'token' => $data['token'],
             ],
             function (User $user, string $password): void {
-                $user->password = $password;
+                $user->password = Hash::make($password);
                 $user->force_password_reset = false;
                 $user->save();
             }

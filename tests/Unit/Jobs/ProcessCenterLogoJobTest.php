@@ -39,12 +39,12 @@ it('records logo processing metadata when needed', function (): void {
         ->and($center->branding_metadata['logo_processed_at'] ?? null)->not->toBeNull();
 });
 
-it('marks center failed when job fails', function (): void {
+it('does not change onboarding status when job fails', function (): void {
     $center = Center::factory()->create(['onboarding_status' => Center::ONBOARDING_IN_PROGRESS]);
 
     $job = new ProcessCenterLogoJob($center->id, 'https://example.com/logo.png');
     $job->failed(new RuntimeException('fail'));
 
     $center->refresh();
-    expect($center->onboarding_status)->toBe(Center::ONBOARDING_FAILED);
+    expect($center->onboarding_status)->toBe(Center::ONBOARDING_IN_PROGRESS);
 });

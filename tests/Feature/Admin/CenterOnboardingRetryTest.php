@@ -6,50 +6,47 @@ use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\Centers\CenterOnboardingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 
 uses(RefreshDatabase::class)->group('centers', 'onboarding', 'admin');
 
+beforeEach(function (): void {
+    $this->withoutMiddleware();
+    $this->asAdmin();
+});
+
 it('retries onboarding without duplicating the owner user', function (): void {
     Role::factory()->create(['slug' => 'center_owner']);
     Bus::fake();
 
-    $service = app(CenterOnboardingService::class);
+    $center = Center::factory()->create([
+        'slug' => 'retry-center',
+        'type' => 0,
+        'name_translations' => ['en' => 'Retry Center'],
+        'onboarding_status' => Center::ONBOARDING_FAILED,
+    ]);
 
-    $result = $service->onboard(
-        [
-            'slug' => 'retry-center',
-            'type' => 0,
-            'name_translations' => ['en' => 'Retry Center'],
-        ],
-        null,
-        [
-            'name' => 'Owner Name',
-            'email' => 'retry-owner@example.com',
-            'phone' => '1999000000',
-        ],
-        'center_owner'
-    );
-
-    $center = $result['center']->fresh();
-    expect($center)->not->toBeNull();
-
-    $center?->update(['onboarding_status' => Center::ONBOARDING_FAILED]);
-
-    $before = User::where('center_id', $center?->id)->count();
-
-    $service->resume($center, null, [
-        'name' => 'Owner Name',
+    $owner = User::factory()->create([
+        'center_id' => $center->id,
+        'is_student' => false,
         'email' => 'retry-owner@example.com',
-        'phone' => '1999000000',
-    ], 'center_owner');
+    ]);
 
-    $after = User::where('center_id', $center?->id)->count();
+    $center->users()->syncWithoutDetaching([
+        $owner->id => ['type' => 'owner'],
+    ]);
+
+    $before = User::where('center_id', $center->id)->count();
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/onboarding/retry", [], $this->adminHeaders());
+
+    $response->assertOk();
+
+    $after = User::where('center_id', $center->id)->count();
 
     expect($after)->toBe($before)
-        ->and($center?->fresh()?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
+        ->and($center->fresh()?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
 
     Bus::assertDispatched(SendAdminInvitationEmailJob::class);
 });

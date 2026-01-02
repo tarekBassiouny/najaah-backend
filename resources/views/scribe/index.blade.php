@@ -122,6 +122,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">
                                 <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url">
+                                <a href="#endpoints-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url">GET api/v1/centers/{center_id}/courses/{course_id}/pdfs/{pdf_id}/signed-url</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">
                                 <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view</a>
                             </li>
@@ -400,7 +403,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: December 29, 2025</li>
+        <li>Last updated: January 1, 2026</li>
     </ul>
 </div>
 
@@ -3573,6 +3576,181 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
+                    <h2 id="endpoints-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url">GET api/v1/centers/{center_id}/courses/{course_id}/pdfs/{pdf_id}/signed-url</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/centers/1/courses/1/pdfs/1/signed-url" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/pdfs/1/signed-url"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url">
+    </span>
+<span id="execution-results-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url" data-method="GET"
+      data-path="api/v1/centers/{center_id}/courses/{course_id}/pdfs/{pdf_id}/signed-url"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+                    onclick="tryItOut('GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+                    onclick="cancelTryOut('GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/centers/{center_id}/courses/{course_id}/pdfs/{pdf_id}/signed-url</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>pdf_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="pdf_id"                data-endpoint="GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the pdf. Example: <code>1</code></p>
+            </div>
+                    </form>
+
                     <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--extra-view">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view</h2>
 
 <p>
@@ -6639,7 +6817,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
-    --form "logo=@/tmp/phpvfukq8jjr7kt6s094AM" </code></pre></div>
+    --form "logo=@/tmp/phpf11dn4onsokvclx3FgN" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -6786,7 +6964,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpvfukq8jjr7kt6s094AM</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpf11dn4onsokvclx3FgN</code></p>
         </div>
         </form>
 
@@ -14626,7 +14804,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpf0c720nvts3l51XlpEN" </code></pre></div>
+    --form "avatar=@/tmp/php14akcil5965jdmt62xR" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14833,7 +15011,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpf0c720nvts3l51XlpEN</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php14akcil5965jdmt62xR</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -15068,7 +15246,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpi1fgblqnff7s5RYD92N" </code></pre></div>
+    --form "avatar=@/tmp/phpbli2b91lnt2s6h5FQyI" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -15291,7 +15469,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpi1fgblqnff7s5RYD92N</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpbli2b91lnt2s6h5FQyI</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -16220,7 +16398,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/php57fluaqk2de0bcAhgrr" </code></pre></div>
+    --form "file=@/tmp/phpc1lhk19m5bp3b1MV5hI" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16384,7 +16562,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php57fluaqk2de0bcAhgrr</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpc1lhk19m5bp3b1MV5hI</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;

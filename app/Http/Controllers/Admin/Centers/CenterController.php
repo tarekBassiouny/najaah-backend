@@ -12,24 +12,19 @@ use App\Http\Requests\Admin\Centers\UpdateCenterRequest;
 use App\Http\Resources\Admin\Centers\CenterResource;
 use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\Center;
-use App\Services\Admin\CenterQueryService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class CenterController extends Controller
 {
     public function __construct(
-        private readonly CenterServiceInterface $centerService,
-        private readonly CenterQueryService $queryService
+        private readonly CenterServiceInterface $centerService
     ) {}
 
     public function index(ListCentersRequest $request): JsonResponse
     {
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
-
-        $paginator = $this->queryService->build($filters)->paginate($perPage);
+        $filters = $request->filters();
+        $paginator = $this->centerService->listAdmin($filters);
 
         return response()->json([
             'success' => true,

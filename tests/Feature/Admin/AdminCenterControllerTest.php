@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Jobs\ProcessCenterLogoJob;
 use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\Permission;
@@ -45,9 +44,8 @@ it('creates a center', function (): void {
     $response->assertJsonPath('data.center.type', 'branded');
     $response->assertJsonPath('data.center.tier', 'premium');
     $response->assertJsonPath('data.center.api_key', $response->json('data.center.api_key'));
-    $response->assertJsonPath('data.email_sent', false);
+    $response->assertJsonPath('data.email_sent', true);
     $this->assertDatabaseHas('centers', ['slug' => 'center-1']);
-    $this->assertDatabaseHas('center_settings', ['center_id' => $response->json('data.center.id')]);
     $this->assertDatabaseHas('user_centers', [
         'center_id' => $response->json('data.center.id'),
         'type' => 'owner',
@@ -61,7 +59,7 @@ it('creates a center', function (): void {
     $center = Center::where('slug', 'center-1')->first();
     expect($center?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
     Bus::assertDispatched(SendAdminInvitationEmailJob::class);
-    Bus::assertDispatched(ProcessCenterLogoJob::class);
+    Bus::assertNotDispatched(ProcessCenterLogoJob::class);
 });
 
 it('rejects branded center creation without branding metadata', function (): void {
@@ -134,6 +132,31 @@ it('updates a center but keeps slug immutable', function (): void {
     $response->assertOk()->assertJsonPath('data.is_featured', true);
     $center->refresh();
     expect($center->slug)->toBe('immutable');
+});
+
+it('updates tier using string enums', function (): void {
+    $center = Center::factory()->create([
+        'tier' => Center::TIER_STANDARD,
+    ]);
+
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}", [
+        'tier' => 'premium',
+    ]);
+
+    $response->assertOk();
+
+    $center->refresh();
+    expect($center->tier)->toBe(Center::TIER_PREMIUM);
+});
+
+it('rejects numeric tier on update', function (): void {
+    $center = Center::factory()->create();
+
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}", [
+        'tier' => 1,
+    ]);
+
+    $response->assertStatus(422);
 });
 
 it('defaults logo path on create when missing', function (): void {

@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "cb6273f1-e326-42c8-b777-a6b5b0dfd553",
+    "_postman_id": "a0c7c47d-3b99-43c4-9a99-d055255f4290",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -4755,6 +4755,12 @@
                   "disabled": false
                 },
                 {
+                  "key": "is_featured",
+                  "value": "",
+                  "description": "Filter centers by featured status.",
+                  "disabled": true
+                },
+                {
                   "key": "per_page",
                   "value": "15",
                   "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
@@ -4767,7 +4773,7 @@
                   "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/centers?search=Science&per_page=15&page=1"
+              "raw": "{{baseUrl}}/api/v1/centers?search=Science&is_featured=&per_page=15&page=1"
             },
             "method": "GET",
             "header": [
@@ -4896,6 +4902,12 @@
                   "disabled": false
                 },
                 {
+                  "key": "is_featured",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
                   "key": "publish_from",
                   "value": "2025-01-01",
                   "description": "Filter courses published on or after this date. Must be a valid date.",
@@ -4908,7 +4920,7 @@
                   "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/courses/explore?per_page=15&page=1&category_id=3&instructor_id=5&enrolled=1&publish_from=2025-01-01&publish_to=2025-01-31"
+              "raw": "{{baseUrl}}/api/v1/courses/explore?per_page=15&page=1&category_id=3&instructor_id=5&enrolled=1&is_featured=&publish_from=2025-01-01&publish_to=2025-01-31"
             },
             "method": "GET",
             "header": [
@@ -5433,6 +5445,67 @@
               "mode": "raw",
               "raw": "{\"reason\":\"Lost my phone and need to register a new device.\"}"
             },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📄 Student – PDFs",
+      "item": [
+        {
+          "name": "GET api/v1/centers/{center_id}/courses/{course_id}/pdfs/{pdf_id}/signed-url",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id/courses/:course_id/pdfs/:pdf_id/signed-url",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id/courses/:course_id/pdfs/:pdf_id/signed-url",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "pdf_id",
+                  "key": "pdf_id",
+                  "value": "1",
+                  "description": "The ID of the pdf."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
             "description": "",
             "auth": {
               "type": "noauth"

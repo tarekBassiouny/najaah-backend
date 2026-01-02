@@ -62,12 +62,6 @@ class ProcessCenterLogoJob implements ShouldQueue
 
     public function failed(\Throwable $exception): void
     {
-        $center = Center::find($this->centerId);
-        if ($center instanceof Center) {
-            $center->onboarding_status = Center::ONBOARDING_FAILED;
-            $center->save();
-        }
-
         Log::error('Center logo processing failed.', $this->resolveLogContext([
             'source' => 'job',
             'center_id' => $this->centerId,

@@ -99,17 +99,6 @@ class StoreCenterRequest extends FormRequest
                     'ar' => 'اسم المركز',
                 ],
             ],
-            'description_translations' => [
-                'description' => 'Localized center description keyed by locale code.',
-                'type' => 'object',
-                'additionalProperties' => [
-                    'type' => 'string',
-                ],
-                'example' => [
-                    'en' => 'Center description in English.',
-                    'ar' => 'وصف المركز بالعربية.',
-                ],
-            ],
             'tier' => [
                 'description' => 'Center tier.',
                 'example' => 'premium',
@@ -121,6 +110,10 @@ class StoreCenterRequest extends FormRequest
             'branding_metadata' => [
                 'description' => 'Branding metadata for branded centers.',
                 'example' => ['primary_color' => '#000000'],
+            ],
+            'branding_metadata.primary_color' => [
+                'description' => 'Primary branding color (required for branded centers).',
+                'example' => '#000000',
             ],
             'admin' => [
                 'description' => 'Initial admin user details.',

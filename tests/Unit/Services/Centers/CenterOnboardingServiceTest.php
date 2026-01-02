@@ -2,120 +2,99 @@
 
 declare(strict_types=1);
 
+use App\Actions\Admin\Centers\CreateCenterAction;
+use App\Actions\Admin\Centers\RetryCenterOnboardingAction;
+use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\Centers\CenterOnboardingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
-uses(TestCase::class, RefreshDatabase::class)->group('center', 'services', 'onboarding', 'admin');
+uses(TestCase::class, RefreshDatabase::class)->group('center', 'actions', 'onboarding', 'admin');
 
-it('marks onboarding as active and applies storage defaults', function (): void {
+it('marks onboarding as active and dispatches invitation email', function (): void {
     Bus::fake();
     Role::factory()->create([
         'slug' => 'center_owner',
     ]);
 
-    $service = app(CenterOnboardingService::class);
-    $result = $service->onboard(
-        [
-            'slug' => 'center-a',
-            'type' => 0,
-            'name_translations' => ['en' => 'Center A'],
-        ],
-        null,
-        [
+    $action = app(CreateCenterAction::class);
+    $result = $action->execute([
+        'slug' => 'center-a',
+        'type' => 0,
+        'name_translations' => ['en' => 'Center A'],
+        'admin' => [
             'name' => 'Owner Name',
             'email' => 'owner@example.com',
             'phone' => '1999000000',
         ],
-        'center_owner'
-    );
+    ]);
 
     expect($result['center']->id)->not->toBeNull()
         ->and($result['owner']->id)->not->toBeNull()
-        ->and($result['email_sent'])->toBeFalse()
-        ->and($result['center']->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE)
-        ->and($result['center']->storage_driver)->toBe('spaces')
-        ->and($result['center']->storage_root)->toBe('centers/'.$result['center']->id);
+        ->and($result['email_sent'])->toBeTrue()
+        ->and($result['center']->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
+
+    Bus::assertDispatched(SendAdminInvitationEmailJob::class);
 });
 
 it('marks onboarding as failed when a step throws', function (): void {
     Bus::fake();
-    Role::factory()->create([
-        'slug' => 'center_owner',
-    ]);
-
-    $service = app(CenterOnboardingService::class);
-
-    $center = Center::factory()->create([
-        'slug' => 'center-b',
-        'type' => 0,
-        'name_translations' => ['en' => 'Center B'],
-        'onboarding_status' => Center::ONBOARDING_DRAFT,
-    ]);
+    $action = app(CreateCenterAction::class);
 
     $exception = null;
     try {
-        $service->resume(
-            $center,
-            null,
-            [
+        $action->execute([
+            'slug' => 'center-b',
+            'type' => 0,
+            'name_translations' => ['en' => 'Center B'],
+            'admin' => [
                 'name' => 'Owner Name',
                 'email' => 'owner-b@example.com',
                 'phone' => '1999000000',
             ],
-            'missing_role'
-        );
+        ]);
     } catch (ValidationException $validationException) {
         $exception = $validationException;
     }
 
     expect($exception)->not->toBeNull();
 
-    $center->refresh();
+    $center = Center::where('slug', 'center-b')->firstOrFail();
     expect($center->onboarding_status)->toBe(Center::ONBOARDING_FAILED);
 });
 
-it('is idempotent when resuming onboarding', function (): void {
+it('is idempotent when retrying onboarding', function (): void {
     Bus::fake();
     Role::factory()->create([
         'slug' => 'center_owner',
     ]);
 
-    $service = app(CenterOnboardingService::class);
-    $result = $service->onboard(
-        [
-            'slug' => 'center-c',
-            'type' => 0,
-            'name_translations' => ['en' => 'Center C'],
-        ],
-        null,
-        [
-            'name' => 'Owner Name',
-            'email' => 'owner-c@example.com',
-            'phone' => '1999000000',
-        ],
-        'center_owner'
-    );
+    $center = Center::factory()->create([
+        'slug' => 'center-c',
+        'type' => 0,
+        'name_translations' => ['en' => 'Center C'],
+        'onboarding_status' => Center::ONBOARDING_FAILED,
+    ]);
 
-    $center = $result['center']->fresh();
-    expect($center)->not->toBeNull();
+    $owner = User::factory()->create([
+        'center_id' => $center->id,
+        'is_student' => false,
+    ]);
 
-    $center?->update(['onboarding_status' => Center::ONBOARDING_FAILED]);
+    $center->users()->syncWithoutDetaching([
+        $owner->id => ['type' => 'owner'],
+    ]);
 
-    $ownerCount = User::where('center_id', $center?->id)->count();
+    $ownerCount = User::where('center_id', $center->id)->count();
 
-    $service->resume($center, null, [
-        'name' => 'Owner Name',
-        'email' => 'owner-c@example.com',
-        'phone' => '1999000000',
-    ], 'center_owner');
+    $action = app(RetryCenterOnboardingAction::class);
+    $action->execute($center);
 
-    $afterCount = User::where('center_id', $center?->id)->count();
+    $afterCount = User::where('center_id', $center->id)->count();
 
     expect($afterCount)->toBe($ownerCount);
 });
