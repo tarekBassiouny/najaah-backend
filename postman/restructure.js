@@ -25,7 +25,7 @@ const tree = {
   adminAudit: folder("🧑‍💼 Admin – Audit Logs"),
 
   /* -------- PUBLIC -------- */
-  public: folder("🔔 public"),
+  public: folder("🔔 Public"),
 
   /* -------- STUDENT / MOBILE -------- */
   mobileAuth: folder("📱 Mobile – Auth (JWT)"),

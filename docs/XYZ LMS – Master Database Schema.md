@@ -10,6 +10,7 @@ Status: Production-Ready
 - id (BIGINT, PK)
 - slug (STRING)
 - type (TINYINT: 0=unbranded, 1=branded)
+- is_demo (BOOLEAN)
 - name_translations (JSON)
 - description_translations (JSON, nullable)
 - logo_url (STRING, nullable)
@@ -148,6 +149,7 @@ Status: Production-Ready
 - thumbnail_url (nullable)
 - duration_minutes (nullable)
 - is_featured (BOOLEAN)
+- is_demo (BOOLEAN)
 - created_by (user_id)
 - cloned_from_id (nullable)
 - publish_at (nullable)
@@ -164,6 +166,7 @@ Status: Production-Ready
 - description_translations (JSON, nullable)
 - order_index
 - visible (BOOLEAN)
+- is_demo (BOOLEAN)
 - created_at
 - updated_at
 - deleted_at
@@ -187,6 +190,7 @@ Status: Production-Ready
 - upload_session_id (BIGINT, nullable)
 - original_filename (STRING, nullable)
 - encoding_status (TINYINT: 0 pending, 1 uploading, 2 processing, 3 ready)
+- is_demo (BOOLEAN)
 - thumbnail_url (STRING, nullable)
 - thumbnail_urls (JSON, nullable)
 - created_at
@@ -237,6 +241,7 @@ Status: Production-Ready
 - source_url (nullable)
 - file_size_kb (nullable)
 - file_extension
+- is_demo (BOOLEAN)
 - created_by
 - created_at
 - updated_at
