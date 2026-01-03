@@ -45,6 +45,14 @@ class CourseService implements CourseServiceInterface
             'college_translations',
         ]);
 
+        if (! array_key_exists('difficulty_level', $data) || ! is_numeric($data['difficulty_level'])) {
+            $data['difficulty_level'] = 0;
+        }
+
+        $data['status'] = 0;
+        $data['is_published'] = false;
+        $data['publish_at'] = null;
+
         if ($actor instanceof User) {
             $centerId = isset($data['center_id']) && is_numeric($data['center_id']) ? (int) $data['center_id'] : null;
             $this->centerScopeService->assertAdminCenterId($actor, $centerId);

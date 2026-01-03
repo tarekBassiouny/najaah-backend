@@ -40,7 +40,6 @@ it('creates course in center', function (): void {
         'category_id' => Category::factory()->create()->id,
         'difficulty' => 'beginner',
         'language' => 'en',
-        'price' => 0,
     ];
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses", $payload, $this->adminHeaders());
@@ -51,6 +50,9 @@ it('creates course in center', function (): void {
     $this->assertDatabaseHas('courses', [
         'center_id' => $center->id,
         'title_translations->en' => 'Sample Course',
+        'status' => 0,
+        'is_published' => false,
+        'publish_at' => null,
     ]);
 });
 
@@ -65,7 +67,7 @@ it('shows course in center', function (): void {
 
 it('updates course in center', function (): void {
     $center = Center::factory()->create();
-    $course = Course::factory()->create(['center_id' => $center->id]);
+    $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0, 'is_published' => false]);
 
     $response = $this->putJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [
         'title' => 'Updated Title',
