@@ -27,7 +27,7 @@ it('blocks students from admin endpoints', function (): void {
     $response = $this->postJson('/api/v1/admin/centers', [
         'slug' => 'blocked-center',
         'type' => 'unbranded',
-        'name_translations' => ['en' => 'Blocked Center'],
+        'name' => 'Blocked Center',
         'admin' => [
             'name' => 'Owner',
             'email' => 'blocked-owner@example.com',

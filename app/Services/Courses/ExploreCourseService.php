@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Exceptions\CenterMismatchException;
+use App\Exceptions\NotFoundException;
 use App\Filters\Mobile\CourseFilters;
 use App\Models\Center;
 use App\Models\Course;
@@ -11,7 +13,6 @@ use App\Models\Enrollment;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ExploreCourseService
 {
@@ -169,23 +170,11 @@ class ExploreCourseService
 
     private function centerMismatch(): void
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => 'CENTER_MISMATCH',
-                'message' => 'Course does not belong to your center.',
-            ],
-        ], 403));
+        throw new CenterMismatchException('Course does not belong to your center.', 403);
     }
 
     private function notFound(): void
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => 'NOT_FOUND',
-                'message' => 'Course not found.',
-            ],
-        ], 404));
+        throw new NotFoundException('Course not found.', 404);
     }
 }

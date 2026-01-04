@@ -19,10 +19,10 @@ class UpdatePdfRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string'],
-            'title_translations' => ['sometimes', 'array'],
-            'description_translations' => ['sometimes', 'array'],
+            'title' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
+            'title_translations' => ['prohibited'],
+            'description_translations' => ['prohibited'],
             'center_id' => ['prohibited'],
             'source_id' => ['prohibited'],
             'source_url' => ['prohibited'],
@@ -48,22 +48,6 @@ class UpdatePdfRequest extends FormRequest
                 'description' => 'Updated description.',
                 'example' => 'Updated description',
             ],
-            'title_translations' => [
-                'description' => 'Optional localized titles keyed by locale.',
-                'example' => ['en' => 'Updated Notes'],
-            ],
-            'description_translations' => [
-                'description' => 'Optional localized descriptions keyed by locale.',
-                'example' => ['en' => 'Updated description'],
-            ],
         ];
-    }
-
-    /**
-     * @return array<string, array<string, string>>
-     */
-    public function queryParameters(): array
-    {
-        return [];
     }
 }

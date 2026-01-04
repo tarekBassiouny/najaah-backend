@@ -28,11 +28,11 @@ class UpdateSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string'],
+            'title' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
             'order_index' => ['sometimes', 'integer', 'min:0'],
-            'title_translations' => ['sometimes', 'array'],
-            'description_translations' => ['sometimes', 'array'],
+            'title_translations' => ['prohibited'],
+            'description_translations' => ['prohibited'],
         ];
     }
 
@@ -53,14 +53,6 @@ class UpdateSectionRequest extends FormRequest
             'order_index' => [
                 'description' => 'Optional ordering index.',
                 'example' => 2,
-            ],
-            'title_translations' => [
-                'description' => 'Localized titles keyed by locale.',
-                'example' => ['en' => 'Updated Section Title'],
-            ],
-            'description_translations' => [
-                'description' => 'Localized descriptions keyed by locale.',
-                'example' => ['en' => 'Updated description.'],
             ],
         ];
     }

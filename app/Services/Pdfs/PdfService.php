@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services\Pdfs;
 
-use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Validation\ValidationException;
 
 class PdfService
 {
-    use NormalizesTranslations;
-
     public function __construct(private readonly CenterScopeService $centerScopeService) {}
 
     /**
@@ -27,14 +25,11 @@ class PdfService
             $this->centerScopeService->assertAdminCenterId($admin, $center->id);
         }
 
-        $localeValue = request()->attributes->get('locale', app()->getLocale());
-        $locale = is_string($localeValue) ? $localeValue : (string) app()->getLocale();
-        $data['locale'] = $locale;
-
-        $payload = $this->normalizeTranslations($data, [
-            'title_translations',
-            'description_translations',
-        ], [], 'locale');
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        $payload = $data;
+        $payload['title_translations'] = $data['title'] ?? '';
+        $payload['description_translations'] = $data['description'] ?? null;
+        unset($payload['title'], $payload['description']);
 
         $payload['center_id'] = $center->id;
         $payload['created_by'] = $admin->id;
@@ -56,18 +51,9 @@ class PdfService
             $payload['file_size_kb'] = $session->file_size_kb;
             $payload['upload_session_id'] = $session->id;
         } else {
-            if (! isset($data['source_id']) || ! is_string($data['source_id']) || $data['source_id'] === '') {
-                throw ValidationException::withMessages([
-                    'source_id' => ['Source ID is required when no upload session is provided.'],
-                ]);
-            }
-
-            $payload['source_type'] = 1;
-            $payload['source_provider'] = 'spaces';
-            $payload['source_id'] = $data['source_id'];
-            $payload['source_url'] = $data['source_url'] ?? null;
-            $payload['file_extension'] = $data['file_extension'];
-            $payload['file_size_kb'] = $data['file_size_kb'] ?? null;
+            throw ValidationException::withMessages([
+                'upload_session_id' => ['Upload session is required for PDF creation.'],
+            ]);
         }
 
         /** @var Pdf $pdf */
@@ -85,17 +71,17 @@ class PdfService
             $this->centerScopeService->assertAdminCenterId($admin, $pdf->center_id);
         }
 
-        $localeValue = request()->attributes->get('locale', app()->getLocale());
-        $locale = is_string($localeValue) ? $localeValue : (string) app()->getLocale();
-        $data['locale'] = $locale;
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        $payload = $data;
+        if (array_key_exists('title', $payload)) {
+            $payload['title_translations'] = $payload['title'];
+            unset($payload['title']);
+        }
 
-        $payload = $this->normalizeTranslations($data, [
-            'title_translations',
-            'description_translations',
-        ], [
-            'title_translations' => $pdf->title_translations ?? [],
-            'description_translations' => $pdf->description_translations ?? [],
-        ], 'locale');
+        if (array_key_exists('description', $payload)) {
+            $payload['description_translations'] = $payload['description'];
+            unset($payload['description']);
+        }
 
         $pdf->update($payload);
 

@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class)->group('pdfs', 'admin');
 
 afterEach(function (): void {
-    Mockery::close();
+    \Mockery::close();
 });
 
 it('creates pdf from upload session', function (): void {
@@ -19,7 +19,7 @@ it('creates pdf from upload session', function (): void {
     $admin = $this->asAdmin();
     $admin->update(['center_id' => $center->id]);
 
-    $storage = Mockery::mock(StorageServiceInterface::class);
+    $storage = \Mockery::mock(StorageServiceInterface::class);
     $storage->shouldReceive('temporaryUploadUrl')->once()->andReturn('https://signed.test/upload');
     $this->app->instance(StorageServiceInterface::class, $storage);
 
@@ -68,7 +68,7 @@ it('fails finalize when uploaded object is missing', function (): void {
         'upload_status' => PdfUploadSessionService::STATUS_PENDING,
     ]);
 
-    $storage = Mockery::mock(StorageServiceInterface::class);
+    $storage = \Mockery::mock(StorageServiceInterface::class);
     $storage->shouldReceive('exists')->once()->with($session->object_key)->andReturn(false);
     $this->app->instance(StorageServiceInterface::class, $storage);
 
@@ -94,7 +94,7 @@ it('finalizes upload session and creates pdf when object exists', function (): v
         'upload_status' => PdfUploadSessionService::STATUS_PENDING,
     ]);
 
-    $storage = Mockery::mock(StorageServiceInterface::class);
+    $storage = \Mockery::mock(StorageServiceInterface::class);
     $storage->shouldReceive('exists')->once()->with($session->object_key)->andReturn(true);
     $this->app->instance(StorageServiceInterface::class, $storage);
 

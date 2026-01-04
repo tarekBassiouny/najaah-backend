@@ -10,6 +10,7 @@ use App\Models\Section;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Pdfs\PdfUploadSessionService;
+use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('videos');
@@ -126,12 +127,18 @@ it('allows attaching ready video', function (): void {
     $center = Center::factory()->create();
     $course = Course::factory()->create(['created_by' => $admin->id, 'center_id' => $center->id]);
     $section = Section::factory()->create(['course_id' => $course->id]);
+    $session = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'uploaded_by' => $admin->id,
+        'upload_status' => VideoUploadService::STATUS_READY,
+        'expires_at' => now()->addDay(),
+    ]);
     $video = Video::factory()->create([
         'center_id' => $center->id,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'created_by' => $admin->id,
-        'upload_session_id' => null,
+        'upload_session_id' => $session->id,
     ]);
 
     $courseAttach = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/videos", [

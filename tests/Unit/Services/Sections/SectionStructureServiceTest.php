@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\AttachmentNotAllowedException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Section;
@@ -9,7 +10,6 @@ use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Sections\SectionStructureService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Validation\ValidationException;
 use Tests\Helpers\AdminTestHelper;
 use Tests\TestCase;
 
@@ -32,4 +32,4 @@ it('blocks attaching videos to deleted sections', function (): void {
     $service = new SectionStructureService(new CenterScopeService);
 
     $service->attachVideo($section, $video, $admin);
-})->throws(ValidationException::class);
+})->throws(AttachmentNotAllowedException::class);

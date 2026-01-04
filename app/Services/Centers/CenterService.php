@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
+use App\Exceptions\NotFoundException;
 use App\Filters\Admin\CenterFilters as AdminCenterFilters;
 use App\Filters\Mobile\CenterFilters;
 use App\Models\Center;
@@ -12,6 +13,7 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\Centers\Contracts\CenterServiceInterface;
+use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -34,6 +36,17 @@ class CenterService implements CenterServiceInterface
             $settings = $data['settings'] ?? null;
             unset($data['settings']);
 
+            RejectNonScalarInput::validate($data, ['name', 'description']);
+            if (array_key_exists('name', $data)) {
+                $data['name_translations'] = $data['name'];
+                unset($data['name']);
+            }
+
+            if (array_key_exists('description', $data)) {
+                $data['description_translations'] = $data['description'];
+                unset($data['description']);
+            }
+
             /** @var Center $center */
             $center = Center::create($data);
 
@@ -54,6 +67,17 @@ class CenterService implements CenterServiceInterface
         return DB::transaction(function () use ($center, $data): Center {
             $settings = $data['settings'] ?? null;
             unset($data['settings'], $data['slug']);
+
+            RejectNonScalarInput::validate($data, ['name', 'description']);
+            if (array_key_exists('name', $data)) {
+                $data['name_translations'] = $data['name'];
+                unset($data['name']);
+            }
+
+            if (array_key_exists('description', $data)) {
+                $data['description_translations'] = $data['description'];
+                unset($data['description']);
+            }
 
             if (! empty($data)) {
                 $center->update($data);
@@ -145,6 +169,7 @@ class CenterService implements CenterServiceInterface
         }
 
         if ($filters->search !== null && $filters->search !== '') {
+            // Search targets the stored base string; not locale-aware yet.
             $query->where('name_translations', 'like', '%'.$filters->search.'%');
         }
 
@@ -211,6 +236,6 @@ class CenterService implements CenterServiceInterface
 
     private function notFound(): void
     {
-        abort(404);
+        throw new NotFoundException('Center not found.', 404);
     }
 }

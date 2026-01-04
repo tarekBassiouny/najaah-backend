@@ -26,7 +26,7 @@ class SectionSummaryResource extends JsonResource
         return [
             'id' => $section->id,
             'course_id' => $section->course_id,
-            'title' => $section->title,
+            'title' => $section->translate('title'),
             'order_index' => $section->order_index,
             'visible' => $section->visible,
         ];

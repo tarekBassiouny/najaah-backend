@@ -6,11 +6,9 @@ namespace App\Http\Controllers\Admin\Videos;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Videos\StoreVideoUploadSessionRequest;
-use App\Http\Requests\Admin\Videos\UpdateVideoUploadSessionRequest;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
-use App\Models\VideoUploadSession;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -37,6 +35,10 @@ class VideoUploadSessionController extends Controller
 
         /** @var string|null $uploadUrl */
         $uploadUrl = $session->getAttribute('upload_url');
+        /** @var \DateTimeInterface|null $expiresAt */
+        $expiresAt = $session->expires_at;
+        $expiresAtString = $expiresAt?->format(DATE_ATOM);
+        $accessKey = (string) config('bunny.api.api_key');
 
         return response()->json([
             'success' => true,
@@ -45,39 +47,12 @@ class VideoUploadSessionController extends Controller
                 'provider' => 'bunny',
                 'remote_id' => $session->bunny_upload_id,
                 'upload_endpoint' => $uploadUrl,
-                'required_headers' => [],
-                'expires_at' => null,
+                'required_headers' => [
+                    'AccessKey' => $accessKey,
+                ],
+                'expires_at' => $expiresAtString,
             ],
         ], 201);
-    }
-
-    public function update(
-        UpdateVideoUploadSessionRequest $request,
-        Center $center,
-        VideoUploadSession $videoUploadSession
-    ): JsonResponse {
-        $admin = $this->requireAdmin();
-
-        if ((int) $videoUploadSession->center_id !== (int) $center->id) {
-            $this->notFound();
-        }
-
-        $session = $this->uploadService->transition(
-            $admin,
-            $videoUploadSession,
-            (string) $request->input('status'),
-            $request->validated()
-        );
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $session->id,
-                'upload_status' => $session->upload_status,
-                'progress_percent' => $session->progress_percent,
-                'error_message' => $session->error_message,
-            ],
-        ]);
     }
 
     private function requireAdmin(): User

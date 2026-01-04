@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\CarbonImmutable|null $expires_at
  * @property-read Center $center
  * @property-read User $creator
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Pdf> $pdfs
  */
 class PdfUploadSession extends Model
 {
@@ -58,5 +60,11 @@ class PdfUploadSession extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /** @return HasMany<Pdf, self> */
+    public function pdfs(): HasMany
+    {
+        return $this->hasMany(Pdf::class, 'upload_session_id');
     }
 }

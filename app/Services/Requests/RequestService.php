@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Requests;
 
+use App\Exceptions\DomainException;
+use App\Exceptions\UnauthorizedException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\DeviceChangeRequest;
@@ -13,6 +15,7 @@ use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
 use App\Services\Playback\ViewLimitService;
+use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
 
 class RequestService
@@ -37,7 +40,7 @@ class RequestService
             ->first();
 
         if ($pivot === null) {
-            $this->deny('VIDEO_NOT_IN_COURSE', 'Video not available for this course.', 404);
+            $this->deny(ErrorCodes::VIDEO_NOT_IN_COURSE, 'Video not available for this course.', 404);
         }
 
         $enrollment = Enrollment::where('user_id', $student->id)
@@ -46,7 +49,7 @@ class RequestService
             ->first();
 
         if ($enrollment === null) {
-            $this->deny('ENROLLMENT_REQUIRED', 'Active enrollment required.', 403);
+            $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
         }
 
         $pending = ExtraViewRequest::where('user_id', $student->id)
@@ -56,7 +59,7 @@ class RequestService
             ->exists();
 
         if ($pending) {
-            $this->deny('PENDING_REQUEST_EXISTS', 'A pending request already exists for this video.', 422);
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending request already exists for this video.', 422);
         }
 
         $remaining = $this->viewLimitService->remaining(
@@ -67,7 +70,7 @@ class RequestService
         );
 
         if ($remaining > 0) {
-            $this->deny('VIEWS_AVAILABLE', 'Extra views are not allowed while views remain.', 422);
+            $this->deny(ErrorCodes::VIEWS_AVAILABLE, 'Extra views are not allowed while views remain.', 422);
         }
 
         ExtraViewRequest::create([
@@ -95,7 +98,7 @@ class RequestService
             ->first();
 
         if ($enrollment !== null) {
-            $this->deny('ALREADY_ENROLLED', 'Student is already enrolled.', 422);
+            $this->deny(ErrorCodes::ALREADY_ENROLLED, 'Student is already enrolled.', 422);
         }
 
         $pending = Enrollment::where('user_id', $student->id)
@@ -105,7 +108,7 @@ class RequestService
             ->exists();
 
         if ($pending) {
-            $this->deny('PENDING_REQUEST_EXISTS', 'A pending enrollment request already exists.', 422);
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending enrollment request already exists.', 422);
         }
 
         Enrollment::create([
@@ -128,7 +131,7 @@ class RequestService
             ->first();
 
         if ($active === null) {
-            $this->deny('NO_ACTIVE_DEVICE', 'Active device required to request a change.', 422);
+            $this->deny(ErrorCodes::NO_ACTIVE_DEVICE, 'Active device required to request a change.', 422);
         }
 
         $pending = DeviceChangeRequest::where('user_id', $student->id)
@@ -137,7 +140,7 @@ class RequestService
             ->exists();
 
         if ($pending) {
-            $this->deny('PENDING_REQUEST_EXISTS', 'A pending device change request already exists.', 422);
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists.', 422);
         }
 
         DeviceChangeRequest::create([
@@ -155,14 +158,14 @@ class RequestService
     private function assertStudent(User $user): void
     {
         if (! $user->is_student) {
-            $this->deny('UNAUTHORIZED', 'Only students can perform this action.', 403);
+            throw new UnauthorizedException('Only students can perform this action.', 403);
         }
     }
 
     private function assertCourseInCenter(Center $center, Course $course): void
     {
         if ((int) $course->center_id !== (int) $center->id) {
-            $this->deny('NOT_FOUND', 'Course not found.', 404);
+            $this->deny(ErrorCodes::NOT_FOUND, 'Course not found.', 404);
         }
     }
 
@@ -171,6 +174,6 @@ class RequestService
      */
     private function deny(string $code, string $message, int $status): void
     {
-        throw new RequestException($code, $message, $status);
+        throw new DomainException($message, $code, $status);
     }
 }

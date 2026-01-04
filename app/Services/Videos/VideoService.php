@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
-use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
+use App\Support\Guards\RejectNonScalarInput;
 
 class VideoService
 {
-    use NormalizesTranslations;
-
     public function __construct(private readonly CenterScopeService $centerScopeService) {}
 
     /**
@@ -25,14 +23,12 @@ class VideoService
             $this->centerScopeService->assertAdminCenterId($admin, $center->id);
         }
 
-        $localeValue = request()->attributes->get('locale', app()->getLocale());
-        $locale = is_string($localeValue) ? $localeValue : (string) app()->getLocale();
-        $data['locale'] = $locale;
+        RejectNonScalarInput::validate($data, ['title', 'description']);
 
-        $payload = $this->normalizeTranslations($data, [
-            'title_translations',
-            'description_translations',
-        ], [], 'locale');
+        $payload = $data;
+        $payload['title_translations'] = $data['title'] ?? '';
+        $payload['description_translations'] = $data['description'] ?? null;
+        unset($payload['title'], $payload['description']);
 
         $payload['center_id'] = $center->id;
         $payload['created_by'] = $admin->id;
@@ -53,17 +49,17 @@ class VideoService
             $this->centerScopeService->assertAdminCenterId($admin, $video->center_id);
         }
 
-        $localeValue = request()->attributes->get('locale', app()->getLocale());
-        $locale = is_string($localeValue) ? $localeValue : (string) app()->getLocale();
-        $data['locale'] = $locale;
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        $payload = $data;
+        if (array_key_exists('title', $payload)) {
+            $payload['title_translations'] = $payload['title'];
+            unset($payload['title']);
+        }
 
-        $payload = $this->normalizeTranslations($data, [
-            'title_translations',
-            'description_translations',
-        ], [
-            'title_translations' => $video->title_translations ?? [],
-            'description_translations' => $video->description_translations ?? [],
-        ], 'locale');
+        if (array_key_exists('description', $payload)) {
+            $payload['description_translations'] = $payload['description'];
+            unset($payload['description']);
+        }
 
         $video->update($payload);
 

@@ -24,9 +24,12 @@ return new class extends Migration
             WHERE videos.center_id IS NULL
         ');
 
-        Schema::table('videos', function (Blueprint $table): void {
-            $table->foreignId('center_id')->nullable(false)->change();
-        });
+        $nullCount = DB::table('videos')->whereNull('center_id')->count();
+        if ($nullCount === 0) {
+            Schema::table('videos', function (Blueprint $table): void {
+                $table->foreignId('center_id')->nullable(false)->change();
+            });
+        }
     }
 
     public function down(): void

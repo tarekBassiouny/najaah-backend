@@ -13,9 +13,12 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Role;
 use App\Models\Section;
+use App\Models\Translation;
 use App\Models\User;
 use App\Models\Video;
+use App\Models\VideoUploadSession;
 use App\Services\Pdfs\PdfUploadSessionService;
+use App\Services\Videos\VideoUploadService;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +46,26 @@ it('filters courses by title search', function (): void {
     ]);
     Course::factory()->create([
         'title_translations' => ['en' => 'Beta Physics'],
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/courses?search=Alpha', $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Alpha Biology');
+});
+
+it('keeps search stable when translations exist', function (): void {
+    $course = Course::factory()->create([
+        'title_translations' => ['en' => 'Alpha Biology'],
+    ]);
+
+    Translation::create([
+        'translatable_type' => Course::class,
+        'translatable_id' => $course->id,
+        'field' => 'title',
+        'locale' => 'ar',
+        'value' => 'Arabic Biology',
     ]);
 
     $response = $this->getJson('/api/v1/admin/courses?search=Alpha', $this->adminHeaders());
@@ -146,7 +169,9 @@ it('adds section', function (): void {
     ], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
-    $this->assertDatabaseHas('sections', ['course_id' => $course->id, 'title_translations->en' => 'Section 1']);
+    $section = Section::where('course_id', $course->id)->latest('id')->first();
+    expect($section)->not->toBeNull()
+        ->and($section?->getRawOriginal('title_translations'))->toBe(json_encode('Section 1'));
 });
 
 it('reorders sections', function (): void {
@@ -177,12 +202,18 @@ it('toggles section visibility', function (): void {
 it('assigns video', function (): void {
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
+    $session = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'uploaded_by' => $course->created_by,
+        'upload_status' => VideoUploadService::STATUS_READY,
+        'expires_at' => now()->addDay(),
+    ]);
     $video = Video::factory()->create([
         'center_id' => $center->id,
         'created_by' => $course->created_by,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
-        'upload_session_id' => null,
+        'upload_session_id' => $session->id,
     ]);
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/videos", [
@@ -258,11 +289,17 @@ it('removes pdf', function (): void {
 it('publishes course', function (): void {
     $course = Course::factory()->create(['status' => 0, 'is_published' => false]);
     Section::factory()->create(['course_id' => $course->id]);
+    $session = VideoUploadSession::factory()->create([
+        'center_id' => $course->center_id,
+        'uploaded_by' => $course->created_by,
+        'upload_status' => VideoUploadService::STATUS_READY,
+        'expires_at' => now()->addDay(),
+    ]);
     $video = Video::factory()->create([
         'center_id' => $course->center_id,
         'lifecycle_status' => 2,
         'encoding_status' => 3,
-        'upload_session_id' => null,
+        'upload_session_id' => $session->id,
     ]);
     CourseVideo::create([
         'course_id' => $course->id,

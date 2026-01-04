@@ -27,7 +27,7 @@ class SectionVideoResource extends JsonResource
         return [
             'id' => $pivot?->id ?? $video->id,
             'video_id' => $video->id,
-            'title' => $video->title,
+            'title' => $video->translate('title'),
             'duration' => $video->duration_seconds,
             'is_free' => $pivot?->visible ?? false,
             'order' => $pivot?->order_index,

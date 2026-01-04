@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Exceptions\PublishBlockedException;
 use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Pivots\CoursePdf;
@@ -14,7 +15,7 @@ use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseWorkflowServiceInterface;
 use App\Services\Videos\VideoPublishingService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class CourseWorkflowService implements CourseWorkflowServiceInterface
 {
@@ -31,21 +32,108 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
     {
         $this->centerScopeService->assertAdminSameCenter($actor, $course);
         $course->loadMissing(['sections', 'videos']);
+        $course->loadMissing(['pdfs']);
+
+        if (method_exists($course, 'trashed') && $course->trashed()) {
+            Log::channel('domain')->warning('course_publish_blocked', [
+                'course_id' => $course->id,
+                'center_id' => $course->center_id,
+                'reason' => 'course_deleted',
+            ]);
+            throw new PublishBlockedException('Course is deleted.', 422);
+        }
 
         if ($course->status === 3) {
-            throw ValidationException::withMessages([
-                'status' => ['Course is already published.'],
+            Log::channel('domain')->warning('course_publish_blocked', [
+                'course_id' => $course->id,
+                'center_id' => $course->center_id,
+                'reason' => 'already_published',
             ]);
+            throw new PublishBlockedException('Course is already published.', 422);
         }
 
         if ($course->sections->isEmpty()) {
-            throw ValidationException::withMessages([
-                'sections' => ['Course must have at least one section before publishing.'],
+            Log::channel('domain')->warning('course_publish_blocked', [
+                'course_id' => $course->id,
+                'center_id' => $course->center_id,
+                'reason' => 'missing_sections',
             ]);
+            throw new PublishBlockedException('Course must have at least one section before publishing.', 422);
         }
 
-        foreach ($course->videos as $video) {
-            $this->videoPublishingService->ensurePublishable($video);
+        $visibleSections = $course->sections->where('visible', true);
+        if ($visibleSections->isEmpty()) {
+            Log::channel('domain')->warning('course_publish_blocked', [
+                'course_id' => $course->id,
+                'center_id' => $course->center_id,
+                'reason' => 'no_visible_sections',
+            ]);
+            throw new PublishBlockedException('At least one visible section is required.', 422);
+        }
+
+        try {
+            foreach ($course->videos as $video) {
+                if ((int) $video->center_id !== (int) $course->center_id) {
+                    Log::channel('domain')->warning('course_publish_blocked', [
+                        'course_id' => $course->id,
+                        'center_id' => $course->center_id,
+                        'reason' => 'video_center_mismatch',
+                    ]);
+                    throw new PublishBlockedException('Video must belong to the course center.', 422);
+                }
+
+                $this->videoPublishingService->ensurePublishable($video);
+            }
+        } catch (PublishBlockedException $publishBlockedException) {
+            Log::channel('domain')->warning('course_publish_blocked', [
+                'course_id' => $course->id,
+                'center_id' => $course->center_id,
+                'reason' => 'video_not_ready',
+            ]);
+            throw $publishBlockedException;
+        }
+
+        foreach ($course->pdfs as $pdf) {
+            $sessionId = $pdf->upload_session_id;
+
+            if ($sessionId === null) {
+                Log::channel('domain')->warning('course_publish_blocked', [
+                    'course_id' => $course->id,
+                    'center_id' => $course->center_id,
+                    'reason' => 'pdf_missing_session',
+                ]);
+                throw new PublishBlockedException('PDF upload session is required.', 422);
+            }
+
+            if ((int) $pdf->center_id !== (int) $course->center_id) {
+                Log::channel('domain')->warning('course_publish_blocked', [
+                    'course_id' => $course->id,
+                    'center_id' => $course->center_id,
+                    'reason' => 'pdf_center_mismatch',
+                ]);
+                throw new PublishBlockedException('PDF must belong to the course center.', 422);
+            }
+
+            $pdf->loadMissing('uploadSession');
+            $session = $pdf->uploadSession;
+
+            if ($session === null || (int) $session->upload_status !== \App\Services\Pdfs\PdfUploadSessionService::STATUS_READY) {
+                Log::channel('domain')->warning('course_publish_blocked', [
+                    'course_id' => $course->id,
+                    'center_id' => $course->center_id,
+                    'reason' => 'pdf_not_ready',
+                ]);
+                throw new PublishBlockedException('PDF upload session is not ready.', 422);
+            }
+
+            if ($session->expires_at !== null && $session->expires_at <= now()) {
+                Log::channel('domain')->warning('course_publish_blocked', [
+                    'course_id' => $course->id,
+                    'center_id' => $course->center_id,
+                    'reason' => 'pdf_session_expired',
+                ]);
+                throw new PublishBlockedException('PDF upload session has expired.', 422);
+            }
         }
 
         $course->status = 3;

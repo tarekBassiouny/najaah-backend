@@ -23,7 +23,7 @@ it('dispatches onboarding jobs after center creation', function (): void {
     $payload = [
         'slug' => 'center-dispatch',
         'type' => 'branded',
-        'name_translations' => ['en' => 'Center Dispatch'],
+        'name' => 'Center Dispatch',
         'branding_metadata' => [
             'primary_color' => '#123456',
         ],

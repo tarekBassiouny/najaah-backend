@@ -30,8 +30,8 @@ class AdminVideoResource extends JsonResource
         return [
             'id' => $video->id,
             'center_id' => $video->center_id,
-            'title' => $video->title,
-            'description' => $video->description,
+            'title' => $video->translate('title'),
+            'description' => $video->translate('description'),
             'encoding_status' => $video->encoding_status,
             'lifecycle_status' => $video->lifecycle_status,
             'created_by' => $creator?->id,

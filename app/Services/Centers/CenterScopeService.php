@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
+use App\Exceptions\CenterMismatchException;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CenterScopeService
 {
@@ -76,12 +76,6 @@ class CenterScopeService
 
     private function deny(): void
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => 'CENTER_MISMATCH',
-                'message' => 'Resource does not belong to your center.',
-            ],
-        ], 403));
+        throw new CenterMismatchException('Resource does not belong to your center.', 403);
     }
 }

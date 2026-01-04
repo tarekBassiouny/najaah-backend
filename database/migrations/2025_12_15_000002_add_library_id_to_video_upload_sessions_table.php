@@ -12,6 +12,7 @@ return new class extends Migration
     {
         Schema::table('video_upload_sessions', function (Blueprint $table): void {
             $table->unsignedBigInteger('library_id')->nullable()->after('uploaded_by');
+            $table->dateTime('expires_at')->nullable()->after('progress_percent');
         });
     }
 
@@ -19,6 +20,7 @@ return new class extends Migration
     {
         Schema::table('video_upload_sessions', function (Blueprint $table): void {
             $table->dropColumn('library_id');
+            $table->dropColumn('expires_at');
         });
     }
 };

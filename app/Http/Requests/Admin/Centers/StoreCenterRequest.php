@@ -26,14 +26,13 @@ class StoreCenterRequest extends FormRequest
             'type' => ['required', 'string', 'in:branded,unbranded'],
             'tier' => ['sometimes', 'string', 'in:standard,premium,vip'],
             'is_featured' => ['sometimes', 'boolean'],
-            'name_translations' => ['required', 'array', 'min:1'],
-            'name_translations.*' => ['string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
             'branding_metadata' => ['required_if:type,branded', 'array'],
             'branding_metadata.primary_color' => ['required_if:type,branded', 'string'],
             'admin' => ['required', 'array'],
             'admin.name' => ['required', 'string', 'max:255'],
             'admin.email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'name' => ['prohibited'],
+            'name_translations' => ['prohibited'],
             'description_translations' => ['prohibited'],
             'description_translations.*' => ['prohibited'],
             'logo_url' => ['prohibited'],
@@ -88,16 +87,9 @@ class StoreCenterRequest extends FormRequest
                 'description' => 'Center type.',
                 'example' => 'branded',
             ],
-            'name_translations' => [
-                'description' => 'Localized center name keyed by locale code.',
-                'type' => 'object',
-                'additionalProperties' => [
-                    'type' => 'string',
-                ],
-                'example' => [
-                    'en' => 'Center Name',
-                    'ar' => 'اسم المركز',
-                ],
+            'name' => [
+                'description' => 'Center name.',
+                'example' => 'Center Name',
             ],
             'tier' => [
                 'description' => 'Center tier.',

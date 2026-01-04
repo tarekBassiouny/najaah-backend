@@ -25,9 +25,9 @@ class CenterResource extends JsonResource
             'id' => $center->id,
             'slug' => $center->slug,
             'type' => $center->type,
-            'name' => $center->name,
+            'name' => $center->translate('name'),
             'is_featured' => $center->is_featured,
-            'description' => $center->description,
+            'description' => $center->translate('description'),
             'logo_url' => $center->logo_url,
             'theme' => $center->setting?->settings['theme'] ?? null,
         ];

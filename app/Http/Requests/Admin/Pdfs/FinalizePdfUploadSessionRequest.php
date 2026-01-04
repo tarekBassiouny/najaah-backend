@@ -20,10 +20,10 @@ class FinalizePdfUploadSessionRequest extends FormRequest
     {
         return [
             'pdf_id' => ['sometimes', 'integer', 'exists:pdfs,id'],
-            'title' => ['required_without:pdf_id', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string'],
-            'title_translations' => ['sometimes', 'array'],
-            'description_translations' => ['sometimes', 'array'],
+            'title' => ['required_without:pdf_id', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
+            'title_translations' => ['prohibited'],
+            'description_translations' => ['prohibited'],
             'error_message' => ['sometimes', 'nullable', 'string', 'max:2000'],
         ];
     }
@@ -46,26 +46,10 @@ class FinalizePdfUploadSessionRequest extends FormRequest
                 'description' => 'Optional description when creating a new record.',
                 'example' => 'Downloadable notes.',
             ],
-            'title_translations' => [
-                'description' => 'Optional localized titles keyed by locale.',
-                'example' => ['en' => 'Lesson Notes'],
-            ],
-            'description_translations' => [
-                'description' => 'Optional localized descriptions keyed by locale.',
-                'example' => ['en' => 'Downloadable notes'],
-            ],
             'error_message' => [
                 'description' => 'Optional error message to record if finalize fails.',
                 'example' => 'Upload failed',
             ],
         ];
-    }
-
-    /**
-     * @return array<string, array<string, string>>
-     */
-    public function queryParameters(): array
-    {
-        return [];
     }
 }

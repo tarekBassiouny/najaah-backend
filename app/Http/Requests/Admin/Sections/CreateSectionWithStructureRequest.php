@@ -19,9 +19,8 @@ class CreateSectionWithStructureRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'course_id' => ['required', 'integer', 'exists:courses,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'title' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
             'sort_order' => ['nullable', 'integer'],
             'videos' => ['nullable', 'array'],
             'videos.*' => ['integer', 'exists:videos,id'],
@@ -36,10 +35,6 @@ class CreateSectionWithStructureRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'course_id' => [
-                'description' => 'ID of the parent course.',
-                'example' => 1,
-            ],
             'title' => [
                 'description' => 'Section title (base locale string).',
                 'example' => 'Introduction',

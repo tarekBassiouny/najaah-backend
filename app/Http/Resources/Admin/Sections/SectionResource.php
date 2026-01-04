@@ -24,8 +24,8 @@ class SectionResource extends JsonResource
         return [
             'id' => $section->id,
             'course_id' => $section->course_id,
-            'title' => $section->title,
-            'description' => $section->description,
+            'title' => $section->translate('title'),
+            'description' => $section->translate('description'),
             'sort_order' => $section->order_index,
             'created_at' => $section->created_at,
             'updated_at' => $section->updated_at,

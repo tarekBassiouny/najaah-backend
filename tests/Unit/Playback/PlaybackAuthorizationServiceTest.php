@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\PlaybackSession;
@@ -11,7 +12,6 @@ use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Playback\PlaybackAuthorizationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class)->group('playback', 'authorization');
@@ -159,26 +159,22 @@ function buildAuthorizationPlaybackContext(array $centerOverrides = []): array
     return [$student, $center, $course, $video];
 }
 
-function captureException(callable $callback): ?HttpResponseException
+function captureException(callable $callback): ?DomainException
 {
     $thrown = null;
 
     try {
         $callback();
-    } catch (HttpResponseException $exception) {
+    } catch (DomainException $exception) {
         $thrown = $exception;
     }
 
     return $thrown;
 }
 
-function assertHttpError(?HttpResponseException $exception, int $status, string $code): void
+function assertHttpError(?DomainException $exception, int $status, string $code): void
 {
     expect($exception)->not->toBeNull();
-
-    $response = $exception?->getResponse();
-    $payload = $response?->getData(true) ?? [];
-
-    expect($response?->getStatusCode())->toBe($status)
-        ->and($payload['error']['code'] ?? null)->toBe($code);
+    expect($exception?->statusCode())->toBe($status)
+        ->and($exception?->errorCode())->toBe($code);
 }

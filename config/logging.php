@@ -136,6 +136,14 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'domain' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/domain.log'),
+            'level' => env('LOG_DOMAIN_LEVEL', env('LOG_LEVEL', 'info')),
+            'days' => env('LOG_DOMAIN_DAYS', env('LOG_DAILY_DAYS', 14)),
+            'replace_placeholders' => true,
+        ],
+
     ],
 
 ];

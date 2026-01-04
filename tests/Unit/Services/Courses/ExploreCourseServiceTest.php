@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\DomainException;
 use App\Filters\Mobile\CourseFilters;
 use App\Models\Center;
 use App\Models\Course;
@@ -12,7 +13,6 @@ use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Courses\ExploreCourseService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class)->group('courses', 'mobile', 'explore');
@@ -252,12 +252,12 @@ it('returns not found for unpublished courses', function (): void {
     $thrown = null;
     try {
         $service->show($student, $course);
-    } catch (HttpResponseException $exception) {
+    } catch (DomainException $exception) {
         $thrown = $exception;
     }
 
     expect($thrown)->not->toBeNull()
-        ->and($thrown?->getResponse()->getStatusCode())->toBe(404);
+        ->and($thrown?->statusCode())->toBe(404);
 });
 
 it('denies system students from branded center courses', function (): void {
@@ -278,10 +278,10 @@ it('denies system students from branded center courses', function (): void {
     $thrown = null;
     try {
         $service->show($student, $course);
-    } catch (HttpResponseException $exception) {
+    } catch (DomainException $exception) {
         $thrown = $exception;
     }
 
     expect($thrown)->not->toBeNull()
-        ->and($thrown?->getResponse()->getStatusCode())->toBe(403);
+        ->and($thrown?->statusCode())->toBe(403);
 });

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Sections;
 
+use App\Exceptions\AttachmentNotAllowedException;
+use App\Exceptions\UploadNotReadyException;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
@@ -16,7 +18,7 @@ use App\Services\Sections\Contracts\SectionStructureServiceInterface;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class SectionStructureService implements SectionStructureServiceInterface
 {
@@ -55,9 +57,7 @@ class SectionStructureService implements SectionStructureServiceInterface
             ->first();
 
         if ($pivot !== null && $pivot->course_id !== $section->course_id) {
-            throw ValidationException::withMessages([
-                'course_id' => ['Video does not belong to this course.'],
-            ]);
+            throw new AttachmentNotAllowedException('Video does not belong to this course.', 422);
         }
 
         $order = $this->nextVideoOrder($section);
@@ -123,9 +123,7 @@ class SectionStructureService implements SectionStructureServiceInterface
             ->first();
 
         if ($pivot !== null && $pivot->course_id !== $section->course_id) {
-            throw ValidationException::withMessages([
-                'course_id' => ['PDF does not belong to this course.'],
-            ]);
+            throw new AttachmentNotAllowedException('PDF does not belong to this course.', 422);
         }
 
         $order = $this->nextPdfOrder($section);
@@ -318,29 +316,38 @@ class SectionStructureService implements SectionStructureServiceInterface
             ->exists();
 
         if ($attachedToOtherCourse) {
-            throw ValidationException::withMessages([
-                'course_id' => ['Video is already attached to another course.'],
-            ]);
+            throw new AttachmentNotAllowedException('Video is already attached to another course.', 422);
         }
     }
 
     private function assertVideoReady(Video $video): void
     {
         if ((int) $video->encoding_status !== 3) {
-            throw ValidationException::withMessages([
-                'video_id' => ['Video is not ready to be attached.'],
-            ]);
+            throw new AttachmentNotAllowedException('Video is not ready to be attached.', 422);
         }
 
-        if ($video->upload_session_id !== null) {
-            $video->loadMissing('uploadSession');
-            $status = $video->uploadSession?->upload_status;
+        if ($video->upload_session_id === null) {
+            throw new UploadNotReadyException('Video upload session is required.', 422);
+        }
 
-            if ($status !== VideoUploadService::STATUS_READY) {
-                throw ValidationException::withMessages([
-                    'video_id' => ['Video upload session is not ready.'],
-                ]);
-            }
+        $video->loadMissing('uploadSession');
+        $session = $video->uploadSession;
+
+        if ($session === null) {
+            throw new UploadNotReadyException('Video upload session is required.', 422);
+        }
+
+        if ($session->expires_at !== null && $session->expires_at <= now()) {
+            Log::channel('domain')->warning('upload_session_expired', [
+                'video_id' => $video->id,
+                'session_id' => $session->id,
+            ]);
+            throw new UploadNotReadyException('Video upload session has expired.', 422);
+        }
+
+        $status = $session->upload_status;
+        if ($status !== VideoUploadService::STATUS_READY) {
+            throw new UploadNotReadyException('Video upload session is not ready.', 422);
         }
     }
 
@@ -352,27 +359,35 @@ class SectionStructureService implements SectionStructureServiceInterface
             ->exists();
 
         if ($attachedToOtherCourse) {
-            throw ValidationException::withMessages([
-                'course_id' => ['PDF is already attached to another course.'],
-            ]);
+            throw new AttachmentNotAllowedException('PDF is already attached to another course.', 422);
         }
     }
 
     private function assertPdfReady(Pdf $pdf): void
     {
         if ($pdf->upload_session_id === null) {
-            throw ValidationException::withMessages([
-                'pdf_id' => ['PDF is not ready to be attached.'],
-            ]);
+            throw new AttachmentNotAllowedException('PDF is not ready to be attached.', 422);
         }
 
         $pdf->loadMissing('uploadSession');
-        $status = $pdf->uploadSession?->upload_status;
+        $session = $pdf->uploadSession;
+
+        if ($session === null) {
+            throw new UploadNotReadyException('PDF upload session is required.', 422);
+        }
+
+        if ($session->expires_at !== null && $session->expires_at <= now()) {
+            Log::channel('domain')->warning('upload_session_expired', [
+                'pdf_id' => $pdf->id,
+                'session_id' => $session->id,
+            ]);
+            throw new UploadNotReadyException('PDF upload session has expired.', 422);
+        }
+
+        $status = $session->upload_status;
 
         if ($status !== PdfUploadSessionService::STATUS_READY) {
-            throw ValidationException::withMessages([
-                'pdf_id' => ['PDF upload session is not ready.'],
-            ]);
+            throw new UploadNotReadyException('PDF upload session is not ready.', 422);
         }
     }
 
@@ -389,9 +404,7 @@ class SectionStructureService implements SectionStructureServiceInterface
     private function assertSectionActive(Section $section): void
     {
         if (method_exists($section, 'trashed') && $section->trashed()) {
-            throw ValidationException::withMessages([
-                'section_id' => ['Section is deleted.'],
-            ]);
+            throw new AttachmentNotAllowedException('Section is deleted.', 422);
         }
     }
 }

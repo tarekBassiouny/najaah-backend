@@ -8,9 +8,11 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\User;
 use App\Models\Video;
+use App\Models\VideoUploadSession;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\CourseAttachmentService;
 use App\Services\Pdfs\PdfUploadSessionService;
+use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(Tests\TestCase::class, RefreshDatabase::class)->group('course', 'services', 'content', 'admin');
@@ -20,10 +22,16 @@ it('assigns and removes video via pivot model', function (): void {
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
     $actor = User::factory()->create(['center_id' => $center->id]);
+    $session = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'uploaded_by' => $actor->id,
+        'upload_status' => VideoUploadService::STATUS_READY,
+        'expires_at' => now()->addDay(),
+    ]);
     $video = Video::factory()->create([
         'encoding_status' => 3,
         'lifecycle_status' => 2,
-        'upload_session_id' => null,
+        'upload_session_id' => $session->id,
         'center_id' => $center->id,
         'created_by' => $actor->id,
     ]);

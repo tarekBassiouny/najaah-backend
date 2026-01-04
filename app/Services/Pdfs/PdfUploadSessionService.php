@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services\Pdfs;
 
+use App\Exceptions\UploadFailedException;
 use App\Models\Center;
 use App\Models\PdfUploadSession;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use App\Services\Storage\StoragePathResolver;
+use Illuminate\Support\Facades\Log;
 
 class PdfUploadSessionService
 {
@@ -55,6 +57,11 @@ class PdfUploadSessionService
 
         $session->setAttribute('upload_url', $this->storageService->temporaryUploadUrl($objectKey, $ttl));
 
+        Log::channel('domain')->info('pdf_upload_session_created', [
+            'session_id' => $session->id,
+            'center_id' => $center->id,
+        ]);
+
         return $session;
     }
 
@@ -68,17 +75,53 @@ class PdfUploadSessionService
             return $session;
         }
 
+        if ($session->expires_at !== null && $session->expires_at <= now()) {
+            $session->upload_status = self::STATUS_FAILED;
+            $session->error_message = $errorMessage ?? 'Upload session expired.';
+            $session->save();
+
+            Log::channel('domain')->warning('pdf_upload_session_failed', [
+                'session_id' => $session->id,
+                'center_id' => $session->center_id,
+            ]);
+
+            throw new UploadFailedException($session->error_message ?? 'Upload failed.', 422);
+        }
+
+        if ($session->file_size_kb === null || $session->file_size_kb < 1) {
+            $session->upload_status = self::STATUS_FAILED;
+            $session->error_message = $errorMessage ?? 'Uploaded file size is invalid.';
+            $session->save();
+
+            Log::channel('domain')->warning('pdf_upload_session_failed', [
+                'session_id' => $session->id,
+                'center_id' => $session->center_id,
+            ]);
+
+            throw new UploadFailedException($session->error_message ?? 'Upload failed.', 422);
+        }
+
         if (! $this->storageService->exists($session->object_key)) {
             $session->upload_status = self::STATUS_FAILED;
             $session->error_message = $errorMessage ?? 'Uploaded object not found.';
             $session->save();
 
-            return $session;
+            Log::channel('domain')->warning('pdf_upload_session_failed', [
+                'session_id' => $session->id,
+                'center_id' => $session->center_id,
+            ]);
+
+            throw new UploadFailedException($session->error_message ?? 'Upload failed.', 422);
         }
 
         $session->upload_status = self::STATUS_READY;
         $session->error_message = null;
         $session->save();
+
+        Log::channel('domain')->info('pdf_upload_session_finalized', [
+            'session_id' => $session->id,
+            'center_id' => $session->center_id,
+        ]);
 
         return $session;
     }

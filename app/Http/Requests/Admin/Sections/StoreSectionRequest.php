@@ -45,12 +45,11 @@ class StoreSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'course_id' => ['required', 'integer', 'exists:courses,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'title' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
             'order_index' => ['nullable', 'integer', 'min:0'],
-            'title_translations' => ['sometimes', 'array'],
-            'description_translations' => ['sometimes', 'array'],
+            'title_translations' => ['prohibited'],
+            'description_translations' => ['prohibited'],
         ];
     }
 
@@ -60,10 +59,6 @@ class StoreSectionRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'course_id' => [
-                'description' => 'ID of the parent course.',
-                'example' => 1,
-            ],
             'title' => [
                 'description' => 'Section title (base locale string).',
                 'example' => 'Introduction',
@@ -75,14 +70,6 @@ class StoreSectionRequest extends FormRequest
             'order_index' => [
                 'description' => 'Optional ordering index.',
                 'example' => 1,
-            ],
-            'title_translations' => [
-                'description' => 'Localized titles keyed by locale.',
-                'example' => ['en' => 'Introduction'],
-            ],
-            'description_translations' => [
-                'description' => 'Localized descriptions keyed by locale.',
-                'example' => ['en' => 'Overview of the course'],
             ],
         ];
     }

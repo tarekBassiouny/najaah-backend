@@ -31,7 +31,7 @@ class resolvedCenterResource extends JsonResource
         return [
             'id' => $center->id,
             'slug' => $center->slug,
-            'name' => $center->name,
+            'name' => $center->translate('name'),
             'type' => $this->resolveType($center->type),
             'tier' => $this->resolveTier($center->tier),
             'branding' => [

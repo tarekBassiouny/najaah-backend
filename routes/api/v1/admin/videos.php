@@ -14,7 +14,4 @@ Route::middleware('require.permission:video.manage')->group(function (): void {
 
 Route::middleware('require.permission:video.upload')->group(function (): void {
     Route::post('/centers/{center}/videos/upload-sessions', [VideoUploadSessionController::class, 'store'])->whereNumber('center');
-    Route::patch('/centers/{center}/videos/upload-sessions/{videoUploadSession}', [VideoUploadSessionController::class, 'update'])
-        ->whereNumber('center')
-        ->whereNumber('videoUploadSession');
 });

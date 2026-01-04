@@ -24,9 +24,9 @@ class InstructorResource extends JsonResource
         return [
             'id' => $instructor->id,
             'center_id' => $instructor->center_id,
-            'name' => $instructor->name,
-            'title' => $instructor->title,
-            'bio' => $instructor->bio,
+            'name' => $instructor->translate('name'),
+            'title' => $instructor->translate('title'),
+            'bio' => $instructor->translate('bio'),
             'avatar_url' => $instructor->avatar_url,
             'email' => $instructor->email,
             'phone' => $instructor->phone,

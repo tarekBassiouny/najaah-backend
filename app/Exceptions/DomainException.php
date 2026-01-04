@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Requests;
+namespace App\Exceptions;
 
 use RuntimeException;
 
-class RequestException extends RuntimeException
+class DomainException extends RuntimeException
 {
     public function __construct(
-        private readonly string $errorCode,
         string $message,
-        private readonly int $status
+        private readonly string $errorCode,
+        private readonly int $statusCode = 400
     ) {
         parent::__construct($message);
     }
@@ -21,8 +21,8 @@ class RequestException extends RuntimeException
         return $this->errorCode;
     }
 
-    public function status(): int
+    public function statusCode(): int
     {
-        return $this->status;
+        return $this->statusCode;
     }
 }

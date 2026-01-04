@@ -24,8 +24,8 @@ class PdfResource extends JsonResource
         return [
             'id' => $pdf->id,
             'center_id' => $pdf->center_id,
-            'title' => $pdf->title,
-            'description' => $pdf->description,
+            'title' => $pdf->translate('title'),
+            'description' => $pdf->translate('description'),
             'source_type' => $pdf->source_type,
             'source_provider' => $pdf->source_provider,
             'source_id' => $pdf->source_id,

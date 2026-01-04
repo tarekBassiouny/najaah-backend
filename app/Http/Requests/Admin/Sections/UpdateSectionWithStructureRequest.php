@@ -19,8 +19,8 @@ class UpdateSectionWithStructureRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string'],
+            'title' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
             'sort_order' => ['sometimes', 'integer'],
             'videos' => ['nullable', 'array'],
             'videos.*' => ['integer', 'exists:videos,id'],

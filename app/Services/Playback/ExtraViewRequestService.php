@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
+use App\Exceptions\DomainException;
 use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Enrollment;
@@ -11,7 +12,7 @@ use App\Models\ExtraViewRequest;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
 
 class ExtraViewRequestService
@@ -49,11 +50,11 @@ class ExtraViewRequestService
         $this->assertAdminScope($admin, $request);
 
         if ($request->status !== ExtraViewRequest::STATUS_PENDING) {
-            $this->deny('INVALID_STATE', 'Only pending requests can be approved.', 409);
+            $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be approved.', 409);
         }
 
         if ($grantedViews <= 0) {
-            $this->deny('INVALID_VIEWS', 'Granted views must be positive.', 422);
+            $this->deny(ErrorCodes::INVALID_VIEWS, 'Granted views must be positive.', 422);
         }
 
         $request->status = ExtraViewRequest::STATUS_APPROVED;
@@ -78,7 +79,7 @@ class ExtraViewRequestService
         $this->assertAdminScope($admin, $request);
 
         if ($request->status !== ExtraViewRequest::STATUS_PENDING) {
-            $this->deny('INVALID_STATE', 'Only pending requests can be rejected.', 409);
+            $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be rejected.', 409);
         }
 
         $request->status = ExtraViewRequest::STATUS_REJECTED;
@@ -99,7 +100,7 @@ class ExtraViewRequestService
     private function assertStudent(User $user): void
     {
         if (! $user->is_student) {
-            $this->deny('UNAUTHORIZED', 'Only students can request extra views.', 403);
+            $this->deny(ErrorCodes::UNAUTHORIZED, 'Only students can request extra views.', 403);
         }
     }
 
@@ -111,7 +112,7 @@ class ExtraViewRequestService
             ->first();
 
         if ($enrollment === null) {
-            $this->deny('ENROLLMENT_REQUIRED', 'Active enrollment required.', 403);
+            $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
         }
     }
 
@@ -123,7 +124,7 @@ class ExtraViewRequestService
             ->exists();
 
         if (! $exists) {
-            $this->deny('VIDEO_NOT_IN_COURSE', 'Video not available for this course.', 404);
+            $this->deny(ErrorCodes::VIDEO_NOT_IN_COURSE, 'Video not available for this course.', 404);
         }
     }
 
@@ -136,14 +137,14 @@ class ExtraViewRequestService
             ->exists();
 
         if ($pending) {
-            $this->deny('PENDING_REQUEST_EXISTS', 'A pending request already exists for this video.', 422);
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending request already exists for this video.', 422);
         }
     }
 
     private function assertAdminScope(User $admin, ExtraViewRequest $request): void
     {
         if ($admin->is_student) {
-            $this->deny('UNAUTHORIZED', 'Only admins can perform this action.', 403);
+            $this->deny(ErrorCodes::UNAUTHORIZED, 'Only admins can perform this action.', 403);
         }
 
         $this->centerScopeService->assertAdminSameCenter($admin, $request);
@@ -168,12 +169,6 @@ class ExtraViewRequestService
      */
     private function deny(string $code, string $message, int $status): void
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => $code,
-                'message' => $message,
-            ],
-        ], $status));
+        throw new DomainException($message, $code, $status);
     }
 }

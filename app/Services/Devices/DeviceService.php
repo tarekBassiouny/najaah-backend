@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services\Devices;
 
+use App\Exceptions\DomainException;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Logging\LogContextResolver;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Support\ErrorCodes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -27,7 +28,7 @@ class DeviceService implements DeviceServiceInterface
                     'user_id' => $user->id,
                     'center_id' => $user->center_id,
                 ]));
-                $this->deny('DEVICE_MISMATCH', 'A different device is already active for this user.');
+                $this->deny(ErrorCodes::DEVICE_MISMATCH, 'A different device is already active for this user.');
             }
 
             /** @var UserDevice|null $device */
@@ -73,7 +74,7 @@ class DeviceService implements DeviceServiceInterface
                 'user_id' => $user->id,
                 'center_id' => $user->center_id,
             ]));
-            $this->deny('DEVICE_MISMATCH', 'Device is not authorized for this user.');
+            $this->deny(ErrorCodes::DEVICE_MISMATCH, 'Device is not authorized for this user.');
         }
 
         return $active;
@@ -95,13 +96,7 @@ class DeviceService implements DeviceServiceInterface
      */
     private function deny(string $code, string $message): void
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => $code,
-                'message' => $message,
-            ],
-        ], 403));
+        throw new DomainException($message, $code, 403);
     }
 
     /**

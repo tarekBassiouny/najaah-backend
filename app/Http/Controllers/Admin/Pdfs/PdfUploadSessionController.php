@@ -76,12 +76,6 @@ class PdfUploadSessionController extends Controller
             isset($data['error_message']) && is_string($data['error_message']) ? $data['error_message'] : null
         );
 
-        if ($session->upload_status === PdfUploadSessionService::STATUS_FAILED) {
-            throw ValidationException::withMessages([
-                'upload' => [$session->error_message ?? 'Upload failed.'],
-            ]);
-        }
-
         $pdfId = isset($data['pdf_id']) && is_numeric($data['pdf_id']) ? (int) $data['pdf_id'] : null;
 
         if ($pdfId !== null) {

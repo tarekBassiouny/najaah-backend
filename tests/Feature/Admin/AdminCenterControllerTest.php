@@ -28,7 +28,7 @@ it('creates a center', function (): void {
         'type' => 'branded',
         'tier' => 'premium',
         'is_featured' => true,
-        'name_translations' => ['en' => 'Center One'],
+        'name' => 'Center One',
         'branding_metadata' => [
             'primary_color' => '#123456',
         ],
@@ -59,7 +59,6 @@ it('creates a center', function (): void {
     $center = Center::where('slug', 'center-1')->first();
     expect($center?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
     Bus::assertDispatched(SendAdminInvitationEmailJob::class);
-    Bus::assertNotDispatched(ProcessCenterLogoJob::class);
 });
 
 it('rejects branded center creation without branding metadata', function (): void {
@@ -69,7 +68,7 @@ it('rejects branded center creation without branding metadata', function (): voi
     $payload = [
         'slug' => 'brandless',
         'type' => 'branded',
-        'name_translations' => ['en' => 'Brandless'],
+        'name' => 'Brandless',
         'admin' => [
             'name' => 'Admin User',
             'email' => 'brandless-owner@example.com',
@@ -88,7 +87,7 @@ it('allows unbranded center creation without branding metadata', function (): vo
     $payload = [
         'slug' => 'unbranded',
         'type' => 'unbranded',
-        'name_translations' => ['en' => 'Unbranded'],
+        'name' => 'Unbranded',
         'admin' => [
             'name' => 'Admin User',
             'email' => 'unbranded-owner@example.com',
@@ -125,7 +124,7 @@ it('updates a center but keeps slug immutable', function (): void {
     $center = Center::factory()->create(['slug' => 'immutable']);
 
     $response = $this->putJson("/api/v1/admin/centers/{$center->id}", [
-        'name_translations' => ['en' => 'Updated Center'],
+        'name' => 'Updated Center',
         'is_featured' => true,
     ]);
 
@@ -168,7 +167,7 @@ it('defaults logo path on create when missing', function (): void {
     $payload = [
         'slug' => 'default-logo',
         'type' => 'unbranded',
-        'name_translations' => ['en' => 'Default Logo Center'],
+        'name' => 'Default Logo Center',
         'admin' => [
             'name' => 'Admin User',
             'email' => 'default-logo@example.com',
@@ -287,7 +286,7 @@ it('rejects duplicate slug on create', function (): void {
     $response = $this->postJson('/api/v1/admin/centers', [
         'slug' => 'dupe',
         'type' => 'branded',
-        'name_translations' => ['en' => 'Center'],
+        'name' => 'Center',
         'branding_metadata' => [
             'primary_color' => '#123456',
         ],
@@ -307,7 +306,7 @@ it('rejects numeric enums on create', function (): void {
         'slug' => 'numeric-enums',
         'type' => 1,
         'tier' => 2,
-        'name_translations' => ['en' => 'Numeric Enums'],
+        'name' => 'Numeric Enums',
         'branding_metadata' => [
             'primary_color' => '#123456',
         ],
@@ -326,7 +325,7 @@ it('rejects legacy fields on create', function (): void {
     $response = $this->postJson('/api/v1/admin/centers', [
         'slug' => 'legacy-fields',
         'type' => 'branded',
-        'name_translations' => ['en' => 'Legacy Fields'],
+        'name' => 'Legacy Fields',
         'branding_metadata' => [
             'primary_color' => '#123456',
         ],

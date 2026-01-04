@@ -23,8 +23,8 @@ class CourseSectionResource extends JsonResource
 
         return [
             'id' => $section->id,
-            'title' => $section->title,
-            'description' => $section->description,
+            'title' => $section->translate('title'),
+            'description' => $section->translate('description'),
             'order' => $section->order_index,
             'videos' => CourseVideoResource::collection($this->whenLoaded('videos')),
             'pdfs' => CoursePdfResource::collection($this->whenLoaded('pdfs')),

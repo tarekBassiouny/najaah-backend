@@ -19,10 +19,10 @@ class StorePdfRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string'],
-            'title_translations' => ['sometimes', 'array'],
-            'description_translations' => ['sometimes', 'array'],
+            'title' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
+            'title_translations' => ['prohibited'],
+            'description_translations' => ['prohibited'],
             'upload_session_id' => ['sometimes', 'integer', 'exists:pdf_upload_sessions,id'],
             'source_id' => ['required_without:upload_session_id', 'string', 'max:2048'],
             'source_url' => ['sometimes', 'nullable', 'string', 'max:2048'],
@@ -45,14 +45,6 @@ class StorePdfRequest extends FormRequest
                 'description' => 'Optional description in the request locale.',
                 'example' => 'Downloadable notes.',
             ],
-            'title_translations' => [
-                'description' => 'Optional localized titles keyed by locale.',
-                'example' => ['en' => 'Lesson Notes'],
-            ],
-            'description_translations' => [
-                'description' => 'Optional localized descriptions keyed by locale.',
-                'example' => ['en' => 'Downloadable notes'],
-            ],
             'upload_session_id' => [
                 'description' => 'Upload session ID used to finalize the PDF.',
                 'example' => 12,
@@ -74,13 +66,5 @@ class StorePdfRequest extends FormRequest
                 'example' => 1024,
             ],
         ];
-    }
-
-    /**
-     * @return array<string, array<string, string>>
-     */
-    public function queryParameters(): array
-    {
-        return [];
     }
 }

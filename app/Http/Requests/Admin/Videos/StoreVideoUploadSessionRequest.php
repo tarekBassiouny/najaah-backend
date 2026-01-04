@@ -40,12 +40,4 @@ class StoreVideoUploadSessionRequest extends FormRequest
             ],
         ];
     }
-
-    /**
-     * @return array<string, array<string, string>>
-     */
-    public function queryParameters(): array
-    {
-        return [];
-    }
 }

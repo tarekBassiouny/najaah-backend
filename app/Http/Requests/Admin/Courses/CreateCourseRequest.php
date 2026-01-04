@@ -15,18 +15,6 @@ class CreateCourseRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        if ($this->has('title') && ! $this->has('title_translations')) {
-            $this->merge([
-                'title_translations' => ['en' => ($this->input('title', ''))],
-            ]);
-        }
-
-        if ($this->has('description') && ! $this->has('description_translations')) {
-            $this->merge([
-                'description_translations' => ['en' => ($this->input('description', ''))],
-            ]);
-        }
-
         if ($this->has('difficulty') && ! $this->has('difficulty_level')) {
             $this->merge([
                 'difficulty_level' => $this->mapDifficulty((string) $this->input('difficulty', '')),
@@ -46,17 +34,15 @@ class CreateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'title' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
             'category_id' => ['required', 'exists:categories,id'],
             'difficulty' => ['required', 'in:beginner,intermediate,advanced'],
             'language' => ['required', 'string', 'max:10'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'metadata' => ['nullable', 'array'],
-            'title_translations' => ['sometimes', 'array'],
-            'title_translations.*' => ['string', 'max:255'],
-            'description_translations' => ['sometimes', 'nullable', 'array'],
-            'description_translations.*' => ['string'],
+            'title_translations' => ['prohibited'],
+            'description_translations' => ['prohibited'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
         ];
@@ -95,22 +81,6 @@ class CreateCourseRequest extends FormRequest
             'metadata' => [
                 'description' => 'Optional metadata array.',
                 'example' => ['key' => 'value'],
-            ],
-            'title_translations' => [
-                'description' => 'Localized titles keyed by locale.',
-                'example' => ['en' => 'Sample Course', 'ar' => 'دورة تجريبية'],
-            ],
-            'title_translations.*' => [
-                'description' => 'Localized title value.',
-                'example' => 'Sample Course',
-            ],
-            'description_translations' => [
-                'description' => 'Localized descriptions keyed by locale.',
-                'example' => ['en' => 'Intro course', 'ar' => 'دورة مقدمة'],
-            ],
-            'description_translations.*' => [
-                'description' => 'Localized description value.',
-                'example' => 'Intro course',
             ],
             'difficulty_level' => [
                 'description' => 'Mapped numeric difficulty (auto-set from difficulty).',

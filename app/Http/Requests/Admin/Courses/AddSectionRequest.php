@@ -13,20 +13,7 @@ class AddSectionRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation(): void
-    {
-        if ($this->has('title') && ! $this->has('title_translations')) {
-            $this->merge([
-                'title_translations' => ['en' => ($this->input('title', ''))],
-            ]);
-        }
-
-        if ($this->has('description') && ! $this->has('description_translations')) {
-            $this->merge([
-                'description_translations' => ['en' => ($this->input('description', ''))],
-            ]);
-        }
-    }
+    protected function prepareForValidation(): void {}
 
     /**
      * @return array<string, array<int, string>|string>
@@ -34,11 +21,11 @@ class AddSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'title' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
             'order_index' => ['nullable', 'integer', 'min:0'],
-            'title_translations' => ['sometimes', 'array'],
-            'description_translations' => ['sometimes', 'array'],
+            'title_translations' => ['prohibited'],
+            'description_translations' => ['prohibited'],
         ];
     }
 
@@ -59,14 +46,6 @@ class AddSectionRequest extends FormRequest
             'order_index' => [
                 'description' => 'Optional order within the course.',
                 'example' => '1',
-            ],
-            'title_translations' => [
-                'description' => 'Localized titles keyed by locale.',
-                'example' => ['en' => 'Introduction', 'ar' => 'مقدمة'],
-            ],
-            'description_translations' => [
-                'description' => 'Localized descriptions keyed by locale.',
-                'example' => ['en' => 'Overview of the course', 'ar' => 'نظرة عامة على الدورة'],
             ],
         ];
     }

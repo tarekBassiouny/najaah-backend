@@ -36,6 +36,7 @@ class CourseQueryService
         if (isset($filters['search']) && is_string($filters['search'])) {
             $term = trim($filters['search']);
             if ($term !== '') {
+                // Search targets the stored base string; not locale-aware yet.
                 $query->where('title_translations', 'like', '%'.$term.'%');
             }
         }

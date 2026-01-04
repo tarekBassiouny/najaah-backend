@@ -15,18 +15,6 @@ class UpdateCourseRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        if ($this->has('title') && ! $this->has('title_translations')) {
-            $this->merge([
-                'title_translations' => ['en' => ($this->input('title', ''))],
-            ]);
-        }
-
-        if ($this->has('description') && ! $this->has('description_translations')) {
-            $this->merge([
-                'description_translations' => ['en' => ($this->input('description', ''))],
-            ]);
-        }
-
         if ($this->has('difficulty') && ! $this->has('difficulty_level')) {
             $this->merge([
                 'difficulty_level' => $this->mapDifficulty((string) $this->input('difficulty', '')),
@@ -46,17 +34,15 @@ class UpdateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string'],
+            'title' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
             'category_id' => ['sometimes', 'required', 'exists:categories,id'],
             'difficulty' => ['sometimes', 'required', 'in:beginner,intermediate,advanced'],
             'language' => ['sometimes', 'required', 'string', 'max:10'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'metadata' => ['sometimes', 'nullable', 'array'],
-            'title_translations' => ['sometimes', 'array'],
-            'title_translations.*' => ['string', 'max:255'],
-            'description_translations' => ['sometimes', 'nullable', 'array'],
-            'description_translations.*' => ['string'],
+            'title_translations' => ['prohibited'],
+            'description_translations' => ['prohibited'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
         ];
@@ -95,22 +81,6 @@ class UpdateCourseRequest extends FormRequest
             'metadata' => [
                 'description' => 'Optional metadata array.',
                 'example' => ['key' => 'value'],
-            ],
-            'title_translations' => [
-                'description' => 'Localized titles keyed by locale.',
-                'example' => ['en' => 'Updated Course', 'ar' => 'دورة محدثة'],
-            ],
-            'title_translations.*' => [
-                'description' => 'Localized title value.',
-                'example' => 'Updated Course',
-            ],
-            'description_translations' => [
-                'description' => 'Localized descriptions keyed by locale.',
-                'example' => ['en' => 'Updated desc', 'ar' => 'وصف محدث'],
-            ],
-            'description_translations.*' => [
-                'description' => 'Localized description value.',
-                'example' => 'Updated desc',
             ],
             'difficulty_level' => [
                 'description' => 'Mapped numeric difficulty (auto-set from difficulty).',

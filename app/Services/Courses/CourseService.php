@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
-use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
+use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class CourseService implements CourseServiceInterface
 {
-    use NormalizesTranslations;
-
     public function __construct(private readonly CenterScopeService $centerScopeService) {}
 
     /** @return LengthAwarePaginator<Course> */
@@ -39,11 +37,10 @@ class CourseService implements CourseServiceInterface
     /** @param array<string, mixed> $data */
     public function create(array $data, ?User $actor = null): Course
     {
-        $data = $this->normalizeTranslations($data, [
-            'title_translations',
-            'description_translations',
-            'college_translations',
-        ]);
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        $data['title_translations'] = $data['title'] ?? '';
+        $data['description_translations'] = $data['description'] ?? null;
+        unset($data['title'], $data['description']);
 
         if (! array_key_exists('difficulty_level', $data) || ! is_numeric($data['difficulty_level'])) {
             $data['difficulty_level'] = 0;
@@ -66,15 +63,16 @@ class CourseService implements CourseServiceInterface
     /** @param array<string, mixed> $data */
     public function update(Course $course, array $data, ?User $actor = null): Course
     {
-        $data = $this->normalizeTranslations($data, [
-            'title_translations',
-            'description_translations',
-            'college_translations',
-        ], [
-            'title_translations' => $course->title_translations ?? [],
-            'description_translations' => $course->description_translations ?? [],
-            'college_translations' => $course->college_translations ?? [],
-        ]);
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        if (array_key_exists('title', $data)) {
+            $data['title_translations'] = $data['title'];
+            unset($data['title']);
+        }
+
+        if (array_key_exists('description', $data)) {
+            $data['description_translations'] = $data['description'];
+            unset($data['description']);
+        }
 
         if ($actor instanceof User) {
             $this->centerScopeService->assertAdminSameCenter($actor, $course);

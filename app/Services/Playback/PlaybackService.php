@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
+use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
@@ -11,7 +12,7 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Bunny\BunnyEmbedTokenService;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Support\ErrorCodes;
 use Illuminate\Support\Facades\DB;
 
 class PlaybackService
@@ -47,13 +48,7 @@ class PlaybackService
 
             if ($active instanceof PlaybackSession) {
                 if ($active->device_id !== $device->id) {
-                    throw new HttpResponseException(response()->json([
-                        'success' => false,
-                        'error' => [
-                            'code' => 'CONCURRENT_DEVICE',
-                            'message' => 'Playback already active on another device.',
-                        ],
-                    ], 409));
+                    throw new DomainException('Playback already active on another device.', ErrorCodes::CONCURRENT_DEVICE, 409);
                 }
 
                 $active->update(['ended_at' => $now]);
@@ -72,12 +67,12 @@ class PlaybackService
 
         $videoUuid = $video->source_id;
         if (! is_string($videoUuid) || $videoUuid === '') {
-            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
+            $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
 
         $libraryId = config('bunny.api.library_id');
         if (! is_numeric($libraryId)) {
-            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
+            $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
 
         $enrollmentId = $this->resolveEnrollmentId($student, $course);
@@ -104,7 +99,7 @@ class PlaybackService
     {
         $videoUuid = $video->source_id;
         if (! is_string($videoUuid) || $videoUuid === '') {
-            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
+            $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
 
         $enrollmentId = $this->resolveEnrollmentId($student, $course);
@@ -164,7 +159,7 @@ class PlaybackService
             ->first();
 
         if (! $enrollment instanceof Enrollment) {
-            $this->deny('ENROLLMENT_REQUIRED', 'Active enrollment required.', 403);
+            $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
         }
 
         return (int) $enrollment->id;
@@ -175,12 +170,6 @@ class PlaybackService
      */
     private function deny(string $code, string $message, int $status): void
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => $code,
-                'message' => $message,
-            ],
-        ], $status));
+        throw new DomainException($message, $code, $status);
     }
 }

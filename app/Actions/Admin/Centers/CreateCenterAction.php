@@ -32,7 +32,7 @@ class CreateCenterAction
         $centerData = [
             'slug' => $data['slug'],
             'type' => $data['type'],
-            'name_translations' => $data['name_translations'],
+            'name' => $data['name'],
             'logo_url' => $this->pathResolver->defaultCenterLogo(),
         ];
 

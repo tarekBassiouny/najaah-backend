@@ -10,7 +10,6 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\User;
 use App\Models\Video;
-use App\Services\Requests\RequestException;
 use App\Services\Requests\RequestService;
 use Illuminate\Http\JsonResponse;
 
@@ -32,23 +31,13 @@ class ExtraViewRequestController extends Controller
             ], 401);
         }
 
-        try {
-            $this->requestService->createExtraViewRequest(
-                $student,
-                $center,
-                $course,
-                $video,
-                $request->input('reason')
-            );
-        } catch (RequestException $requestException) {
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => $requestException->errorCode(),
-                    'message' => $requestException->getMessage(),
-                ],
-            ], $requestException->status());
-        }
+        $this->requestService->createExtraViewRequest(
+            $student,
+            $center,
+            $course,
+            $video,
+            $request->input('reason')
+        );
 
         return response()->json([
             'success' => true,

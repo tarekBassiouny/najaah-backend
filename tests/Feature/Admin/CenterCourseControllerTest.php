@@ -49,11 +49,27 @@ it('creates course in center', function (): void {
         ->assertJsonPath('data.title', 'Sample Course');
     $this->assertDatabaseHas('courses', [
         'center_id' => $center->id,
-        'title_translations->en' => 'Sample Course',
         'status' => 0,
-        'is_published' => false,
+        'is_published' => 0,
         'publish_at' => null,
     ]);
+    $course = Course::where('center_id', $center->id)->latest('id')->first();
+    expect($course)->not->toBeNull()
+        ->and($course?->getRawOriginal('title_translations'))->toBe(json_encode('Sample Course'));
+});
+
+it('rejects array title payload when creating course', function (): void {
+    $center = Center::factory()->create();
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses", [
+        'title' => ['en' => 'Bad'],
+        'description' => 'A course description',
+        'category_id' => Category::factory()->create()->id,
+        'difficulty' => 'beginner',
+        'language' => 'en',
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422);
 });
 
 it('shows course in center', function (): void {
@@ -74,7 +90,9 @@ it('updates course in center', function (): void {
     ], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('data.title', 'Updated Title');
-    $this->assertDatabaseHas('courses', ['id' => $course->id, 'title_translations->en' => 'Updated Title']);
+    $updated = Course::find($course->id);
+    expect($updated)->not->toBeNull()
+        ->and($updated?->getRawOriginal('title_translations'))->toBe(json_encode('Updated Title'));
 });
 
 it('soft deletes course in center', function (): void {

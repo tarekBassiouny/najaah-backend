@@ -24,8 +24,8 @@ class VideoResource extends JsonResource
         return [
             'id' => $video->id,
             'center_id' => $video->center_id,
-            'title' => $video->title,
-            'description' => $video->description,
+            'title' => $video->translate('title'),
+            'description' => $video->translate('description'),
             'tags' => $video->tags,
             'duration_seconds' => $video->duration_seconds,
             'source_type' => $video->source_type,
