@@ -25,7 +25,7 @@ class OtpService implements OtpServiceInterface
             ->where('is_student', true);
 
         if (is_numeric($centerId)) {
-            $userQuery->where('center_id', (int) $centerId);
+            $userQuery->where('center_id', $centerId);
         }
 
         $user = $userQuery->first();

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Auth\AdminLoginRequest;
 use App\Http\Resources\Admin\Users\AdminUserResource;
+use App\Models\User;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -100,6 +101,17 @@ class AdminAuthController extends Controller
         /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
         $guard = Auth::guard('admin');
         $user = $guard->user() ?? $guard->authenticate();
+
+        if (! $user instanceof User) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Unauthorized.',
+                ],
+            ], 401);
+        }
+
         $user->loadMissing('roles.permissions');
 
         $userData = (new AdminUserResource($user))->toArray(request());
