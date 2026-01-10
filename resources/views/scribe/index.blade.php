@@ -430,7 +430,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: January 4, 2026</li>
+        <li>Last updated: January 8, 2026</li>
     </ul>
 </div>
 
@@ -1468,7 +1468,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;is_featured=1&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
+    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;is_featured=&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
@@ -1486,7 +1486,7 @@ const params = {
     "category_id": "3",
     "instructor_id": "5",
     "enrolled": "1",
-    "is_featured": "1",
+    "is_featured": "0",
     "publish_from": "2025-01-01",
     "publish_to": "2025-01-31",
 };
@@ -1695,7 +1695,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>publish_from</code></b>&nbsp;&nbsp;
@@ -6858,7 +6858,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
-    --form "logo=@/tmp/php6721f7p7sh2l5Lrq1BY" </code></pre></div>
+    --form "logo=@/tmp/phpcqn226qalmre6TPGo8O" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7005,7 +7005,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/php6721f7p7sh2l5Lrq1BY</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpcqn226qalmre6TPGo8O</code></p>
         </div>
         </form>
 
@@ -10724,7 +10724,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
     --data "{
-    \"course_id\": 1,
     \"title\": \"Introduction\",
     \"description\": \"Overview of the course.\",
     \"order_index\": 1
@@ -10745,7 +10744,6 @@ const headers = {
 };
 
 let body = {
-    "course_id": 1,
     "title": "Introduction",
     "description": "Overview of the course.",
     "order_index": 1
@@ -10883,18 +10881,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
-               value="1"
-               data-component="body">
-    <br>
-<p>ID of the parent course. The <code>id</code> of an existing record in the courses table. Example: <code>1</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
@@ -12115,7 +12101,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
     --data "{
-    \"course_id\": 1,
     \"title\": \"Introduction\",
     \"description\": \"Overview of the course.\",
     \"sort_order\": 1,
@@ -12142,7 +12127,6 @@ const headers = {
 };
 
 let body = {
-    "course_id": 1,
     "title": "Introduction",
     "description": "Overview of the course.",
     "sort_order": 1,
@@ -12286,18 +12270,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
-               value="1"
-               data-component="body">
-    <br>
-<p>ID of the parent course. The <code>id</code> of an existing record in the courses table. Example: <code>1</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
@@ -16293,7 +16265,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpq7vv645a5du6eAz6nIO" </code></pre></div>
+    --form "avatar=@/tmp/php6ei40v0liofqbzzBWUu" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16500,7 +16472,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpq7vv645a5du6eAz6nIO</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php6ei40v0liofqbzzBWUu</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -16735,7 +16707,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpb6c7151840l40QNVxnm" </code></pre></div>
+    --form "avatar=@/tmp/phpnm2cvr071hvh6CSdFoW" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16958,7 +16930,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpb6c7151840l40QNVxnm</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpnm2cvr071hvh6CSdFoW</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;

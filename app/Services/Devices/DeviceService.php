@@ -40,7 +40,7 @@ class DeviceService implements DeviceServiceInterface
                 $device = UserDevice::create([
                     'user_id' => $user->id,
                     'device_id' => $uuid,
-                    'model' => $meta['device_name'] ?? 'Unknown',
+                    'model' => $meta['device_type'] ?? $meta['device_name'] ?? 'Unknown',
                     'os_version' => $meta['device_os'] ?? 'unknown',
                     'status' => UserDevice::STATUS_ACTIVE,
                     'approved_at' => now(),
@@ -48,7 +48,7 @@ class DeviceService implements DeviceServiceInterface
                 ]);
             } else {
                 $device->update([
-                    'model' => $meta['device_name'] ?? $device->model,
+                    'model' => $meta['device_type'] ?? $meta['device_name'] ?? $device->model,
                     'os_version' => $meta['device_os'] ?? $device->os_version,
                     'status' => UserDevice::STATUS_ACTIVE,
                     'approved_at' => $device->approved_at ?? now(),

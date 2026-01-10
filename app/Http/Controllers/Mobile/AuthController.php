@@ -29,7 +29,9 @@ class AuthController extends Controller
         /** @var array{phone:string,country_code:string} $data */
         $data = $request->validated();
 
-        $otpResult = $this->otpService->send($data['phone'], $data['country_code']);
+        $resolvedCenterId = $request->attributes->get('resolved_center_id');
+        $centerId = is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null;
+        $otpResult = $this->otpService->send($data['phone'], $data['country_code'], $centerId);
 
         return response()->json([
             'success' => true,

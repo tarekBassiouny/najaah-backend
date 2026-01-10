@@ -100,11 +100,22 @@ class AdminAuthController extends Controller
         /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
         $guard = Auth::guard('admin');
         $user = $guard->user() ?? $guard->authenticate();
+        $user->loadMissing('roles.permissions');
+
+        $userData = (new AdminUserResource($user))->toArray(request());
+        $userData['roles'] = $user->roles
+            ->map(static function ($role): array {
+                return [
+                    'slug' => $role->slug,
+                    'permissions' => $role->permissions->pluck('name')->values(),
+                ];
+            })
+            ->values();
 
         return response()->json([
             'success' => true,
             'data' => [
-                'user' => new AdminUserResource($user),
+                'user' => $userData,
             ],
         ]);
     }

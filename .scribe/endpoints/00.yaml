@@ -402,7 +402,7 @@ endpoints:
         name: is_featured
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -436,7 +436,7 @@ endpoints:
       category_id: 3
       instructor_id: 5
       enrolled: true
-      is_featured: true
+      is_featured: false
       publish_from: '2025-01-01'
       publish_to: '2025-01-31'
     bodyParameters: []
@@ -4150,17 +4150,6 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'ID of the parent course. The <code>id</code> of an existing record in the courses table.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       title:
         custom: []
         name: title
@@ -4217,7 +4206,6 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      course_id: 1
       title: Introduction
       description: 'Overview of the course.'
       order_index: 1
@@ -4751,17 +4739,6 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      course_id:
-        custom: []
-        name: course_id
-        description: 'ID of the parent course. The <code>id</code> of an existing record in the courses table.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       title:
         custom: []
         name: title
@@ -4820,7 +4797,6 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      course_id: 1
       title: Introduction
       description: 'Overview of the course.'
       sort_order: 1

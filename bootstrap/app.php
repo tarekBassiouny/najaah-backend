@@ -36,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Admin (JWT) - canonical /api/v1/admin with backward-compatible /admin alias
             Route::prefix('api/v1/admin')
-                ->middleware(['api', HandleCors::class])
+                ->middleware(['api'])
                 ->group(function (): void {
                     require __DIR__.'/../routes/api/v1/admin/auth.php';
 
@@ -67,6 +67,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Global middleware
         $middleware->use([
+            HandleCors::class,
             RequestIdMiddleware::class,
         ]);
 
