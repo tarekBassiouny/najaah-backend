@@ -32,6 +32,7 @@ it('lists videos with upload sessions for admin center', function (): void {
 
     /** @var Video $video */
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'created_by' => $admin->id,
         'upload_session_id' => $session->id,
         'encoding_status' => VideoUploadService::STATUS_PROCESSING,
@@ -45,10 +46,11 @@ it('lists videos with upload sessions for admin center', function (): void {
 
     VideoUploadSession::factory()->create(['center_id' => $otherCenter->id]);
     Video::factory()->create([
+        'center_id' => $otherCenter->id,
         'created_by' => $otherAdmin->id,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/videos?per_page=10&center_id='.$center->id, $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/videos?per_page=10", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('meta.total', 1)
@@ -65,15 +67,19 @@ it('lists videos with upload sessions for admin center', function (): void {
 });
 
 it('filters videos by title search', function (): void {
-    $this->asAdmin();
+    $center = Center::factory()->create();
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
     Video::factory()->create([
+        'center_id' => $center->id,
         'title_translations' => ['en' => 'Alpha Intro'],
     ]);
     Video::factory()->create([
+        'center_id' => $center->id,
         'title_translations' => ['en' => 'Beta Intro'],
     ]);
 
-    $response = $this->getJson('/api/v1/admin/videos?search=Alpha', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/videos?search=Alpha", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -81,21 +87,25 @@ it('filters videos by title search', function (): void {
 });
 
 it('filters videos by course', function (): void {
-    $this->asAdmin();
-    $courseA = Course::factory()->create();
-    $courseB = Course::factory()->create();
+    $center = Center::factory()->create();
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
+    $courseA = Course::factory()->create(['center_id' => $center->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id]);
 
     $videoA = Video::factory()->create([
+        'center_id' => $center->id,
         'title_translations' => ['en' => 'Course A Video'],
     ]);
     $videoB = Video::factory()->create([
+        'center_id' => $center->id,
         'title_translations' => ['en' => 'Course B Video'],
     ]);
 
     $courseA->videos()->attach($videoA->id, ['section_id' => null]);
     $courseB->videos()->attach($videoB->id, ['section_id' => null]);
 
-    $response = $this->getJson('/api/v1/admin/videos?course_id='.$courseA->id, $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/videos?course_id=".$courseA->id, $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -121,6 +131,7 @@ it('scopes videos to admin center for non super admins', function (): void {
     $admin->centers()->sync([$centerA->id => ['type' => 'admin']]);
 
     Video::factory()->create([
+        'center_id' => $centerA->id,
         'title_translations' => ['en' => 'Center A Video'],
         'created_by' => User::factory()->create([
             'center_id' => $centerA->id,
@@ -128,6 +139,7 @@ it('scopes videos to admin center for non super admins', function (): void {
         ])->id,
     ]);
     Video::factory()->create([
+        'center_id' => $centerB->id,
         'title_translations' => ['en' => 'Center B Video'],
         'created_by' => User::factory()->create([
             'center_id' => $centerB->id,
@@ -141,7 +153,7 @@ it('scopes videos to admin center for non super admins', function (): void {
         'is_student' => false,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/videos?center_id='.$centerB->id, [
+    $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/videos", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),
@@ -153,7 +165,8 @@ it('scopes videos to admin center for non super admins', function (): void {
 });
 
 it('requires admin authentication', function (): void {
-    $response = $this->getJson('/api/v1/admin/videos', [
+    $center = Center::factory()->create();
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/videos", [
         'X-Api-Key' => config('services.system_api_key'),
     ]);
 

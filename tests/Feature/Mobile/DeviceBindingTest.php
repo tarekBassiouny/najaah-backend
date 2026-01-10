@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\DomainException;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
@@ -53,7 +54,7 @@ it('blocks login from a different device when one is active', function (): void 
         'device_os' => 'iOS',
     ]);
 
-    $this->expectException(\Illuminate\Http\Exceptions\HttpResponseException::class);
+    $this->expectException(DomainException::class);
 
     $service->register($student, 'device-2', [
         'device_name' => 'Android',

@@ -23,8 +23,8 @@ class InstructorResource extends JsonResource
 
         return [
             'id' => $instructor->id,
-            'name' => $instructor->name,
-            'title' => $instructor->title,
+            'name' => $instructor->translate('name'),
+            'title' => $instructor->translate('title'),
             'avatar_url' => $instructor->avatar_url,
         ];
     }

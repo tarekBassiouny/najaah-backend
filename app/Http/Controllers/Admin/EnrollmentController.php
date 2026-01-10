@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Enrollments\StoreEnrollmentRequest;
-use App\Http\Requests\Enrollments\UpdateEnrollmentStatusRequest;
-use App\Http\Resources\EnrollmentResource;
+use App\Http\Requests\Admin\Enrollments\StoreEnrollmentRequest;
+use App\Http\Requests\Admin\Enrollments\UpdateEnrollmentStatusRequest;
+use App\Http\Resources\Admin\EnrollmentResource;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;

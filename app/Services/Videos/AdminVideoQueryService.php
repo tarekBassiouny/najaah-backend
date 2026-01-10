@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
@@ -34,6 +35,26 @@ class AdminVideoQueryService
     }
 
     /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<Video>
+     */
+    public function paginateForCenter(User $admin, Center $center, int $perPage = 15, array $filters = []): LengthAwarePaginator
+    {
+        if (! $admin->hasRole('super_admin')) {
+            $this->centerScopeService->assertAdminCenterId($admin, $center->id);
+        }
+
+        $query = Video::query()
+            ->with(['uploadSession', 'creator'])
+            ->where('center_id', $center->id)
+            ->orderByDesc('created_at');
+
+        $query = $this->applyFilters($query, $admin, $filters);
+
+        return $query->paginate($perPage);
+    }
+
+    /**
      * @param  Builder<Video>  $query
      * @return Builder<Video>
      */
@@ -44,9 +65,7 @@ class AdminVideoQueryService
         }
 
         $this->centerScopeService->assertAdminCenterId($admin, $admin->center_id);
-        $query->whereHas('creator', static function (Builder $builder) use ($admin): void {
-            $builder->where('center_id', $admin->center_id);
-        });
+        $query->where('center_id', $admin->center_id);
 
         return $query;
     }
@@ -68,6 +87,7 @@ class AdminVideoQueryService
         if (isset($filters['search']) && is_string($filters['search'])) {
             $term = trim($filters['search']);
             if ($term !== '') {
+                // Search targets the stored base string; not locale-aware yet.
                 $query->where('title_translations', 'like', '%'.$term.'%');
             }
         }
@@ -75,9 +95,7 @@ class AdminVideoQueryService
         if ($admin->hasRole('super_admin')) {
             if (isset($filters['center_id']) && is_numeric($filters['center_id'])) {
                 $centerId = (int) $filters['center_id'];
-                $query->whereHas('creator', static function (Builder $builder) use ($centerId): void {
-                    $builder->where('center_id', $centerId);
-                });
+                $query->where('center_id', $centerId);
             }
         }
 

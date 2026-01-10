@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
+use App\Exceptions\DomainException;
 use App\Models\Course;
 use App\Models\ExtraViewRequest;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
+use App\Support\ErrorCodes;
 
 class ViewLimitService
 {
@@ -28,13 +30,7 @@ class ViewLimitService
     public function assertWithinLimit(User $user, Video $video, Course $course, ?int $pivotOverride = null): void
     {
         if ($this->remaining($user, $video, $course, $pivotOverride) <= 0) {
-            throw new \Illuminate\Http\Exceptions\HttpResponseException(response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'VIEW_LIMIT_EXCEEDED',
-                    'message' => 'View limit exceeded.',
-                ],
-            ], 403));
+            throw new DomainException('View limit exceeded.', ErrorCodes::VIEW_LIMIT_EXCEEDED, 403);
         }
     }
 

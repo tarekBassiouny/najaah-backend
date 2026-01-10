@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
@@ -16,7 +17,10 @@ class VideoFactory extends Factory
 
     public function definition(): array
     {
+        $center = Center::factory();
+
         return [
+            'center_id' => $center,
             'title_translations' => [
                 'en' => 'Video title',
                 'ar' => 'عنوان الفيديو',
@@ -36,7 +40,7 @@ class VideoFactory extends Factory
             'tags' => [
                 'type' => 'intro',
             ],
-            'created_by' => User::factory(),
+            'created_by' => User::factory()->for($center, 'center'),
             'library_id' => (int) (config('bunny.api.library_id') ?? 1),
             'upload_session_id' => VideoUploadSession::factory(),
             'original_filename' => 'video.mp4',

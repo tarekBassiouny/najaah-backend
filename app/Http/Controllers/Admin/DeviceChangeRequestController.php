@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\ListDeviceChangeRequestsRequest;
-use App\Http\Requests\Devices\ApproveDeviceChangeRequest;
-use App\Http\Requests\Devices\RejectDeviceChangeRequest;
-use App\Http\Resources\DeviceChangeRequestListResource;
-use App\Http\Resources\DeviceChangeRequestResource;
+use App\Http\Requests\Admin\Devices\ApproveDeviceChangeRequest;
+use App\Http\Requests\Admin\Devices\ListDeviceChangeRequestsRequest;
+use App\Http\Requests\Admin\Devices\RejectDeviceChangeRequest;
+use App\Http\Resources\Admin\Devices\DeviceChangeRequestListResource;
+use App\Http\Resources\Admin\Devices\DeviceChangeRequestResource;
 use App\Models\DeviceChangeRequest;
 use App\Models\User;
 use App\Services\Admin\DeviceChangeRequestQueryService;

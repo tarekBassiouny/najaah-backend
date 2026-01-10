@@ -9,6 +9,7 @@ use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
+use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -36,6 +37,19 @@ class CourseService implements CourseServiceInterface
     /** @param array<string, mixed> $data */
     public function create(array $data, ?User $actor = null): Course
     {
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        $data['title_translations'] = $data['title'] ?? '';
+        $data['description_translations'] = $data['description'] ?? null;
+        unset($data['title'], $data['description']);
+
+        if (! array_key_exists('difficulty_level', $data) || ! is_numeric($data['difficulty_level'])) {
+            $data['difficulty_level'] = 0;
+        }
+
+        $data['status'] = 0;
+        $data['is_published'] = false;
+        $data['publish_at'] = null;
+
         if ($actor instanceof User) {
             $centerId = isset($data['center_id']) && is_numeric($data['center_id']) ? (int) $data['center_id'] : null;
             $this->centerScopeService->assertAdminCenterId($actor, $centerId);
@@ -49,6 +63,17 @@ class CourseService implements CourseServiceInterface
     /** @param array<string, mixed> $data */
     public function update(Course $course, array $data, ?User $actor = null): Course
     {
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        if (array_key_exists('title', $data)) {
+            $data['title_translations'] = $data['title'];
+            unset($data['title']);
+        }
+
+        if (array_key_exists('description', $data)) {
+            $data['description_translations'] = $data['description'];
+            unset($data['description']);
+        }
+
         if ($actor instanceof User) {
             $this->centerScopeService->assertAdminSameCenter($actor, $course);
         }

@@ -8,6 +8,7 @@ use App\Models\BunnyWebhookLog;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Videos\VideoUploadService;
+use Illuminate\Support\Facades\Log;
 
 class BunnyWebhookService
 {
@@ -42,6 +43,12 @@ class BunnyWebhookService
             $mappedStatus = $this->mapStatus($statusCode);
 
             if ($mappedStatus === null) {
+                Log::channel('domain')->info('bunny_webhook_ignored', [
+                    'reason' => 'unmapped_status',
+                    'status' => $statusCode,
+                    'video_guid' => $videoGuid,
+                ]);
+
                 return;
             }
 
@@ -50,27 +57,72 @@ class BunnyWebhookService
                 ->latest()
                 ->first();
 
-            $videos = Video::where('source_id', $videoGuid)
-                ->where('library_id', $libraryId)
-                ->get();
-
             $errorMessage = isset($payload['ErrorMessage']) && is_string($payload['ErrorMessage'])
                 ? $payload['ErrorMessage']
                 : null;
 
-            if ($session !== null && $this->shouldTransition($session->upload_status, $mappedStatus)) {
-                $session->upload_status = $mappedStatus;
+            if ($session === null) {
+                Log::channel('domain')->info('bunny_webhook_ignored', [
+                    'reason' => 'session_not_found',
+                    'video_guid' => $videoGuid,
+                    'library_id' => $libraryId,
+                ]);
 
-                if ($mappedStatus === VideoUploadService::STATUS_FAILED) {
-                    $session->error_message = $errorMessage;
-                }
+                return;
+            }
 
-                if ($mappedStatus === VideoUploadService::STATUS_READY) {
-                    $session->progress_percent = 100;
-                    $session->error_message = null;
-                }
+            if ($session->expires_at !== null && $session->expires_at->isPast()) {
+                Log::channel('domain')->info('bunny_webhook_ignored', [
+                    'reason' => 'session_expired',
+                    'session_id' => $session->id,
+                    'video_guid' => $videoGuid,
+                ]);
 
-                $session->save();
+                return;
+            }
+
+            if (! $this->shouldTransition($session->upload_status, $mappedStatus)) {
+                Log::channel('domain')->info('bunny_webhook_ignored', [
+                    'reason' => 'duplicate_or_invalid_transition',
+                    'session_id' => $session->id,
+                    'status' => $mappedStatus,
+                ]);
+
+                return;
+            }
+
+            $session->upload_status = $mappedStatus;
+
+            if ($mappedStatus === VideoUploadService::STATUS_FAILED) {
+                $session->error_message = $errorMessage;
+            }
+
+            if ($mappedStatus === VideoUploadService::STATUS_READY) {
+                $session->progress_percent = 100;
+                $session->error_message = null;
+            }
+
+            $session->save();
+
+            Log::channel('domain')->info('bunny_webhook_applied', [
+                'session_id' => $session->id,
+                'video_guid' => $videoGuid,
+                'status' => $mappedStatus,
+            ]);
+
+            $videos = Video::where('source_id', $videoGuid)
+                ->where('library_id', $libraryId)
+                ->where('center_id', $session->center_id)
+                ->get();
+
+            if ($videos->isEmpty()) {
+                Log::channel('domain')->info('bunny_webhook_ignored', [
+                    'reason' => 'video_not_found',
+                    'session_id' => $session->id,
+                    'video_guid' => $videoGuid,
+                ]);
+
+                return;
             }
 
             foreach ($videos as $video) {

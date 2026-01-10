@@ -30,10 +30,12 @@ it('paginates courses', function (): void {
 it('updates course', function (): void {
     $service = new CourseService(new CenterScopeService);
     $course = Course::factory()->create();
-    $updated = $service->update($course, ['title_translations' => ['en' => 'Updated']]);
+    $updated = $service->update($course, ['title' => 'Updated']);
 
     expect($updated)->toBeInstanceOf(Course::class);
-    assertDatabaseHas('courses', ['id' => $course->id, 'title_translations->en' => 'Updated']);
+    $fresh = Course::find($course->id);
+    expect($fresh)->not->toBeNull()
+        ->and($fresh?->getRawOriginal('title_translations'))->toBe(json_encode('Updated'));
 });
 
 it('deletes course', function (): void {

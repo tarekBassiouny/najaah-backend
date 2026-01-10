@@ -18,6 +18,7 @@ it('updates upload session and video to ready', function (): void {
     ]);
 
     $video = Video::factory()->create([
+        'center_id' => $session->center_id,
         'upload_session_id' => $session->id,
         'library_id' => 123,
         'source_id' => 'video-123',
@@ -58,6 +59,7 @@ it('records failure without downgrading ready videos', function (): void {
     ]);
 
     $readyVideo = Video::factory()->create([
+        'center_id' => $session->center_id,
         'upload_session_id' => $session->id,
         'library_id' => 55,
         'source_id' => 'video-999',
@@ -92,6 +94,7 @@ it('ignores duplicate or lower-priority updates once ready', function (): void {
     ]);
 
     $video = Video::factory()->create([
+        'center_id' => $session->center_id,
         'upload_session_id' => $session->id,
         'library_id' => 77,
         'source_id' => 'dup-1',
@@ -130,6 +133,7 @@ it('ignores cross-library payloads', function (): void {
     ]);
 
     $video = Video::factory()->create([
+        'center_id' => $session->center_id,
         'upload_session_id' => $session->id,
         'library_id' => 10,
         'source_id' => 'cross-1',

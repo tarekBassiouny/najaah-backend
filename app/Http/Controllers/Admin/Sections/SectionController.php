@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Sections;
 
-use App\Actions\Sections\CreateSectionAction;
-use App\Actions\Sections\DeleteSectionAction;
-use App\Actions\Sections\RestoreSectionAction;
-use App\Actions\Sections\UpdateSectionAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Sections\ReorderSectionRequest;
-use App\Http\Requests\Sections\StoreSectionRequest;
-use App\Http\Requests\Sections\UpdateSectionRequest;
-use App\Http\Resources\Sections\SectionCollection;
-use App\Http\Resources\Sections\SectionResource;
+use App\Http\Requests\Admin\Sections\ReorderSectionRequest;
+use App\Http\Requests\Admin\Sections\StoreSectionRequest;
+use App\Http\Requests\Admin\Sections\UpdateSectionRequest;
+use App\Http\Resources\Admin\Sections\SectionCollection;
+use App\Http\Resources\Admin\Sections\SectionResource;
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Section;
 use App\Models\User;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseStructureServiceInterface;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -26,13 +24,17 @@ class SectionController extends Controller
 {
     public function __construct(
         private readonly SectionServiceInterface $sectionService,
-        private readonly CourseStructureServiceInterface $courseStructureService
+        private readonly CourseStructureServiceInterface $courseStructureService,
+        private readonly CenterScopeService $centerScopeService
     ) {}
 
     public function index(
+        Center $center,
         Course $course
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->centerScopeService->assertAdminSameCenter($admin, $course);
         $sections = $this->sectionService->listForCourse((int) $course->id, $admin);
 
         return response()->json([
@@ -43,12 +45,15 @@ class SectionController extends Controller
 
     public function store(
         StoreSectionRequest $request,
-        CreateSectionAction $createSectionAction
+        Center $center,
+        Course $course
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $section = $createSectionAction->execute($admin, $data);
+        $data['course_id'] = (int) $course->id;
+        $section = $this->sectionService->create($data, $admin);
 
         return response()->json([
             'success' => true,
@@ -57,13 +62,13 @@ class SectionController extends Controller
     }
 
     public function show(
+        Center $center,
         Course $course,
         Section $section
     ): JsonResponse {
         $admin = $this->requireAdmin();
-        if ((int) $section->course_id !== (int) $course->id) {
-            abort(404);
-        }
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->assertSectionBelongsToCourse($course, $section);
 
         $found = $this->sectionService->find((int) $section->id, $admin)?->load(['videos', 'pdfs']);
 
@@ -75,13 +80,16 @@ class SectionController extends Controller
 
     public function update(
         UpdateSectionRequest $request,
-        Section $section,
-        UpdateSectionAction $updateSectionAction
+        Center $center,
+        Course $course,
+        Section $section
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->assertSectionBelongsToCourse($course, $section);
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $updated = $updateSectionAction->execute($admin, $section, $data)->load(['videos', 'pdfs']);
+        $updated = $this->sectionService->update($section, $data, $admin)->load(['videos', 'pdfs']);
 
         return response()->json([
             'success' => true,
@@ -90,11 +98,14 @@ class SectionController extends Controller
     }
 
     public function destroy(
-        Section $section,
-        DeleteSectionAction $deleteSectionAction
+        Center $center,
+        Course $course,
+        Section $section
     ): JsonResponse {
         $admin = $this->requireAdmin();
-        $deleteSectionAction->execute($admin, $section);
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->assertSectionBelongsToCourse($course, $section);
+        $this->sectionService->delete($section, $admin);
 
         return response()->json([
             'success' => true,
@@ -103,11 +114,15 @@ class SectionController extends Controller
     }
 
     public function restore(
-        Section $section,
-        RestoreSectionAction $restoreSectionAction
+        Center $center,
+        Course $course,
+        int $section
     ): JsonResponse {
         $admin = $this->requireAdmin();
-        $restored = $restoreSectionAction->execute($admin, $section)->load(['videos', 'pdfs']);
+        $this->assertCourseBelongsToCenter($center, $course);
+        $found = Section::withTrashed()->findOrFail($section);
+        $this->assertSectionBelongsToCourse($course, $found);
+        $restored = $this->sectionService->restore($found, $admin)->load(['videos', 'pdfs']);
 
         return response()->json([
             'success' => true,
@@ -116,10 +131,13 @@ class SectionController extends Controller
     }
 
     public function reorder(
+        Center $center,
         Course $course,
         ReorderSectionRequest $request
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->centerScopeService->assertAdminSameCenter($admin, $course);
         $validated = $request->validated();
         $sectionsInput = $validated['sections'] ?? [];
 
@@ -142,13 +160,13 @@ class SectionController extends Controller
     }
 
     public function toggleVisibility(
+        Center $center,
         Course $course,
         Section $section
     ): JsonResponse {
         $admin = $this->requireAdmin();
-        if ((int) $section->course_id !== (int) $course->id) {
-            abort(404);
-        }
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->assertSectionBelongsToCourse($course, $section);
 
         $section = $this->courseStructureService->toggleSectionVisibility($section, $admin);
 
@@ -156,6 +174,20 @@ class SectionController extends Controller
             'success' => true,
             'data' => new SectionResource($section->fresh(['videos', 'pdfs'])),
         ]);
+    }
+
+    private function assertCourseBelongsToCenter(Center $center, Course $course): void
+    {
+        if ((int) $course->center_id !== (int) $center->id) {
+            $this->notFound();
+        }
+    }
+
+    private function assertSectionBelongsToCourse(Course $course, Section $section): void
+    {
+        if ((int) $section->course_id !== (int) $course->id) {
+            $this->notFound();
+        }
     }
 
     private function requireAdmin(): User
@@ -173,5 +205,16 @@ class SectionController extends Controller
         }
 
         return $admin;
+    }
+
+    private function notFound(): void
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'NOT_FOUND',
+                'message' => 'Section not found.',
+            ],
+        ], 404));
     }
 }

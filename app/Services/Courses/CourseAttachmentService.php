@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Exceptions\AttachmentNotAllowedException;
+use App\Exceptions\UploadNotReadyException;
 use App\Models\Course;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
@@ -12,7 +14,9 @@ use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseAttachmentServiceInterface;
-use Illuminate\Validation\ValidationException;
+use App\Services\Pdfs\PdfUploadSessionService;
+use App\Services\Videos\VideoUploadService;
+use Illuminate\Support\Facades\Log;
 
 class CourseAttachmentService implements CourseAttachmentServiceInterface
 {
@@ -73,6 +77,7 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
         $this->centerScopeService->assertAdminSameCenter($actor, $course);
         $pdf = Pdf::findOrFail($pdfId);
         $this->assertSameCenter($course, $pdf);
+        $this->assertPdfReady($pdf);
 
         $existing = CoursePdf::withTrashed()
             ->where('course_id', $course->id)
@@ -132,18 +137,66 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
         $resourceCenterId = $resourceCenter ?? $creatorCenter;
 
         if ($resourceCenterId !== null && $resourceCenterId !== $course->center_id) {
-            throw ValidationException::withMessages([
-                'center_id' => ['Attachment must belong to the same center as the course.'],
-            ]);
+            throw new AttachmentNotAllowedException('Attachment must belong to the same center as the course.', 422);
         }
     }
 
     private function assertVideoReady(Video $video): void
     {
         if ((int) $video->encoding_status !== 3) {
-            throw ValidationException::withMessages([
-                'video_id' => ['Video is not ready to be attached.'],
+            throw new AttachmentNotAllowedException('Video is not ready to be attached.', 422);
+        }
+
+        if ($video->upload_session_id === null) {
+            throw new UploadNotReadyException('Video upload session is required.', 422);
+        }
+
+        $video->loadMissing('uploadSession');
+        $session = $video->uploadSession;
+
+        if ($session === null) {
+            throw new UploadNotReadyException('Video upload session is required.', 422);
+        }
+
+        if ($session->expires_at !== null && $session->expires_at <= now()) {
+            Log::channel('domain')->warning('upload_session_expired', [
+                'video_id' => $video->id,
+                'session_id' => $session->id,
             ]);
+            throw new UploadNotReadyException('Video upload session has expired.', 422);
+        }
+
+        $status = $session->upload_status;
+        if ($status !== VideoUploadService::STATUS_READY) {
+            throw new UploadNotReadyException('Video upload session is not ready.', 422);
+        }
+    }
+
+    private function assertPdfReady(Pdf $pdf): void
+    {
+        if ($pdf->upload_session_id === null) {
+            throw new AttachmentNotAllowedException('PDF is not ready to be attached.', 422);
+        }
+
+        $pdf->loadMissing('uploadSession');
+        $session = $pdf->uploadSession;
+
+        if ($session === null) {
+            throw new UploadNotReadyException('PDF upload session is required.', 422);
+        }
+
+        if ($session->expires_at !== null && $session->expires_at <= now()) {
+            Log::channel('domain')->warning('upload_session_expired', [
+                'pdf_id' => $pdf->id,
+                'session_id' => $session->id,
+            ]);
+            throw new UploadNotReadyException('PDF upload session has expired.', 422);
+        }
+
+        $status = $session->upload_status;
+
+        if ($status !== PdfUploadSessionService::STATUS_READY) {
+            throw new UploadNotReadyException('PDF upload session is not ready.', 422);
         }
     }
 }

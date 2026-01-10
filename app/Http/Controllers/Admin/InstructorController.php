@@ -9,11 +9,10 @@ use App\Actions\Instructors\DeleteInstructorAction;
 use App\Actions\Instructors\ShowInstructorAction;
 use App\Actions\Instructors\UpdateInstructorAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\ListInstructorsRequest;
-use App\Http\Requests\Instructor\StoreInstructorRequest;
-use App\Http\Requests\Instructor\UpdateInstructorRequest;
-use App\Http\Resources\InstructorCollection;
-use App\Http\Resources\InstructorResource;
+use App\Http\Requests\Admin\Instructors\ListInstructorsRequest;
+use App\Http\Requests\Admin\Instructors\StoreInstructorRequest;
+use App\Http\Requests\Admin\Instructors\UpdateInstructorRequest;
+use App\Http\Resources\Admin\InstructorResource;
 use App\Models\Instructor;
 use App\Models\User;
 use App\Services\Admin\InstructorQueryService;
@@ -50,12 +49,11 @@ class InstructorController extends Controller
         /** @var array<string, mixed> $filters */
         $filters = $request->validated();
         $paginator = $this->queryService->build($admin, $filters)->paginate($perPage);
-        $items = (new InstructorCollection(collect($paginator->items())))->toArray($request);
 
         return response()->json([
             'success' => true,
             'message' => 'Operation completed',
-            'data' => $items,
+            'data' => InstructorResource::collection($paginator->items()),
             'meta' => [
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),

@@ -23,7 +23,7 @@ test('send creates otp record and returns token', function (): void {
 
     $service = new OtpService($sender);
 
-    $result = $service->send('1234567890', '+20');
+    $result = $service->send('1234567890', '+20', null);
 
     expect($result)->toBeString()
         ->and($result)->not->toBeEmpty();
@@ -70,6 +70,7 @@ it('creates otp record and sends via provider', function (): void {
     $user = User::factory()->create([
         'phone' => '555000111',
         'country_code' => '+1',
+        'is_student' => true,
     ]);
 
     $sender = Mockery::mock(OtpSenderInterface::class);
@@ -83,7 +84,7 @@ it('creates otp record and sends via provider', function (): void {
     app()->instance(OtpSenderInterface::class, $sender);
 
     $service = app(OtpService::class);
-    $response = $service->send('555000111', '+1');
+    $response = $service->send('555000111', '+1', null);
 
     expect($response)->toBeString()
         ->and($response)->not->toBeEmpty();

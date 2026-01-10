@@ -25,7 +25,7 @@ it('marks onboarding as active and dispatches invitation email', function (): vo
     $result = $action->execute([
         'slug' => 'center-a',
         'type' => 0,
-        'name_translations' => ['en' => 'Center A'],
+        'name' => 'Center A',
         'admin' => [
             'name' => 'Owner Name',
             'email' => 'owner@example.com',
@@ -50,7 +50,7 @@ it('marks onboarding as failed when a step throws', function (): void {
         $action->execute([
             'slug' => 'center-b',
             'type' => 0,
-            'name_translations' => ['en' => 'Center B'],
+            'name' => 'Center B',
             'admin' => [
                 'name' => 'Owner Name',
                 'email' => 'owner-b@example.com',

@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $upload_status
  * @property int $progress_percent
  * @property string|null $error_message
+ * @property \Illuminate\Support\Carbon|null $expires_at
  * @property-read Center $center
  * @property-read User $uploader
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Video> $videos
@@ -38,12 +39,14 @@ class VideoUploadSession extends Model
         'upload_status',
         'progress_percent',
         'error_message',
+        'expires_at',
     ];
 
     protected $casts = [
         'upload_status' => 'integer',
         'progress_percent' => 'integer',
         'library_id' => 'integer',
+        'expires_at' => 'datetime',
     ];
 
     /** @return BelongsTo<Center, self> */

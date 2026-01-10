@@ -62,7 +62,7 @@ test('send returns token', function (): void {
     /** @var MockInterface&OtpServiceInterface $otp */
     $otp = Mockery::mock(OtpServiceInterface::class);
     $otp->allows()
-        ->send('1234567890', '+20')
+        ->send('1234567890', '+20', null)
         ->andReturn('abc');
 
     $this->app->instance(OtpServiceInterface::class, $otp);

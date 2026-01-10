@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Mobile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mobile\StoreDeviceChangeRequest;
 use App\Models\User;
-use App\Services\Requests\RequestException;
 use App\Services\Requests\RequestService;
 use Illuminate\Http\JsonResponse;
 
@@ -29,17 +28,7 @@ class DeviceChangeRequestController extends Controller
             ], 401);
         }
 
-        try {
-            $this->requestService->createDeviceChangeRequest($student, $request->input('reason'));
-        } catch (RequestException $requestException) {
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => $requestException->errorCode(),
-                    'message' => $requestException->getMessage(),
-                ],
-            ], $requestException->status());
-        }
+        $this->requestService->createDeviceChangeRequest($student, $request->input('reason'));
 
         return response()->json([
             'success' => true,

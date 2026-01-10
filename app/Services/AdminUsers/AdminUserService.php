@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\AdminUsers;
 
+use App\Exceptions\DomainException;
 use App\Models\User;
+use App\Support\ErrorCodes;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AdminUserService
 {
@@ -91,13 +92,7 @@ class AdminUserService
     private function assertAdminUser(User $user): void
     {
         if ($user->is_student) {
-            throw new HttpResponseException(response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'NOT_ADMIN',
-                    'message' => 'User is not an admin.',
-                ],
-            ], 422));
+            throw new DomainException('User is not an admin.', ErrorCodes::NOT_ADMIN, 422);
         }
     }
 }

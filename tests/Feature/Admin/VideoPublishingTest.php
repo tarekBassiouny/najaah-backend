@@ -31,6 +31,7 @@ it('blocks publishing when any video is not ready', function (): void {
     Section::factory()->create(['course_id' => $course->id]);
 
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'encoding_status' => 1,
         'lifecycle_status' => 1,
         'created_by' => $admin->id,
@@ -56,6 +57,7 @@ it('allows publishing when videos are ready and latest session ready', function 
     ]);
 
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'upload_session_id' => $session->id,
@@ -67,4 +69,31 @@ it('allows publishing when videos are ready and latest session ready', function 
 
     $response->assertOk()
         ->assertJsonPath('data.status', 3);
+});
+
+it('blocks publishing when latest upload session is not ready', function (): void {
+    $center = Center::factory()->create();
+    $admin = $this->asAdmin();
+    $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0]);
+    Section::factory()->create(['course_id' => $course->id]);
+
+    $session = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'uploaded_by' => $admin->id,
+        'upload_status' => 1,
+        'progress_percent' => 10,
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => $session->id,
+        'created_by' => $admin->id,
+    ]);
+    attachVideoToCourseForPublishing($course, $video);
+
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/courses/{$course->id}/publish", [], $this->adminHeaders());
+
+    $response->assertStatus(422);
 });

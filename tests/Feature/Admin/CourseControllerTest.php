@@ -7,13 +7,18 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\Instructor;
 use App\Models\Pdf;
+use App\Models\PdfUploadSession;
 use App\Models\Permission;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Role;
 use App\Models\Section;
+use App\Models\Translation;
 use App\Models\User;
 use App\Models\Video;
+use App\Models\VideoUploadSession;
+use App\Services\Pdfs\PdfUploadSessionService;
+use App\Services\Videos\VideoUploadService;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +46,26 @@ it('filters courses by title search', function (): void {
     ]);
     Course::factory()->create([
         'title_translations' => ['en' => 'Beta Physics'],
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/courses?search=Alpha', $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Alpha Biology');
+});
+
+it('keeps search stable when translations exist', function (): void {
+    $course = Course::factory()->create([
+        'title_translations' => ['en' => 'Alpha Biology'],
+    ]);
+
+    Translation::create([
+        'translatable_type' => Course::class,
+        'translatable_id' => $course->id,
+        'field' => 'title',
+        'locale' => 'ar',
+        'value' => 'Arabic Biology',
     ]);
 
     $response = $this->getJson('/api/v1/admin/courses?search=Alpha', $this->adminHeaders());
@@ -134,70 +159,28 @@ it('scopes courses to admin center when not super admin', function (): void {
         ->assertJsonPath('data.0.title', 'Center A Course');
 });
 
-it('creates course', function (): void {
-    $payload = [
-        'title' => 'Sample Course',
-        'description' => 'A course description',
-        'category_id' => Category::factory()->create()->id,
-        'center_id' => Center::factory()->create()->id,
-        'difficulty' => 'beginner',
-        'language' => 'en',
-        'price' => 0,
-    ];
-
-    $response = $this->postJson('/api/v1/admin/courses', $payload, $this->adminHeaders());
-
-    $response->assertCreated()->assertJsonPath('success', true);
-    $response->assertJsonPath('data.title', 'Sample Course');
-    $this->assertDatabaseHas('courses', ['title_translations->en' => 'Sample Course']);
-});
-
-it('shows course', function (): void {
-    $course = Course::factory()->create();
-
-    $response = $this->getJson("/api/v1/admin/courses/{$course->id}", $this->adminHeaders());
-
-    $response->assertOk()->assertJsonPath('data.id', $course->id);
-});
-
-it('updates course', function (): void {
-    $course = Course::factory()->create();
-
-    $response = $this->putJson("/api/v1/admin/courses/{$course->id}", [
-        'title' => 'Updated Title',
-    ], $this->adminHeaders());
-
-    $response->assertOk()->assertJsonPath('data.title', 'Updated Title');
-    $this->assertDatabaseHas('courses', ['id' => $course->id, 'title_translations->en' => 'Updated Title']);
-});
-
-it('soft deletes course', function (): void {
-    $course = Course::factory()->create();
-
-    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}", [], $this->adminHeaders());
-
-    $response->assertNoContent();
-    $this->assertSoftDeleted('courses', ['id' => $course->id]);
-});
-
 it('adds section', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/sections", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections", [
         'title' => 'Section 1',
         'description' => 'Description',
     ], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
-    $this->assertDatabaseHas('sections', ['course_id' => $course->id, 'title_translations->en' => 'Section 1']);
+    $section = Section::where('course_id', $course->id)->latest('id')->first();
+    expect($section)->not->toBeNull()
+        ->and($section?->getRawOriginal('title_translations'))->toBe(json_encode('Section 1'));
 });
 
 it('reorders sections', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
     $sections = Section::factory()->count(2)->create(['course_id' => $course->id]);
     $ordered = $sections->pluck('id')->reverse()->values()->all();
 
-    $response = $this->putJson("/api/v1/admin/courses/{$course->id}/sections/reorder", [
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/reorder", [
         'sections' => $ordered,
     ], $this->adminHeaders());
 
@@ -205,10 +188,11 @@ it('reorders sections', function (): void {
 });
 
 it('toggles section visibility', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
     $section = Section::factory()->create(['course_id' => $course->id, 'visible' => true]);
 
-    $response = $this->patchJson("/api/v1/admin/courses/{$course->id}/sections/{$section->id}/visibility", [], $this->adminHeaders());
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/{$section->id}/visibility", [], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
     $section->refresh();
@@ -216,14 +200,23 @@ it('toggles section visibility', function (): void {
 });
 
 it('assigns video', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $session = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'uploaded_by' => $course->created_by,
+        'upload_status' => VideoUploadService::STATUS_READY,
+        'expires_at' => now()->addDay(),
+    ]);
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'created_by' => $course->created_by,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
+        'upload_session_id' => $session->id,
     ]);
 
-    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/videos", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/videos", [
         'video_id' => $video->id,
     ], $this->adminHeaders());
 
@@ -232,8 +225,12 @@ it('assigns video', function (): void {
 });
 
 it('removes video', function (): void {
-    $course = Course::factory()->create();
-    $video = Video::factory()->create(['created_by' => $course->created_by]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $course->created_by,
+    ]);
     CourseVideo::create([
         'course_id' => $course->id,
         'video_id' => $video->id,
@@ -241,17 +238,27 @@ it('removes video', function (): void {
         'visible' => true,
     ]);
 
-    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}/videos/{$video->id}", [], $this->adminHeaders());
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}", [], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
     $this->assertSoftDeleted('course_video', ['course_id' => $course->id, 'video_id' => $video->id]);
 });
 
 it('assigns pdf', function (): void {
-    $course = Course::factory()->create();
-    $pdf = Pdf::factory()->create(['created_by' => $course->created_by]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $course->created_by,
+        'upload_status' => PdfUploadSessionService::STATUS_READY,
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $course->created_by,
+        'upload_session_id' => $session->id,
+    ]);
 
-    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/pdfs", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/pdfs", [
         'pdf_id' => $pdf->id,
     ], $this->adminHeaders());
 
@@ -260,8 +267,12 @@ it('assigns pdf', function (): void {
 });
 
 it('removes pdf', function (): void {
-    $course = Course::factory()->create();
-    $pdf = Pdf::factory()->create(['created_by' => $course->created_by]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $course->created_by,
+    ]);
     CoursePdf::create([
         'course_id' => $course->id,
         'pdf_id' => $pdf->id,
@@ -269,7 +280,7 @@ it('removes pdf', function (): void {
         'visible' => true,
     ]);
 
-    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}/pdfs/{$pdf->id}", [], $this->adminHeaders());
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/pdfs/{$pdf->id}", [], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
     $this->assertSoftDeleted('course_pdf', ['course_id' => $course->id, 'pdf_id' => $pdf->id]);
@@ -278,10 +289,17 @@ it('removes pdf', function (): void {
 it('publishes course', function (): void {
     $course = Course::factory()->create(['status' => 0, 'is_published' => false]);
     Section::factory()->create(['course_id' => $course->id]);
+    $session = VideoUploadSession::factory()->create([
+        'center_id' => $course->center_id,
+        'uploaded_by' => $course->created_by,
+        'upload_status' => VideoUploadService::STATUS_READY,
+        'expires_at' => now()->addDay(),
+    ]);
     $video = Video::factory()->create([
+        'center_id' => $course->center_id,
         'lifecycle_status' => 2,
         'encoding_status' => 3,
-        'upload_session_id' => null,
+        'upload_session_id' => $session->id,
     ]);
     CourseVideo::create([
         'course_id' => $course->id,

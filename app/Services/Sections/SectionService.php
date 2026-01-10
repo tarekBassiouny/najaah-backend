@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Services\Sections;
 
 use App\Models\Course;
+use App\Models\Pivots\CoursePdf;
+use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
+use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -43,6 +46,11 @@ class SectionService implements SectionServiceInterface
     /** @param array<string, mixed> $data */
     public function create(array $data, ?User $actor = null): Section
     {
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        $data['title_translations'] = $data['title'] ?? '';
+        $data['description_translations'] = $data['description'] ?? null;
+        unset($data['title'], $data['description']);
+
         $courseId = isset($data['course_id']) && is_numeric($data['course_id']) ? (int) $data['course_id'] : 0;
 
         if ($actor instanceof User) {
@@ -65,6 +73,17 @@ class SectionService implements SectionServiceInterface
     /** @param array<string, mixed> $data */
     public function update(Section $section, array $data, ?User $actor = null): Section
     {
+        RejectNonScalarInput::validate($data, ['title', 'description']);
+        if (array_key_exists('title', $data)) {
+            $data['title_translations'] = $data['title'];
+            unset($data['title']);
+        }
+
+        if (array_key_exists('description', $data)) {
+            $data['description_translations'] = $data['description'];
+            unset($data['description']);
+        }
+
         if ($actor instanceof User) {
             $section->loadMissing('course');
             $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
@@ -92,7 +111,19 @@ class SectionService implements SectionServiceInterface
             $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
         }
 
-        $section->restore();
+        DB::transaction(function () use ($section): void {
+            $section->restore();
+
+            CourseVideo::withTrashed()
+                ->where('course_id', $section->course_id)
+                ->where('section_id', $section->id)
+                ->restore();
+
+            CoursePdf::withTrashed()
+                ->where('course_id', $section->course_id)
+                ->where('section_id', $section->id)
+                ->restore();
+        });
 
         return $section->fresh(['videos', 'pdfs']) ?? $section;
     }

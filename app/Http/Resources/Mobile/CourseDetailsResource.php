@@ -24,8 +24,8 @@ class CourseDetailsResource extends JsonResource
 
         return [
             'id' => $course->id,
-            'title' => $course->title,
-            'description' => $course->description,
+            'title' => $course->translate('title'),
+            'description' => $course->translate('description'),
             'difficulty' => $course->difficulty_level ?? null,
             'language' => $course->language,
             'thumbnail' => $course->thumbnail_url ?? null,

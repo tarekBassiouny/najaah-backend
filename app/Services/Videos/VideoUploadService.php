@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterScopeService;
-use Illuminate\Validation\ValidationException;
+use App\Support\ErrorCodes;
+use Illuminate\Support\Facades\Log;
 
 class VideoUploadService
 {
@@ -35,14 +37,15 @@ class VideoUploadService
         $libraryIdValue = is_numeric(config('bunny.api.library_id')) ? (int) config('bunny.api.library_id') : null;
 
         if ($libraryIdValue === null) {
-            throw ValidationException::withMessages([
-                'center_id' => ['Bunny library is not configured.'],
-            ]);
+            throw new DomainException('Bunny library is not configured.', ErrorCodes::INVALID_STATE, 422);
         }
+
+        $previousSessionId = null;
 
         if ($video !== null) {
             $video->loadMissing('creator');
             $this->centerScopeService->assertAdminCenterId($admin, $video->creator->center_id);
+            $previousSessionId = $video->upload_session_id;
         }
 
         $courseId = $this->resolveCourseId($video);
@@ -65,6 +68,7 @@ class VideoUploadService
             'bunny_upload_id' => $bunnyId,
             'upload_status' => self::STATUS_PENDING,
             'progress_percent' => 0,
+            'expires_at' => now()->addSeconds((int) config('uploads.video_upload_token_ttl_seconds', 3600)),
         ]);
 
         if ($video !== null) {
@@ -78,6 +82,22 @@ class VideoUploadService
         }
 
         $session->setAttribute('upload_url', $created['upload_url']);
+
+        Log::channel('domain')->info('video_upload_session_created', [
+            'session_id' => $session->id,
+            'center_id' => $center->id,
+            'video_id' => $video?->id,
+            'retry_from_session_id' => $previousSessionId,
+        ]);
+
+        if ($previousSessionId !== null) {
+            Log::channel('domain')->info('video_upload_session_retry_created', [
+                'session_id' => $session->id,
+                'center_id' => $center->id,
+                'video_id' => $video?->id,
+                'retry_from_session_id' => $previousSessionId,
+            ]);
+        }
 
         return $session;
     }
@@ -122,6 +142,10 @@ class VideoUploadService
     {
         $this->centerScopeService->assertAdminSameCenter($admin, $session);
 
+        if ($session->expires_at !== null && $session->expires_at->isPast()) {
+            throw new \App\Exceptions\UploadFailedException('Upload session expired.', 422);
+        }
+
         $status = $this->statusFromLabel($statusLabel);
         $this->assertTransitionAllowed($session->upload_status, $status);
 
@@ -135,6 +159,20 @@ class VideoUploadService
         }
 
         $session->save();
+
+        if ($status === self::STATUS_READY) {
+            Log::channel('domain')->info('video_upload_session_ready', [
+                'session_id' => $session->id,
+                'center_id' => $session->center_id,
+            ]);
+        }
+
+        if ($status === self::STATUS_FAILED) {
+            Log::channel('domain')->warning('video_upload_session_failed', [
+                'session_id' => $session->id,
+                'center_id' => $session->center_id,
+            ]);
+        }
 
         $session->loadMissing('videos');
 
@@ -158,9 +196,7 @@ class VideoUploadService
         $upper = strtoupper($label);
 
         if (! array_key_exists($upper, $map)) {
-            throw ValidationException::withMessages([
-                'status' => ['Invalid status label.'],
-            ]);
+            throw new DomainException('Invalid status label.', ErrorCodes::INVALID_STATE, 422);
         }
 
         return $map[$upper];
@@ -177,9 +213,7 @@ class VideoUploadService
         ];
 
         if (! in_array($next, $allowed[$current] ?? [], true) && $current !== $next) {
-            throw ValidationException::withMessages([
-                'status' => ['Invalid status transition.'],
-            ]);
+            throw new DomainException('Invalid status transition.', ErrorCodes::INVALID_STATE, 422);
         }
     }
 
@@ -189,9 +223,7 @@ class VideoUploadService
     private function applyVideoState(Video $video, int $status, array $payload, ?VideoUploadSession $session = null): void
     {
         if ($session !== null && $video->upload_session_id !== null && $video->upload_session_id !== $session->id && $status === self::STATUS_READY) {
-            throw ValidationException::withMessages([
-                'upload_session_id' => ['Only the latest upload session can mark the video as ready.'],
-            ]);
+            throw new DomainException('Only the latest upload session can mark the video as ready.', ErrorCodes::INVALID_STATE, 422);
         }
 
         $encodingMap = [

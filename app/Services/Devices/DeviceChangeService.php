@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Devices;
 
+use App\Exceptions\DomainException;
 use App\Models\AuditLog;
 use App\Models\DeviceChangeRequest;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Centers\CenterScopeService;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -29,7 +30,7 @@ class DeviceChangeService
             ->first();
 
         if ($active === null) {
-            $this->deny('NO_ACTIVE_DEVICE', 'Active device required to request a change.', 422);
+            $this->deny(ErrorCodes::NO_ACTIVE_DEVICE, 'Active device required to request a change.', 422);
         }
 
         $pending = DeviceChangeRequest::where('user_id', $student->id)
@@ -38,7 +39,7 @@ class DeviceChangeService
             ->exists();
 
         if ($pending) {
-            $this->deny('PENDING_REQUEST_EXISTS', 'A pending device change request already exists.', 422);
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists.', 422);
         }
 
         /** @var DeviceChangeRequest $request */
@@ -66,7 +67,7 @@ class DeviceChangeService
         $this->assertAdminScope($admin, $request);
 
         if ($request->status !== DeviceChangeRequest::STATUS_PENDING) {
-            $this->deny('INVALID_STATE', 'Only pending requests can be approved.', 409);
+            $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be approved.', 409);
         }
 
         return DB::transaction(function () use ($admin, $request): DeviceChangeRequest {
@@ -119,7 +120,7 @@ class DeviceChangeService
         $this->assertAdminScope($admin, $request);
 
         if ($request->status !== DeviceChangeRequest::STATUS_PENDING) {
-            $this->deny('INVALID_STATE', 'Only pending requests can be rejected.', 409);
+            $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be rejected.', 409);
         }
 
         $request->status = DeviceChangeRequest::STATUS_REJECTED;
@@ -141,14 +142,14 @@ class DeviceChangeService
     private function assertStudent(User $user): void
     {
         if (! $user->is_student) {
-            $this->deny('UNAUTHORIZED', 'Only students can request device changes.', 403);
+            $this->deny(ErrorCodes::UNAUTHORIZED, 'Only students can request device changes.', 403);
         }
     }
 
     private function assertAdminScope(User $admin, DeviceChangeRequest $request): void
     {
         if ($admin->is_student) {
-            $this->deny('UNAUTHORIZED', 'Only admins can perform this action.', 403);
+            $this->deny(ErrorCodes::UNAUTHORIZED, 'Only admins can perform this action.', 403);
         }
 
         $this->centerScopeService->assertAdminSameCenter($admin, $request);
@@ -173,12 +174,6 @@ class DeviceChangeService
      */
     private function deny(string $code, string $message, int $status): void
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => $code,
-                'message' => $message,
-            ],
-        ], $status));
+        throw new DomainException($message, $code, $status);
     }
 }

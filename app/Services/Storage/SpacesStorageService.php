@@ -41,6 +41,17 @@ class SpacesStorageService implements StorageServiceInterface
         }
     }
 
+    public function temporaryUploadUrl(string $path, int $expiresInSeconds): string
+    {
+        $expiresAt = now()->addSeconds($expiresInSeconds);
+
+        try {
+            return $this->disk->temporaryUrl($path, $expiresAt, ['method' => 'PUT']);
+        } catch (\Throwable $throwable) {
+            return $this->disk->url($path);
+        }
+    }
+
     public function exists(string $path): bool
     {
         return $this->disk->exists($path);

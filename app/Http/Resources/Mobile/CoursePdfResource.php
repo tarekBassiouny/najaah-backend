@@ -26,7 +26,7 @@ class CoursePdfResource extends JsonResource
 
         return [
             'id' => $pdf->id,
-            'title' => $pdf->title,
+            'title' => $pdf->translate('title'),
             'pages' => null,
             'is_locked' => ! (bool) ($pivot?->visible ?? true),
         ];

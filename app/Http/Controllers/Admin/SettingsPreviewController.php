@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\SettingsPreviewRequest;
+use App\Http\Requests\Admin\Settings\SettingsPreviewRequest;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\User;

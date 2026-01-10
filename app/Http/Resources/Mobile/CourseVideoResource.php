@@ -26,7 +26,7 @@ class CourseVideoResource extends JsonResource
 
         return [
             'id' => $video->id,
-            'title' => $video->title,
+            'title' => $video->translate('title'),
             'duration' => $video->duration_seconds,
             'library_id' => $video->library_id,
             'video_uuid' => $video->source_id,

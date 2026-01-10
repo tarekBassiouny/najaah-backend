@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\DomainException;
 use App\Http\Middleware\EnsureActiveEnrollment;
 use App\Http\Middleware\EnsureUnbrandedStudent;
 use App\Http\Middleware\JwtAdminMiddleware;
@@ -15,6 +16,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Admin (JWT) - canonical /api/v1/admin with backward-compatible /admin alias
             Route::prefix('api/v1/admin')
-                ->middleware(['api', HandleCors::class])
+                ->middleware(['api'])
                 ->group(function (): void {
                     require __DIR__.'/../routes/api/v1/admin/auth.php';
 
@@ -65,6 +67,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Global middleware
         $middleware->use([
+            HandleCors::class,
             RequestIdMiddleware::class,
         ]);
 
@@ -86,6 +89,18 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->renderable(function (DomainException $exception, Request $request) {
+            if (! $request->is('api/*')) {
+                return null;
+            }
+
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => $exception->errorCode(),
+                    'message' => $exception->getMessage(),
+                ],
+            ], $exception->statusCode());
+        });
     })
     ->create();

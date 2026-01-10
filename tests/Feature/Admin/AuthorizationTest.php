@@ -27,7 +27,7 @@ it('blocks students from admin endpoints', function (): void {
     $response = $this->postJson('/api/v1/admin/centers', [
         'slug' => 'blocked-center',
         'type' => 'unbranded',
-        'name_translations' => ['en' => 'Blocked Center'],
+        'name' => 'Blocked Center',
         'admin' => [
             'name' => 'Owner',
             'email' => 'blocked-owner@example.com',
@@ -64,13 +64,14 @@ it('prevents admins from accessing other centers', function (): void {
 
     $course = Course::factory()->create(['center_id' => $centerB->id]);
 
-    $response = $this->getJson("/api/v1/admin/courses/{$course->id}", [
+    $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/courses/{$course->id}", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),
     ]);
 
-    $response->assertForbidden();
+    $response->assertNotFound()
+        ->assertJsonPath('error.code', 'NOT_FOUND');
 });
 
 it('allows admins with permission and center access', function (): void {
@@ -95,7 +96,7 @@ it('allows admins with permission and center access', function (): void {
 
     $course = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->getJson("/api/v1/admin/courses/{$course->id}", [
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),

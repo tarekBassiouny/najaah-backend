@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AuditLogs\ListAuditLogsRequest;
-use App\Http\Resources\AuditLogResource;
+use App\Http\Requests\Admin\AuditLogs\ListAuditLogsRequest;
+use App\Http\Resources\Admin\AuditLogResource;
 use App\Models\User;
 use App\Services\Audit\AuditLogQueryService;
 use Illuminate\Http\JsonResponse;

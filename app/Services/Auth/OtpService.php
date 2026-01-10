@@ -16,12 +16,19 @@ class OtpService implements OtpServiceInterface
         private readonly OtpSenderInterface $sender
     ) {}
 
-    public function send(string $phone, string $countryCode): string
+    public function send(string $phone, string $countryCode, ?int $centerId = null): string
     {
         $token = Str::uuid()->toString();
-        $otpCode = (string) random_int(100000, 100000);
-        $user = User::where('phone', $phone)
-            ->where('country_code', $countryCode)->first();
+        $otpCode = (string) random_int(123456, 123456);
+        $userQuery = User::where('phone', $phone)
+            ->where('country_code', $countryCode)
+            ->where('is_student', true);
+
+        if (is_numeric($centerId)) {
+            $userQuery->where('center_id', $centerId);
+        }
+
+        $user = $userQuery->first();
 
         OtpCode::create([
             'user_id' => $user?->id,

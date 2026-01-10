@@ -22,12 +22,12 @@ class UpdateCenterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_translations' => ['sometimes', 'array', 'min:1'],
-            'name_translations.*' => ['string', 'max:255'],
+            'name' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
             'tier' => ['sometimes', 'string', 'in:standard,premium,vip'],
             'is_featured' => ['sometimes', 'boolean'],
             'branding_metadata' => ['sometimes', 'array'],
             'branding_metadata.primary_color' => ['sometimes', 'string'],
+            'name_translations' => ['prohibited'],
         ];
     }
 
@@ -81,9 +81,9 @@ class UpdateCenterRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'name_translations' => [
-                'description' => 'Localized center name.',
-                'example' => ['en' => 'Updated Name'],
+            'name' => [
+                'description' => 'Center name.',
+                'example' => 'Updated Name',
             ],
             'tier' => [
                 'description' => 'Center tier identifier.',

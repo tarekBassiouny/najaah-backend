@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\ListExtraViewRequestsRequest;
-use App\Http\Requests\ExtraViews\ApproveExtraViewRequestRequest;
-use App\Http\Requests\ExtraViews\RejectExtraViewRequestRequest;
-use App\Http\Resources\ExtraViewRequestListResource;
-use App\Http\Resources\ExtraViewRequestResource;
+use App\Http\Requests\Admin\ExtraViews\ApproveExtraViewRequestRequest;
+use App\Http\Requests\Admin\ExtraViews\ListExtraViewRequestsRequest;
+use App\Http\Requests\Admin\ExtraViews\RejectExtraViewRequestRequest;
+use App\Http\Resources\Admin\ExtraViews\ExtraViewRequestListResource;
+use App\Http\Resources\Admin\ExtraViews\ExtraViewRequestResource;
 use App\Models\ExtraViewRequest;
 use App\Models\User;
 use App\Services\Admin\ExtraViewRequestQueryService;

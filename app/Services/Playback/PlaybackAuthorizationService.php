@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
+use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
@@ -11,7 +12,7 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Support\ErrorCodes;
 
 class PlaybackAuthorizationService
 {
@@ -58,11 +59,11 @@ class PlaybackAuthorizationService
         $this->assertSessionExists($session);
 
         if ($session->ended_at !== null) {
-            $this->deny('SESSION_ENDED', 'Playback session has ended.', 409);
+            $this->deny(ErrorCodes::SESSION_ENDED, 'Playback session has ended.', 409);
         }
 
         if ($session->user_id !== $student->id) {
-            $this->deny('UNAUTHORIZED', 'Session does not belong to the user.', 403);
+            $this->deny(ErrorCodes::UNAUTHORIZED, 'Session does not belong to the user.', 403);
         }
 
         $this->assertCourseContext($student, $center, $course, $video, $session);
@@ -83,11 +84,11 @@ class PlaybackAuthorizationService
         $this->assertStudent($student);
 
         if ($session->user_id !== $student->id) {
-            $this->deny('UNAUTHORIZED', 'Session does not belong to the user.', 403);
+            $this->deny(ErrorCodes::UNAUTHORIZED, 'Session does not belong to the user.', 403);
         }
 
         if ($session->ended_at !== null) {
-            $this->deny('SESSION_ENDED', 'Playback session has ended.', 409);
+            $this->deny(ErrorCodes::SESSION_ENDED, 'Playback session has ended.', 409);
         }
 
         $this->assertVideoReady($video);
@@ -106,7 +107,7 @@ class PlaybackAuthorizationService
     private function assertStudent(User $user): void
     {
         if (! $user->is_student) {
-            $this->deny('UNAUTHORIZED', 'Only students can access this endpoint.', 403);
+            $this->deny(ErrorCodes::UNAUTHORIZED, 'Only students can access this endpoint.', 403);
         }
     }
 
@@ -114,14 +115,14 @@ class PlaybackAuthorizationService
     {
         if (is_numeric($student->center_id)) {
             if ((int) $student->center_id !== (int) $center->id) {
-                $this->deny('CENTER_MISMATCH', 'Center mismatch.', 403);
+                $this->deny(ErrorCodes::CENTER_MISMATCH, 'Center mismatch.', 403);
             }
 
             return;
         }
 
         if ((int) $center->type !== 0) {
-            $this->deny('CENTER_MISMATCH', 'Center mismatch.', 403);
+            $this->deny(ErrorCodes::CENTER_MISMATCH, 'Center mismatch.', 403);
         }
     }
 
@@ -147,7 +148,7 @@ class PlaybackAuthorizationService
             ->exists();
 
         if (! $videoInCourse || $session->video_id !== $video->id) {
-            $this->deny('NOT_FOUND', 'Video not found.', 404);
+            $this->deny(ErrorCodes::NOT_FOUND, 'Video not found.', 404);
         }
 
         $this->assertCenterAccess($student, $center);
@@ -156,12 +157,12 @@ class PlaybackAuthorizationService
     private function assertVideoReady(Video $video): void
     {
         if ((int) $video->encoding_status !== 3 || (int) $video->lifecycle_status !== 2) {
-            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
+            $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
 
         $session = $video->uploadSession;
         if ($session !== null && (int) $session->upload_status !== 3) {
-            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
+            $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
     }
 
@@ -175,7 +176,7 @@ class PlaybackAuthorizationService
             ->exists();
 
         if (! $enrolled) {
-            $this->deny('ENROLLMENT_REQUIRED', 'Active enrollment required.', 403);
+            $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
         }
     }
 
@@ -183,14 +184,14 @@ class PlaybackAuthorizationService
     {
         $videoUuid = $video->source_id;
         if (! is_string($videoUuid) || $videoUuid === '') {
-            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
+            $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
     }
 
     private function assertSessionExists(PlaybackSession $session): void
     {
         if (! $session->exists) {
-            $this->deny('SESSION_NOT_FOUND', 'Playback session not found.', 404);
+            $this->deny(ErrorCodes::SESSION_NOT_FOUND, 'Playback session not found.', 404);
         }
     }
 
@@ -204,7 +205,7 @@ class PlaybackAuthorizationService
             ->first();
 
         if ($device === null) {
-            $this->deny('NO_ACTIVE_DEVICE', 'Active device required for playback.', 422);
+            $this->deny(ErrorCodes::NO_ACTIVE_DEVICE, 'Active device required for playback.', 422);
         }
 
         return $device;
@@ -212,7 +213,7 @@ class PlaybackAuthorizationService
 
     private function notFound(string $message): void
     {
-        $this->deny('NOT_FOUND', $message, 404);
+        $this->deny(ErrorCodes::NOT_FOUND, $message, 404);
     }
 
     /**
@@ -220,12 +221,6 @@ class PlaybackAuthorizationService
      */
     private function deny(string $code, string $message, int $status): void
     {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => $code,
-                'message' => $message,
-            ],
-        ], $status));
+        throw new DomainException($message, $code, $status);
     }
 }
