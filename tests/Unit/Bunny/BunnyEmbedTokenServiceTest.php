@@ -7,64 +7,34 @@ use App\Services\Bunny\BunnyEmbedTokenService;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
-uses(TestCase::class)->group('bunny', 'services', 'tokens');
+uses(TestCase::class)->group('bunny');
 
-afterEach(function (): void {
+test('it generates a bunny embed token with expected hash and expiry', function (): void {
+    config(['bunny.embed_key' => 'embed-secret']);
+    Carbon::setTestNow('2025-01-01 00:00:00');
+
+    $service = app(BunnyEmbedTokenService::class);
+    $user = new User;
+    $user->id = 42;
+
+    $result = $service->generate('video-uuid', $user, 10, 99, 300);
+
+    $expectedExpires = Carbon::now()->addSeconds(300)->timestamp;
+    $expectedToken = hash('sha256', 'embed-secret'.'video-uuid'.$expectedExpires);
+
+    expect($result['expires'])->toBe($expectedExpires)
+        ->and($result['token'])->toBe($expectedToken);
+
     Carbon::setTestNow();
 });
 
-it('generates a valid embed token payload with deterministic output', function (): void {
-    config([
-        'bunny.api.api_key' => 'bunny-secret',
-    ]);
+test('it throws when bunny embed key is missing', function (): void {
+    config(['bunny.embed_key' => null]);
 
-    Carbon::setTestNow('2024-01-01 00:00:00');
+    $service = app(BunnyEmbedTokenService::class);
+    $user = new User;
+    $user->id = 1;
 
-    $student = User::factory()->create(['is_student' => true]);
-    $service = new BunnyEmbedTokenService;
-
-    $result = $service->generate('video-uuid', $student, 44, 88, 600);
-
-    expect($result['expires_in'])->toBe(600);
-
-    $decoded = decodeEmbedToken($result['token']);
-    $expectedExpiry = now()->addSeconds(600)->timestamp;
-
-    expect($decoded['video_uuid'])->toBe('video-uuid')
-        ->and((int) $decoded['center_id'])->toBe(44)
-        ->and((int) $decoded['student_id'])->toBe($student->id)
-        ->and((int) $decoded['enrollment_id'])->toBe(88)
-        ->and((int) $decoded['expires_at'])->toBe($expectedExpiry);
-
-    $expectedPayload = $decoded['video_uuid'].'|'.$decoded['center_id'].'|'.$decoded['student_id'].'|'.$decoded['enrollment_id'].'|'.$decoded['expires_at'];
-    $expectedHash = hash_hmac('sha256', $expectedPayload, 'bunny-secret');
-
-    expect($decoded['hash'])->toBe($expectedHash);
-
-    $repeat = $service->generate('video-uuid', $student, 44, 88, 600);
-    expect($repeat['token'])->toBe($result['token']);
+    expect(fn (): array => $service->generate('video-uuid', $user, 1, 1))
+        ->toThrow(RuntimeException::class);
 });
-
-/**
- * @return array{video_uuid:string,center_id:string,student_id:string,enrollment_id:string,expires_at:string,hash:string}
- */
-function decodeEmbedToken(string $token): array
-{
-    $base64 = strtr($token, '-_', '+/');
-    $base64 .= str_repeat('=', (4 - (strlen($base64) % 4)) % 4);
-
-    $decoded = base64_decode($base64, true);
-    expect($decoded)->not->toBeFalse();
-
-    $parts = explode('|', (string) $decoded);
-    expect($parts)->toHaveCount(6);
-
-    return [
-        'video_uuid' => $parts[0],
-        'center_id' => $parts[1],
-        'student_id' => $parts[2],
-        'enrollment_id' => $parts[3],
-        'expires_at' => $parts[4],
-        'hash' => $parts[5],
-    ];
-}

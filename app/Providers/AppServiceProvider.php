@@ -14,6 +14,7 @@ use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
+use App\Services\Contracts\ViewLimitServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
 use App\Services\Courses\CourseInstructorService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
@@ -61,6 +62,7 @@ class AppServiceProvider extends ServiceProvider
             CenterServiceInterface::class => CenterService::class,
             CenterSettingsServiceInterface::class => CenterSettingsService::class,
             SettingsResolverServiceInterface::class => SettingsResolverService::class,
+            ViewLimitServiceInterface::class => ViewLimitService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {
@@ -68,6 +70,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(ViewLimitService::class);
+        $this->app->singleton(ViewLimitServiceInterface::class, ViewLimitService::class);
         $this->app->singleton(StorageServiceInterface::class, function (Application $app): StorageServiceInterface {
             $disk = (string) $app['config']->get('filesystems.default', 'local');
 

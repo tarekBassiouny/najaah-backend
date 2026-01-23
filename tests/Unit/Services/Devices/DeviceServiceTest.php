@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\AuditLog;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Devices\DeviceService;
@@ -41,4 +42,97 @@ test('register updates existing device', function (): void {
     ]);
 
     expect($device->is($existing))->toBeTrue();
+});
+
+test('handleReinstall detects same device with different uuid', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create();
+
+    /** @var UserDevice $existing */
+    $existing = UserDevice::factory()->create([
+        'user_id' => $user->id,
+        'device_id' => 'old-device-uuid',
+        'model' => 'iPhone 14 Pro',
+        'os_version' => 'iOS 17.1',
+        'status' => UserDevice::STATUS_ACTIVE,
+    ]);
+
+    $service = new DeviceService;
+    $result = $service->handleReinstall($user, 'new-device-uuid', 'iPhone 14 Pro', 'iOS 17.1');
+
+    expect($result)->not->toBeNull()
+        ->and($result?->id)->toBe($existing->id)
+        ->and($result?->device_id)->toBe('new-device-uuid')
+        ->and($result?->os_version)->toBe('iOS 17.1');
+
+    $auditLog = AuditLog::where('action', 'device_uuid_updated')
+        ->where('entity_type', UserDevice::class)
+        ->where('entity_id', $existing->id)
+        ->first();
+
+    expect($auditLog)->not->toBeNull()
+        ->and($auditLog?->metadata['old_device_id'])->toBe('old-device-uuid')
+        ->and($auditLog?->metadata['new_device_id'])->toBe('new-device-uuid')
+        ->and($auditLog?->metadata['reason'])->toBe('reinstall_detected');
+});
+
+test('handleReinstall returns null when no matching fingerprint', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create();
+
+    /** @var UserDevice $existing */
+    UserDevice::factory()->create([
+        'user_id' => $user->id,
+        'device_id' => 'old-device-uuid',
+        'model' => 'iPhone 14 Pro',
+        'os_version' => 'iOS 17.1',
+        'status' => UserDevice::STATUS_ACTIVE,
+    ]);
+
+    $service = new DeviceService;
+    $result = $service->handleReinstall($user, 'new-device-uuid', 'Samsung Galaxy S24', 'Android 14');
+
+    expect($result)->toBeNull();
+});
+
+test('handleReinstall returns null when same device uuid', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create();
+
+    /** @var UserDevice $existing */
+    UserDevice::factory()->create([
+        'user_id' => $user->id,
+        'device_id' => 'same-device-uuid',
+        'model' => 'iPhone 14 Pro',
+        'os_version' => 'iOS 17.1',
+        'status' => UserDevice::STATUS_ACTIVE,
+    ]);
+
+    $service = new DeviceService;
+    $result = $service->handleReinstall($user, 'same-device-uuid', 'iPhone 14 Pro', 'iOS 17.1');
+
+    expect($result)->toBeNull();
+});
+
+test('register uses handleReinstall for app reinstall scenario', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create();
+
+    /** @var UserDevice $existing */
+    $existing = UserDevice::factory()->create([
+        'user_id' => $user->id,
+        'device_id' => 'old-uuid-before-reinstall',
+        'model' => 'iPhone 14 Pro',
+        'os_version' => 'iOS 17.1',
+        'status' => UserDevice::STATUS_ACTIVE,
+    ]);
+
+    $service = new DeviceService;
+    $device = $service->register($user, 'new-uuid-after-reinstall', [
+        'device_type' => 'iPhone 14 Pro',
+        'device_os' => 'iOS 17.1',
+    ]);
+
+    expect($device->id)->toBe($existing->id)
+        ->and($device->device_id)->toBe('new-uuid-after-reinstall');
 });

@@ -18,6 +18,9 @@ class BunnyWebhookService
     public function handle(array $payload): void
     {
         try {
+            Log::channel('domain')->info('bunny_webhook_payload', [
+                'payload' => $payload,
+            ]);
             $videoGuid = isset($payload['VideoGuid']) && is_string($payload['VideoGuid'])
                 ? $payload['VideoGuid']
                 : null;

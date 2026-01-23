@@ -23,6 +23,7 @@ beforeEach(function (): void {
         'services.system_api_key' => 'system-key',
         'bunny.api.api_key' => 'bunny-secret',
         'bunny.api.library_id' => 55,
+        'bunny.embed_key' => 'test-embed-secret-key',
     ]);
 });
 
@@ -34,15 +35,27 @@ test('it creates playback session when views remain', function (): void {
     $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
 
     $response->assertOk()
-        ->assertJsonPath('data.library_id', '55')
-        ->assertJsonPath('data.video_uuid', 'video-uuid')
-        ->assertJsonPath('data.session_id', fn ($value) => is_string($value) && $value !== '')
-        ->assertJsonPath('data.embed_token', fn ($value) => is_string($value) && $value !== '');
+        ->assertJsonPath('data.session_id', fn ($value) => is_int($value) && $value > 0)
+        ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'iframe.mediadelivery.net'))
+        ->assertJsonPath('data.expires_at', fn ($value) => is_int($value) && $value > 0);
+
+    // Verify embed URL contains expected components
+    $embedUrl = $response->json('data.embed_url');
+    expect($embedUrl)->toContain('iframe.mediadelivery.net/embed/55/video-uuid')
+        ->toContain('token=')
+        ->toContain('expires=');
 
     $this->assertDatabaseHas('playback_sessions', [
         'user_id' => $student->id,
         'video_id' => $video->id,
+        'course_id' => $course->id,
     ]);
+
+    $session = PlaybackSession::where('user_id', $student->id)->where('video_id', $video->id)->first();
+    expect($session)->not->toBeNull();
+    expect($session->embed_token)->not->toBeNull();
+    expect($session->embed_token_expires_at)->not->toBeNull();
+    expect($session->enrollment_id)->not->toBeNull();
 });
 
 test('it rejects playback without enrollment', function (): void {
@@ -134,7 +147,7 @@ test('it creates new session when previous one expired on same device', function
     ]);
 });
 
-test('it updates progress and counts view once after 50 percent', function (): void {
+test('it updates progress and counts view once after 80 percent', function (): void {
     [$student, $center, $course, $video] = buildPlaybackContext();
     $this->asApiUser($student);
     $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
@@ -143,21 +156,18 @@ test('it updates progress and counts view once after 50 percent', function (): v
     $sessionId = $response->json('data.session_id');
 
     $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [
-        'session_id' => (int) $sessionId,
+        'session_id' => $sessionId,
         'percentage' => 20,
-    ])->assertOk();
+    ])->assertOk()->assertJsonPath('success', true);
 
-    $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [
-        'session_id' => (int) $sessionId,
-        'percentage' => 60,
-    ])->assertOk();
-
-    $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [
-        'session_id' => (int) $sessionId,
+    $progressResponse = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [
+        'session_id' => $sessionId,
         'percentage' => 80,
-    ])->assertOk();
+    ]);
 
-    $session = PlaybackSession::query()->find((int) $sessionId);
+    $progressResponse->assertOk()->assertJsonPath('success', true);
+
+    $session = PlaybackSession::query()->find($sessionId);
     expect($session?->progress_percent)->toBe(80)
         ->and($session?->is_full_play)->toBeTrue();
 
@@ -241,7 +251,8 @@ test('it allows system student playback for unbranded center', function (): void
 
     $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
 
-    $response->assertOk()->assertJsonPath('data.video_uuid', 'video-uuid-system');
+    $response->assertOk()
+        ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'video-uuid-system'));
 });
 
 test('it blocks system student playback for branded center', function (): void {
@@ -337,6 +348,87 @@ test('it rejects playback without authentication', function (): void {
     $response = $this->postJson("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
 
     $response->assertStatus(401)->assertJsonPath('error.code', 'INVALID_API_KEY');
+});
+
+test('it returns playback session with embed url', function (): void {
+    [$student, $center, $course, $video] = buildPlaybackContext(['default_view_limit' => 5]);
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+
+    $response->assertOk()
+        ->assertJsonPath('data.session_id', fn ($value) => is_int($value) && $value > 0)
+        ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'iframe.mediadelivery.net'))
+        ->assertJsonPath('data.expires_at', fn ($value) => is_int($value) && $value > 0);
+});
+
+test('it closes session with user reason', function (): void {
+    [$student, $center, $course, $video] = buildPlaybackContext();
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+    $sessionId = (int) $response->json('data.session_id');
+
+    $closeResponse = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/close_session", [
+        'session_id' => $sessionId,
+        'watch_duration' => 300,
+    ]);
+
+    $closeResponse->assertOk()->assertJsonPath('success', true);
+
+    $session = PlaybackSession::query()->find($sessionId);
+    expect($session?->ended_at)->not->toBeNull()
+        ->and($session?->watch_duration)->toBe(300)
+        ->and($session?->close_reason)->toBe('user')
+        ->and($session?->auto_closed)->toBeFalse();
+});
+
+test('it sets is_locked when view limit reached', function (): void {
+    [$student, $center, $course, $video] = buildPlaybackContext(['default_view_limit' => 1]);
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+    $sessionId = $response->json('data.session_id');
+
+    $progressResponse = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [
+        'session_id' => $sessionId,
+        'percentage' => 80,
+    ]);
+
+    $progressResponse->assertOk()->assertJsonPath('success', true);
+
+    $session = PlaybackSession::query()->find($sessionId);
+    expect($session?->is_full_play)->toBeTrue()
+        ->and($session?->is_locked)->toBeTrue();
+});
+
+test('it updates last_activity_at on progress update', function (): void {
+    Carbon::setTestNow('2024-01-01 00:00:00');
+
+    [$student, $center, $course, $video] = buildPlaybackContext();
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+    $sessionId = (int) $response->json('data.session_id');
+
+    $session = PlaybackSession::query()->find($sessionId);
+    expect($session?->last_activity_at?->timestamp)->toBe(Carbon::parse('2024-01-01 00:00:00')->timestamp);
+
+    Carbon::setTestNow('2024-01-01 00:05:00');
+
+    $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [
+        'session_id' => $sessionId,
+        'percentage' => 20,
+    ])->assertOk();
+
+    $session->refresh();
+    expect($session->last_activity_at?->timestamp)->toBe(Carbon::parse('2024-01-01 00:05:00')->timestamp);
+
+    Carbon::setTestNow();
 });
 
 /**

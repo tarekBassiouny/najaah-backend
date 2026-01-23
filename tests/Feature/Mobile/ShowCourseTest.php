@@ -83,8 +83,8 @@ it('shows course aggregate with metadata only', function (): void {
         ->assertJsonPath('data.id', $course->id)
         ->assertJsonPath('data.is_enrolled', true)
         ->assertJsonPath('data.sections.0.id', $section->id)
-        ->assertJsonPath('data.videos.0.video_uuid', 'video-uuid')
-        ->assertJsonPath('data.videos.0.library_id', 55)
+        ->assertJsonPath('data.videos.0.id', $video->id)
+        ->assertJsonPath('data.videos.0.duration', 120)
         ->assertJsonPath('data.videos.0.is_locked', false)
         ->assertJsonPath('data.pdfs.0.is_locked', false);
 
@@ -97,6 +97,8 @@ it('shows course aggregate with metadata only', function (): void {
         'cdn_url',
         'download_url',
         'source_url',
+        'video_uuid',
+        'library_id',
     ]);
 });
 
@@ -282,6 +284,6 @@ it('filters out non-ready videos from course details', function (): void {
     $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}");
 
     $response->assertOk()
-        ->assertJsonPath('data.videos.0.video_uuid', 'ready-uuid')
-        ->assertJsonMissing(['video_uuid' => 'pending-uuid']);
+        ->assertJsonPath('data.videos.0.id', $readyVideo->id)
+        ->assertJsonCount(1, 'data.videos');
 });

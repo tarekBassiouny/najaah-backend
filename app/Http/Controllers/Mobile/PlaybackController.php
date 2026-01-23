@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mobile\CloseSessionRequest;
 use App\Http\Requests\Mobile\PlaybackProgressRequest;
 use App\Http\Requests\Mobile\RefreshPlaybackTokenRequest;
 use App\Http\Requests\Mobile\RequestPlaybackRequest;
+use App\Http\Resources\Mobile\PlaybackSessionResource;
+use App\Http\Resources\Mobile\PlaybackTokenResource;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\PlaybackSession;
@@ -37,7 +40,7 @@ class PlaybackController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $payload,
+            'data' => new PlaybackSessionResource($payload),
         ]);
     }
 
@@ -58,11 +61,39 @@ class PlaybackController extends Controller
             ->first() ?? new PlaybackSession;
 
         $this->authorizationService->assertCanUpdateProgress($student, $center, $course, $video, $session);
-        $this->playbackService->updateProgress($student, $session, $data['percentage']);
+        $progress = $this->playbackService->updateProgress($student, $session, $data['percentage']);
 
         return response()->json([
             'success' => true,
+            'data' => $progress,
         ]);
+    }
+
+    public function closeSession(
+        CloseSessionRequest $request,
+        Center $center,
+        Course $course,
+        Video $video
+    ): JsonResponse {
+        $session = PlaybackSession::find($request->integer('session_id'));
+
+        if (! $session instanceof PlaybackSession || $session->video_id !== $video->id || $session->course_id !== $course->id) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'SESSION_MISMATCH',
+                    'message' => 'Session does not belong to this video/course.',
+                ],
+            ], 403);
+        }
+
+        $this->playbackService->closeSession(
+            sessionId: $session->id,
+            watchDuration: $request->integer('watch_duration'),
+            reason: 'user'
+        );
+
+        return response()->json(['success' => true]);
     }
 
     public function refreshToken(
@@ -83,14 +114,11 @@ class PlaybackController extends Controller
 
         $this->authorizationService->assertCanRefreshToken($student, $center, $course, $video, $session);
 
-        $tokenPayload = $this->playbackService->generateEmbedToken($student, $center, $course, $video);
+        $payload = $this->playbackService->refreshEmbedToken($student, $center, $course, $video, $session);
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'embed_token' => $tokenPayload['token'],
-                'expires_in' => $tokenPayload['expires_in'],
-            ],
+            'data' => new PlaybackTokenResource($payload),
         ]);
     }
 }

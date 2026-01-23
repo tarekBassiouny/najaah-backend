@@ -71,7 +71,10 @@
                     <a href="#endpoints">Endpoints</a>
                 </li>
                                     <ul id="tocify-subheader-endpoints" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-send-otp">
+                                                    <li class="tocify-item level-2" data-unique="endpoints-POSTwebhooks-bunny">
+                                <a href="#endpoints-POSTwebhooks-bunny">POST webhooks/bunny</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-send-otp">
                                 <a href="#endpoints-POSTapi-v1-auth-send-otp">POST api/v1/auth/send-otp</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-verify">
@@ -113,6 +116,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses-enrolled">
                                 <a href="#endpoints-GETapi-v1-courses-enrolled">GET api/v1/courses/enrolled</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses-enrolled-by-instructor">
+                                <a href="#endpoints-GETapi-v1-courses-enrolled-by-instructor">GET api/v1/courses/enrolled/by-instructor</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">
                                 <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback</a>
                             </li>
@@ -121,6 +127,9 @@
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">
                                 <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--playback_progress">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/playback_progress</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session">
+                                <a href="#endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/close_session</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url">
                                 <a href="#endpoints-GETapi-v1-centers--center_id--courses--course_id--pdfs--pdf_id--signed-url">GET api/v1/centers/{center_id}/courses/{course_id}/pdfs/{pdf_id}/signed-url</a>
@@ -430,7 +439,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: January 8, 2026</li>
+        <li>Last updated: January 22, 2026</li>
     </ul>
 </div>
 
@@ -455,7 +464,145 @@ You can switch the language used with the tabs at the top right (or from the nav
 
     
 
-                                <h2 id="endpoints-POSTapi-v1-auth-send-otp">POST api/v1/auth/send-otp</h2>
+                                <h2 id="endpoints-POSTwebhooks-bunny">POST webhooks/bunny</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTwebhooks-bunny">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/webhooks/bunny" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/webhooks/bunny"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTwebhooks-bunny">
+</span>
+<span id="execution-results-POSTwebhooks-bunny" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTwebhooks-bunny"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTwebhooks-bunny"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTwebhooks-bunny" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTwebhooks-bunny">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTwebhooks-bunny" data-method="POST"
+      data-path="webhooks/bunny"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTwebhooks-bunny', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTwebhooks-bunny"
+                    onclick="tryItOut('POSTwebhooks-bunny');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTwebhooks-bunny"
+                    onclick="cancelTryOut('POSTwebhooks-bunny');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTwebhooks-bunny"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>webhooks/bunny</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTwebhooks-bunny"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTwebhooks-bunny"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTwebhooks-bunny"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTwebhooks-bunny"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="endpoints-POSTapi-v1-auth-send-otp">POST api/v1/auth/send-otp</h2>
 
 <p>
 </p>
@@ -474,8 +621,8 @@ You can switch the language used with the tabs at the top right (or from the nav
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
     --data "{
-    \"phone\": \"{{student_phone}}\",
-    \"country_code\": \"{{country_code}}\"
+    \"phone\": \"123456789\",
+    \"country_code\": \"+966\"
 }"
 </code></pre></div>
 
@@ -493,8 +640,8 @@ const headers = {
 };
 
 let body = {
-    "phone": "{{student_phone}}",
-    "country_code": "{{country_code}}"
+    "phone": "123456789",
+    "country_code": "+966"
 };
 
 fetch(url, {
@@ -610,10 +757,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="phone"                data-endpoint="POSTapi-v1-auth-send-otp"
-               value="{{student_phone}}"
+               value="123456789"
                data-component="body">
     <br>
-<p>The full phone number including country code. Example: <code>{{student_phone}}</code></p>
+<p>Subscriber number without leading zero. Must match the regex /^[1-9][0-9]*$/. Example: <code>123456789</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country_code</code></b>&nbsp;&nbsp;
@@ -622,10 +769,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="country_code"                data-endpoint="POSTapi-v1-auth-send-otp"
-               value="{{country_code}}"
+               value="+966"
                data-component="body">
     <br>
-<p>The country dialing code. Must not be greater than 5 characters. Example: <code>{{country_code}}</code></p>
+<p>Dialing code with + or 00 prefix. Must match the regex /^(+\d{1,6}|00\d{1,6})$/. Must not be greater than 8 characters. Example: <code>+966</code></p>
         </div>
         </form>
 
@@ -1468,7 +1615,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;is_featured=&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
+    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;is_featured=1&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
@@ -1486,7 +1633,7 @@ const params = {
     "category_id": "3",
     "instructor_id": "5",
     "enrolled": "1",
-    "is_featured": "0",
+    "is_featured": "1",
     "publish_from": "2025-01-01",
     "publish_to": "2025-01-31",
 };
@@ -1695,7 +1842,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>publish_from</code></b>&nbsp;&nbsp;
@@ -3020,6 +3167,163 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
+                    <h2 id="endpoints-GETapi-v1-courses-enrolled-by-instructor">GET api/v1/courses/enrolled/by-instructor</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-courses-enrolled-by-instructor">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/courses/enrolled/by-instructor?category_id=3" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/courses/enrolled/by-instructor"
+);
+
+const params = {
+    "category_id": "3",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-courses-enrolled-by-instructor">
+    </span>
+<span id="execution-results-GETapi-v1-courses-enrolled-by-instructor" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-courses-enrolled-by-instructor"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-courses-enrolled-by-instructor"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-courses-enrolled-by-instructor" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-courses-enrolled-by-instructor">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-courses-enrolled-by-instructor" data-method="GET"
+      data-path="api/v1/courses/enrolled/by-instructor"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-courses-enrolled-by-instructor', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-courses-enrolled-by-instructor"
+                    onclick="tryItOut('GETapi-v1-courses-enrolled-by-instructor');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-courses-enrolled-by-instructor"
+                    onclick="cancelTryOut('GETapi-v1-courses-enrolled-by-instructor');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-courses-enrolled-by-instructor"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/courses/enrolled/by-instructor</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-courses-enrolled-by-instructor"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-courses-enrolled-by-instructor"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-courses-enrolled-by-instructor"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-courses-enrolled-by-instructor"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="GETapi-v1-courses-enrolled-by-instructor"
+               value="3"
+               data-component="query">
+    <br>
+<p>Filter courses by category ID. Example: <code>3</code></p>
+            </div>
+                </form>
+
                     <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--request_playback">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback</h2>
 
 <p>
@@ -3600,6 +3904,217 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Progress percent value (0-100). Must be at least 0. Must not be greater than 100. Example: <code>50</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session">POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/close_session</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/close_session" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: {{locale}}" \
+    --header "X-Api-Key: {{api_key}}" \
+    --data "{
+    \"session_id\": 123,
+    \"watch_duration\": 1234
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/centers/1/courses/1/videos/1/close_session"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "{{locale}}",
+    "X-Api-Key": "{{api_key}}",
+};
+
+let body = {
+    "session_id": 123,
+    "watch_duration": 1234
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session">
+</span>
+<span id="execution-results-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session" data-method="POST"
+      data-path="api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/close_session"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+                    onclick="tryItOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+                    onclick="cancelTryOut('POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/close_session</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="video_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the video. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>session_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="session_id"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="123"
+               data-component="body">
+    <br>
+<p>Playback session identifier. The <code>id</code> of an existing record in the playback_sessions table. Example: <code>123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>watch_duration</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="watch_duration"                data-endpoint="POSTapi-v1-centers--center_id--courses--course_id--videos--video_id--close_session"
+               value="1234"
+               data-component="body">
+    <br>
+<p>Total seconds watched. Must be at least 0. Example: <code>1234</code></p>
         </div>
         </form>
 
@@ -6858,7 +7373,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
-    --form "logo=@/tmp/phpcqn226qalmre6TPGo8O" </code></pre></div>
+    --form "logo=@/tmp/phpgigo7mmbatou504jeb7" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7005,7 +7520,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpcqn226qalmre6TPGo8O</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpgigo7mmbatou504jeb7</code></p>
         </div>
         </form>
 
@@ -16265,7 +16780,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/php6ei40v0liofqbzzBWUu" </code></pre></div>
+    --form "avatar=@/tmp/phpe1fmgjuoso1uePsYwQB" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16472,7 +16987,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php6ei40v0liofqbzzBWUu</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpe1fmgjuoso1uePsYwQB</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -16707,7 +17222,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpnm2cvr071hvh6CSdFoW" </code></pre></div>
+    --form "avatar=@/tmp/phpngj9kbkh965ideIlmE2" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16930,7 +17445,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpnm2cvr071hvh6CSdFoW</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpngj9kbkh965ideIlmE2</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;

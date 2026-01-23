@@ -9,7 +9,7 @@ use App\Models\User;
 class BunnyEmbedTokenService
 {
     /**
-     * @return array{token:string,expires_in:int}
+     * @return array{token:string,expires:int}
      */
     public function generate(
         string $videoUuid,
@@ -18,21 +18,17 @@ class BunnyEmbedTokenService
         int $enrollmentId,
         int $ttlSeconds = 600
     ): array {
-        $secret = config('bunny.api.api_key');
+        $secret = config('bunny.embed_key');
         if (! is_string($secret) || $secret === '') {
-            throw new \RuntimeException('Missing Bunny Stream API key.');
+            throw new \RuntimeException('Missing Bunny embed key.');
         }
 
-        $expiresAt = now()->addSeconds($ttlSeconds)->timestamp;
-        $payload = $videoUuid.'|'.$centerId.'|'.$student->id.'|'.$enrollmentId.'|'.$expiresAt;
-        $hash = hash_hmac('sha256', $payload, $secret);
-
-        $token = base64_encode($payload.'|'.$hash);
-        $token = rtrim(strtr($token, '+/', '-_'), '=');
+        $expiresAt = (int) now()->addSeconds($ttlSeconds)->timestamp;
+        $token = hash('sha256', $secret.$videoUuid.$expiresAt);
 
         return [
             'token' => $token,
-            'expires_in' => $ttlSeconds,
+            'expires' => $expiresAt,
         ];
     }
 }

@@ -76,10 +76,7 @@ class InstructorService implements InstructorServiceInterface
             $path = $this->pathResolver->instructorAvatar($centerId, $avatar->hashName());
             $storedPath = $this->storageService->upload($path, $avatar);
 
-            $data['avatar_url'] = $this->storageService->temporaryUrl(
-                $storedPath,
-                (int) config('filesystems.signed_url_ttl', 900)
-            );
+            $data['avatar_url'] = $storedPath;
         }
 
         unset($data['avatar']);

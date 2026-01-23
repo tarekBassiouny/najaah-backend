@@ -13,5 +13,6 @@ return [
         'api_key' => env('BUNNY_STREAM_API_KEY'),
         'library_id' => env('BUNNY_STREAM_LIBRARY_ID'),
     ],
-    'embed_token_ttl' => env('BUNNY_EMBED_TOKEN_TTL', 600),
+    'embed_key' => env('BUNNY_EMBED_KEY'),
+    'embed_token_ttl' => env('BUNNY_EMBED_TOKEN_TTL', 240),
 ];

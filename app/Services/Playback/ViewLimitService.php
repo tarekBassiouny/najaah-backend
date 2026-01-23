@@ -10,10 +10,11 @@ use App\Models\ExtraViewRequest;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Contracts\ViewLimitServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Support\ErrorCodes;
 
-class ViewLimitService
+class ViewLimitService implements ViewLimitServiceInterface
 {
     public function __construct(
         private readonly SettingsResolverServiceInterface $settingsResolver
@@ -32,6 +33,76 @@ class ViewLimitService
         if ($this->remaining($user, $video, $course, $pivotOverride) <= 0) {
             throw new DomainException('View limit exceeded.', ErrorCodes::VIEW_LIMIT_EXCEEDED, 403);
         }
+    }
+
+    /**
+     * Get remaining views for a user/video combination.
+     *
+     * @return int|null Remaining views, or null if unlimited
+     */
+    public function getRemainingViews(User $user, Video $video, ?Course $course = null): ?int
+    {
+        $limit = $this->getEffectiveLimit($user, $video, $course);
+
+        if ($limit === null) {
+            return null;
+        }
+
+        $used = $this->countFullPlays($user, $video);
+
+        return max(0, $limit - $used);
+    }
+
+    /**
+     * Get the effective view limit for a user/video combination.
+     *
+     * @return int|null View limit, or null if unlimited
+     */
+    public function getEffectiveLimit(User $user, Video $video, ?Course $course = null): ?int
+    {
+        if ($course === null) {
+            return null;
+        }
+
+        $settings = $this->settingsResolver->resolve($user, $video, $course, $course->center);
+        $limit = $settings['view_limit'] ?? null;
+
+        if (! is_numeric($limit) || (int) $limit === 0) {
+            return null;
+        }
+
+        $extra = $this->resolveExtraViews($user, $video);
+
+        return (int) $limit + $extra;
+    }
+
+    /**
+     * Check if video is locked (no remaining views).
+     */
+    public function isLocked(User $user, Video $video, ?Course $course = null): bool
+    {
+        $remaining = $this->getRemainingViews($user, $video, $course);
+
+        return $remaining !== null && $remaining <= 0;
+    }
+
+    /**
+     * Resolve the base view limit without student overrides.
+     */
+    public function resolveViewLimit(Video $video, ?Course $course = null): ?int
+    {
+        if ($course === null) {
+            return null;
+        }
+
+        $settings = $this->settingsResolver->resolve(null, $video, $course, $course->center);
+        $limit = $settings['view_limit'] ?? null;
+
+        if (! is_numeric($limit) || (int) $limit === 0) {
+            return null;
+        }
+
+        return (int) $limit;
     }
 
     private function resolveLimit(User $user, Video $video, Course $course, ?int $pivotOverride): int

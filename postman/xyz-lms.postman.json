@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "4394ac84-812c-4146-963e-639b02481543",
+    "_postman_id": "cac3076e-7f12-4b51-9673-85d26aa30a6b",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -1296,7 +1296,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"course_id\":1,\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"order_index\":1}"
+              "raw": "{\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"order_index\":1}"
             },
             "description": "",
             "auth": {
@@ -1685,7 +1685,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"course_id\":1,\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"sort_order\":1,\"videos\":[5],\"pdfs\":[3]}"
+              "raw": "{\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"sort_order\":1,\"videos\":[5],\"pdfs\":[3]}"
             },
             "description": "",
             "auth": {
@@ -5092,6 +5092,42 @@
       "name": "🔔 Public",
       "item": [
         {
+          "name": "POST webhooks/bunny",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "webhooks/bunny",
+              "query": [],
+              "raw": "{{baseUrl}}/webhooks/bunny"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
           "name": "GET api/v1/resolve/centers/{slug}",
           "request": {
             "url": {
@@ -5170,7 +5206,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"phone\":\"{{student_phone}}\",\"country_code\":\"{{country_code}}\"}"
+              "raw": "{\"phone\":\"123456789\",\"country_code\":\"+966\"}"
             },
             "description": "",
             "auth": {
@@ -5801,6 +5837,49 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "GET api/v1/courses/enrolled/by-instructor",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/courses/enrolled/by-instructor",
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "3",
+                  "description": "Filter courses by category ID.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/courses/enrolled/by-instructor?category_id=3"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -5973,6 +6052,65 @@
             "body": {
               "mode": "raw",
               "raw": "{\"session_id\":123,\"percentage\":50}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/close_session",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/centers/:center_id/courses/:course_id/videos/:video_id/close_session",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/centers/:center_id/courses/:course_id/videos/:video_id/close_session",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "video_id",
+                  "key": "video_id",
+                  "value": "1",
+                  "description": "The ID of the video."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"session_id\":123,\"watch_duration\":1234}"
             },
             "description": "",
             "auth": {

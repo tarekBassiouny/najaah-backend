@@ -184,6 +184,49 @@ class CourseService implements CourseServiceInterface
     }
 
     /**
+     * @return Collection<int, \App\Models\Instructor>
+     */
+    public function enrolledGroupedByInstructor(User $student, \App\Filters\Mobile\CourseFilters $filters): Collection
+    {
+        $query = Course::query()
+            ->where('status', 3)
+            ->where('is_published', true)
+            ->whereHas('enrollments', function (Builder $query) use ($student): void {
+                $query->where('user_id', $student->id)
+                    ->where('status', Enrollment::STATUS_ACTIVE)
+                    ->whereNull('deleted_at');
+            })
+            ->when(is_numeric($student->center_id), function (Builder $query) use ($student): void {
+                $query->where('center_id', (int) $student->center_id);
+            })
+            ->when(! is_numeric($student->center_id), function (Builder $query): void {
+                $query->whereHas('center', fn ($q) => $q->where('type', 0));
+            });
+
+        if ($filters->categoryId !== null) {
+            $query->where('category_id', $filters->categoryId);
+        }
+
+        $enrolledCourseIds = $query->pluck('id');
+
+        if ($enrolledCourseIds->isEmpty()) {
+            return collect();
+        }
+
+        return \App\Models\Instructor::query()
+            ->whereHas('courses', function (Builder $query) use ($enrolledCourseIds): void {
+                $query->whereIn('courses.id', $enrolledCourseIds);
+            })
+            ->with([
+                'courses' => function ($query) use ($enrolledCourseIds): void {
+                    $query->whereIn('courses.id', $enrolledCourseIds)
+                        ->with(['center', 'category', 'instructors']);
+                },
+            ])
+            ->get();
+    }
+
+    /**
      * @return Builder<Course>
      */
     private function mobileBaseQuery(User $student): Builder
