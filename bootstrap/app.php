@@ -71,6 +71,10 @@ return Application::configure(basePath: dirname(__DIR__))
             RequestIdMiddleware::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/bunny',
+        ]);
+
         // API middleware stack
         $middleware->api([
             ResolveCenterApiKey::class,

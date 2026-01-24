@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video View Test - Bunny Embed</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #333; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #555;
+            font-size: 1.1em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover { background: #1976D2; }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        button.secondary {
+            background: #4CAF50;
+        }
+        button.secondary:hover { background: #45a049; }
+        button.danger {
+            background: #f44336;
+        }
+        button.danger:hover { background: #d32f2f; }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row > div { flex: 1; }
+        .status {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .status.pending { background: #fff3e0; color: #e65100; }
+        .status.success { background: #e8f5e9; color: #2e7d32; }
+        .status.error { background: #ffebee; color: #c62828; }
+        .hidden { display: none; }
+        .log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry { margin: 3px 0; }
+        .log-entry.success { color: #4CAF50; }
+        .log-entry.error { color: #f44336; }
+        .log-entry.info { color: #2196F3; }
+        .log-entry.warn { color: #ff9800; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        iframe {
+            width: 100%;
+            height: 420px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #000;
+        }
+        .hint {
+            font-size: 12px;
+            color: #777;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video View Test (Bunny Embed)</h1>
+
+    <div class="card">
+        <h2>1. Configuration</h2>
+        <div class="row">
+            <div>
+                <label>API Base URL</label>
+                <input type="text" id="apiBaseUrl" value="http://xyz-lms.test/api/v1">
+            </div>
+            <div>
+                <label>User Type</label>
+                <select id="userType">
+                    <option value="student">Student (mobile)</option>
+                    <option value="admin">Admin (may be denied)</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>Center ID</label>
+                <input type="number" id="centerId" value="225">
+            </div>
+            <div>
+                <label>Course ID</label>
+                <input type="number" id="courseId" value="18">
+            </div>
+            <div>
+                <label>Video ID</label>
+                <input type="number" id="videoId" value="64">
+            </div>
+        </div>
+        <label>JWT Token</label>
+        <input type="text" id="jwtToken" placeholder="eyJhbGciOiJIUzI1NiIs...">
+        <div class="row">
+            <div>
+                <label>X-Locale</label>
+                <input type="text" id="locale" value="en">
+                <div class="hint">Optional. Uses X-Locale header.</div>
+            </div>
+            <div>
+                <label>X-Api-Key</label>
+                <input type="text" id="apiKey" placeholder="system-key" value="123456">
+                <div class="hint">Optional. Uses X-Api-Key header.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>2. Playback Actions</h2>
+        <button id="btnRequest" onclick="requestPlayback()">Request Playback</button>
+        <button id="btnRefresh" onclick="refreshToken()" disabled class="secondary">Refresh Token</button>
+        <button id="btnProgress" onclick="sendProgress()" disabled>Send Progress</button>
+        <button id="btnClose" onclick="closeSession()" disabled class="danger">Close Session</button>
+
+        <div class="row">
+            <div>
+                <label>Progress Percentage</label>
+                <input type="number" id="progressPercent" value="10" min="0" max="100">
+            </div>
+            <div>
+                <label>Watch Duration (seconds)</label>
+                <input type="number" id="watchDuration" value="60" min="0">
+            </div>
+        </div>
+
+        <div id="statusContainer" class="hidden">
+            <div id="status" class="status pending">Waiting...</div>
+        </div>
+    </div>
+
+    <div class="card" id="playerCard" class="hidden">
+        <h2>3. Player</h2>
+        <div class="hint">Bunny embed URL is used in an iframe. Token and expires are included in the URL.</div>
+        <input type="text" id="embedUrl" readonly>
+        <iframe id="player" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <div class="card" id="sessionInfo" class="hidden">
+        <h2>Session Info</h2>
+        <pre id="sessionData"></pre>
+    </div>
+
+    <div class="card">
+        <h2>Logs</h2>
+        <div id="logContainer" class="log"></div>
+    </div>
+
+    <script>
+        let currentSessionId = null;
+        let currentEmbedUrl = null;
+
+        function log(type, message) {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function setStatus(status, message) {
+            const container = document.getElementById('statusContainer');
+            const statusEl = document.getElementById('status');
+            container.classList.remove('hidden');
+            statusEl.className = `status ${status}`;
+            statusEl.textContent = message;
+        }
+
+        function buildHeaders(withJson) {
+            const headers = {
+                'Accept': 'application/json'
+            };
+            if (withJson) {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            const token = document.getElementById('jwtToken').value.trim();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const locale = document.getElementById('locale').value.trim();
+            if (locale) {
+                headers['X-Locale'] = locale;
+            }
+
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (apiKey) {
+                headers['X-Api-Key'] = apiKey;
+            }
+
+            return headers;
+        }
+
+        function updateSessionView(payload) {
+            currentSessionId = payload.session_id;
+            currentEmbedUrl = payload.embed_url || null;
+
+            document.getElementById('sessionInfo').classList.remove('hidden');
+            document.getElementById('sessionData').textContent = JSON.stringify(payload, null, 2);
+
+            if (currentEmbedUrl) {
+                document.getElementById('playerCard').classList.remove('hidden');
+                document.getElementById('embedUrl').value = currentEmbedUrl;
+                document.getElementById('player').src = currentEmbedUrl;
+            }
+
+            document.getElementById('btnRefresh').disabled = false;
+            document.getElementById('btnProgress').disabled = false;
+            document.getElementById('btnClose').disabled = false;
+        }
+
+        async function requestPlayback() {
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+            const centerId = document.getElementById('centerId').value;
+            const courseId = document.getElementById('courseId').value;
+            const videoId = document.getElementById('videoId').value;
+            const userType = document.getElementById('userType').value;
+
+            log('info', `Requesting playback as ${userType}...`);
+            setStatus('pending', 'Requesting playback...');
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/videos/${videoId}/request_playback`, {
+                    method: 'POST',
+                    headers: buildHeaders(true),
+                    body: JSON.stringify({})
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error?.message || 'Request failed');
+                }
+
+                log('success', `Session created: ${data.data.session_id}`);
+                log('info', `Embed URL: ${data.data.embed_url}`);
+                setStatus('success', 'Playback session created');
+
+                updateSessionView(data.data);
+            } catch (error) {
+                log('error', `Request failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+
+        async function refreshToken() {
+            if (!currentSessionId) {
+                alert('No session created yet');
+                return;
+            }
+
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+            const centerId = document.getElementById('centerId').value;
+            const courseId = document.getElementById('courseId').value;
+            const videoId = document.getElementById('videoId').value;
+
+            log('info', 'Refreshing embed token...');
+            setStatus('pending', 'Refreshing token...');
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/videos/${videoId}/refresh_token`, {
+                    method: 'POST',
+                    headers: buildHeaders(true),
+                    body: JSON.stringify({ session_id: currentSessionId })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error?.message || 'Refresh failed');
+                }
+
+                log('success', 'Token refreshed');
+                setStatus('success', 'Embed token refreshed');
+
+                updateSessionView(data.data);
+            } catch (error) {
+                log('error', `Refresh failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+
+        async function sendProgress() {
+            if (!currentSessionId) {
+                alert('No session created yet');
+                return;
+            }
+
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+            const centerId = document.getElementById('centerId').value;
+            const courseId = document.getElementById('courseId').value;
+            const videoId = document.getElementById('videoId').value;
+            const percent = parseInt(document.getElementById('progressPercent').value || '0', 10);
+
+            log('info', `Sending progress: ${percent}%`);
+            setStatus('pending', 'Sending progress...');
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/videos/${videoId}/playback_progress`, {
+                    method: 'POST',
+                    headers: buildHeaders(true),
+                    body: JSON.stringify({ session_id: currentSessionId, percentage: percent })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error?.message || 'Progress update failed');
+                }
+
+                log('success', `Progress updated: ${data.data.progress}%`);
+                setStatus('success', 'Progress updated');
+            } catch (error) {
+                log('error', `Progress failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+
+        async function closeSession() {
+            if (!currentSessionId) {
+                alert('No session created yet');
+                return;
+            }
+
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+            const centerId = document.getElementById('centerId').value;
+            const courseId = document.getElementById('courseId').value;
+            const videoId = document.getElementById('videoId').value;
+            const watchDuration = parseInt(document.getElementById('watchDuration').value || '0', 10);
+
+            log('warn', 'Closing session...');
+            setStatus('pending', 'Closing session...');
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/videos/${videoId}/close_session`, {
+                    method: 'POST',
+                    headers: buildHeaders(true),
+                    body: JSON.stringify({ session_id: currentSessionId, watch_duration: watchDuration })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error?.message || 'Close failed');
+                }
+
+                log('success', 'Session closed');
+                setStatus('success', 'Session closed');
+            } catch (error) {
+                log('error', `Close failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

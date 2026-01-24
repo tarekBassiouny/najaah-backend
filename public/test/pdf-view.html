@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF View Test - Signed URL</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #333; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #555;
+            font-size: 1.1em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover { background: #1976D2; }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row > div { flex: 1; }
+        .status {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .status.pending { background: #fff3e0; color: #e65100; }
+        .status.success { background: #e8f5e9; color: #2e7d32; }
+        .status.error { background: #ffebee; color: #c62828; }
+        .hidden { display: none; }
+        .log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry { margin: 3px 0; }
+        .log-entry.success { color: #4CAF50; }
+        .log-entry.error { color: #f44336; }
+        .log-entry.info { color: #2196F3; }
+        .log-entry.warn { color: #ff9800; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        iframe {
+            width: 100%;
+            height: 520px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+        }
+        .hint {
+            font-size: 12px;
+            color: #777;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>PDF View Test (Signed URL)</h1>
+
+    <div class="card">
+        <h2>1. Configuration</h2>
+        <div class="row">
+            <div>
+                <label>API Base URL</label>
+                <input type="text" id="apiBaseUrl" value="http://xyz-lms.test/api/v1">
+            </div>
+            <div>
+                <label>User Type</label>
+                <select id="userType">
+                    <option value="student">Student (mobile)</option>
+                    <option value="admin">Admin (may be denied)</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>Center ID</label>
+                <input type="number" id="centerId" value="225">
+            </div>
+            <div>
+                <label>Course ID</label>
+                <input type="number" id="courseId" value="18">
+            </div>
+            <div>
+                <label>PDF ID</label>
+                <input type="number" id="pdfId" value="50">
+            </div>
+        </div>
+        <label>JWT Token</label>
+        <input type="text" id="jwtToken" placeholder="eyJhbGciOiJIUzI1NiIs...">
+        <div class="row">
+            <div>
+                <label>X-Locale</label>
+                <input type="text" id="locale" value="en">
+                <div class="hint">Optional. Uses X-Locale header.</div>
+            </div>
+            <div>
+                <label>X-Api-Key</label>
+                <input type="text" id="apiKey" placeholder="system-key" value="123456">
+                <div class="hint">Optional. Uses X-Api-Key header.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>2. Signed URL</h2>
+        <button id="btnRequest" onclick="requestSignedUrl()">Request Signed URL</button>
+        <div id="statusContainer" class="hidden">
+            <div id="status" class="status pending">Waiting...</div>
+        </div>
+        <div class="hint">The mobile endpoint requires a student token and active enrollment.</div>
+    </div>
+
+    <div class="card" id="viewerCard" class="hidden">
+        <h2>3. Viewer</h2>
+        <input type="text" id="signedUrl" readonly>
+        <iframe id="viewer" src=""></iframe>
+    </div>
+
+    <div class="card" id="sessionInfo" class="hidden">
+        <h2>Response</h2>
+        <pre id="sessionData"></pre>
+    </div>
+
+    <div class="card">
+        <h2>Logs</h2>
+        <div id="logContainer" class="log"></div>
+    </div>
+
+    <script>
+        function log(type, message) {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function setStatus(status, message) {
+            const container = document.getElementById('statusContainer');
+            const statusEl = document.getElementById('status');
+            container.classList.remove('hidden');
+            statusEl.className = `status ${status}`;
+            statusEl.textContent = message;
+        }
+
+        function buildHeaders() {
+            const headers = {
+                'Accept': 'application/json'
+            };
+
+            const token = document.getElementById('jwtToken').value.trim();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const locale = document.getElementById('locale').value.trim();
+            if (locale) {
+                headers['X-Locale'] = locale;
+            }
+
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (apiKey) {
+                headers['X-Api-Key'] = apiKey;
+            }
+
+            return headers;
+        }
+
+        async function requestSignedUrl() {
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+            const centerId = document.getElementById('centerId').value;
+            const courseId = document.getElementById('courseId').value;
+            const pdfId = document.getElementById('pdfId').value;
+            const userType = document.getElementById('userType').value;
+
+            log('info', `Requesting signed URL as ${userType}...`);
+            setStatus('pending', 'Requesting signed URL...');
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/pdfs/${pdfId}/signed-url`, {
+                    method: 'GET',
+                    headers: buildHeaders()
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error?.message || 'Request failed');
+                }
+
+                log('success', 'Signed URL received');
+                setStatus('success', 'Signed URL ready');
+
+                document.getElementById('sessionInfo').classList.remove('hidden');
+                document.getElementById('sessionData').textContent = JSON.stringify(data, null, 2);
+
+                document.getElementById('viewerCard').classList.remove('hidden');
+                document.getElementById('signedUrl').value = data.data.url;
+                document.getElementById('viewer').src = data.data.url;
+            } catch (error) {
+                log('error', `Request failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
