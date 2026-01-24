@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Bunny\BunnyStreamService;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('videos');
@@ -36,11 +36,19 @@ it('creates bunny video and returns upload url', function (): void {
                 'course_id' => null,
                 'env' => config('app.env'),
             ],
-        ], 123)
+        ], 123, \Mockery::type('int'))
         ->andReturn([
             'id' => 'bunny-123',
             'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-123',
+            'tus_upload_url' => 'https://video.bunnycdn.com/tusupload',
+            'presigned_headers' => [
+                'AuthorizationSignature' => 'test-signature',
+                'AuthorizationExpire' => time() + 10800,
+                'VideoId' => 'bunny-123',
+                'LibraryId' => 123,
+            ],
             'library_id' => 123,
+            'raw' => [],
         ]);
 
     $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/videos/upload-sessions", [
@@ -52,7 +60,8 @@ it('creates bunny video and returns upload url', function (): void {
         ->assertJsonPath('data.upload_session_id', fn ($id) => is_int($id) || is_numeric($id))
         ->assertJsonPath('data.provider', 'bunny')
         ->assertJsonPath('data.remote_id', fn ($id) => is_string($id) && $id !== '')
-        ->assertJsonPath('data.upload_endpoint', fn ($url) => is_string($url) && $url !== '');
+        ->assertJsonPath('data.upload_endpoint', 'https://video.bunnycdn.com/tusupload')
+        ->assertJsonStructure(['data' => ['presigned_headers' => ['AuthorizationSignature', 'AuthorizationExpire', 'VideoId', 'LibraryId']]]);
 
     $this->assertDatabaseHas('video_upload_sessions', [
         'center_id' => $center->id,
@@ -86,11 +95,19 @@ it('ties existing video to new upload session', function (): void {
                 'course_id' => null,
                 'env' => config('app.env'),
             ],
-        ], 123)
+        ], 123, \Mockery::type('int'))
         ->andReturn([
             'id' => 'bunny-456',
             'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-456',
+            'tus_upload_url' => 'https://video.bunnycdn.com/tusupload',
+            'presigned_headers' => [
+                'AuthorizationSignature' => 'test-signature',
+                'AuthorizationExpire' => time() + 10800,
+                'VideoId' => 'bunny-456',
+                'LibraryId' => 123,
+            ],
             'library_id' => 123,
+            'raw' => [],
         ]);
 
     $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/videos/upload-sessions", [
@@ -100,12 +117,12 @@ it('ties existing video to new upload session', function (): void {
 
     $response->assertCreated()
         ->assertJsonPath('data.remote_id', fn ($id) => is_string($id) && $id !== '')
-        ->assertJsonPath('data.upload_endpoint', fn ($url) => is_string($url) && $url !== '');
+        ->assertJsonPath('data.upload_endpoint', 'https://video.bunnycdn.com/tusupload');
 
     $video->refresh();
     expect($video->upload_session_id)->not->toBeNull()
         ->and($video->source_id)->not->toBeNull()
-        ->and($video->encoding_status)->toBe(VideoUploadService::STATUS_PENDING);
+        ->and($video->encoding_status)->toBe(VideoUploadStatus::Pending);
 });
 
 it('rejects upload authorization without admin authentication', function (): void {
@@ -174,12 +191,28 @@ it('creates a new upload session on retry', function (): void {
             [
                 'id' => 'bunny-111',
                 'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-111',
+                'tus_upload_url' => 'https://video.bunnycdn.com/tusupload',
+                'presigned_headers' => [
+                    'AuthorizationSignature' => 'test-signature-1',
+                    'AuthorizationExpire' => time() + 10800,
+                    'VideoId' => 'bunny-111',
+                    'LibraryId' => 123,
+                ],
                 'library_id' => 123,
+                'raw' => [],
             ],
             [
                 'id' => 'bunny-222',
                 'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-222',
+                'tus_upload_url' => 'https://video.bunnycdn.com/tusupload',
+                'presigned_headers' => [
+                    'AuthorizationSignature' => 'test-signature-2',
+                    'AuthorizationExpire' => time() + 10800,
+                    'VideoId' => 'bunny-222',
+                    'LibraryId' => 123,
+                ],
                 'library_id' => 123,
+                'raw' => [],
             ]
         );
 

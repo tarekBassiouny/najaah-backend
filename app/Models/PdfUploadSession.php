@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\PdfUploadStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $center_id
  * @property int $created_by
  * @property string $object_key
- * @property int $upload_status
+ * @property PdfUploadStatus $upload_status
  * @property string|null $error_message
  * @property string $file_extension
  * @property int|null $file_size_kb
@@ -47,7 +48,7 @@ class PdfUploadSession extends Model
         'created_by' => 'integer',
         'file_size_kb' => 'integer',
         'expires_at' => 'immutable_datetime',
-        'upload_status' => 'integer',
+        'upload_status' => PdfUploadStatus::class,
     ];
 
     /** @return BelongsTo<Center, self> */

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pivots\CourseVideo;
@@ -12,7 +13,6 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterOnboardingService;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -406,7 +406,7 @@ class ProductionDemoSeeder extends Seeder
                 'source_id' => null,
                 'duration_seconds' => $payload['duration'],
                 'lifecycle_status' => 2,
-                'encoding_status' => VideoUploadService::STATUS_READY,
+                'encoding_status' => VideoUploadStatus::Ready,
                 'tags' => [
                     'demo' => true,
                     'source' => 'ProductionDemoSeeder',

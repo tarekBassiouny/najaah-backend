@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Pdfs;
 
+use App\Http\Controllers\Concerns\AdminAuthenticates;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Pdfs\ListPdfsRequest;
 use App\Http\Requests\Admin\Pdfs\StorePdfRequest;
@@ -11,17 +12,17 @@ use App\Http\Requests\Admin\Pdfs\UpdatePdfRequest;
 use App\Http\Resources\Admin\PdfResource;
 use App\Models\Center;
 use App\Models\Pdf;
-use App\Models\User;
-use App\Services\Pdfs\AdminPdfQueryService;
-use App\Services\Pdfs\PdfService;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
+use App\Services\Pdfs\Contracts\PdfServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class PdfController extends Controller
 {
+    use AdminAuthenticates;
+
     public function __construct(
-        private readonly PdfService $pdfService,
-        private readonly AdminPdfQueryService $queryService
+        private readonly PdfServiceInterface $pdfService,
+        private readonly AdminPdfQueryServiceInterface $queryService
     ) {}
 
     public function index(ListPdfsRequest $request, Center $center): JsonResponse
@@ -100,35 +101,7 @@ class PdfController extends Controller
     private function assertPdfBelongsToCenter(Center $center, Pdf $pdf): void
     {
         if ((int) $pdf->center_id !== (int) $center->id) {
-            $this->notFound();
+            $this->notFound('PDF not found.');
         }
-    }
-
-    private function requireAdmin(): User
-    {
-        $admin = request()->user();
-
-        if (! $admin instanceof User) {
-            throw new HttpResponseException(response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'UNAUTHORIZED',
-                    'message' => 'Authentication required.',
-                ],
-            ], 401));
-        }
-
-        return $admin;
-    }
-
-    private function notFound(): void
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => 'NOT_FOUND',
-                'message' => 'PDF not found.',
-            ],
-        ], 404));
     }
 }

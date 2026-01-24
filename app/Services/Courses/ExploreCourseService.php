@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Enums\VideoUploadStatus;
 use App\Exceptions\CenterMismatchException;
 use App\Exceptions\NotFoundException;
 use App\Filters\Mobile\CourseFilters;
@@ -78,12 +79,12 @@ class ExploreCourseService
         }
 
         $query->whereDoesntHave('videos', function ($query): void {
-            $query->where('encoding_status', '!=', 3)
+            $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
                 ->orWhere('lifecycle_status', '!=', 2)
                 ->orWhere(function ($query): void {
                     $query->whereNotNull('upload_session_id')
                         ->whereHas('uploadSession', function ($query): void {
-                            $query->where('upload_status', '!=', 3);
+                            $query->where('upload_status', '!=', VideoUploadStatus::Ready->value);
                         });
                 });
         });
@@ -156,12 +157,12 @@ class ExploreCourseService
 
     private function isVideoReady(Video $video): bool
     {
-        if ((int) $video->encoding_status !== 3 || (int) $video->lifecycle_status !== 2) {
+        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status !== 2) {
             return false;
         }
 
         $session = $video->uploadSession;
-        if ($session !== null && (int) $session->upload_status !== 3) {
+        if ($session !== null && $session->upload_status !== VideoUploadStatus::Ready) {
             return false;
         }
 

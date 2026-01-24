@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Upload Test - Presigned S3 URL</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #333; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #555;
+            font-size: 1.1em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input[type="file"] {
+            padding: 8px;
+            background: #f9f9f9;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover { background: #1976D2; }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        button.success {
+            background: #4CAF50;
+        }
+        button.success:hover { background: #45a049; }
+        .progress-container {
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            height: 24px;
+            margin: 15px 0;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #2196F3, #03A9F4);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry { margin: 3px 0; }
+        .log-entry.success { color: #4CAF50; }
+        .log-entry.error { color: #f44336; }
+        .log-entry.info { color: #2196F3; }
+        .log-entry.warn { color: #ff9800; }
+        .status {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .status.pending { background: #fff3e0; color: #e65100; }
+        .status.uploading { background: #e3f2fd; color: #1565c0; }
+        .status.success { background: #e8f5e9; color: #2e7d32; }
+        .status.error { background: #ffebee; color: #c62828; }
+        .hidden { display: none; }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row > div { flex: 1; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .step-indicator {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: #e0e0e0;
+            position: relative;
+        }
+        .step.active { background: #2196F3; color: white; }
+        .step.completed { background: #4CAF50; color: white; }
+        .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            line-height: 24px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>PDF Upload Test (Presigned S3 URL)</h1>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+        <div class="step" id="step1"><span class="step-number">1</span> Configure</div>
+        <div class="step" id="step2"><span class="step-number">2</span> Initialize</div>
+        <div class="step" id="step3"><span class="step-number">3</span> Upload</div>
+        <div class="step" id="step4"><span class="step-number">4</span> Finalize</div>
+    </div>
+
+    <!-- Configuration -->
+    <div class="card">
+        <h2>1. Configuration</h2>
+        <div class="row">
+            <div>
+                <label>API Base URL</label>
+                <input type="text" id="apiBaseUrl" value="http://localhost/api/v1">
+            </div>
+            <div>
+                <label>Center ID</label>
+                <input type="number" id="centerId" value="1">
+            </div>
+        </div>
+        <label>Admin Token (JWT)</label>
+        <input type="text" id="adminToken" placeholder="eyJhbGciOiJIUzI1NiIs...">
+    </div>
+
+    <!-- File Selection -->
+    <div class="card">
+        <h2>2. Select PDF File</h2>
+        <label>PDF File</label>
+        <input type="file" id="pdfFile" accept=".pdf,application/pdf">
+        <div id="fileInfo" class="hidden">
+            <strong>Selected:</strong> <span id="fileName"></span> (<span id="fileSize"></span>)
+        </div>
+    </div>
+
+    <!-- Upload Actions -->
+    <div class="card">
+        <h2>3. Upload Actions</h2>
+        <button id="btnInitialize" onclick="initializeSession()">Step 1: Initialize Session</button>
+        <button id="btnUpload" onclick="uploadFile()" disabled>Step 2: Upload to S3</button>
+        <button id="btnFinalize" onclick="finalizeUpload()" disabled class="success">Step 3: Finalize</button>
+
+        <div id="statusContainer" class="hidden">
+            <div id="status" class="status pending">Waiting...</div>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar">0%</div>
+        </div>
+    </div>
+
+    <!-- Finalize Options -->
+    <div class="card" id="finalizeCard" class="hidden">
+        <h2>4. Finalize Options</h2>
+        <label>PDF Title</label>
+        <input type="text" id="pdfTitle" placeholder="Enter PDF title">
+        <label>Description (optional)</label>
+        <input type="text" id="pdfDescription" placeholder="Enter description">
+    </div>
+
+    <!-- Session Info -->
+    <div class="card" id="sessionInfo" class="hidden">
+        <h2>Session Info</h2>
+        <pre id="sessionData"></pre>
+    </div>
+
+    <!-- Logs -->
+    <div class="card">
+        <h2>Logs</h2>
+        <div id="logContainer" class="log"></div>
+    </div>
+
+    <script>
+        let uploadSession = null;
+        let selectedFile = null;
+
+        // File selection handler
+        document.getElementById('pdfFile').addEventListener('change', function(e) {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                document.getElementById('fileInfo').classList.remove('hidden');
+                document.getElementById('fileName').textContent = selectedFile.name;
+                document.getElementById('fileSize').textContent = formatBytes(selectedFile.size);
+                document.getElementById('pdfTitle').value = selectedFile.name.replace('.pdf', '');
+                log('info', `File selected: ${selectedFile.name} (${formatBytes(selectedFile.size)})`);
+                setStep(1);
+            }
+        });
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function log(type, message) {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function setStatus(status, message) {
+            const container = document.getElementById('statusContainer');
+            const statusEl = document.getElementById('status');
+            container.classList.remove('hidden');
+            statusEl.className = `status ${status}`;
+            statusEl.textContent = message;
+        }
+
+        function setStep(step) {
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(`step${i}`);
+                el.classList.remove('active', 'completed');
+                if (i < step) el.classList.add('completed');
+                if (i === step) el.classList.add('active');
+            }
+        }
+
+        function updateProgress(percent) {
+            const bar = document.getElementById('progressBar');
+            bar.style.width = `${percent}%`;
+            bar.textContent = `${percent.toFixed(1)}%`;
+        }
+
+        async function initializeSession() {
+            if (!selectedFile) {
+                alert('Please select a PDF file first');
+                return;
+            }
+
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value;
+            const centerId = document.getElementById('centerId').value;
+            const adminToken = document.getElementById('adminToken').value;
+
+            log('info', 'Initializing upload session...');
+            setStatus('pending', 'Initializing session...');
+            setStep(2);
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/admin/centers/${centerId}/pdfs/upload-sessions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({
+                        original_filename: selectedFile.name,
+                        file_size_kb: Math.ceil(selectedFile.size / 1024)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error?.message || 'Failed to initialize');
+                }
+
+                uploadSession = data.data;
+
+                document.getElementById('sessionInfo').classList.remove('hidden');
+                document.getElementById('sessionData').textContent = JSON.stringify(uploadSession, null, 2);
+
+                log('success', `Session created: ${uploadSession.upload_session_id}`);
+                log('info', `Provider: ${uploadSession.provider}`);
+                log('info', `Remote ID: ${uploadSession.remote_id}`);
+                log('info', `Expires: ${uploadSession.expires_at}`);
+
+                setStatus('success', 'Session initialized - Ready to upload');
+                document.getElementById('btnInitialize').disabled = true;
+                document.getElementById('btnUpload').disabled = false;
+
+            } catch (error) {
+                log('error', `Initialization failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+
+        async function uploadFile() {
+            if (!uploadSession || !selectedFile) {
+                alert('Please initialize session first');
+                return;
+            }
+
+            log('info', 'Starting upload to presigned URL...');
+            setStatus('uploading', 'Uploading to S3...');
+            setStep(3);
+
+            try {
+                const xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percent = (e.loaded / e.total) * 100;
+                        updateProgress(percent);
+                        log('info', `Progress: ${formatBytes(e.loaded)} / ${formatBytes(e.total)}`);
+                    }
+                });
+
+                xhr.addEventListener('load', function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        log('success', `Upload completed! Status: ${xhr.status}`);
+                        setStatus('success', 'File uploaded to S3 - Ready to finalize');
+                        updateProgress(100);
+                        document.getElementById('btnUpload').disabled = true;
+                        document.getElementById('btnFinalize').disabled = false;
+                        document.getElementById('finalizeCard').classList.remove('hidden');
+                    } else {
+                        throw new Error(`Upload failed with status ${xhr.status}`);
+                    }
+                });
+
+                xhr.addEventListener('error', function() {
+                    log('error', 'Upload failed - Network error');
+                    setStatus('error', 'Upload failed');
+                });
+
+                xhr.open('PUT', uploadSession.upload_endpoint);
+                xhr.setRequestHeader('Content-Type', 'application/pdf');
+                xhr.send(selectedFile);
+
+            } catch (error) {
+                log('error', `Upload failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+
+        async function finalizeUpload() {
+            if (!uploadSession) {
+                alert('No upload session');
+                return;
+            }
+
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value;
+            const centerId = document.getElementById('centerId').value;
+            const adminToken = document.getElementById('adminToken').value;
+            const title = document.getElementById('pdfTitle').value || selectedFile.name;
+            const description = document.getElementById('pdfDescription').value;
+
+            log('info', 'Finalizing upload...');
+            setStatus('pending', 'Finalizing...');
+            setStep(4);
+
+            try {
+                const response = await fetch(
+                    `${apiBaseUrl}/admin/centers/${centerId}/pdfs/upload-sessions/${uploadSession.upload_session_id}/finalize`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${adminToken}`
+                        },
+                        body: JSON.stringify({
+                            title: title,
+                            description: description || null
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || data.error?.message || 'Finalize failed');
+                }
+
+                log('success', 'PDF created successfully!');
+                log('info', `Upload Status: ${data.data.upload_status}`);
+
+                document.getElementById('sessionData').textContent = JSON.stringify(data.data, null, 2);
+                setStatus('success', 'PDF uploaded and created successfully!');
+                document.getElementById('btnFinalize').disabled = true;
+
+            } catch (error) {
+                log('error', `Finalize failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

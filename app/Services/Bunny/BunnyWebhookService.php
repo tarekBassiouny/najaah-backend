@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Bunny;
 
+use App\Enums\VideoUploadStatus;
 use App\Models\BunnyWebhookLog;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Support\Facades\Log;
 
 class BunnyWebhookService
@@ -18,6 +18,10 @@ class BunnyWebhookService
     public function handle(array $payload): void
     {
         try {
+            Log::channel('domain')->info('bunny_webhook_payload', [
+                'payload' => $payload,
+            ]);
+
             $videoGuid = isset($payload['VideoGuid']) && is_string($payload['VideoGuid'])
                 ? $payload['VideoGuid']
                 : null;
@@ -71,21 +75,21 @@ class BunnyWebhookService
                 return;
             }
 
-            if ($session->expires_at !== null && $session->expires_at->isPast()) {
-                Log::channel('domain')->info('bunny_webhook_ignored', [
-                    'reason' => 'session_expired',
-                    'session_id' => $session->id,
-                    'video_guid' => $videoGuid,
-                ]);
+            // Note: We intentionally do NOT check session expiry here.
+            // The expires_at field is for the upload URL TTL, not encoding.
+            // Video encoding can take many hours (especially for 2+ hour videos),
+            // and we must accept webhook updates regardless of upload URL expiry.
+            // The shouldTransition() check below handles terminal state protection.
 
-                return;
-            }
+            $currentStatus = $session->upload_status instanceof VideoUploadStatus
+                ? $session->upload_status
+                : VideoUploadStatus::from((int) $session->upload_status);
 
-            if (! $this->shouldTransition($session->upload_status, $mappedStatus)) {
+            if (! $this->shouldTransition($currentStatus, $mappedStatus)) {
                 Log::channel('domain')->info('bunny_webhook_ignored', [
                     'reason' => 'duplicate_or_invalid_transition',
                     'session_id' => $session->id,
-                    'status' => $mappedStatus,
+                    'status' => $mappedStatus->value,
                 ]);
 
                 return;
@@ -93,11 +97,11 @@ class BunnyWebhookService
 
             $session->upload_status = $mappedStatus;
 
-            if ($mappedStatus === VideoUploadService::STATUS_FAILED) {
+            if ($mappedStatus === VideoUploadStatus::Failed) {
                 $session->error_message = $errorMessage;
             }
 
-            if ($mappedStatus === VideoUploadService::STATUS_READY) {
+            if ($mappedStatus === VideoUploadStatus::Ready) {
                 $session->progress_percent = 100;
                 $session->error_message = null;
             }
@@ -107,7 +111,7 @@ class BunnyWebhookService
             Log::channel('domain')->info('bunny_webhook_applied', [
                 'session_id' => $session->id,
                 'video_guid' => $videoGuid,
-                'status' => $mappedStatus,
+                'status' => $mappedStatus->value,
             ]);
 
             $videos = Video::where('source_id', $videoGuid)
@@ -133,69 +137,70 @@ class BunnyWebhookService
         }
     }
 
-    private function mapStatus(int $status): ?int
+    private function mapStatus(int $status): ?VideoUploadStatus
     {
         $map = [
-            0 => VideoUploadService::STATUS_PROCESSING,
-            1 => VideoUploadService::STATUS_PROCESSING,
-            2 => VideoUploadService::STATUS_PROCESSING,
-            3 => VideoUploadService::STATUS_READY,
-            4 => VideoUploadService::STATUS_READY,
-            5 => VideoUploadService::STATUS_FAILED,
-            6 => VideoUploadService::STATUS_UPLOADING,
-            7 => VideoUploadService::STATUS_PROCESSING,
-            8 => VideoUploadService::STATUS_FAILED,
+            0 => VideoUploadStatus::Processing,
+            1 => VideoUploadStatus::Processing,
+            2 => VideoUploadStatus::Processing,
+            3 => VideoUploadStatus::Ready,
+            4 => VideoUploadStatus::Ready,
+            5 => VideoUploadStatus::Failed,
+            6 => VideoUploadStatus::Uploading,
+            7 => VideoUploadStatus::Processing,
+            8 => VideoUploadStatus::Failed,
         ];
 
-        if (! isset($map[$status])) {
-            return null;
-        }
-
-        return $map[$status];
+        return $map[$status] ?? null;
     }
 
-    private function shouldTransition(int $current, int $incoming): bool
+    private function shouldTransition(VideoUploadStatus $current, VideoUploadStatus $incoming): bool
     {
-        if (in_array($current, [VideoUploadService::STATUS_READY, VideoUploadService::STATUS_FAILED], true)) {
+        if (in_array($current, [VideoUploadStatus::Ready, VideoUploadStatus::Failed], true)) {
             return false;
         }
 
-        $priority = [
-            0 => 0,
-            VideoUploadService::STATUS_UPLOADING => 1,
-            VideoUploadService::STATUS_PROCESSING => 2,
-            VideoUploadService::STATUS_READY => 3,
-            VideoUploadService::STATUS_FAILED => 4,
-        ];
-
-        $currentPriority = $priority[$current] ?? 0;
-        $incomingPriority = $priority[$incoming] ?? 0;
+        $currentPriority = $this->priority($current);
+        $incomingPriority = $this->priority($incoming);
 
         return $incomingPriority > $currentPriority;
     }
 
-    private function applyVideoState(Video $video, int $status): void
+    private function applyVideoState(Video $video, VideoUploadStatus $status): void
     {
-        if ($video->encoding_status === VideoUploadService::STATUS_READY) {
+        $currentStatus = $video->encoding_status;
+
+        if ($currentStatus === VideoUploadStatus::Ready) {
             return;
         }
 
-        if ($status === VideoUploadService::STATUS_FAILED) {
-            $video->encoding_status = 0;
+        if ($status === VideoUploadStatus::Failed) {
+            $video->encoding_status = VideoUploadStatus::Pending;
             $video->lifecycle_status = 0;
             $video->save();
 
             return;
         }
 
-        $shouldUpdate = $this->shouldTransition($video->encoding_status, $status);
+        $shouldUpdate = $this->shouldTransition($currentStatus, $status);
 
         if (! $shouldUpdate) {
             return;
         }
 
         $video->encoding_status = $status;
-        $video->lifecycle_status = $status === VideoUploadService::STATUS_READY ? 2 : 1;
+        $video->lifecycle_status = $status === VideoUploadStatus::Ready ? 2 : 1;
         $video->save();
+    }
+
+    private function priority(VideoUploadStatus $status): int
+    {
+        return match ($status) {
+            VideoUploadStatus::Pending => 0,
+            VideoUploadStatus::Uploading => 1,
+            VideoUploadStatus::Processing => 2,
+            VideoUploadStatus::Ready => 3,
+            VideoUploadStatus::Failed => 4,
+        };
     }
 }

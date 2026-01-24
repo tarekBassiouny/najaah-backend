@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Videos;
 
+use App\Http\Controllers\Concerns\AdminAuthenticates;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Videos\ListVideosRequest;
 use App\Http\Requests\Admin\Videos\StoreVideoRequest;
@@ -11,18 +12,18 @@ use App\Http\Requests\Admin\Videos\UpdateVideoRequest;
 use App\Http\Resources\Admin\Videos\AdminVideoResource;
 use App\Http\Resources\Admin\Videos\VideoResource;
 use App\Models\Center;
-use App\Models\User;
 use App\Models\Video;
-use App\Services\Videos\AdminVideoQueryService;
-use App\Services\Videos\VideoService;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
+use App\Services\Videos\Contracts\VideoServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class VideoController extends Controller
 {
+    use AdminAuthenticates;
+
     public function __construct(
-        private readonly VideoService $videoService,
-        private readonly AdminVideoQueryService $queryService
+        private readonly VideoServiceInterface $videoService,
+        private readonly AdminVideoQueryServiceInterface $queryService
     ) {}
 
     public function index(ListVideosRequest $request, Center $center): JsonResponse
@@ -101,35 +102,7 @@ class VideoController extends Controller
     private function assertVideoBelongsToCenter(Center $center, Video $video): void
     {
         if ((int) $video->center_id !== (int) $center->id) {
-            $this->notFound();
+            $this->notFound('Video not found.');
         }
-    }
-
-    private function requireAdmin(): User
-    {
-        $admin = request()->user();
-
-        if (! $admin instanceof User) {
-            throw new HttpResponseException(response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'UNAUTHORIZED',
-                    'message' => 'Authentication required.',
-                ],
-            ], 401));
-        }
-
-        return $admin;
-    }
-
-    private function notFound(): void
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => 'NOT_FOUND',
-                'message' => 'Video not found.',
-            ],
-        ], 404));
     }
 }

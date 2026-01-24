@@ -9,13 +9,13 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pdf;
 use App\Models\User;
-use App\Services\Pdfs\PdfAccessService;
+use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PdfController extends Controller
 {
-    public function __construct(private readonly PdfAccessService $accessService) {}
+    public function __construct(private readonly PdfAccessServiceInterface $accessService) {}
 
     public function signedUrl(Request $request, Center $center, Course $course, Pdf $pdf): JsonResponse
     {

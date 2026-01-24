@@ -8,10 +8,11 @@ use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
-class AdminVideoQueryService
+class AdminVideoQueryService implements AdminVideoQueryServiceInterface
 {
     public function __construct(private readonly CenterScopeService $centerScopeService) {}
 

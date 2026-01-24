@@ -93,7 +93,7 @@ class JwtMobileMiddleware
             $device = UserDevice::find($record->device_id);
 
             if ($device === null || $device->status !== UserDevice::STATUS_ACTIVE) {
-                return $this->deny();
+                return $this->deny('DEVICE_MISMATCH', 'Device is not authorized for this user.');
             }
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\VideoUploadStatus;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CourseVideo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,7 +31,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $created_by
  * @property int|null $upload_session_id
  * @property string|null $original_filename
- * @property int $encoding_status
+ * @property VideoUploadStatus $encoding_status
+ * @property int $views_count
  * @property string|null $thumbnail_url
  * @property array<string, string>|null $thumbnail_urls
  * @property-read User $creator
@@ -67,6 +69,7 @@ class Video extends Model
         'is_demo',
         'thumbnail_url',
         'thumbnail_urls',
+        'views_count',
     ];
 
     protected $casts = [
@@ -77,10 +80,11 @@ class Video extends Model
         'duration_seconds' => 'integer',
         'lifecycle_status' => 'integer',
         'source_type' => 'integer',
-        'encoding_status' => 'integer',
+        'encoding_status' => VideoUploadStatus::class,
         'is_demo' => 'boolean',
         'library_id' => 'integer',
         'thumbnail_urls' => 'array',
+        'views_count' => 'integer',
     ];
 
     /** @var array<int, string> */

@@ -87,6 +87,7 @@ function route(item) {
   /* ========= PUBLIC ========= */
 
   if (has(path, "/api/v1/resolve")) return tree.public;
+  if (path === "/webhooks/bunny") return tree.public;
 
   /* ========= MOBILE AUTH ========= */
 
@@ -96,7 +97,7 @@ function route(item) {
 
   // Playback
   if (
-    path.match(/^\/api\/v1\/centers\/[^/]+\/courses\/[^/]+\/videos\/[^/]+\/(request_playback|refresh_token|playback_progress)$/)
+    path.match(/^\/api\/v1\/centers\/[^/]+\/courses\/[^/]+\/videos\/[^/]+\/(request_playback|refresh_token|playback_progress|close_session)$/)
   ) return tree.studentPlayback;
 
   // Extra view
@@ -110,6 +111,7 @@ function route(item) {
 
   // Enrolled courses
   if (path === "/api/v1/courses/enrolled") return tree.studentCourses;
+  if (path === "/api/v1/courses/enrolled/by-instructor") return tree.studentCourses;
 
   // Explore
   if (path === "/api/v1/courses/explore") return tree.studentCourses;
@@ -128,6 +130,12 @@ function route(item) {
   // Search / categories
   if (path === "/api/v1/search" || path === "/api/v1/categories")
     return tree.studentCourses;
+
+  // Auth profile/logout
+  if (
+    path === "/api/v1/auth/me" ||
+    path === "/api/v1/auth/logout"
+  ) return tree.mobileAuth;
 
   // Centers (unbranded)
   if (

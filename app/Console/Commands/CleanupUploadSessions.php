@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Enums\PdfUploadStatus;
+use App\Enums\VideoUploadStatus;
 use App\Models\PdfUploadSession;
 use App\Models\VideoUploadSession;
-use App\Services\Pdfs\PdfUploadSessionService;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -27,17 +27,17 @@ class CleanupUploadSessions extends Command
         $pdfCutoff = $now->copy()->subDays($pdfTtlDays);
 
         $videoQuery = VideoUploadSession::query()
-            ->where('upload_status', '!=', VideoUploadService::STATUS_READY)
+            ->where('upload_status', '!=', VideoUploadStatus::Ready)
             ->where(function ($query) use ($now, $videoCutoff): void {
                 $query
                     ->where(function ($sub) use ($now): void {
                         $sub->whereNotNull('expires_at')
                             ->where('expires_at', '<', $now);
                     })
-                    ->orWhereIn('upload_status', [VideoUploadService::STATUS_FAILED])
+                    ->orWhereIn('upload_status', [VideoUploadStatus::Failed])
                     ->orWhere(function ($sub) use ($videoCutoff): void {
                         $sub->where('created_at', '<', $videoCutoff)
-                            ->where('upload_status', '!=', VideoUploadService::STATUS_READY);
+                            ->where('upload_status', '!=', VideoUploadStatus::Ready);
                     });
             })
             ->whereDoesntHave('videos.courses', function ($query): void {
@@ -47,7 +47,7 @@ class CleanupUploadSessions extends Command
         $deletedVideoSessions = $videoQuery->delete();
 
         $pdfQuery = PdfUploadSession::query()
-            ->where('upload_status', '!=', PdfUploadSessionService::STATUS_READY)
+            ->where('upload_status', '!=', PdfUploadStatus::Ready)
             ->where(function ($query) use ($now, $pdfCutoff): void {
                 $query
                     ->where(function ($sub) use ($now): void {
@@ -56,7 +56,7 @@ class CleanupUploadSessions extends Command
                     })
                     ->orWhere(function ($sub) use ($pdfCutoff): void {
                         $sub->where('created_at', '<', $pdfCutoff)
-                            ->where('upload_status', '!=', PdfUploadSessionService::STATUS_READY);
+                            ->where('upload_status', '!=', PdfUploadStatus::Ready);
                     });
             })
             ->whereDoesntHave('pdfs.courses', function ($query): void {

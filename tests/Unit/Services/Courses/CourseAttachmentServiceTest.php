@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\PdfUploadStatus;
+use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pdf;
@@ -11,8 +13,6 @@ use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\CourseAttachmentService;
-use App\Services\Pdfs\PdfUploadSessionService;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(Tests\TestCase::class, RefreshDatabase::class)->group('course', 'services', 'content', 'admin');
@@ -25,7 +25,7 @@ it('assigns and removes video via pivot model', function (): void {
     $session = VideoUploadSession::factory()->create([
         'center_id' => $center->id,
         'uploaded_by' => $actor->id,
-        'upload_status' => VideoUploadService::STATUS_READY,
+        'upload_status' => VideoUploadStatus::Ready,
         'expires_at' => now()->addDay(),
     ]);
     $video = Video::factory()->create([
@@ -51,7 +51,7 @@ it('assigns and removes pdf via pivot model', function (): void {
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $actor->id,
-        'upload_status' => PdfUploadSessionService::STATUS_READY,
+        'upload_status' => PdfUploadStatus::Ready,
     ]);
     $pdf = Pdf::factory()->create([
         'center_id' => $center->id,

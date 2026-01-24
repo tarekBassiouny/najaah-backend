@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Enums\PdfUploadStatus;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
-use App\Services\Pdfs\PdfUploadSessionService;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -65,7 +65,7 @@ it('fails finalize when uploaded object is missing', function (): void {
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,
-        'upload_status' => PdfUploadSessionService::STATUS_PENDING,
+        'upload_status' => PdfUploadStatus::Pending,
     ]);
 
     $storage = \Mockery::mock(StorageServiceInterface::class);
@@ -81,7 +81,7 @@ it('fails finalize when uploaded object is missing', function (): void {
     $response->assertStatus(422);
 
     $session->refresh();
-    expect($session->upload_status)->toBe(PdfUploadSessionService::STATUS_FAILED);
+    expect($session->upload_status)->toBe(PdfUploadStatus::Failed);
 });
 
 it('finalizes upload session and creates pdf when object exists', function (): void {
@@ -91,7 +91,7 @@ it('finalizes upload session and creates pdf when object exists', function (): v
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,
-        'upload_status' => PdfUploadSessionService::STATUS_PENDING,
+        'upload_status' => PdfUploadStatus::Pending,
     ]);
 
     $storage = \Mockery::mock(StorageServiceInterface::class);
@@ -104,7 +104,7 @@ it('finalizes upload session and creates pdf when object exists', function (): v
         $this->adminHeaders()
     );
 
-    $response->assertOk()->assertJsonPath('data.upload_status', PdfUploadSessionService::STATUS_READY);
+    $response->assertOk()->assertJsonPath('data.upload_status', PdfUploadStatus::Ready->value);
 
     $pdf = Pdf::first();
     expect($pdf)->not->toBeNull()

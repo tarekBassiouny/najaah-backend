@@ -9,10 +9,11 @@ use App\Models\Pdf;
 use App\Models\PdfUploadSession;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Pdfs\Contracts\PdfServiceInterface;
 use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Validation\ValidationException;
 
-class PdfService
+class PdfService implements PdfServiceInterface
 {
     public function __construct(private readonly CenterScopeService $centerScopeService) {}
 

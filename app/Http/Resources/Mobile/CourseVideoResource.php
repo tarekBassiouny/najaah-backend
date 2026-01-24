@@ -28,8 +28,7 @@ class CourseVideoResource extends JsonResource
             'id' => $video->id,
             'title' => $video->translate('title'),
             'duration' => $video->duration_seconds,
-            'library_id' => $video->library_id,
-            'video_uuid' => $video->source_id,
+            'thumbnail' => $video->thumbnail_url,
             'is_locked' => ! (bool) ($pivot?->visible ?? true),
         ];
     }

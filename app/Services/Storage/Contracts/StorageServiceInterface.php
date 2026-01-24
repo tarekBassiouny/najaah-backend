@@ -13,7 +13,7 @@ interface StorageServiceInterface
 
     public function temporaryUrl(string $path, int $expiresInSeconds): string;
 
-    public function temporaryUploadUrl(string $path, int $expiresInSeconds): string;
+    public function temporaryUploadUrl(string $path, int $expiresInSeconds, string $contentType): string;
 
     public function url(string $path): string;
 

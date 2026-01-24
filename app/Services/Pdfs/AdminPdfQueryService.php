@@ -8,10 +8,11 @@ use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
-class AdminPdfQueryService
+class AdminPdfQueryService implements AdminPdfQueryServiceInterface
 {
     public function __construct(private readonly CenterScopeService $centerScopeService) {}
 

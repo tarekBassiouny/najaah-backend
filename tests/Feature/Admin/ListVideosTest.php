@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Permission;
@@ -9,7 +10,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +26,7 @@ it('lists videos with upload sessions for admin center', function (): void {
     /** @var VideoUploadSession $session */
     $session = VideoUploadSession::factory()->create([
         'center_id' => $center->id,
-        'upload_status' => VideoUploadService::STATUS_FAILED,
+        'upload_status' => VideoUploadStatus::Failed,
         'error_message' => 'Encoding failed',
     ]);
 
@@ -35,7 +35,7 @@ it('lists videos with upload sessions for admin center', function (): void {
         'center_id' => $center->id,
         'created_by' => $admin->id,
         'upload_session_id' => $session->id,
-        'encoding_status' => VideoUploadService::STATUS_PROCESSING,
+        'encoding_status' => VideoUploadStatus::Processing,
         'lifecycle_status' => 1,
     ]);
 
@@ -55,10 +55,10 @@ it('lists videos with upload sessions for admin center', function (): void {
     $response->assertOk()
         ->assertJsonPath('meta.total', 1)
         ->assertJsonPath('data.0.id', $video->id)
-        ->assertJsonPath('data.0.encoding_status', VideoUploadService::STATUS_PROCESSING)
+        ->assertJsonPath('data.0.encoding_status', VideoUploadStatus::Processing->value)
         ->assertJsonPath('data.0.lifecycle_status', 1)
         ->assertJsonPath('data.0.upload_sessions.0.id', $session->id)
-        ->assertJsonPath('data.0.upload_sessions.0.upload_status', VideoUploadService::STATUS_FAILED)
+        ->assertJsonPath('data.0.upload_sessions.0.upload_status', VideoUploadStatus::Failed->value)
         ->assertJsonPath('data.0.upload_sessions.0.error_message', 'Encoding failed');
 
     $json = $response->json();

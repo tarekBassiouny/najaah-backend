@@ -82,6 +82,7 @@ Route::middleware('jwt.mobile')->group(function (): void {
     |--------------------------------------------------------------------------
     */
     Route::get('/courses/enrolled', [EnrolledCoursesController::class, 'index']);
+    Route::get('/courses/enrolled/by-instructor', [EnrolledCoursesController::class, 'byInstructor']);
 
     /*
     |--------------------------------------------------------------------------
@@ -99,6 +100,10 @@ Route::middleware('jwt.mobile')->group(function (): void {
     Route::post(
         '/centers/{center}/courses/{course}/videos/{video}/playback_progress',
         [PlaybackController::class, 'updateProgress']
+    );
+    Route::post(
+        '/centers/{center}/courses/{course}/videos/{video}/close_session',
+        [PlaybackController::class, 'closeSession']
     );
 
     /*

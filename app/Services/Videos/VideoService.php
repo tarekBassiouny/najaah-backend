@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Videos\Contracts\VideoServiceInterface;
 use App\Support\Guards\RejectNonScalarInput;
 
-class VideoService
+class VideoService implements VideoServiceInterface
 {
     public function __construct(private readonly CenterScopeService $centerScopeService) {}
 
@@ -34,7 +36,7 @@ class VideoService
         $payload['created_by'] = $admin->id;
         $payload['source_type'] = $payload['source_type'] ?? 1;
         $payload['source_provider'] = $payload['source_provider'] ?? 'bunny';
-        $payload['encoding_status'] = 0;
+        $payload['encoding_status'] = VideoUploadStatus::Pending;
         $payload['lifecycle_status'] = 0;
 
         return Video::create($payload);

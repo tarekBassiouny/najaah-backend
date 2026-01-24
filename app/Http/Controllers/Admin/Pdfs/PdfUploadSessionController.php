@@ -4,24 +4,25 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Pdfs;
 
+use App\Http\Controllers\Concerns\AdminAuthenticates;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Pdfs\FinalizePdfUploadSessionRequest;
 use App\Http\Requests\Admin\Pdfs\StorePdfUploadSessionRequest;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
-use App\Models\User;
-use App\Services\Pdfs\PdfService;
-use App\Services\Pdfs\PdfUploadSessionService;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Services\Pdfs\Contracts\PdfServiceInterface;
+use App\Services\Pdfs\Contracts\PdfUploadSessionServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
 class PdfUploadSessionController extends Controller
 {
+    use AdminAuthenticates;
+
     public function __construct(
-        private readonly PdfUploadSessionService $uploadSessionService,
-        private readonly PdfService $pdfService
+        private readonly PdfUploadSessionServiceInterface $uploadSessionService,
+        private readonly PdfServiceInterface $pdfService
     ) {}
 
     public function store(StorePdfUploadSessionRequest $request, Center $center): JsonResponse
@@ -64,7 +65,7 @@ class PdfUploadSessionController extends Controller
         $admin = $this->requireAdmin();
 
         if ((int) $pdfUploadSession->center_id !== (int) $center->id) {
-            $this->notFound();
+            $this->notFound('PDF upload session not found.');
         }
 
         /** @var array<string, mixed> $data */
@@ -81,7 +82,7 @@ class PdfUploadSessionController extends Controller
         if ($pdfId !== null) {
             $pdf = Pdf::findOrFail($pdfId);
             if ((int) $pdf->center_id !== (int) $center->id) {
-                $this->notFound();
+                $this->notFound('PDF upload session not found.');
             }
 
             if ($pdf->upload_session_id !== null && (int) $pdf->upload_session_id !== (int) $session->id) {
@@ -113,33 +114,5 @@ class PdfUploadSessionController extends Controller
                 'error_message' => $session->error_message,
             ],
         ]);
-    }
-
-    private function requireAdmin(): User
-    {
-        $admin = request()->user();
-
-        if (! $admin instanceof User) {
-            throw new HttpResponseException(response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'UNAUTHORIZED',
-                    'message' => 'Authentication required.',
-                ],
-            ], 401));
-        }
-
-        return $admin;
-    }
-
-    private function notFound(): void
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => 'NOT_FOUND',
-                'message' => 'PDF upload session not found.',
-            ],
-        ], 404));
     }
 }

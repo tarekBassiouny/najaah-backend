@@ -5,6 +5,39 @@ endpoints:
     custom: []
     httpMethods:
       - POST
+    uri: webhooks/bunny
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
     uri: api/v1/auth/send-otp
     metadata:
       custom: []
@@ -29,9 +62,9 @@ endpoints:
       phone:
         custom: []
         name: phone
-        description: 'The full phone number including country code.'
+        description: 'Subscriber number without leading zero. Must match the regex /^[1-9][0-9]*$/.'
         required: true
-        example: '{{student_phone}}'
+        example: '123456789'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -40,17 +73,17 @@ endpoints:
       country_code:
         custom: []
         name: country_code
-        description: 'The country dialing code. Must not be greater than 5 characters.'
+        description: 'Dialing code with + or 00 prefix. Must match the regex /^(\+\d{1,6}|00\d{1,6})$/. Must not be greater than 8 characters.'
         required: true
-        example: '{{country_code}}'
+        example: '+966'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      phone: '{{student_phone}}'
-      country_code: '{{country_code}}'
+      phone: '123456789'
+      country_code: '+966'
     fileParameters: []
     responses: []
     responseFields: []
@@ -946,6 +979,51 @@ endpoints:
   -
     custom: []
     httpMethods:
+      - GET
+    uri: api/v1/courses/enrolled/by-instructor
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      category_id:
+        custom: []
+        name: category_id
+        description: 'Filter courses by category ID.'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      category_id: 3
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
       - POST
     uri: 'api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/request_playback'
     metadata:
@@ -1179,6 +1257,99 @@ endpoints:
     cleanBodyParameters:
       session_id: 123
       percentage: 50
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/close_session'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '{{locale}}'
+      X-Api-Key: '{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      video_id:
+        custom: []
+        name: video_id
+        description: 'The ID of the video.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      course_id: 1
+      video_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      session_id:
+        custom: []
+        name: session_id
+        description: 'Playback session identifier. The <code>id</code> of an existing record in the playback_sessions table.'
+        required: true
+        example: 123
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      watch_duration:
+        custom: []
+        name: watch_duration
+        description: 'Total seconds watched. Must be at least 0.'
+        required: true
+        example: 1234
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      session_id: 123
+      watch_duration: 1234
     fileParameters: []
     responses: []
     responseFields: []

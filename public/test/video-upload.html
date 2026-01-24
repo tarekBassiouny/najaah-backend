@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Upload Test - TUS Resumable</title>
+    <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #333; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #555;
+            font-size: 1.1em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input[type="file"] {
+            padding: 8px;
+            background: #f9f9f9;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover { background: #45a049; }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        button.secondary {
+            background: #2196F3;
+        }
+        button.secondary:hover { background: #1976D2; }
+        button.danger {
+            background: #f44336;
+        }
+        button.danger:hover { background: #d32f2f; }
+        .progress-container {
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            height: 24px;
+            margin: 15px 0;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry { margin: 3px 0; }
+        .log-entry.success { color: #4CAF50; }
+        .log-entry.error { color: #f44336; }
+        .log-entry.info { color: #2196F3; }
+        .log-entry.warn { color: #ff9800; }
+        .status {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .status.pending { background: #fff3e0; color: #e65100; }
+        .status.uploading { background: #e3f2fd; color: #1565c0; }
+        .status.success { background: #e8f5e9; color: #2e7d32; }
+        .status.error { background: #ffebee; color: #c62828; }
+        .hidden { display: none; }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row > div { flex: 1; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Upload Test (TUS Resumable)</h1>
+
+    <!-- Configuration -->
+    <div class="card">
+        <h2>1. Configuration</h2>
+        <div class="row">
+            <div>
+                <label>API Base URL</label>
+                <input type="text" id="apiBaseUrl" value="http://localhost/api/v1">
+            </div>
+            <div>
+                <label>Center ID</label>
+                <input type="number" id="centerId" value="1">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>Admin Token (JWT)</label>
+                <input type="text" id="adminToken" placeholder="eyJhbGciOiJIUzI1NiIs...">
+            </div>
+            <div>
+                <label>Video ID</label>
+                <input type="number" id="videoId" placeholder="Enter existing video ID">
+            </div>
+        </div>
+    </div>
+
+    <!-- File Selection -->
+    <div class="card">
+        <h2>2. Select Video File</h2>
+        <label>Video File</label>
+        <input type="file" id="videoFile" accept="video/*">
+        <div id="fileInfo" class="hidden">
+            <strong>Selected:</strong> <span id="fileName"></span> (<span id="fileSize"></span>)
+        </div>
+    </div>
+
+    <!-- Upload Control -->
+    <div class="card">
+        <h2>3. Upload</h2>
+        <button id="btnInitialize" onclick="initializeUpload()">Initialize Upload Session</button>
+        <button id="btnStart" onclick="startUpload()" disabled class="secondary">Start Upload</button>
+        <button id="btnPause" onclick="pauseUpload()" disabled class="danger">Pause</button>
+        <button id="btnResume" onclick="resumeUpload()" disabled class="secondary">Resume</button>
+
+        <div id="statusContainer" class="hidden">
+            <div id="status" class="status pending">Waiting...</div>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar">0%</div>
+        </div>
+    </div>
+
+    <!-- Session Info -->
+    <div class="card" id="sessionInfo" class="hidden">
+        <h2>4. Session Info</h2>
+        <pre id="sessionData"></pre>
+    </div>
+
+    <!-- Logs -->
+    <div class="card">
+        <h2>Logs</h2>
+        <div id="logContainer" class="log"></div>
+    </div>
+
+    <script>
+        let uploadSession = null;
+        let tusUpload = null;
+        let selectedFile = null;
+
+        // File selection handler
+        document.getElementById('videoFile').addEventListener('change', function(e) {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                document.getElementById('fileInfo').classList.remove('hidden');
+                document.getElementById('fileName').textContent = selectedFile.name;
+                document.getElementById('fileSize').textContent = formatBytes(selectedFile.size);
+                log('info', `File selected: ${selectedFile.name} (${formatBytes(selectedFile.size)})`);
+            }
+        });
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function log(type, message) {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function setStatus(status, message) {
+            const container = document.getElementById('statusContainer');
+            const statusEl = document.getElementById('status');
+            container.classList.remove('hidden');
+            statusEl.className = `status ${status}`;
+            statusEl.textContent = message;
+        }
+
+        function updateProgress(percent) {
+            const bar = document.getElementById('progressBar');
+            bar.style.width = `${percent}%`;
+            bar.textContent = `${percent.toFixed(1)}%`;
+        }
+
+        async function initializeUpload() {
+            if (!selectedFile) {
+                alert('Please select a video file first');
+                return;
+            }
+
+            const videoId = document.getElementById('videoId').value;
+            if (!videoId) {
+                alert('Please enter a Video ID');
+                return;
+            }
+
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value;
+            const centerId = document.getElementById('centerId').value;
+            const adminToken = document.getElementById('adminToken').value;
+
+            log('info', 'Initializing upload session...');
+            setStatus('pending', 'Initializing...');
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/admin/centers/${centerId}/videos/upload-sessions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({
+                        video_id: parseInt(videoId),
+                        original_filename: selectedFile.name
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to initialize upload');
+                }
+
+                uploadSession = data.data;
+
+                document.getElementById('sessionInfo').classList.remove('hidden');
+                document.getElementById('sessionData').textContent = JSON.stringify(uploadSession, null, 2);
+
+                log('success', `Upload session created: ${uploadSession.upload_session_id}`);
+                log('info', `TUS Endpoint: ${uploadSession.upload_endpoint}`);
+                log('info', `Video GUID: ${uploadSession.remote_id}`);
+                log('info', `Expires: ${uploadSession.expires_at}`);
+
+                setStatus('success', 'Session initialized - Ready to upload');
+                document.getElementById('btnStart').disabled = false;
+                document.getElementById('btnInitialize').disabled = true;
+
+            } catch (error) {
+                log('error', `Initialization failed: ${error.message}`);
+                setStatus('error', `Error: ${error.message}`);
+            }
+        }
+
+        function startUpload() {
+            if (!uploadSession || !selectedFile) {
+                alert('Please initialize upload session first');
+                return;
+            }
+
+            log('info', 'Starting TUS upload...');
+            setStatus('uploading', 'Uploading...');
+
+            // Convert presigned headers to string values (TUS requires strings)
+            const headers = {};
+            for (const [key, value] of Object.entries(uploadSession.presigned_headers)) {
+                headers[key] = String(value);
+            }
+
+            tusUpload = new tus.Upload(selectedFile, {
+                endpoint: uploadSession.upload_endpoint,
+                headers: headers,
+                retryDelays: [0, 3000, 5000, 10000, 20000],
+                chunkSize: 5 * 1024 * 1024, // 5MB chunks
+                metadata: {
+                    filetype: selectedFile.type,
+                    title: selectedFile.name
+                },
+                onError: function(error) {
+                    log('error', `Upload error: ${error.message}`);
+                    setStatus('error', `Upload failed: ${error.message}`);
+                    document.getElementById('btnPause').disabled = true;
+                    document.getElementById('btnResume').disabled = false;
+                },
+                onProgress: function(bytesUploaded, bytesTotal) {
+                    const percentage = (bytesUploaded / bytesTotal * 100);
+                    updateProgress(percentage);
+                    log('info', `Progress: ${formatBytes(bytesUploaded)} / ${formatBytes(bytesTotal)}`);
+                },
+                onSuccess: function() {
+                    log('success', 'Upload completed successfully!');
+                    setStatus('success', 'Upload complete! Video is now encoding on Bunny.');
+                    updateProgress(100);
+                    document.getElementById('btnPause').disabled = true;
+                    document.getElementById('btnResume').disabled = true;
+                }
+            });
+
+            // Check for previous uploads
+            tusUpload.findPreviousUploads().then(function(previousUploads) {
+                if (previousUploads.length > 0) {
+                    log('warn', 'Found previous upload, resuming...');
+                    tusUpload.resumeFromPreviousUpload(previousUploads[0]);
+                }
+                tusUpload.start();
+            });
+
+            document.getElementById('btnStart').disabled = true;
+            document.getElementById('btnPause').disabled = false;
+        }
+
+        function pauseUpload() {
+            if (tusUpload) {
+                tusUpload.abort();
+                log('warn', 'Upload paused');
+                setStatus('pending', 'Upload paused');
+                document.getElementById('btnPause').disabled = true;
+                document.getElementById('btnResume').disabled = false;
+            }
+        }
+
+        function resumeUpload() {
+            if (tusUpload) {
+                tusUpload.start();
+                log('info', 'Upload resumed');
+                setStatus('uploading', 'Uploading...');
+                document.getElementById('btnPause').disabled = false;
+                document.getElementById('btnResume').disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>

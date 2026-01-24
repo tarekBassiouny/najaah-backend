@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
+use App\Enums\VideoUploadStatus;
 use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
@@ -12,9 +13,10 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Services\Playback\Contracts\PlaybackAuthorizationServiceInterface;
 use App\Support\ErrorCodes;
 
-class PlaybackAuthorizationService
+class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterface
 {
     private ?UserDevice $activeDevice = null;
 
@@ -156,12 +158,12 @@ class PlaybackAuthorizationService
 
     private function assertVideoReady(Video $video): void
     {
-        if ((int) $video->encoding_status !== 3 || (int) $video->lifecycle_status !== 2) {
+        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status !== 2) {
             $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
 
         $session = $video->uploadSession;
-        if ($session !== null && (int) $session->upload_status !== 3) {
+        if ($session !== null && $session->upload_status !== VideoUploadStatus::Ready) {
             $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
     }

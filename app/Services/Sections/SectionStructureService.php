@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Sections;
 
+use App\Enums\PdfUploadStatus;
+use App\Enums\VideoUploadStatus;
 use App\Exceptions\AttachmentNotAllowedException;
 use App\Exceptions\UploadNotReadyException;
 use App\Models\Pdf;
@@ -13,9 +15,7 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
-use App\Services\Pdfs\PdfUploadSessionService;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -322,7 +322,7 @@ class SectionStructureService implements SectionStructureServiceInterface
 
     private function assertVideoReady(Video $video): void
     {
-        if ((int) $video->encoding_status !== 3) {
+        if ($video->encoding_status !== VideoUploadStatus::Ready) {
             throw new AttachmentNotAllowedException('Video is not ready to be attached.', 422);
         }
 
@@ -345,8 +345,7 @@ class SectionStructureService implements SectionStructureServiceInterface
             throw new UploadNotReadyException('Video upload session has expired.', 422);
         }
 
-        $status = $session->upload_status;
-        if ($status !== VideoUploadService::STATUS_READY) {
+        if ($session->upload_status !== VideoUploadStatus::Ready) {
             throw new UploadNotReadyException('Video upload session is not ready.', 422);
         }
     }
@@ -384,9 +383,7 @@ class SectionStructureService implements SectionStructureServiceInterface
             throw new UploadNotReadyException('PDF upload session has expired.', 422);
         }
 
-        $status = $session->upload_status;
-
-        if ($status !== PdfUploadSessionService::STATUS_READY) {
+        if ($session->upload_status !== PdfUploadStatus::Ready) {
             throw new UploadNotReadyException('PDF upload session is not ready.', 422);
         }
     }

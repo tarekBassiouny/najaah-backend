@@ -8,13 +8,14 @@ use App\Models\Course;
 use App\Models\Pivots\CoursePdf;
 use App\Models\User;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PdfAccessService
+class PdfAccessService implements PdfAccessServiceInterface
 {
     public function __construct(
         private readonly EnrollmentServiceInterface $enrollmentService,
@@ -33,6 +34,10 @@ class PdfAccessService
 
         if ($pivot === null) {
             throw new NotFoundHttpException('PDF not found for this course.');
+        }
+
+        if ($pivot->visible === false) {
+            throw new AccessDeniedHttpException('PDF download is not permitted.');
         }
 
         /** @var \App\Models\Pdf $pdf */

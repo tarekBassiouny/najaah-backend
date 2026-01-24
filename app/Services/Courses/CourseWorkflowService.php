@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Enums\PdfUploadStatus;
 use App\Exceptions\PublishBlockedException;
 use App\Models\AuditLog;
 use App\Models\Course;
@@ -117,7 +118,7 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
             $pdf->loadMissing('uploadSession');
             $session = $pdf->uploadSession;
 
-            if ($session === null || (int) $session->upload_status !== \App\Services\Pdfs\PdfUploadSessionService::STATUS_READY) {
+            if ($session === null || $session->upload_status !== PdfUploadStatus::Ready) {
                 Log::channel('domain')->warning('course_publish_blocked', [
                     'course_id' => $course->id,
                     'center_id' => $course->center_id,

@@ -14,6 +14,7 @@ use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
+use App\Services\Contracts\ViewLimitServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
 use App\Services\Courses\CourseInstructorService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
@@ -22,6 +23,18 @@ use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
+use App\Services\Pdfs\AdminPdfQueryService;
+use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
+use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
+use App\Services\Pdfs\Contracts\PdfServiceInterface;
+use App\Services\Pdfs\Contracts\PdfUploadSessionServiceInterface;
+use App\Services\Pdfs\PdfAccessService;
+use App\Services\Pdfs\PdfService;
+use App\Services\Pdfs\PdfUploadSessionService;
+use App\Services\Playback\Contracts\PlaybackAuthorizationServiceInterface;
+use App\Services\Playback\Contracts\PlaybackServiceInterface;
+use App\Services\Playback\PlaybackAuthorizationService;
+use App\Services\Playback\PlaybackService;
 use App\Services\Playback\ViewLimitService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
@@ -35,6 +48,12 @@ use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Services\Settings\SettingsResolverService;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use App\Services\Storage\SpacesStorageService;
+use App\Services\Videos\AdminVideoQueryService;
+use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
+use App\Services\Videos\Contracts\VideoServiceInterface;
+use App\Services\Videos\Contracts\VideoUploadServiceInterface;
+use App\Services\Videos\VideoService;
+use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
@@ -61,6 +80,16 @@ class AppServiceProvider extends ServiceProvider
             CenterServiceInterface::class => CenterService::class,
             CenterSettingsServiceInterface::class => CenterSettingsService::class,
             SettingsResolverServiceInterface::class => SettingsResolverService::class,
+            ViewLimitServiceInterface::class => ViewLimitService::class,
+            PdfServiceInterface::class => PdfService::class,
+            PdfUploadSessionServiceInterface::class => PdfUploadSessionService::class,
+            PdfAccessServiceInterface::class => PdfAccessService::class,
+            AdminPdfQueryServiceInterface::class => AdminPdfQueryService::class,
+            VideoServiceInterface::class => VideoService::class,
+            VideoUploadServiceInterface::class => VideoUploadService::class,
+            AdminVideoQueryServiceInterface::class => AdminVideoQueryService::class,
+            PlaybackServiceInterface::class => PlaybackService::class,
+            PlaybackAuthorizationServiceInterface::class => PlaybackAuthorizationService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {
@@ -68,10 +97,11 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(ViewLimitService::class);
+        $this->app->singleton(ViewLimitServiceInterface::class, ViewLimitService::class);
         $this->app->singleton(StorageServiceInterface::class, function (Application $app): StorageServiceInterface {
-            $disk = (string) $app['config']->get('filesystems.default', 'local');
+            $diskName = (string) $app['config']->get('filesystems.default', 'local');
 
-            return new SpacesStorageService($app['filesystem']->disk($disk));
+            return new SpacesStorageService($app['filesystem']->disk($diskName));
         });
 
         $this->app->singleton(BunnyStreamService::class, function (Application $app): BunnyStreamService {

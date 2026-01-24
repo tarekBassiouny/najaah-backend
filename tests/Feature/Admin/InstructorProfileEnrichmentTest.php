@@ -45,6 +45,9 @@ it('allows creating instructor with avatar and metadata', function (): void {
     expect($avatarUrl)->not->toBe('');
     $parsedPath = parse_url($avatarUrl, PHP_URL_PATH) ?? '';
     $path = ltrim($parsedPath, '/');
+    if (str_starts_with($path, 'storage/')) {
+        $path = substr($path, strlen('storage/'));
+    }
     Storage::disk('local')->assertExists($path);
 });
 

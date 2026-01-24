@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Enums\VideoUploadStatus;
 use App\Exceptions\PublishBlockedException;
 use App\Models\Video;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +13,7 @@ class VideoPublishingService
 {
     public function ensurePublishable(Video $video): void
     {
-        if ((int) $video->encoding_status !== VideoUploadService::STATUS_READY || (int) $video->lifecycle_status < 2) {
+        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status < 2) {
             throw new PublishBlockedException('Video is not ready for publishing.', 422);
         }
 
@@ -22,7 +23,7 @@ class VideoPublishingService
 
         $session = $video->uploadSession()->first();
 
-        if ($session !== null && (int) $session->upload_status !== VideoUploadService::STATUS_READY) {
+        if ($session !== null && $session->upload_status !== VideoUploadStatus::Ready) {
             throw new PublishBlockedException('Latest upload session is not ready.', 422);
         }
 

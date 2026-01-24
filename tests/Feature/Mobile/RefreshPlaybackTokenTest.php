@@ -23,7 +23,8 @@ beforeEach(function (): void {
         'services.system_api_key' => 'system-key',
         'bunny.api.api_key' => 'bunny-secret',
         'bunny.api.library_id' => 55,
-        'bunny.embed_token_ttl' => 600,
+        'bunny.embed_key' => 'test-embed-secret-key',
+        'bunny.embed_token_ttl' => 240,
     ]);
 });
 
@@ -41,8 +42,8 @@ test('it refreshes playback token for active session', function (): void {
     $requestResponse = $this->apiPost(
         "/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback"
     );
-    $sessionId = (int) $requestResponse->json('data.session_id');
-    $firstToken = (string) $requestResponse->json('data.embed_token');
+    $sessionId = $requestResponse->json('data.session_id');
+    $firstEmbedUrl = $requestResponse->json('data.embed_url');
 
     Carbon::setTestNow('2024-01-01 00:05:00');
 
@@ -52,10 +53,13 @@ test('it refreshes playback token for active session', function (): void {
     );
 
     $refreshResponse->assertOk()
-        ->assertJsonPath('data.expires_in', 600)
-        ->assertJsonPath('data.embed_token', function ($value) use ($firstToken): bool {
-            return is_string($value) && $value !== '' && $value !== $firstToken;
-        });
+        ->assertJsonPath('data.session_id', $sessionId)
+        ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'iframe.mediadelivery.net'))
+        ->assertJsonPath('data.expires_at', fn ($value) => is_int($value) && $value > 0);
+
+    // Verify the embed URL changed (new token)
+    $newEmbedUrl = $refreshResponse->json('data.embed_url');
+    expect($newEmbedUrl)->not->toBe($firstEmbedUrl);
 });
 
 test('it returns not found for invalid session id', function (): void {

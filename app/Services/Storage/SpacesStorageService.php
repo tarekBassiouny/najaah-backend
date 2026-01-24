@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Storage;
 
 use App\Services\Storage\Contracts\StorageServiceInterface;
+use Aws\S3\S3Client;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use RuntimeException;
@@ -12,7 +13,31 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SpacesStorageService implements StorageServiceInterface
 {
-    public function __construct(private readonly Filesystem $disk) {}
+    private readonly S3Client $s3;
+
+    private readonly string $bucket;
+
+    public function __construct(
+        private readonly Filesystem $disk,
+        ?S3Client $s3Client = null,
+        ?string $bucket = null
+    ) {
+        $this->bucket = $bucket ?? (string) config('filesystems.disks.spaces.bucket');
+        $this->s3 = $s3Client ?? $this->createS3Client();
+    }
+
+    private function createS3Client(): S3Client
+    {
+        return new S3Client([
+            'version' => 'latest',
+            'region' => (string) config('filesystems.disks.spaces.region', 'us-east-1'),
+            'endpoint' => (string) config('filesystems.disks.spaces.endpoint'),
+            'credentials' => [
+                'key' => (string) config('filesystems.disks.spaces.key'),
+                'secret' => (string) config('filesystems.disks.spaces.secret'),
+            ],
+        ]);
+    }
 
     public function upload(string $path, UploadedFile $file): string
     {
@@ -41,14 +66,29 @@ class SpacesStorageService implements StorageServiceInterface
         }
     }
 
-    public function temporaryUploadUrl(string $path, int $expiresInSeconds): string
-    {
-        $expiresAt = now()->addSeconds($expiresInSeconds);
+    public function temporaryUploadUrl(
+        string $path,
+        int $expiresInSeconds,
+        string $contentType
+    ): string {
+        $cmd = $this->s3->getCommand('PutObject', [
+            'Bucket' => $this->bucket,
+            'Key' => ltrim($path, '/'),
+            'ContentType' => $contentType,
+        ]);
 
         try {
-            return $this->disk->temporaryUrl($path, $expiresAt, ['method' => 'PUT']);
+            $request = $this->s3->createPresignedRequest(
+                $cmd,
+                '+'.$expiresInSeconds.' seconds'
+            );
+
+            return (string) $request->getUri();
         } catch (\Throwable $throwable) {
-            return $this->disk->url($path);
+            throw new RuntimeException(
+                'Failed to generate presigned upload URL',
+                previous: $throwable
+            );
         }
     }
 

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\PdfUploadStatus;
+use App\Enums\VideoUploadStatus;
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\Course;
@@ -17,8 +19,6 @@ use App\Models\Translation;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
-use App\Services\Pdfs\PdfUploadSessionService;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -205,7 +205,7 @@ it('assigns video', function (): void {
     $session = VideoUploadSession::factory()->create([
         'center_id' => $center->id,
         'uploaded_by' => $course->created_by,
-        'upload_status' => VideoUploadService::STATUS_READY,
+        'upload_status' => VideoUploadStatus::Ready,
         'expires_at' => now()->addDay(),
     ]);
     $video = Video::factory()->create([
@@ -250,7 +250,7 @@ it('assigns pdf', function (): void {
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $course->created_by,
-        'upload_status' => PdfUploadSessionService::STATUS_READY,
+        'upload_status' => PdfUploadStatus::Ready,
     ]);
     $pdf = Pdf::factory()->create([
         'center_id' => $center->id,
@@ -292,7 +292,7 @@ it('publishes course', function (): void {
     $session = VideoUploadSession::factory()->create([
         'center_id' => $course->center_id,
         'uploaded_by' => $course->created_by,
-        'upload_status' => VideoUploadService::STATUS_READY,
+        'upload_status' => VideoUploadStatus::Ready,
         'expires_at' => now()->addDay(),
     ]);
     $video = Video::factory()->create([

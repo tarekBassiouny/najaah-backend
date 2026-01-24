@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
+use App\Enums\VideoUploadStatus;
 use App\Exceptions\NotFoundException;
 use App\Filters\Admin\CenterFilters as AdminCenterFilters;
 use App\Filters\Mobile\CenterFilters;
@@ -222,12 +223,12 @@ class CenterService implements CenterServiceInterface
                 },
             ])
             ->whereDoesntHave('videos', function ($query): void {
-                $query->where('encoding_status', '!=', 3)
+                $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
                     ->orWhere('lifecycle_status', '!=', 2)
                     ->orWhere(function ($query): void {
                         $query->whereNotNull('upload_session_id')
                             ->whereHas('uploadSession', function ($query): void {
-                                $query->where('upload_status', '!=', 3);
+                                $query->where('upload_status', '!=', VideoUploadStatus::Ready->value);
                             });
                     });
             })

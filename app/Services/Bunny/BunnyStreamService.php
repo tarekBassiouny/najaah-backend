@@ -37,12 +37,12 @@ class BunnyStreamService
 
     /**
      * @param  array<string, mixed>  $payload
-     * @return array{id:string, upload_url:string, raw:array<string, mixed>, library_id:int}
+     * @return array{id:string, upload_url:string, tus_upload_url:string, presigned_headers:array<string, string|int>, raw:array<string, mixed>, library_id:int}
      *
      * @throws BunnyJsonException
      * @throws ClientExceptionInterface
      */
-    public function createVideo(array $payload, ?int $libraryId = null): array
+    public function createVideo(array $payload, ?int $libraryId = null, ?int $expiresInSeconds = null): array
     {
         $libraryIdValue = $libraryId ?? (is_numeric($this->libraryId) ? (int) $this->libraryId : null);
         if ($libraryIdValue === null) {
@@ -79,11 +79,39 @@ class BunnyStreamService
         $uploadUrl = $data['upload_url']
             ?? $this->apiUrlValue.sprintf('/library/%d/videos/%s', $libraryIdValue, $id);
 
+        // Generate presigned headers for TUS resumable upload (no API key exposure)
+        $presignedHeaders = $this->generatePresignedHeaders($libraryIdValue, $id, $expiresInSeconds);
+
         return [
             'id' => $id,
             'upload_url' => $uploadUrl,
+            'tus_upload_url' => 'https://video.bunnycdn.com/tusupload',
+            'presigned_headers' => $presignedHeaders,
             'raw' => $data,
             'library_id' => $libraryIdValue,
+        ];
+    }
+
+    /**
+     * Generate presigned headers for TUS resumable uploads.
+     * This allows clients to upload directly without the API key.
+     *
+     * @return array{AuthorizationSignature:string, AuthorizationExpire:int, VideoId:string, LibraryId:int}
+     */
+    public function generatePresignedHeaders(int $libraryId, string $videoId, ?int $expiresInSeconds = null): array
+    {
+        $expiresInSeconds = $expiresInSeconds ?? (int) config('uploads.video_upload_token_ttl_seconds', 10800);
+        $expirationTime = time() + $expiresInSeconds;
+
+        // Signature formula: sha256(library_id + api_key + expiration_time + video_id)
+        $signaturePayload = $libraryId.$this->apiKey.$expirationTime.$videoId;
+        $signature = hash('sha256', $signaturePayload);
+
+        return [
+            'AuthorizationSignature' => $signature,
+            'AuthorizationExpire' => $expirationTime,
+            'VideoId' => $videoId,
+            'LibraryId' => $libraryId,
         ];
     }
 

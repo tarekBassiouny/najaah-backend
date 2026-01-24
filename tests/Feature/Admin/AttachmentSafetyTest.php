@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\PdfUploadStatus;
+use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pdf;
@@ -9,8 +11,6 @@ use App\Models\PdfUploadSession;
 use App\Models\Section;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
-use App\Services\Pdfs\PdfUploadSessionService;
-use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('videos');
@@ -84,7 +84,7 @@ it('blocks attaching non-ready pdf to course', function (): void {
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,
-        'upload_status' => PdfUploadSessionService::STATUS_UPLOADING,
+        'upload_status' => PdfUploadStatus::Uploading,
     ]);
     $pdf = Pdf::factory()->create([
         'center_id' => $center->id,
@@ -107,7 +107,7 @@ it('blocks attaching non-ready pdf to section', function (): void {
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,
-        'upload_status' => PdfUploadSessionService::STATUS_UPLOADING,
+        'upload_status' => PdfUploadStatus::Uploading,
     ]);
     $pdf = Pdf::factory()->create([
         'center_id' => $center->id,
@@ -130,7 +130,7 @@ it('allows attaching ready video', function (): void {
     $session = VideoUploadSession::factory()->create([
         'center_id' => $center->id,
         'uploaded_by' => $admin->id,
-        'upload_status' => VideoUploadService::STATUS_READY,
+        'upload_status' => VideoUploadStatus::Ready,
         'expires_at' => now()->addDay(),
     ]);
     $video = Video::factory()->create([
@@ -160,7 +160,7 @@ it('allows attaching ready pdf to course and section', function (): void {
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,
-        'upload_status' => PdfUploadSessionService::STATUS_READY,
+        'upload_status' => PdfUploadStatus::Ready,
     ]);
     $pdf = Pdf::factory()->create([
         'center_id' => $center->id,

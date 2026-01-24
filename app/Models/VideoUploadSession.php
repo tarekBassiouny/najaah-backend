@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\VideoUploadStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $uploaded_by
  * @property string $bunny_upload_id
  * @property int|null $library_id
- * @property int $upload_status
+ * @property VideoUploadStatus $upload_status
  * @property int $progress_percent
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $expires_at
@@ -43,7 +44,8 @@ class VideoUploadSession extends Model
     ];
 
     protected $casts = [
-        'upload_status' => 'integer',
+        'upload_status' => VideoUploadStatus::class,
+        'encoding_status' => VideoUploadStatus::class,
         'progress_percent' => 'integer',
         'library_id' => 'integer',
         'expires_at' => 'datetime',

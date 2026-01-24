@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Enums\VideoUploadStatus;
 use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\User;
@@ -11,21 +12,12 @@ use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Videos\Contracts\VideoUploadServiceInterface;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Facades\Log;
 
-class VideoUploadService
+class VideoUploadService implements VideoUploadServiceInterface
 {
-    public const STATUS_PENDING = 0;
-
-    public const STATUS_UPLOADING = 1;
-
-    public const STATUS_PROCESSING = 2;
-
-    public const STATUS_READY = 3;
-
-    public const STATUS_FAILED = 4;
-
     public function __construct(
         private readonly BunnyStreamService $bunnyService,
         private readonly CenterScopeService $centerScopeService
@@ -58,7 +50,9 @@ class VideoUploadService
                 'env' => (string) config('app.env'),
             ],
         ];
-        $created = $this->bunnyService->createVideo($payload, $libraryIdValue);
+
+        $uploadTtl = (int) config('uploads.video_upload_token_ttl_seconds', 10800);
+        $created = $this->bunnyService->createVideo($payload, $libraryIdValue, $uploadTtl);
         $bunnyId = $created['id'];
 
         $session = VideoUploadSession::create([
@@ -66,9 +60,9 @@ class VideoUploadService
             'uploaded_by' => $admin->id,
             'library_id' => $libraryIdValue,
             'bunny_upload_id' => $bunnyId,
-            'upload_status' => self::STATUS_PENDING,
+            'upload_status' => VideoUploadStatus::Pending,
             'progress_percent' => 0,
-            'expires_at' => now()->addSeconds((int) config('uploads.video_upload_token_ttl_seconds', 3600)),
+            'expires_at' => now()->addSeconds($uploadTtl),
         ]);
 
         if ($video !== null) {
@@ -78,10 +72,13 @@ class VideoUploadService
             $video->source_type = $video->source_type ?: 1;
             $video->source_id = $bunnyId;
             $video->library_id = $video->library_id ?? $libraryIdValue;
-            $this->applyVideoState($video, self::STATUS_PENDING, []);
+            $this->applyVideoState($video, VideoUploadStatus::Pending, []);
         }
 
+        // Store both legacy upload URL and new TUS presigned data
         $session->setAttribute('upload_url', $created['upload_url']);
+        $session->setAttribute('tus_upload_url', $created['tus_upload_url']);
+        $session->setAttribute('presigned_headers', $created['presigned_headers']);
 
         Log::channel('domain')->info('video_upload_session_created', [
             'session_id' => $session->id,
@@ -147,27 +144,33 @@ class VideoUploadService
         }
 
         $status = $this->statusFromLabel($statusLabel);
-        $this->assertTransitionAllowed($session->upload_status, $status);
+        $currentStatus = $session->upload_status instanceof VideoUploadStatus
+            ? $session->upload_status
+            : VideoUploadStatus::from($session->upload_status);
+
+        if (! $currentStatus->canTransitionTo($status)) {
+            throw new DomainException('Invalid status transition.', ErrorCodes::INVALID_STATE, 422);
+        }
 
         $session->upload_status = $status;
         $session->progress_percent = isset($payload['progress_percent']) ? max(0, min(100, (int) $payload['progress_percent'])) : $session->progress_percent;
         $session->error_message = $payload['error_message'] ?? null;
 
-        if ($status === self::STATUS_READY) {
+        if ($status === VideoUploadStatus::Ready) {
             $session->progress_percent = 100;
             $session->error_message = null;
         }
 
         $session->save();
 
-        if ($status === self::STATUS_READY) {
+        if ($status === VideoUploadStatus::Ready) {
             Log::channel('domain')->info('video_upload_session_ready', [
                 'session_id' => $session->id,
                 'center_id' => $session->center_id,
             ]);
         }
 
-        if ($status === self::STATUS_FAILED) {
+        if ($status === VideoUploadStatus::Failed) {
             Log::channel('domain')->warning('video_upload_session_failed', [
                 'session_id' => $session->id,
                 'center_id' => $session->center_id,
@@ -183,69 +186,36 @@ class VideoUploadService
         return $session->fresh() ?? $session;
     }
 
-    private function statusFromLabel(string $label): int
+    private function statusFromLabel(string $label): VideoUploadStatus
     {
-        $map = [
-            'PENDING' => self::STATUS_PENDING,
-            'UPLOADING' => self::STATUS_UPLOADING,
-            'PROCESSING' => self::STATUS_PROCESSING,
-            'READY' => self::STATUS_READY,
-            'FAILED' => self::STATUS_FAILED,
-        ];
-
-        $upper = strtoupper($label);
-
-        if (! array_key_exists($upper, $map)) {
+        try {
+            return VideoUploadStatus::fromLabel($label);
+        } catch (\ValueError) {
             throw new DomainException('Invalid status label.', ErrorCodes::INVALID_STATE, 422);
-        }
-
-        return $map[$upper];
-    }
-
-    private function assertTransitionAllowed(int $current, int $next): void
-    {
-        $allowed = [
-            self::STATUS_PENDING => [self::STATUS_UPLOADING, self::STATUS_PROCESSING, self::STATUS_READY, self::STATUS_FAILED],
-            self::STATUS_UPLOADING => [self::STATUS_PROCESSING, self::STATUS_READY, self::STATUS_FAILED],
-            self::STATUS_PROCESSING => [self::STATUS_READY, self::STATUS_FAILED],
-            self::STATUS_READY => [],
-            self::STATUS_FAILED => [],
-        ];
-
-        if (! in_array($next, $allowed[$current] ?? [], true) && $current !== $next) {
-            throw new DomainException('Invalid status transition.', ErrorCodes::INVALID_STATE, 422);
         }
     }
 
     /**
      * @param  array<string, mixed>  $payload
      */
-    private function applyVideoState(Video $video, int $status, array $payload, ?VideoUploadSession $session = null): void
+    private function applyVideoState(Video $video, VideoUploadStatus $status, array $payload, ?VideoUploadSession $session = null): void
     {
-        if ($session !== null && $video->upload_session_id !== null && $video->upload_session_id !== $session->id && $status === self::STATUS_READY) {
+        if ($session !== null && $video->upload_session_id !== null && $video->upload_session_id !== $session->id && $status === VideoUploadStatus::Ready) {
             throw new DomainException('Only the latest upload session can mark the video as ready.', ErrorCodes::INVALID_STATE, 422);
         }
 
-        $encodingMap = [
-            self::STATUS_PENDING => 0,
-            self::STATUS_UPLOADING => 1,
-            self::STATUS_PROCESSING => 2,
-            self::STATUS_READY => 3,
-            self::STATUS_FAILED => 0,
-        ];
+        $video->encoding_status = $status === VideoUploadStatus::Failed
+            ? VideoUploadStatus::Pending
+            : $status;
+        $video->lifecycle_status = match ($status) {
+            VideoUploadStatus::Pending => 0,
+            VideoUploadStatus::Uploading => 1,
+            VideoUploadStatus::Processing => 1,
+            VideoUploadStatus::Ready => 2,
+            VideoUploadStatus::Failed => 0,
+        };
 
-        $lifecycleMap = [
-            self::STATUS_PENDING => 0,
-            self::STATUS_UPLOADING => 1,
-            self::STATUS_PROCESSING => 1,
-            self::STATUS_READY => 2,
-            self::STATUS_FAILED => 0,
-        ];
-
-        $video->encoding_status = $encodingMap[$status];
-        $video->lifecycle_status = $lifecycleMap[$status];
-
-        if ($status === self::STATUS_READY) {
+        if ($status === VideoUploadStatus::Ready) {
             if (isset($payload['source_id']) && is_string($payload['source_id'])) {
                 $video->source_id = $payload['source_id'];
             }

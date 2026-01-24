@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
@@ -44,7 +45,7 @@ class VideoFactory extends Factory
             'library_id' => (int) (config('bunny.api.library_id') ?? 1),
             'upload_session_id' => VideoUploadSession::factory(),
             'original_filename' => 'video.mp4',
-            'encoding_status' => 1,
+            'encoding_status' => VideoUploadStatus::Uploading,
             'thumbnail_url' => 'https://example.com/thumb.jpg',
             'thumbnail_urls' => [
                 'small' => 'https://example.com/thumb-small.jpg',
