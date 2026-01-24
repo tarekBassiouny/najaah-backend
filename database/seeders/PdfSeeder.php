@@ -23,7 +23,6 @@ class PdfSeeder extends Seeder
                             'video_id' => $videoId,
                             'order_index' => rand(1, 50),
                             'visible' => true,
-                            'download_permission_override' => null,
                         ]);
                     });
             }

@@ -19,12 +19,14 @@ class UpdateVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
-            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
+            'title_translations' => ['sometimes', 'array', 'min:1'],
+            'title_translations.en' => ['nullable', 'string', 'max:255'],
+            'title_translations.ar' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['sometimes', 'nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string'],
+            'description_translations.ar' => ['nullable', 'string'],
             'tags' => ['sometimes', 'array'],
             'tags.*' => ['string', 'max:255'],
-            'title_translations' => ['prohibited'],
-            'description_translations' => ['prohibited'],
             'center_id' => ['prohibited'],
             'encoding_status' => ['prohibited'],
             'lifecycle_status' => ['prohibited'],
@@ -48,13 +50,21 @@ class UpdateVideoRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'title' => [
-                'description' => 'Updated video title.',
+            'title_translations' => [
+                'description' => 'Video title translations object.',
+                'example' => ['en' => 'Updated title', 'ar' => 'العنوان المحدث'],
+            ],
+            'title_translations.en' => [
+                'description' => 'Video title in English.',
                 'example' => 'Updated title',
             ],
-            'description' => [
-                'description' => 'Updated description.',
-                'example' => 'Updated description',
+            'title_translations.ar' => [
+                'description' => 'Video title in Arabic.',
+                'example' => 'العنوان المحدث',
+            ],
+            'description_translations' => [
+                'description' => 'Video description translations object.',
+                'example' => ['en' => 'Updated description', 'ar' => 'الوصف المحدث'],
             ],
             'tags' => [
                 'description' => 'Optional tags array.',

@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "8b262b28-6ea0-4e5d-8f12-494ae229233e",
+        "_postman_id": "b2f95a73-cf17-4265-966c-1296d6558a91",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -2347,7 +2347,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Sample Course\",\"description\":\"This is an introductory course.\",\"category_id\":1,\"difficulty\":\"beginner\",\"language\":\"en\",\"price\":0,\"metadata\":{\"key\":\"value\"},\"difficulty_level\":1,\"created_by\":5}"
+                            "raw": "{\"title_translations\":{\"en\":\"Sample Course\",\"ar\":\"\u062f\u0648\u0631\u0629 \u062a\u062c\u0631\u064a\u0628\u064a\u0629\"},\"description_translations\":{\"en\":\"This is an introductory course.\",\"ar\":\"\u0647\u0630\u0647 \u062f\u0648\u0631\u0629 \u062a\u0645\u0647\u064a\u062f\u064a\u0629.\"},\"category_id\":1,\"difficulty\":\"beginner\",\"language\":\"bngzmi\",\"price\":0,\"metadata\":{\"key\":\"value\"},\"difficulty_level\":16,\"created_by\":16}"
                         },
                         "description": "",
                         "auth": {
@@ -2450,7 +2450,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Updated Course Title\",\"description\":\"Updated description.\",\"category_id\":2,\"difficulty\":\"intermediate\",\"language\":\"en\",\"price\":10.5,\"metadata\":{\"key\":\"value\"},\"difficulty_level\":2,\"created_by\":5}"
+                            "raw": "{\"title_translations\":{\"en\":\"Updated Course Title\",\"ar\":\"\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u062f\u0648\u0631\u0629 \u0627\u0644\u0645\u062d\u062f\u062b\"},\"description_translations\":{\"en\":\"Updated description.\",\"ar\":\"\u0627\u0644\u0648\u0635\u0641 \u0627\u0644\u0645\u062d\u062f\u062b.\"},\"category_id\":2,\"difficulty\":\"intermediate\",\"price\":10.5,\"metadata\":{\"key\":\"value\"},\"difficulty_level\":16,\"created_by\":16}"
                         },
                         "description": "",
                         "auth": {
@@ -2865,7 +2865,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"order_index\":1}"
+                            "raw": "{\"title_translations\":{\"en\":\"Introduction\",\"ar\":\"\u0645\u0642\u062f\u0645\u0629\"},\"description_translations\":{\"en\":\"Overview of the course.\",\"ar\":\"\u0646\u0638\u0631\u0629 \u0639\u0627\u0645\u0629 \u0639\u0644\u0649 \u0627\u0644\u062f\u0648\u0631\u0629.\"},\"order_index\":1}"
                         },
                         "description": "",
                         "auth": {
@@ -3033,7 +3033,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Updated Section Title\",\"description\":\"Updated description.\",\"order_index\":2}"
+                            "raw": "{\"title_translations\":{\"en\":\"Updated Section Title\",\"ar\":\"\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0642\u0633\u0645 \u0627\u0644\u0645\u062d\u062f\u062b\"},\"description_translations\":{\"en\":\"Updated description.\",\"ar\":\"\u0627\u0644\u0648\u0635\u0641 \u0627\u0644\u0645\u062d\u062f\u062b.\"},\"order_index\":2}"
                         },
                         "description": "",
                         "auth": {
@@ -3254,7 +3254,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"sort_order\":1,\"videos\":[5],\"pdfs\":[3]}"
+                            "raw": "{\"title_translations\":{\"en\":\"Introduction\",\"ar\":\"\u0645\u0642\u062f\u0645\u0629\"},\"description_translations\":{\"en\":\"Overview of the course.\",\"ar\":\"\u0646\u0638\u0631\u0629 \u0639\u0627\u0645\u0629 \u0639\u0644\u0649 \u0627\u0644\u062f\u0648\u0631\u0629.\"},\"sort_order\":1,\"videos\":[16],\"pdfs\":[16]}"
                         },
                         "description": "",
                         "auth": {
@@ -3313,7 +3313,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Updated Section\",\"description\":\"Updated description.\",\"sort_order\":2,\"videos\":[5],\"pdfs\":[3]}"
+                            "raw": "{\"title_translations\":{\"en\":\"Updated Section\",\"ar\":\"\u0627\u0644\u0642\u0633\u0645 \u0627\u0644\u0645\u062d\u062f\u062b\"},\"description_translations\":{\"en\":\"Updated description.\",\"ar\":\"\u0627\u0644\u0648\u0635\u0641 \u0627\u0644\u0645\u062d\u062f\u062b.\"},\"sort_order\":2,\"videos\":[16],\"pdfs\":[16]}"
                         },
                         "description": "",
                         "auth": {
@@ -4081,7 +4081,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Introduction\",\"description\":\"Overview of the lesson.\",\"tags\":[\"b\"]}"
+                            "raw": "{\"title_translations\":{\"en\":\"Introduction\",\"ar\":\"\u0645\u0642\u062f\u0645\u0629\"},\"description_translations\":{\"en\":\"Overview of the lesson.\",\"ar\":\"\u0646\u0638\u0631\u0629 \u0639\u0627\u0645\u0629 \u0639\u0644\u0649 \u0627\u0644\u062f\u0631\u0633.\"},\"tags\":[\"b\"]}"
                         },
                         "description": "",
                         "auth": {
@@ -4184,7 +4184,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Updated title\",\"description\":\"Updated description\",\"tags\":[\"b\"]}"
+                            "raw": "{\"title_translations\":{\"en\":\"Updated title\",\"ar\":\"\u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0645\u062d\u062f\u062b\"},\"description_translations\":{\"en\":\"Updated description\",\"ar\":\"\u0627\u0644\u0648\u0635\u0641 \u0627\u0644\u0645\u062d\u062f\u062b\"},\"tags\":[\"b\"]}"
                         },
                         "description": "",
                         "auth": {
@@ -4802,6 +4802,281 @@
                     "response": []
                 },
                 {
+                    "name": "GET api\/v1\/admin\/centers\/{center_id}\/categories",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/centers\/:center_id\/categories",
+                            "query": [
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number to retrieve. Must be at least 1.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "Science",
+                                    "description": "Search by category title.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "is_active",
+                                    "value": "1",
+                                    "description": "Filter by active status.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "parent_id",
+                                    "value": "10",
+                                    "description": "Filter by parent category id. The id of an existing record in the categories table.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers\/:center_id\/categories?per_page=15&page=1&search=Science&is_active=1&parent_id=10",
+                            "variable": [
+                                {
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST api\/v1\/admin\/centers\/{center_id}\/categories",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/centers\/:center_id\/categories",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers\/:center_id\/categories",
+                            "variable": [
+                                {
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"title_translations\":{\"en\":\"Science\",\"ar\":\"\u0627\u0644\u0639\u0644\u0648\u0645\"},\"description_translations\":{\"en\":\"STEM courses\",\"ar\":\"\u062f\u0648\u0631\u0627\u062a \u0627\u0644\u0639\u0644\u0648\u0645\"},\"parent_id\":2,\"order_index\":1,\"is_active\":false}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/v1\/admin\/centers\/{center_id}\/categories\/{category_id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/centers\/:center_id\/categories\/:category_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers\/:center_id\/categories\/:category_id",
+                            "variable": [
+                                {
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                },
+                                {
+                                    "id": "category_id",
+                                    "key": "category_id",
+                                    "value": "1",
+                                    "description": "The ID of the category."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT api\/v1\/admin\/centers\/{center_id}\/categories\/{category_id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/centers\/:center_id\/categories\/:category_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers\/:center_id\/categories\/:category_id",
+                            "variable": [
+                                {
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                },
+                                {
+                                    "id": "category_id",
+                                    "key": "category_id",
+                                    "value": "1",
+                                    "description": "The ID of the category."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"title_translations\":{\"en\":\"Science\",\"ar\":\"\u0627\u0644\u0639\u0644\u0648\u0645\"},\"description_translations\":{\"en\":\"STEM courses\",\"ar\":\"\u062f\u0648\u0631\u0627\u062a \u0627\u0644\u0639\u0644\u0648\u0645\"},\"parent_id\":2,\"order_index\":1,\"is_active\":false}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/v1\/admin\/centers\/{center_id}\/categories\/{category_id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/centers\/:center_id\/categories\/:category_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/centers\/:center_id\/categories\/:category_id",
+                            "variable": [
+                                {
+                                    "id": "center_id",
+                                    "key": "center_id",
+                                    "value": "1",
+                                    "description": "The ID of the center."
+                                },
+                                {
+                                    "id": "category_id",
+                                    "key": "category_id",
+                                    "value": "1",
+                                    "description": "The ID of the category."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "GET api\/v1\/admin\/centers\/{center_id}\/pdfs",
                     "request": {
                         "url": {
@@ -4908,7 +5183,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Lesson Notes\",\"description\":\"Downloadable notes.\",\"upload_session_id\":12,\"source_id\":\"centers\\\/1\\\/pdfs\\\/demo.pdf\",\"source_url\":\"https:\\\/\\\/cdn.example.com\\\/demo.pdf\",\"file_extension\":\"pdf\",\"file_size_kb\":1024}"
+                            "raw": "{\"title_translations\":{\"en\":\"Lesson Notes\",\"ar\":\"\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u062f\u0631\u0633\"},\"description_translations\":{\"en\":\"Downloadable notes.\",\"ar\":\"\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0642\u0627\u0628\u0644\u0629 \u0644\u0644\u062a\u0646\u0632\u064a\u0644.\"},\"upload_session_id\":12,\"source_id\":\"centers\\\/1\\\/pdfs\\\/demo.pdf\",\"source_url\":\"https:\\\/\\\/cdn.example.com\\\/demo.pdf\",\"file_extension\":\"pdf\",\"file_size_kb\":1024}"
                         },
                         "description": "",
                         "auth": {
@@ -5011,7 +5286,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"title\":\"Updated Notes\",\"description\":\"Updated description\"}"
+                            "raw": "{\"title_translations\":{\"en\":\"Updated Notes\",\"ar\":\"\u0627\u0644\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u0645\u062d\u062f\u062b\u0629\"},\"description_translations\":{\"en\":\"Updated description\",\"ar\":\"\u0627\u0644\u0648\u0635\u0641 \u0627\u0644\u0645\u062d\u062f\u062b\"}}"
                         },
                         "description": "",
                         "auth": {
@@ -5161,7 +5436,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"pdf_id\":12,\"title\":\"Lesson Notes\",\"description\":\"Downloadable notes.\",\"error_message\":\"Upload failed\"}"
+                            "raw": "{\"pdf_id\":12,\"title_translations\":{\"en\":\"Lesson Notes\",\"ar\":\"\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u062f\u0631\u0633\"},\"description_translations\":{\"en\":\"Downloadable notes.\",\"ar\":\"\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0642\u0627\u0628\u0644\u0629 \u0644\u0644\u062a\u0646\u0632\u064a\u0644.\"},\"error_message\":\"Upload failed\"}"
                         },
                         "description": "",
                         "auth": {
@@ -5687,6 +5962,50 @@
                     "response": []
                 },
                 {
+                    "name": "GET api\/v1\/admin\/roles\/{role_id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/roles\/:role_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/roles\/:role_id",
+                            "variable": [
+                                {
+                                    "id": "role_id",
+                                    "key": "role_id",
+                                    "value": "1",
+                                    "description": "The ID of the role."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "X-Locale",
+                                "value": "{{locale}}"
+                            },
+                            {
+                                "key": "X-Api-Key",
+                                "value": "{{api_key}}"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "POST api\/v1\/admin\/roles",
                     "request": {
                         "url": {
@@ -5716,7 +6035,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"Content Admin\",\"slug\":\"content_admin\",\"description\":\"Manages course and video content.\"}"
+                            "raw": "{\"name_translations\":{\"en\":\"Content Admin\",\"ar\":\"\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062d\u062a\u0648\u0649\"},\"slug\":\"content_admin\",\"description_translations\":{\"en\":\"Manages course and video content.\",\"ar\":\"\u064a\u062f\u064a\u0631 \u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u062f\u0648\u0631\u0627\u062a \u0648\u0627\u0644\u0641\u064a\u062f\u064a\u0648.\"}}"
                         },
                         "description": "",
                         "auth": {
@@ -5763,7 +6082,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"Support Admin\",\"slug\":\"support_admin\",\"description\":\"Handles support workflows.\"}"
+                            "raw": "{\"name_translations\":{\"en\":\"Support Admin\",\"ar\":\"\u0645\u062f\u064a\u0631 \u0627\u0644\u062f\u0639\u0645\"},\"slug\":\"support_admin\",\"description_translations\":{\"en\":\"Handles support workflows.\",\"ar\":\"\u064a\u062f\u064a\u0631 \u0633\u064a\u0631 \u0639\u0645\u0644 \u0627\u0644\u062f\u0639\u0645.\"}}"
                         },
                         "description": "",
                         "auth": {

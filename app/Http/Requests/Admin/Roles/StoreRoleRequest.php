@@ -22,9 +22,13 @@ class StoreRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:100'],
+            'name_translations' => ['required', 'array', 'min:1'],
+            'name_translations.en' => ['required', 'string', 'max:100'],
+            'name_translations.ar' => ['nullable', 'string', 'max:100'],
             'slug' => ['required', 'string', 'max:100', Rule::unique('roles', 'slug')],
-            'description' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string', 'max:255'],
+            'description_translations.ar' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -46,17 +50,33 @@ class StoreRoleRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'name' => [
-                'description' => 'Role display name.',
+            'name_translations' => [
+                'description' => 'Role name translations object.',
+                'example' => ['en' => 'Content Admin', 'ar' => 'مدير المحتوى'],
+            ],
+            'name_translations.en' => [
+                'description' => 'Role name in English (required).',
                 'example' => 'Content Admin',
+            ],
+            'name_translations.ar' => [
+                'description' => 'Role name in Arabic (optional).',
+                'example' => 'مدير المحتوى',
             ],
             'slug' => [
                 'description' => 'Unique role identifier.',
                 'example' => 'content_admin',
             ],
-            'description' => [
-                'description' => 'Optional role description.',
+            'description_translations' => [
+                'description' => 'Role description translations object.',
+                'example' => ['en' => 'Manages course and video content.', 'ar' => 'يدير محتوى الدورات والفيديو.'],
+            ],
+            'description_translations.en' => [
+                'description' => 'Role description in English.',
                 'example' => 'Manages course and video content.',
+            ],
+            'description_translations.ar' => [
+                'description' => 'Role description in Arabic.',
+                'example' => 'يدير محتوى الدورات والفيديو.',
             ],
         ];
     }

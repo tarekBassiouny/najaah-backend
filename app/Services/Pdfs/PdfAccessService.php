@@ -43,7 +43,7 @@ class PdfAccessService implements PdfAccessServiceInterface
         /** @var \App\Models\Pdf $pdf */
         $pdf = $pivot->pdf()->first();
 
-        if (! $this->canDownload($student, $course, $pivot)) {
+        if (! $this->canDownload($student, $course)) {
             throw new AccessDeniedHttpException('PDF download is not permitted.');
         }
 
@@ -78,7 +78,7 @@ class PdfAccessService implements PdfAccessServiceInterface
             throw new AccessDeniedHttpException('PDF download is not permitted.');
         }
 
-        if (! $this->canDownload($student, $course, $pivot)) {
+        if (! $this->canDownload($student, $course)) {
             throw new AccessDeniedHttpException('PDF download is not permitted.');
         }
 
@@ -107,12 +107,8 @@ class PdfAccessService implements PdfAccessServiceInterface
         }
     }
 
-    private function canDownload(User $student, Course $course, CoursePdf $pivot): bool
+    private function canDownload(User $student, Course $course): bool
     {
-        if ($pivot->download_permission_override !== null) {
-            return (bool) $pivot->download_permission_override;
-        }
-
         $settings = $this->settingsResolverService->resolve($student, null, $course, $course->center);
 
         return (bool) ($settings['pdf_download_permission'] ?? false);

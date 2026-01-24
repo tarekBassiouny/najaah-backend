@@ -210,7 +210,6 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
                     'video_id' => $pivot->video_id,
                     'order_index' => $pivot->order_index,
                     'visible' => $pivot->visible,
-                    'download_permission_override' => $pivot->download_permission_override,
                 ]);
             }
 

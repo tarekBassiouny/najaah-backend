@@ -21,7 +21,7 @@ class SyncRolePermissionsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'permission_ids' => ['required', 'array', 'min:1'],
+            'permission_ids' => ['present', 'array'],
             'permission_ids.*' => ['integer', 'distinct', 'exists:permissions,id'],
         ];
     }
@@ -45,7 +45,7 @@ class SyncRolePermissionsRequest extends FormRequest
     {
         return [
             'permission_ids' => [
-                'description' => 'List of permission IDs to assign to the role.',
+                'description' => 'List of permission IDs to assign to the role. Pass empty array to remove all permissions.',
                 'example' => [1, 2, 3],
             ],
             'permission_ids.*' => [

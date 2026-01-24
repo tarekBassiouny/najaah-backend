@@ -429,7 +429,7 @@ This document tracks identified issues for refactoring and improvement.
 2. Fix invalid enrollment status constant (BUG-001)
 3. Add rate limiting to auth endpoints (SEC-002, SEC-003, SEC-004)
 4. Fix OTP error handling (BUG-002) (Hold will fix later before production)
-5. Add authorization to critical Form Requests
+5. Add authorization to critical Form Requests if needed
 
 ## Sprint 2: Data Integrity (Week 2)
 1. Add transactions to RequestService (RACE-001, RACE-002, RACE-003)

@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "8b262b28-6ea0-4e5d-8f12-494ae229233e",
+    "_postman_id": "b2f95a73-cf17-4265-966c-1296d6558a91",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -169,6 +169,286 @@
               "raw": "{{baseUrl}}/api/v1/admin/auth/logout"
             },
             "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧑‍💼 Admin – Categories",
+      "item": [
+        {
+          "name": "GET api/v1/admin/centers/{center_id}/categories",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/categories",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
+                  "key": "search",
+                  "value": "Science",
+                  "description": "Search by category title.",
+                  "disabled": false
+                },
+                {
+                  "key": "is_active",
+                  "value": "1",
+                  "description": "Filter by active status.",
+                  "disabled": false
+                },
+                {
+                  "key": "parent_id",
+                  "value": "10",
+                  "description": "Filter by parent category id. The id of an existing record in the categories table.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/categories?per_page=15&page=1&search=Science&is_active=1&parent_id=10",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/centers/{center_id}/categories",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/categories",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/categories",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title_translations\":{\"en\":\"Science\",\"ar\":\"العلوم\"},\"description_translations\":{\"en\":\"STEM courses\",\"ar\":\"دورات العلوم\"},\"parent_id\":2,\"order_index\":1,\"is_active\":false}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/centers/{center_id}/categories/{category_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/categories/:category_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/categories/:category_id",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "category_id",
+                  "key": "category_id",
+                  "value": "1",
+                  "description": "The ID of the category."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT api/v1/admin/centers/{center_id}/categories/{category_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/categories/:category_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/categories/:category_id",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "category_id",
+                  "key": "category_id",
+                  "value": "1",
+                  "description": "The ID of the category."
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title_translations\":{\"en\":\"Science\",\"ar\":\"العلوم\"},\"description_translations\":{\"en\":\"STEM courses\",\"ar\":\"دورات العلوم\"},\"parent_id\":2,\"order_index\":1,\"is_active\":false}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE api/v1/admin/centers/{center_id}/categories/{category_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/categories/:category_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/categories/:category_id",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "category_id",
+                  "key": "category_id",
+                  "value": "1",
+                  "description": "The ID of the category."
+                }
+              ]
+            },
+            "method": "DELETE",
             "header": [
               {
                 "key": "Content-Type",
@@ -822,7 +1102,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Sample Course\",\"description\":\"This is an introductory course.\",\"category_id\":1,\"difficulty\":\"beginner\",\"language\":\"en\",\"price\":0,\"metadata\":{\"key\":\"value\"},\"difficulty_level\":1,\"created_by\":5}"
+              "raw": "{\"title_translations\":{\"en\":\"Sample Course\",\"ar\":\"دورة تجريبية\"},\"description_translations\":{\"en\":\"This is an introductory course.\",\"ar\":\"هذه دورة تمهيدية.\"},\"category_id\":1,\"difficulty\":\"beginner\",\"language\":\"bngzmi\",\"price\":0,\"metadata\":{\"key\":\"value\"},\"difficulty_level\":16,\"created_by\":16}"
             },
             "description": "",
             "auth": {
@@ -925,7 +1205,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Updated Course Title\",\"description\":\"Updated description.\",\"category_id\":2,\"difficulty\":\"intermediate\",\"language\":\"en\",\"price\":10.5,\"metadata\":{\"key\":\"value\"},\"difficulty_level\":2,\"created_by\":5}"
+              "raw": "{\"title_translations\":{\"en\":\"Updated Course Title\",\"ar\":\"عنوان الدورة المحدث\"},\"description_translations\":{\"en\":\"Updated description.\",\"ar\":\"الوصف المحدث.\"},\"category_id\":2,\"difficulty\":\"intermediate\",\"price\":10.5,\"metadata\":{\"key\":\"value\"},\"difficulty_level\":16,\"created_by\":16}"
             },
             "description": "",
             "auth": {
@@ -1296,7 +1576,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"order_index\":1}"
+              "raw": "{\"title_translations\":{\"en\":\"Introduction\",\"ar\":\"مقدمة\"},\"description_translations\":{\"en\":\"Overview of the course.\",\"ar\":\"نظرة عامة على الدورة.\"},\"order_index\":1}"
             },
             "description": "",
             "auth": {
@@ -1464,7 +1744,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Updated Section Title\",\"description\":\"Updated description.\",\"order_index\":2}"
+              "raw": "{\"title_translations\":{\"en\":\"Updated Section Title\",\"ar\":\"عنوان القسم المحدث\"},\"description_translations\":{\"en\":\"Updated description.\",\"ar\":\"الوصف المحدث.\"},\"order_index\":2}"
             },
             "description": "",
             "auth": {
@@ -1685,7 +1965,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"sort_order\":1,\"videos\":[5],\"pdfs\":[3]}"
+              "raw": "{\"title_translations\":{\"en\":\"Introduction\",\"ar\":\"مقدمة\"},\"description_translations\":{\"en\":\"Overview of the course.\",\"ar\":\"نظرة عامة على الدورة.\"},\"sort_order\":1,\"videos\":[16],\"pdfs\":[16]}"
             },
             "description": "",
             "auth": {
@@ -1744,7 +2024,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Updated Section\",\"description\":\"Updated description.\",\"sort_order\":2,\"videos\":[5],\"pdfs\":[3]}"
+              "raw": "{\"title_translations\":{\"en\":\"Updated Section\",\"ar\":\"القسم المحدث\"},\"description_translations\":{\"en\":\"Updated description.\",\"ar\":\"الوصف المحدث.\"},\"sort_order\":2,\"videos\":[16],\"pdfs\":[16]}"
             },
             "description": "",
             "auth": {
@@ -2512,7 +2792,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Introduction\",\"description\":\"Overview of the lesson.\",\"tags\":[\"b\"]}"
+              "raw": "{\"title_translations\":{\"en\":\"Introduction\",\"ar\":\"مقدمة\"},\"description_translations\":{\"en\":\"Overview of the lesson.\",\"ar\":\"نظرة عامة على الدرس.\"},\"tags\":[\"b\"]}"
             },
             "description": "",
             "auth": {
@@ -2615,7 +2895,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Updated title\",\"description\":\"Updated description\",\"tags\":[\"b\"]}"
+              "raw": "{\"title_translations\":{\"en\":\"Updated title\",\"ar\":\"العنوان المحدث\"},\"description_translations\":{\"en\":\"Updated description\",\"ar\":\"الوصف المحدث\"},\"tags\":[\"b\"]}"
             },
             "description": "",
             "auth": {
@@ -2713,375 +2993,6 @@
             "body": {
               "mode": "raw",
               "raw": "{\"video_id\":10,\"original_filename\":\"lecture-1.mp4\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET api/v1/admin/centers/{center_id}/pdfs",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/centers/:center_id/pdfs",
-              "query": [
-                {
-                  "key": "per_page",
-                  "value": "15",
-                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
-                  "disabled": false
-                },
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number to retrieve. Must be at least 1.",
-                  "disabled": false
-                },
-                {
-                  "key": "course_id",
-                  "value": "10",
-                  "description": "Filter PDFs by course ID.",
-                  "disabled": false
-                },
-                {
-                  "key": "search",
-                  "value": "Lesson+Notes",
-                  "description": "Search PDFs by title.",
-                  "disabled": false
-                }
-              ],
-              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs?per_page=15&page=1&course_id=10&search=Lesson+Notes",
-              "variable": [
-                {
-                  "id": "center_id",
-                  "key": "center_id",
-                  "value": "1",
-                  "description": "The ID of the center."
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST api/v1/admin/centers/{center_id}/pdfs",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/centers/:center_id/pdfs",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs",
-              "variable": [
-                {
-                  "id": "center_id",
-                  "key": "center_id",
-                  "value": "1",
-                  "description": "The ID of the center."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"title\":\"Lesson Notes\",\"description\":\"Downloadable notes.\",\"upload_session_id\":12,\"source_id\":\"centers\\/1\\/pdfs\\/demo.pdf\",\"source_url\":\"https:\\/\\/cdn.example.com\\/demo.pdf\",\"file_extension\":\"pdf\",\"file_size_kb\":1024}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET api/v1/admin/centers/{center_id}/pdfs/{pdf_id}",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/centers/:center_id/pdfs/:pdf_id",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/:pdf_id",
-              "variable": [
-                {
-                  "id": "center_id",
-                  "key": "center_id",
-                  "value": "1",
-                  "description": "The ID of the center."
-                },
-                {
-                  "id": "pdf_id",
-                  "key": "pdf_id",
-                  "value": "1",
-                  "description": "The ID of the pdf."
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "PUT api/v1/admin/centers/{center_id}/pdfs/{pdf_id}",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/centers/:center_id/pdfs/:pdf_id",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/:pdf_id",
-              "variable": [
-                {
-                  "id": "center_id",
-                  "key": "center_id",
-                  "value": "1",
-                  "description": "The ID of the center."
-                },
-                {
-                  "id": "pdf_id",
-                  "key": "pdf_id",
-                  "value": "1",
-                  "description": "The ID of the pdf."
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"title\":\"Updated Notes\",\"description\":\"Updated description\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "DELETE api/v1/admin/centers/{center_id}/pdfs/{pdf_id}",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/centers/:center_id/pdfs/:pdf_id",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/:pdf_id",
-              "variable": [
-                {
-                  "id": "center_id",
-                  "key": "center_id",
-                  "value": "1",
-                  "description": "The ID of the center."
-                },
-                {
-                  "id": "pdf_id",
-                  "key": "pdf_id",
-                  "value": "1",
-                  "description": "The ID of the pdf."
-                }
-              ]
-            },
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST api/v1/admin/centers/{center_id}/pdfs/upload-sessions",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/centers/:center_id/pdfs/upload-sessions",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/upload-sessions",
-              "variable": [
-                {
-                  "id": "center_id",
-                  "key": "center_id",
-                  "value": "1",
-                  "description": "The ID of the center."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"original_filename\":\"notes.pdf\",\"file_size_kb\":2048}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST api/v1/admin/centers/{center_id}/pdfs/upload-sessions/{pdfUploadSession_id}/finalize",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/centers/:center_id/pdfs/upload-sessions/:pdfUploadSession_id/finalize",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/upload-sessions/:pdfUploadSession_id/finalize",
-              "variable": [
-                {
-                  "id": "center_id",
-                  "key": "center_id",
-                  "value": "1",
-                  "description": "The ID of the center."
-                },
-                {
-                  "id": "pdfUploadSession_id",
-                  "key": "pdfUploadSession_id",
-                  "value": "1",
-                  "description": "The ID of the pdfUploadSession."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"pdf_id\":12,\"title\":\"Lesson Notes\",\"description\":\"Downloadable notes.\",\"error_message\":\"Upload failed\"}"
             },
             "description": "",
             "auth": {
@@ -4256,6 +4167,380 @@
       ]
     },
     {
+      "name": "🧑‍💼 Admin – PDFs",
+      "item": [
+        {
+          "name": "GET api/v1/admin/centers/{center_id}/pdfs",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/pdfs",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
+                  "key": "course_id",
+                  "value": "10",
+                  "description": "Filter PDFs by course ID.",
+                  "disabled": false
+                },
+                {
+                  "key": "search",
+                  "value": "Lesson+Notes",
+                  "description": "Search PDFs by title.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs?per_page=15&page=1&course_id=10&search=Lesson+Notes",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/centers/{center_id}/pdfs",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/pdfs",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title_translations\":{\"en\":\"Lesson Notes\",\"ar\":\"ملاحظات الدرس\"},\"description_translations\":{\"en\":\"Downloadable notes.\",\"ar\":\"ملاحظات قابلة للتنزيل.\"},\"upload_session_id\":12,\"source_id\":\"centers\\/1\\/pdfs\\/demo.pdf\",\"source_url\":\"https:\\/\\/cdn.example.com\\/demo.pdf\",\"file_extension\":\"pdf\",\"file_size_kb\":1024}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/centers/{center_id}/pdfs/{pdf_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/pdfs/:pdf_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/:pdf_id",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "pdf_id",
+                  "key": "pdf_id",
+                  "value": "1",
+                  "description": "The ID of the pdf."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT api/v1/admin/centers/{center_id}/pdfs/{pdf_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/pdfs/:pdf_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/:pdf_id",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "pdf_id",
+                  "key": "pdf_id",
+                  "value": "1",
+                  "description": "The ID of the pdf."
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title_translations\":{\"en\":\"Updated Notes\",\"ar\":\"الملاحظات المحدثة\"},\"description_translations\":{\"en\":\"Updated description\",\"ar\":\"الوصف المحدث\"}}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE api/v1/admin/centers/{center_id}/pdfs/{pdf_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/pdfs/:pdf_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/:pdf_id",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "pdf_id",
+                  "key": "pdf_id",
+                  "value": "1",
+                  "description": "The ID of the pdf."
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/centers/{center_id}/pdfs/upload-sessions",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/pdfs/upload-sessions",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/upload-sessions",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"original_filename\":\"notes.pdf\",\"file_size_kb\":2048}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/centers/{center_id}/pdfs/upload-sessions/{pdfUploadSession_id}/finalize",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/centers/:center_id/pdfs/upload-sessions/:pdfUploadSession_id/finalize",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/centers/:center_id/pdfs/upload-sessions/:pdfUploadSession_id/finalize",
+              "variable": [
+                {
+                  "id": "center_id",
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "The ID of the center."
+                },
+                {
+                  "id": "pdfUploadSession_id",
+                  "key": "pdfUploadSession_id",
+                  "value": "1",
+                  "description": "The ID of the pdfUploadSession."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"pdf_id\":12,\"title_translations\":{\"en\":\"Lesson Notes\",\"ar\":\"ملاحظات الدرس\"},\"description_translations\":{\"en\":\"Downloadable notes.\",\"ar\":\"ملاحظات قابلة للتنزيل.\"},\"error_message\":\"Upload failed\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "🧑‍💼 Admin – Roles",
       "item": [
         {
@@ -4273,6 +4558,50 @@
                 }
               ],
               "raw": "{{baseUrl}}/api/v1/admin/roles?per_page=15"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/roles/{role_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/roles/:role_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/roles/:role_id",
+              "variable": [
+                {
+                  "id": "role_id",
+                  "key": "role_id",
+                  "value": "1",
+                  "description": "The ID of the role."
+                }
+              ]
             },
             "method": "GET",
             "header": [
@@ -4331,7 +4660,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"name\":\"Content Admin\",\"slug\":\"content_admin\",\"description\":\"Manages course and video content.\"}"
+              "raw": "{\"name_translations\":{\"en\":\"Content Admin\",\"ar\":\"مدير المحتوى\"},\"slug\":\"content_admin\",\"description_translations\":{\"en\":\"Manages course and video content.\",\"ar\":\"يدير محتوى الدورات والفيديو.\"}}"
             },
             "description": "",
             "auth": {
@@ -4378,7 +4707,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"name\":\"Support Admin\",\"slug\":\"support_admin\",\"description\":\"Handles support workflows.\"}"
+              "raw": "{\"name_translations\":{\"en\":\"Support Admin\",\"ar\":\"مدير الدعم\"},\"slug\":\"support_admin\",\"description_translations\":{\"en\":\"Handles support workflows.\",\"ar\":\"يدير سير عمل الدعم.\"}}"
             },
             "description": "",
             "auth": {

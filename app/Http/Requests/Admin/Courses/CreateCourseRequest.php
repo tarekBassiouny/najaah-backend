@@ -34,15 +34,17 @@ class CreateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
-            'description' => ['nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
+            'title_translations' => ['required', 'array', 'min:1'],
+            'title_translations.en' => ['required', 'string', 'max:255'],
+            'title_translations.ar' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string'],
+            'description_translations.ar' => ['nullable', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'difficulty' => ['required', 'in:beginner,intermediate,advanced'],
-            'language' => ['required', 'string', 'max:10'],
+            'language' => ['nullable', 'string', 'max:10'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'metadata' => ['nullable', 'array'],
-            'title_translations' => ['prohibited'],
-            'description_translations' => ['prohibited'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
         ];
@@ -54,13 +56,29 @@ class CreateCourseRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'title' => [
-                'description' => 'Course title (base locale string).',
+            'title_translations' => [
+                'description' => 'Course title translations object.',
+                'example' => ['en' => 'Sample Course', 'ar' => 'دورة تجريبية'],
+            ],
+            'title_translations.en' => [
+                'description' => 'Course title in English (required).',
                 'example' => 'Sample Course',
             ],
-            'description' => [
-                'description' => 'Course description (base locale string).',
+            'title_translations.ar' => [
+                'description' => 'Course title in Arabic (optional).',
+                'example' => 'دورة تجريبية',
+            ],
+            'description_translations' => [
+                'description' => 'Course description translations object.',
+                'example' => ['en' => 'This is an introductory course.', 'ar' => 'هذه دورة تمهيدية.'],
+            ],
+            'description_translations.en' => [
+                'description' => 'Course description in English.',
                 'example' => 'This is an introductory course.',
+            ],
+            'description_translations.ar' => [
+                'description' => 'Course description in Arabic.',
+                'example' => 'هذه دورة تمهيدية.',
             ],
             'category_id' => [
                 'description' => 'Category ID for the course.',
@@ -70,10 +88,6 @@ class CreateCourseRequest extends FormRequest
                 'description' => 'Difficulty level slug.',
                 'example' => 'beginner',
             ],
-            'language' => [
-                'description' => 'Primary language code.',
-                'example' => 'en',
-            ],
             'price' => [
                 'description' => 'Optional course price.',
                 'example' => 0,
@@ -81,14 +95,6 @@ class CreateCourseRequest extends FormRequest
             'metadata' => [
                 'description' => 'Optional metadata array.',
                 'example' => ['key' => 'value'],
-            ],
-            'difficulty_level' => [
-                'description' => 'Mapped numeric difficulty (auto-set from difficulty).',
-                'example' => 1,
-            ],
-            'created_by' => [
-                'description' => 'User ID creating the course.',
-                'example' => 5,
             ],
         ];
     }

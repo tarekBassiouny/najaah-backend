@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Instructors;
 
+use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Instructor;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Storage\Contracts\StorageServiceInterface;
@@ -14,6 +15,14 @@ use RuntimeException;
 
 class InstructorService implements InstructorServiceInterface
 {
+    use NormalizesTranslations;
+
+    private const TRANSLATION_FIELDS = [
+        'name_translations',
+        'bio_translations',
+        'title_translations',
+    ];
+
     public function __construct(
         private readonly StorageServiceInterface $storageService,
         private readonly StoragePathResolver $pathResolver
@@ -34,6 +43,7 @@ class InstructorService implements InstructorServiceInterface
      */
     public function create(array $data): Instructor
     {
+        $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS);
         $data = $this->prepareAvatar($data);
         $data = $this->prepareMetadata($data);
 
@@ -45,6 +55,11 @@ class InstructorService implements InstructorServiceInterface
      */
     public function update(Instructor $instructor, array $data): Instructor
     {
+        $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS, [
+            'name_translations' => $instructor->name_translations ?? [],
+            'bio_translations' => $instructor->bio_translations ?? [],
+            'title_translations' => $instructor->title_translations ?? [],
+        ]);
         $data = $this->prepareAvatar($data, $instructor);
         $data = $this->prepareMetadata($data);
 

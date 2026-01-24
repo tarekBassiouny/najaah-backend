@@ -31,11 +31,15 @@ use App\Services\Pdfs\Contracts\PdfUploadSessionServiceInterface;
 use App\Services\Pdfs\PdfAccessService;
 use App\Services\Pdfs\PdfService;
 use App\Services\Pdfs\PdfUploadSessionService;
+use App\Services\Permissions\Contracts\PermissionServiceInterface;
+use App\Services\Permissions\PermissionService;
 use App\Services\Playback\Contracts\PlaybackAuthorizationServiceInterface;
 use App\Services\Playback\Contracts\PlaybackServiceInterface;
 use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackService;
 use App\Services\Playback\ViewLimitService;
+use App\Services\Roles\Contracts\RoleServiceInterface;
+use App\Services\Roles\RoleService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
 use App\Services\Sections\Contracts\SectionWorkflowServiceInterface;
@@ -90,6 +94,8 @@ class AppServiceProvider extends ServiceProvider
             AdminVideoQueryServiceInterface::class => AdminVideoQueryService::class,
             PlaybackServiceInterface::class => PlaybackService::class,
             PlaybackAuthorizationServiceInterface::class => PlaybackAuthorizationService::class,
+            RoleServiceInterface::class => RoleService::class,
+            PermissionServiceInterface::class => PermissionService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {

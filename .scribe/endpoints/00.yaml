@@ -19,8 +19,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -52,8 +52,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -109,8 +109,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -214,8 +214,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -259,8 +259,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -292,8 +292,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -337,8 +337,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -370,8 +370,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -499,8 +499,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -556,8 +556,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -625,8 +625,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -706,8 +706,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -775,8 +775,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -844,8 +844,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -913,8 +913,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -994,8 +994,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -1039,8 +1039,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1108,8 +1108,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1189,8 +1189,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1282,8 +1282,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1375,8 +1375,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1444,8 +1444,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1525,8 +1525,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1570,8 +1570,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -1639,8 +1639,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       slug:
         custom: []
@@ -1684,8 +1684,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1741,8 +1741,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1810,8 +1810,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1843,8 +1843,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1876,8 +1876,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -1909,8 +1909,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -2062,8 +2062,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -2355,8 +2355,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2400,8 +2400,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2520,8 +2520,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2565,8 +2565,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2610,8 +2610,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2655,8 +2655,8 @@ endpoints:
     headers:
       Content-Type: multipart/form-data
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center:
         custom: []
@@ -2712,8 +2712,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -2757,8 +2757,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -2907,8 +2907,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -2979,8 +2979,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       enrollment_id:
         custom: []
@@ -3039,8 +3039,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       enrollment_id:
         custom: []
@@ -3084,8 +3084,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -3189,8 +3189,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3285,8 +3285,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -3402,8 +3402,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -3421,10 +3421,23 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Course title (base locale string). Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'Course title translations object. Must have at least 1 items.'
+        required: true
+        example:
+          en: 'Sample Course'
+          ar: 'دورة تجريبية'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'Course title in English (required). Must not be greater than 255 characters.'
         required: true
         example: 'Sample Course'
         type: string
@@ -3432,12 +3445,47 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Course description (base locale string).'
+        name: title_translations.ar
+        description: 'Course title in Arabic (optional). Must not be greater than 255 characters.'
+        required: false
+        example: 'دورة تجريبية'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Course description translations object.'
+        required: false
+        example:
+          en: 'This is an introductory course.'
+          ar: 'هذه دورة تمهيدية.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: 'Course description in English.'
         required: false
         example: 'This is an introductory course.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: 'Course description in Arabic.'
+        required: false
+        example: 'هذه دورة تمهيدية.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -3471,13 +3519,13 @@ endpoints:
       language:
         custom: []
         name: language
-        description: 'Primary language code. Must not be greater than 10 characters.'
-        required: true
-        example: en
+        description: 'Must not be greater than 10 characters.'
+        required: false
+        example: bngzmi
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       price:
         custom: []
@@ -3502,34 +3550,12 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
-      title_translations:
-        custom: []
-        name: title_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       difficulty_level:
         custom: []
         name: difficulty_level
-        description: 'Mapped numeric difficulty (auto-set from difficulty).'
+        description: ''
         required: false
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -3538,25 +3564,29 @@ endpoints:
       created_by:
         custom: []
         name: created_by
-        description: 'User ID creating the course. The <code>id</code> of an existing record in the users table.'
+        description: 'The <code>id</code> of an existing record in the users table.'
         required: false
-        example: 5
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: 'Sample Course'
-      description: 'This is an introductory course.'
+      title_translations:
+        en: 'Sample Course'
+        ar: 'دورة تجريبية'
+      description_translations:
+        en: 'This is an introductory course.'
+        ar: 'هذه دورة تمهيدية.'
       category_id: 1
       difficulty: beginner
-      language: en
+      language: bngzmi
       price: 0.0
       metadata:
         key: value
-      difficulty_level: 1
-      created_by: 5
+      difficulty_level: 16
+      created_by: 16
     fileParameters: []
     responses: []
     responseFields: []
@@ -3582,8 +3612,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -3639,8 +3669,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -3670,23 +3700,71 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Course title (base locale string). Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'Course title translations object. Must have at least 1 items.'
+        required: false
+        example:
+          en: 'Updated Course Title'
+          ar: 'عنوان الدورة المحدث'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'Course title in English. Must not be greater than 255 characters.'
         required: false
         example: 'Updated Course Title'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Course description (base locale string).'
+        name: title_translations.ar
+        description: 'Course title in Arabic. Must not be greater than 255 characters.'
+        required: false
+        example: 'عنوان الدورة المحدث'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Course description translations object.'
+        required: false
+        example:
+          en: 'Updated description.'
+          ar: 'الوصف المحدث.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: 'Course description in English.'
         required: false
         example: 'Updated description.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: 'Course description in Arabic.'
+        required: false
+        example: 'الوصف المحدث.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -3717,17 +3795,6 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      language:
-        custom: []
-        name: language
-        description: 'Primary language code. Must not be greater than 10 characters.'
-        required: false
-        example: en
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       price:
         custom: []
         name: price
@@ -3751,34 +3818,12 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
-      title_translations:
-        custom: []
-        name: title_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       difficulty_level:
         custom: []
         name: difficulty_level
-        description: 'Mapped numeric difficulty (auto-set from difficulty).'
+        description: ''
         required: false
-        example: 2
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -3787,25 +3832,28 @@ endpoints:
       created_by:
         custom: []
         name: created_by
-        description: 'User ID updating the course. The <code>id</code> of an existing record in the users table.'
+        description: 'The <code>id</code> of an existing record in the users table.'
         required: false
-        example: 5
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: 'Updated Course Title'
-      description: 'Updated description.'
+      title_translations:
+        en: 'Updated Course Title'
+        ar: 'عنوان الدورة المحدث'
+      description_translations:
+        en: 'Updated description.'
+        ar: 'الوصف المحدث.'
       category_id: 2
       difficulty: intermediate
-      language: en
       price: 10.5
       metadata:
         key: value
-      difficulty_level: 2
-      created_by: 5
+      difficulty_level: 16
+      created_by: 16
     fileParameters: []
     responses: []
     responseFields: []
@@ -3831,8 +3879,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -3888,8 +3936,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -3933,8 +3981,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4014,8 +4062,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4083,8 +4131,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4164,8 +4212,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4233,8 +4281,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4290,8 +4338,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4321,10 +4369,23 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Section title (base locale string). Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'Section title translations object. Must have at least 1 items.'
+        required: true
+        example:
+          en: Introduction
+          ar: مقدمة
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'Section title in English (required). Must not be greater than 255 characters.'
         required: true
         example: Introduction
         type: string
@@ -4332,12 +4393,47 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Section description (base locale string).'
+        name: title_translations.ar
+        description: 'Section title in Arabic (optional). Must not be greater than 255 characters.'
+        required: false
+        example: مقدمة
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Section description translations object.'
+        required: false
+        example:
+          en: 'Overview of the course.'
+          ar: 'نظرة عامة على الدورة.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Overview of the course.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: ''
+        required: false
+        example: 'نظرة عامة على الدورة.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -4354,31 +4450,13 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
-      title_translations:
-        custom: []
-        name: title_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
     cleanBodyParameters:
-      title: Introduction
-      description: 'Overview of the course.'
+      title_translations:
+        en: Introduction
+        ar: مقدمة
+      description_translations:
+        en: 'Overview of the course.'
+        ar: 'نظرة عامة على الدورة.'
       order_index: 1
     fileParameters: []
     responses: []
@@ -4405,8 +4483,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4476,8 +4554,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4545,8 +4623,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4588,23 +4666,71 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Section title (base locale string). Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'Section title translations object. Must have at least 1 items.'
+        required: false
+        example:
+          en: 'Updated Section Title'
+          ar: 'عنوان القسم المحدث'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'Section title in English. Must not be greater than 255 characters.'
         required: false
         example: 'Updated Section Title'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Section description (base locale string).'
+        name: title_translations.ar
+        description: 'Section title in Arabic. Must not be greater than 255 characters.'
+        required: false
+        example: 'عنوان القسم المحدث'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Section description translations object.'
+        required: false
+        example:
+          en: 'Updated description.'
+          ar: 'الوصف المحدث.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Updated description.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: ''
+        required: false
+        example: 'الوصف المحدث.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -4621,31 +4747,13 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      title_translations:
-        custom: []
-        name: title_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
     cleanBodyParameters:
-      title: 'Updated Section Title'
-      description: 'Updated description.'
+      title_translations:
+        en: 'Updated Section Title'
+        ar: 'عنوان القسم المحدث'
+      description_translations:
+        en: 'Updated description.'
+        ar: 'الوصف المحدث.'
       order_index: 2
     fileParameters: []
     responses: []
@@ -4672,8 +4780,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4741,8 +4849,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4810,8 +4918,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4879,8 +4987,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -4910,10 +5018,23 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Section title (base locale string). Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'Section title translations object. Must have at least 1 items.'
+        required: true
+        example:
+          en: Introduction
+          ar: مقدمة
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'Section title in English (required). Must not be greater than 255 characters.'
         required: true
         example: Introduction
         type: string
@@ -4921,12 +5042,47 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Section description (base locale string).'
+        name: title_translations.ar
+        description: 'Section title in Arabic (optional). Must not be greater than 255 characters.'
+        required: false
+        example: مقدمة
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Section description translations object.'
+        required: false
+        example:
+          en: 'Overview of the course.'
+          ar: 'نظرة عامة على الدورة.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Overview of the course.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: ''
+        required: false
+        example: 'نظرة عامة على الدورة.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -4946,10 +5102,10 @@ endpoints:
       videos:
         custom: []
         name: videos
-        description: 'Video ID to attach. The <code>id</code> of an existing record in the videos table.'
+        description: 'The <code>id</code> of an existing record in the videos table.'
         required: false
         example:
-          - 5
+          - 16
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -4958,23 +5114,27 @@ endpoints:
       pdfs:
         custom: []
         name: pdfs
-        description: 'PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.'
+        description: 'The <code>id</code> of an existing record in the pdfs table.'
         required: false
         example:
-          - 3
+          - 16
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: Introduction
-      description: 'Overview of the course.'
+      title_translations:
+        en: Introduction
+        ar: مقدمة
+      description_translations:
+        en: 'Overview of the course.'
+        ar: 'نظرة عامة على الدورة.'
       sort_order: 1
       videos:
-        - 5
+        - 16
       pdfs:
-        - 3
+        - 16
     fileParameters: []
     responses: []
     responseFields: []
@@ -5000,8 +5160,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5043,23 +5203,71 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Section title (base locale string). Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'Section title translations object. Must have at least 1 items.'
+        required: false
+        example:
+          en: 'Updated Section'
+          ar: 'القسم المحدث'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'Section title in English. Must not be greater than 255 characters.'
         required: false
         example: 'Updated Section'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Section description (base locale string).'
+        name: title_translations.ar
+        description: 'Section title in Arabic. Must not be greater than 255 characters.'
+        required: false
+        example: 'القسم المحدث'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Section description translations object.'
+        required: false
+        example:
+          en: 'Updated description.'
+          ar: 'الوصف المحدث.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Updated description.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: ''
+        required: false
+        example: 'الوصف المحدث.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -5079,10 +5287,10 @@ endpoints:
       videos:
         custom: []
         name: videos
-        description: 'Video ID to attach. The <code>id</code> of an existing record in the videos table.'
+        description: 'The <code>id</code> of an existing record in the videos table.'
         required: false
         example:
-          - 5
+          - 16
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -5091,23 +5299,27 @@ endpoints:
       pdfs:
         custom: []
         name: pdfs
-        description: 'PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.'
+        description: 'The <code>id</code> of an existing record in the pdfs table.'
         required: false
         example:
-          - 3
+          - 16
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: 'Updated Section'
-      description: 'Updated description.'
+      title_translations:
+        en: 'Updated Section'
+        ar: 'القسم المحدث'
+      description_translations:
+        en: 'Updated description.'
+        ar: 'الوصف المحدث.'
       sort_order: 2
       videos:
-        - 5
+        - 16
       pdfs:
-        - 3
+        - 16
     fileParameters: []
     responses: []
     responseFields: []
@@ -5133,8 +5345,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5202,8 +5414,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5271,8 +5483,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5352,8 +5564,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5433,8 +5645,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5526,8 +5738,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5595,8 +5807,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5676,8 +5888,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5757,8 +5969,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5850,8 +6062,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5919,8 +6131,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -5988,8 +6200,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -6081,8 +6293,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -6100,10 +6312,23 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Video title in the request locale. Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'Video title translations object. Must have at least 1 items.'
+        required: true
+        example:
+          en: Introduction
+          ar: مقدمة
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'Video title in English (required). Must not be greater than 255 characters.'
         required: true
         example: Introduction
         type: string
@@ -6111,12 +6336,47 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Optional description in the request locale.'
+        name: title_translations.ar
+        description: 'Video title in Arabic (optional). Must not be greater than 255 characters.'
+        required: false
+        example: مقدمة
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Video description translations object.'
+        required: false
+        example:
+          en: 'Overview of the lesson.'
+          ar: 'نظرة عامة على الدرس.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Overview of the lesson.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: ''
+        required: false
+        example: 'نظرة عامة على الدرس.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -6134,31 +6394,13 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      title_translations:
-        custom: []
-        name: title_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
     cleanBodyParameters:
-      title: Introduction
-      description: 'Overview of the lesson.'
+      title_translations:
+        en: Introduction
+        ar: مقدمة
+      description_translations:
+        en: 'Overview of the lesson.'
+        ar: 'نظرة عامة على الدرس.'
       tags:
         - b
     fileParameters: []
@@ -6186,8 +6428,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -6243,8 +6485,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -6274,23 +6516,71 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Updated video title. Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'Video title translations object. Must have at least 1 items.'
+        required: false
+        example:
+          en: 'Updated title'
+          ar: 'العنوان المحدث'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'Video title in English. Must not be greater than 255 characters.'
         required: false
         example: 'Updated title'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Updated description.'
+        name: title_translations.ar
+        description: 'Video title in Arabic. Must not be greater than 255 characters.'
+        required: false
+        example: 'العنوان المحدث'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Video description translations object.'
+        required: false
+        example:
+          en: 'Updated description'
+          ar: 'الوصف المحدث'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Updated description'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: ''
+        required: false
+        example: 'الوصف المحدث'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -6304,28 +6594,6 @@ endpoints:
         example:
           - b
         type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      title_translations:
-        custom: []
-        name: title_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -6485,8 +6753,12 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: 'Updated title'
-      description: 'Updated description'
+      title_translations:
+        en: 'Updated title'
+        ar: 'العنوان المحدث'
+      description_translations:
+        en: 'Updated description'
+        ar: 'الوصف المحدث'
       tags:
         - b
     fileParameters: []
@@ -6514,8 +6786,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -6571,8 +6843,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -6640,8 +6912,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -6733,8 +7005,8 @@ endpoints:
     headers:
       Content-Type: multipart/form-data
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -6908,8 +7180,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       id:
         custom: []
@@ -6954,8 +7226,8 @@ endpoints:
     headers:
       Content-Type: multipart/form-data
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       id:
         custom: []
@@ -7135,8 +7407,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       id:
         custom: []
@@ -7180,8 +7452,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -7249,8 +7521,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       course_id:
         custom: []
@@ -7292,6 +7564,463 @@ endpoints:
     custom: []
     httpMethods:
       - GET
+    uri: 'api/v1/admin/centers/{center_id}/categories'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+    queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      search:
+        custom: []
+        name: search
+        description: 'Search by category title.'
+        required: false
+        example: Science
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      is_active:
+        custom: []
+        name: is_active
+        description: 'Filter by active status.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      parent_id:
+        custom: []
+        name: parent_id
+        description: 'Filter by parent category id. The <code>id</code> of an existing record in the categories table.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      per_page: 15
+      page: 1
+      search: Science
+      is_active: true
+      parent_id: 10
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/admin/centers/{center_id}/categories'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      title_translations:
+        custom: []
+        name: title_translations
+        description: 'Localized category title keyed by locale.'
+        required: true
+        example:
+          en: Science
+          ar: العلوم
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Localized category description keyed by locale.'
+        required: false
+        example:
+          en: 'STEM courses'
+          ar: 'دورات العلوم'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      parent_id:
+        custom: []
+        name: parent_id
+        description: 'Optional parent category id. The <code>id</code> of an existing record in the categories table.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      order_index:
+        custom: []
+        name: order_index
+        description: 'Optional ordering index (lower shows first). Must be at least 0.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      is_active:
+        custom: []
+        name: is_active
+        description: 'Whether the category is active.'
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      title_translations:
+        en: Science
+        ar: العلوم
+      description_translations:
+        en: 'STEM courses'
+        ar: 'دورات العلوم'
+      parent_id: 2
+      order_index: 1
+      is_active: false
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/admin/centers/{center_id}/categories/{category_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      category_id:
+        custom: []
+        name: category_id
+        description: 'The ID of the category.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      category_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/v1/admin/centers/{center_id}/categories/{category_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      category_id:
+        custom: []
+        name: category_id
+        description: 'The ID of the category.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      category_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      title_translations:
+        custom: []
+        name: title_translations
+        description: 'Localized category title keyed by locale.'
+        required: false
+        example:
+          en: Science
+          ar: العلوم
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'Localized category description keyed by locale.'
+        required: false
+        example:
+          en: 'STEM courses'
+          ar: 'دورات العلوم'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      parent_id:
+        custom: []
+        name: parent_id
+        description: 'Optional parent category id. The <code>id</code> of an existing record in the categories table.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      order_index:
+        custom: []
+        name: order_index
+        description: 'Optional ordering index (lower shows first). Must be at least 0.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      is_active:
+        custom: []
+        name: is_active
+        description: 'Whether the category is active.'
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      title_translations:
+        en: Science
+        ar: العلوم
+      description_translations:
+        en: 'STEM courses'
+        ar: 'دورات العلوم'
+      parent_id: 2
+      order_index: 1
+      is_active: false
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/v1/admin/centers/{center_id}/categories/{category_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The ID of the center.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      category_id:
+        custom: []
+        name: category_id
+        description: 'The ID of the category.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      center_id: 1
+      category_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
     uri: 'api/v1/admin/centers/{center_id}/pdfs'
     metadata:
       custom: []
@@ -7306,8 +8035,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -7399,8 +8128,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -7418,10 +8147,23 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'PDF title in the request locale. Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'PDF title translations object. Must have at least 1 items.'
+        required: true
+        example:
+          en: 'Lesson Notes'
+          ar: 'ملاحظات الدرس'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'PDF title in English (required). Must not be greater than 255 characters.'
         required: true
         example: 'Lesson Notes'
         type: string
@@ -7429,10 +8171,34 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Optional description in the request locale.'
+        name: title_translations.ar
+        description: 'PDF title in Arabic (optional). Must not be greater than 255 characters.'
+        required: false
+        example: 'ملاحظات الدرس'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'PDF description translations object.'
+        required: false
+        example:
+          en: 'Downloadable notes.'
+          ar: 'ملاحظات قابلة للتنزيل.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Downloadable notes.'
         type: string
@@ -7440,27 +8206,16 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
-      title_translations:
+      description_translations.ar:
         custom: []
-        name: title_translations
+        name: description_translations.ar
         description: ''
         required: false
-        example: null
+        example: 'ملاحظات قابلة للتنزيل.'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       upload_session_id:
         custom: []
@@ -7518,8 +8273,12 @@ endpoints:
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      title: 'Lesson Notes'
-      description: 'Downloadable notes.'
+      title_translations:
+        en: 'Lesson Notes'
+        ar: 'ملاحظات الدرس'
+      description_translations:
+        en: 'Downloadable notes.'
+        ar: 'ملاحظات قابلة للتنزيل.'
       upload_session_id: 12
       source_id: centers/1/pdfs/demo.pdf
       source_url: 'https://cdn.example.com/demo.pdf'
@@ -7550,8 +8309,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -7607,8 +8366,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -7638,21 +8397,58 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'Updated PDF title. Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'PDF title translations object. Must have at least 1 items.'
+        required: false
+        example:
+          en: 'Updated Notes'
+          ar: 'الملاحظات المحدثة'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'PDF title in English. Must not be greater than 255 characters.'
         required: false
         example: 'Updated Notes'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Updated description.'
+        name: title_translations.ar
+        description: 'PDF title in Arabic. Must not be greater than 255 characters.'
+        required: false
+        example: 'الملاحظات المحدثة'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'PDF description translations object.'
+        required: false
+        example:
+          en: 'Updated description'
+          ar: 'الوصف المحدث'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Updated description'
         type: string
@@ -7660,27 +8456,16 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
-      title_translations:
+      description_translations.ar:
         custom: []
-        name: title_translations
+        name: description_translations.ar
         description: ''
         required: false
-        example: null
+        example: 'الوصف المحدث'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       center_id:
         custom: []
@@ -7771,8 +8556,12 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: 'Updated Notes'
-      description: 'Updated description'
+      title_translations:
+        en: 'Updated Notes'
+        ar: 'الملاحظات المحدثة'
+      description_translations:
+        en: 'Updated description'
+        ar: 'الوصف المحدث'
     fileParameters: []
     responses: []
     responseFields: []
@@ -7798,8 +8587,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -7855,8 +8644,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -7924,8 +8713,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       center_id:
         custom: []
@@ -7966,21 +8755,58 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      title:
+      title_translations:
         custom: []
-        name: title
-        description: 'PDF title when creating a new record. This field is required when <code>pdf_id</code> is not present. Must not be greater than 255 characters.'
+        name: title_translations
+        description: 'PDF title translations object (required without pdf_id). This field is required when <code>pdf_id</code> is not present. Must have at least 1 items.'
+        required: false
+        example:
+          en: 'Lesson Notes'
+          ar: 'ملاحظات الدرس'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      title_translations.en:
+        custom: []
+        name: title_translations.en
+        description: 'PDF title in English. Must not be greater than 255 characters.'
         required: false
         example: 'Lesson Notes'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
-      description:
+      title_translations.ar:
         custom: []
-        name: description
-        description: 'Optional description when creating a new record.'
+        name: title_translations.ar
+        description: 'PDF title in Arabic. Must not be greater than 255 characters.'
+        required: false
+        example: 'ملاحظات الدرس'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations:
+        custom: []
+        name: description_translations
+        description: 'PDF description translations object.'
+        required: false
+        example:
+          en: 'Downloadable notes.'
+          ar: 'ملاحظات قابلة للتنزيل.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: ''
         required: false
         example: 'Downloadable notes.'
         type: string
@@ -7988,27 +8814,16 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
-      title_translations:
+      description_translations.ar:
         custom: []
-        name: title_translations
+        name: description_translations.ar
         description: ''
         required: false
-        example: null
+        example: 'ملاحظات قابلة للتنزيل.'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      description_translations:
-        custom: []
-        name: description_translations
-        description: ''
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       error_message:
         custom: []
@@ -8023,8 +8838,12 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       pdf_id: 12
-      title: 'Lesson Notes'
-      description: 'Downloadable notes.'
+      title_translations:
+        en: 'Lesson Notes'
+        ar: 'ملاحظات الدرس'
+      description_translations:
+        en: 'Downloadable notes.'
+        ar: 'ملاحظات قابلة للتنزيل.'
       error_message: 'Upload failed'
     fileParameters: []
     responses: []
@@ -8051,8 +8870,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -8132,8 +8951,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -8273,8 +9092,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -8393,8 +9212,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       extraViewRequest_id:
         custom: []
@@ -8462,8 +9281,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       extraViewRequest_id:
         custom: []
@@ -8519,8 +9338,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -8639,8 +9458,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       deviceChangeRequest_id:
         custom: []
@@ -8684,8 +9503,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       deviceChangeRequest_id:
         custom: []
@@ -8741,8 +9560,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -8771,6 +9590,51 @@ endpoints:
   -
     custom: []
     httpMethods:
+      - GET
+    uri: 'api/v1/admin/roles/{role_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      role_id:
+        custom: []
+        name: role_id
+        description: 'The ID of the role.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      role_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
       - POST
     uri: api/v1/admin/roles
     metadata:
@@ -8786,23 +9650,47 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      name:
+      name_translations:
         custom: []
-        name: name
-        description: 'Role display name. Must not be greater than 100 characters.'
+        name: name_translations
+        description: 'Role name translations object. Must have at least 1 items.'
+        required: true
+        example:
+          en: 'Content Admin'
+          ar: 'مدير المحتوى'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      name_translations.en:
+        custom: []
+        name: name_translations.en
+        description: 'Role name in English (required). Must not be greater than 100 characters.'
         required: true
         example: 'Content Admin'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
+        deprecated: false
+      name_translations.ar:
+        custom: []
+        name: name_translations.ar
+        description: 'Role name in Arabic (optional). Must not be greater than 100 characters.'
+        required: false
+        example: 'مدير المحتوى'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
       slug:
         custom: []
@@ -8815,10 +9703,23 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      description:
+      description_translations:
         custom: []
-        name: description
-        description: 'Optional role description. Must not be greater than 255 characters.'
+        name: description_translations
+        description: 'Role description translations object.'
+        required: false
+        example:
+          en: 'Manages course and video content.'
+          ar: 'يدير محتوى الدورات والفيديو.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: 'Role description in English. Must not be greater than 255 characters.'
         required: false
         example: 'Manages course and video content.'
         type: string
@@ -8826,10 +9727,25 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: 'Role description in Arabic. Must not be greater than 255 characters.'
+        required: false
+        example: 'يدير محتوى الدورات والفيديو.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
-      name: 'Content Admin'
+      name_translations:
+        en: 'Content Admin'
+        ar: 'مدير المحتوى'
       slug: content_admin
-      description: 'Manages course and video content.'
+      description_translations:
+        en: 'Manages course and video content.'
+        ar: 'يدير محتوى الدورات والفيديو.'
     fileParameters: []
     responses: []
     responseFields: []
@@ -8855,8 +9771,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       role_id:
         custom: []
@@ -8874,16 +9790,40 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      name:
+      name_translations:
         custom: []
-        name: name
-        description: 'Role display name. Must not be greater than 100 characters.'
+        name: name_translations
+        description: 'Role name translations object. Must have at least 1 items.'
+        required: false
+        example:
+          en: 'Support Admin'
+          ar: 'مدير الدعم'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      name_translations.en:
+        custom: []
+        name: name_translations.en
+        description: 'Role name in English. Must not be greater than 100 characters.'
         required: false
         example: 'Support Admin'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
+        deprecated: false
+      name_translations.ar:
+        custom: []
+        name: name_translations.ar
+        description: 'Role name in Arabic. Must not be greater than 100 characters.'
+        required: false
+        example: 'مدير الدعم'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
       slug:
         custom: []
@@ -8896,10 +9836,23 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      description:
+      description_translations:
         custom: []
-        name: description
-        description: 'Optional role description. Must not be greater than 255 characters.'
+        name: description_translations
+        description: 'Role description translations object.'
+        required: false
+        example:
+          en: 'Handles support workflows.'
+          ar: 'يدير سير عمل الدعم.'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      description_translations.en:
+        custom: []
+        name: description_translations.en
+        description: 'Role description in English. Must not be greater than 255 characters.'
         required: false
         example: 'Handles support workflows.'
         type: string
@@ -8907,10 +9860,25 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
+      description_translations.ar:
+        custom: []
+        name: description_translations.ar
+        description: 'Role description in Arabic. Must not be greater than 255 characters.'
+        required: false
+        example: 'يدير سير عمل الدعم.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
-      name: 'Support Admin'
+      name_translations:
+        en: 'Support Admin'
+        ar: 'مدير الدعم'
       slug: support_admin
-      description: 'Handles support workflows.'
+      description_translations:
+        en: 'Handles support workflows.'
+        ar: 'يدير سير عمل الدعم.'
     fileParameters: []
     responses: []
     responseFields: []
@@ -8936,8 +9904,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       role_id:
         custom: []
@@ -8981,8 +9949,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       role_id:
         custom: []
@@ -9040,8 +10008,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -9073,8 +10041,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -9118,8 +10086,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -9226,8 +10194,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       user_id:
         custom: []
@@ -9346,8 +10314,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       user_id:
         custom: []
@@ -9391,8 +10359,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       user_id:
         custom: []
@@ -9450,8 +10418,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
@@ -9546,8 +10514,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       user_id:
         custom: []
@@ -9630,8 +10598,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -9723,8 +10691,8 @@ endpoints:
     headers:
       Content-Type: application/json
       Accept: application/json
-      X-Locale: '{{locale}}'
-      X-Api-Key: '{{api_key}}'
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
     urlParameters:
       user_id:
         custom: []

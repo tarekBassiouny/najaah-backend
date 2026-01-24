@@ -137,7 +137,6 @@ class SectionStructureService implements SectionStructureServiceInterface
                 'video_id' => null,
                 'order_index' => $order,
                 'visible' => true,
-                'download_permission_override' => null,
             ]);
 
             return;

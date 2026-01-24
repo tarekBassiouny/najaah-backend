@@ -31,6 +31,8 @@ class CenterResource extends JsonResource
             'is_featured' => $center->is_featured,
             'name' => $center->translate('name'),
             'description' => $center->translate('description'),
+            'name_translations' => $center->name_translations,
+            'description_translations' => $center->description_translations,
             'logo_url' => $logoUrlResolver->resolve($center->logo_url),
             'primary_color' => $center->primary_color,
             'onboarding_status' => $center->onboarding_status,

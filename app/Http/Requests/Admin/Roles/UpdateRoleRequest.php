@@ -27,9 +27,13 @@ class UpdateRoleRequest extends FormRequest
         $roleId = $role?->id;
 
         return [
-            'name' => ['sometimes', 'string', 'max:100'],
+            'name_translations' => ['sometimes', 'array', 'min:1'],
+            'name_translations.en' => ['nullable', 'string', 'max:100'],
+            'name_translations.ar' => ['nullable', 'string', 'max:100'],
             'slug' => ['sometimes', 'string', 'max:100', Rule::unique('roles', 'slug')->ignore($roleId)],
-            'description' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['sometimes', 'nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string', 'max:255'],
+            'description_translations.ar' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -51,17 +55,33 @@ class UpdateRoleRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'name' => [
-                'description' => 'Role display name.',
+            'name_translations' => [
+                'description' => 'Role name translations object.',
+                'example' => ['en' => 'Support Admin', 'ar' => 'مدير الدعم'],
+            ],
+            'name_translations.en' => [
+                'description' => 'Role name in English.',
                 'example' => 'Support Admin',
+            ],
+            'name_translations.ar' => [
+                'description' => 'Role name in Arabic.',
+                'example' => 'مدير الدعم',
             ],
             'slug' => [
                 'description' => 'Unique role identifier.',
                 'example' => 'support_admin',
             ],
-            'description' => [
-                'description' => 'Optional role description.',
+            'description_translations' => [
+                'description' => 'Role description translations object.',
+                'example' => ['en' => 'Handles support workflows.', 'ar' => 'يدير سير عمل الدعم.'],
+            ],
+            'description_translations.en' => [
+                'description' => 'Role description in English.',
                 'example' => 'Handles support workflows.',
+            ],
+            'description_translations.ar' => [
+                'description' => 'Role description in Arabic.',
+                'example' => 'يدير سير عمل الدعم.',
             ],
         ];
     }

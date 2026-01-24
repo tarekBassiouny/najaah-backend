@@ -7,9 +7,10 @@ namespace App\Services\Instructors;
 use App\Filters\Mobile\InstructorFilters;
 use App\Models\Instructor;
 use App\Models\User;
+use App\Services\Instructors\Contracts\MobileInstructorServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class MobileInstructorService
+class MobileInstructorService implements MobileInstructorServiceInterface
 {
     /**
      * @return LengthAwarePaginator<Instructor>

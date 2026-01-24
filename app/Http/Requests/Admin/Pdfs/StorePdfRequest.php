@@ -19,10 +19,12 @@ class StorePdfRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
-            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
-            'title_translations' => ['prohibited'],
-            'description_translations' => ['prohibited'],
+            'title_translations' => ['required', 'array', 'min:1'],
+            'title_translations.en' => ['required', 'string', 'max:255'],
+            'title_translations.ar' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string'],
+            'description_translations.ar' => ['nullable', 'string'],
             'upload_session_id' => ['sometimes', 'integer', 'exists:pdf_upload_sessions,id'],
             'source_id' => ['required_without:upload_session_id', 'string', 'max:2048'],
             'source_url' => ['sometimes', 'nullable', 'string', 'max:2048'],
@@ -37,13 +39,21 @@ class StorePdfRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'title' => [
-                'description' => 'PDF title in the request locale.',
+            'title_translations' => [
+                'description' => 'PDF title translations object.',
+                'example' => ['en' => 'Lesson Notes', 'ar' => 'ملاحظات الدرس'],
+            ],
+            'title_translations.en' => [
+                'description' => 'PDF title in English (required).',
                 'example' => 'Lesson Notes',
             ],
-            'description' => [
-                'description' => 'Optional description in the request locale.',
-                'example' => 'Downloadable notes.',
+            'title_translations.ar' => [
+                'description' => 'PDF title in Arabic (optional).',
+                'example' => 'ملاحظات الدرس',
+            ],
+            'description_translations' => [
+                'description' => 'PDF description translations object.',
+                'example' => ['en' => 'Downloadable notes.', 'ar' => 'ملاحظات قابلة للتنزيل.'],
             ],
             'upload_session_id' => [
                 'description' => 'Upload session ID used to finalize the PDF.',

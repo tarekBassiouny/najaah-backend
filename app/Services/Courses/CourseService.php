@@ -39,12 +39,23 @@ class CourseService implements CourseServiceInterface
     public function create(array $data, ?User $actor = null): Course
     {
         RejectNonScalarInput::validate($data, ['title', 'description']);
-        $data['title_translations'] = $data['title'] ?? '';
-        $data['description_translations'] = $data['description'] ?? null;
+        // Support legacy 'title'/'description' fields by mapping to '_translations'
+        if (array_key_exists('title', $data) && ! array_key_exists('title_translations', $data)) {
+            $data['title_translations'] = $data['title'];
+        }
+
+        if (array_key_exists('description', $data) && ! array_key_exists('description_translations', $data)) {
+            $data['description_translations'] = $data['description'];
+        }
+
         unset($data['title'], $data['description']);
 
         if (! array_key_exists('difficulty_level', $data) || ! is_numeric($data['difficulty_level'])) {
             $data['difficulty_level'] = 0;
+        }
+
+        if (! array_key_exists('language', $data) || ! is_string($data['language']) || $data['language'] === '') {
+            $data['language'] = 'en';
         }
 
         $data['status'] = 0;

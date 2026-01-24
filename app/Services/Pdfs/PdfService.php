@@ -28,8 +28,15 @@ class PdfService implements PdfServiceInterface
 
         RejectNonScalarInput::validate($data, ['title', 'description']);
         $payload = $data;
-        $payload['title_translations'] = $data['title'] ?? '';
-        $payload['description_translations'] = $data['description'] ?? null;
+        // Support legacy 'title'/'description' fields by mapping to '_translations'
+        if (array_key_exists('title', $payload) && ! array_key_exists('title_translations', $payload)) {
+            $payload['title_translations'] = $payload['title'];
+        }
+
+        if (array_key_exists('description', $payload) && ! array_key_exists('description_translations', $payload)) {
+            $payload['description_translations'] = $payload['description'];
+        }
+
         unset($payload['title'], $payload['description']);
 
         $payload['center_id'] = $center->id;

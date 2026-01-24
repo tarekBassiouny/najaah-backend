@@ -35,8 +35,14 @@ it('lists center courses', function (): void {
 it('creates course in center', function (): void {
     $center = Center::factory()->create();
     $payload = [
-        'title' => 'Sample Course',
-        'description' => 'A course description',
+        'title_translations' => [
+            'en' => 'Sample Course',
+            'ar' => 'دورة نموذجية',
+        ],
+        'description_translations' => [
+            'en' => 'A course description',
+            'ar' => 'وصف الدورة',
+        ],
         'category_id' => Category::factory()->create()->id,
         'difficulty' => 'beginner',
         'language' => 'en',
@@ -46,24 +52,23 @@ it('creates course in center', function (): void {
 
     $response->assertCreated()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('data.title', 'Sample Course');
+        ->assertJsonPath('data.title', 'Sample Course')
+        ->assertJsonPath('data.title_translations.en', 'Sample Course')
+        ->assertJsonPath('data.title_translations.ar', 'دورة نموذجية');
     $this->assertDatabaseHas('courses', [
         'center_id' => $center->id,
         'status' => 0,
         'is_published' => 0,
         'publish_at' => null,
     ]);
-    $course = Course::where('center_id', $center->id)->latest('id')->first();
-    expect($course)->not->toBeNull()
-        ->and($course?->getRawOriginal('title_translations'))->toBe(json_encode('Sample Course'));
 });
 
-it('rejects array title payload when creating course', function (): void {
+it('rejects invalid title_translations payload when creating course', function (): void {
     $center = Center::factory()->create();
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses", [
-        'title' => ['en' => 'Bad'],
-        'description' => 'A course description',
+        'title_translations' => 'not an array',
+        'description_translations' => ['en' => 'A course description'],
         'category_id' => Category::factory()->create()->id,
         'difficulty' => 'beginner',
         'language' => 'en',
@@ -86,13 +91,15 @@ it('updates course in center', function (): void {
     $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0, 'is_published' => false]);
 
     $response = $this->putJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [
-        'title' => 'Updated Title',
+        'title_translations' => [
+            'en' => 'Updated Title',
+            'ar' => 'العنوان المحدث',
+        ],
     ], $this->adminHeaders());
 
-    $response->assertOk()->assertJsonPath('data.title', 'Updated Title');
-    $updated = Course::find($course->id);
-    expect($updated)->not->toBeNull()
-        ->and($updated?->getRawOriginal('title_translations'))->toBe(json_encode('Updated Title'));
+    $response->assertOk()
+        ->assertJsonPath('data.title', 'Updated Title')
+        ->assertJsonPath('data.title_translations.en', 'Updated Title');
 });
 
 it('soft deletes course in center', function (): void {

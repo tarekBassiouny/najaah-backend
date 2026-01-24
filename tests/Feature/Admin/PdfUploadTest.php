@@ -42,8 +42,8 @@ it('creates pdf from upload session', function (): void {
     $response = $this->actingAs($admin, 'admin')->postJson(
         "/api/v1/admin/centers/{$center->id}/pdfs",
         [
-            'title' => 'Doc',
-            'description' => 'Sample',
+            'title_translations' => ['en' => 'Doc', 'ar' => 'مستند'],
+            'description_translations' => ['en' => 'Sample', 'ar' => 'نموذج'],
             'upload_session_id' => $session->id,
         ],
         $this->adminHeaders()
@@ -74,7 +74,10 @@ it('fails finalize when uploaded object is missing', function (): void {
 
     $response = $this->actingAs($admin, 'admin')->postJson(
         "/api/v1/admin/centers/{$center->id}/pdfs/upload-sessions/{$session->id}/finalize",
-        ['title' => 'Doc'],
+        [
+            'title_translations' => ['en' => 'Doc'],
+            'error_message' => 'Upload verification failed',
+        ],
         $this->adminHeaders()
     );
 
@@ -100,7 +103,7 @@ it('finalizes upload session and creates pdf when object exists', function (): v
 
     $response = $this->actingAs($admin, 'admin')->postJson(
         "/api/v1/admin/centers/{$center->id}/pdfs/upload-sessions/{$session->id}/finalize",
-        ['title' => 'Doc'],
+        ['title_translations' => ['en' => 'Doc', 'ar' => 'مستند']],
         $this->adminHeaders()
     );
 
