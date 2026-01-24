@@ -63,6 +63,7 @@ function route(item) {
   // Categories & PDFs under centers must be checked BEFORE adminCenters
   if (path.match(/^\/api\/v1\/admin\/centers\/[^/]+\/categories/)) return tree.adminCategories;
   if (path.match(/^\/api\/v1\/admin\/centers\/[^/]+\/pdfs/)) return tree.adminPdfs;
+  if (path.match(/^\/api\/v1\/admin\/centers\/[^/]+\/videos/)) return tree.adminVideos;
   if (has(path, "/api/v1/admin/centers")) return tree.adminCenters;
   if (has(path, "/api/v1/admin/courses") && has(path, "/sections")) return tree.adminSections;
   if (has(path, "/api/v1/admin/courses")) return tree.adminCourses;
@@ -71,11 +72,6 @@ function route(item) {
     has(path, "/api/v1/admin/device-change-requests") ||
     has(path, "/api/v1/admin/extra-view-requests")
   ) return tree.adminEnrollment;
-  if (
-    has(path, "/api/v1/admin/videos") ||
-    has(path, "/api/v1/admin/video-uploads") ||
-    has(path, "/api/v1/admin/video-upload-sessions")
-  ) return tree.adminVideos;
   if (
     has(path, "/api/v1/admin/instructors") ||
     path.match(/^\/api\/v1\/admin\/courses\/[^/]+\/instructors/)
