@@ -163,11 +163,11 @@
         <div class="row">
             <div>
                 <label>API Base URL</label>
-                <input type="text" id="apiBaseUrl" value="http://localhost/api/v1">
+                <input type="text" id="apiBaseUrl" value="http://xyz-lms.test/api/v1">
             </div>
             <div>
                 <label>Center ID</label>
-                <input type="number" id="centerId" value="1">
+                <input type="number" id="centerId" value="225">
             </div>
         </div>
         <label>Admin Token (JWT)</label>
@@ -298,7 +298,9 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'Authorization': `Bearer ${adminToken}`
+                        'Authorization': `Bearer ${adminToken}`,
+                        'X-Locale': 'en',
+                        'X-Api-Key': '123456'
                     },
                     body: JSON.stringify({
                         original_filename: selectedFile.name,
@@ -405,7 +407,9 @@
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'Authorization': `Bearer ${adminToken}`
+                            'Authorization': `Bearer ${adminToken}`,
+                            'X-Locale': 'en',
+                            'X-Api-Key': '123456'
                         },
                         body: JSON.stringify({
                             title: title,

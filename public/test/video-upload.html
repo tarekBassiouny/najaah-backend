@@ -138,11 +138,11 @@
         <div class="row">
             <div>
                 <label>API Base URL</label>
-                <input type="text" id="apiBaseUrl" value="http://localhost/api/v1">
+                <input type="text" id="apiBaseUrl" value="http://xyz-lms.test/api/v1">
             </div>
             <div>
                 <label>Center ID</label>
-                <input type="number" id="centerId" value="1">
+                <input type="number" id="centerId" value="225">
             </div>
         </div>
         <div class="row">
@@ -152,7 +152,7 @@
             </div>
             <div>
                 <label>Video ID</label>
-                <input type="number" id="videoId" placeholder="Enter existing video ID">
+                <input type="number" id="videoId" placeholder="Enter existing video ID" value="64">
             </div>
         </div>
     </div>
@@ -268,7 +268,9 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'Authorization': `Bearer ${adminToken}`
+                        'Authorization': `Bearer ${adminToken}`,
+                        'X-Locale': 'en',
+                        'X-Api-Key': '123456'
                     },
                     body: JSON.stringify({
                         video_id: parseInt(videoId),
