@@ -107,7 +107,6 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
             'video_id' => null,
             'order_index' => $order + 1,
             'visible' => true,
-            'download_permission_override' => null,
         ]);
     }
 

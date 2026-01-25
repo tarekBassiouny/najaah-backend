@@ -19,8 +19,12 @@ class CreateSectionWithStructureRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
-            'description' => ['nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
+            'title_translations' => ['required', 'array', 'min:1'],
+            'title_translations.en' => ['required', 'string', 'max:255'],
+            'title_translations.ar' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string'],
+            'description_translations.ar' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
             'videos' => ['nullable', 'array'],
             'videos.*' => ['integer', 'exists:videos,id'],
@@ -35,13 +39,21 @@ class CreateSectionWithStructureRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'title' => [
-                'description' => 'Section title (base locale string).',
+            'title_translations' => [
+                'description' => 'Section title translations object.',
+                'example' => ['en' => 'Introduction', 'ar' => 'مقدمة'],
+            ],
+            'title_translations.en' => [
+                'description' => 'Section title in English (required).',
                 'example' => 'Introduction',
             ],
-            'description' => [
-                'description' => 'Section description (base locale string).',
-                'example' => 'Overview of the course.',
+            'title_translations.ar' => [
+                'description' => 'Section title in Arabic (optional).',
+                'example' => 'مقدمة',
+            ],
+            'description_translations' => [
+                'description' => 'Section description translations object.',
+                'example' => ['en' => 'Overview of the course.', 'ar' => 'نظرة عامة على الدورة.'],
             ],
             'sort_order' => [
                 'description' => 'Optional ordering index.',
@@ -51,17 +63,9 @@ class CreateSectionWithStructureRequest extends FormRequest
                 'description' => 'Optional list of video IDs to attach to this section.',
                 'example' => [5, 6],
             ],
-            'videos.*' => [
-                'description' => 'Video ID to attach.',
-                'example' => 5,
-            ],
             'pdfs' => [
                 'description' => 'Optional list of PDF IDs to attach to this section.',
                 'example' => [3, 4],
-            ],
-            'pdfs.*' => [
-                'description' => 'PDF ID to attach.',
-                'example' => 3,
             ],
         ];
     }

@@ -34,15 +34,16 @@ class UpdateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
-            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
+            'title_translations' => ['sometimes', 'array', 'min:1'],
+            'title_translations.en' => ['nullable', 'string', 'max:255'],
+            'title_translations.ar' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['sometimes', 'nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string'],
+            'description_translations.ar' => ['nullable', 'string'],
             'category_id' => ['sometimes', 'required', 'exists:categories,id'],
             'difficulty' => ['sometimes', 'required', 'in:beginner,intermediate,advanced'],
-            'language' => ['sometimes', 'required', 'string', 'max:10'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'metadata' => ['sometimes', 'nullable', 'array'],
-            'title_translations' => ['prohibited'],
-            'description_translations' => ['prohibited'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
         ];
@@ -54,13 +55,29 @@ class UpdateCourseRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'title' => [
-                'description' => 'Course title (base locale string).',
+            'title_translations' => [
+                'description' => 'Course title translations object.',
+                'example' => ['en' => 'Updated Course Title', 'ar' => 'عنوان الدورة المحدث'],
+            ],
+            'title_translations.en' => [
+                'description' => 'Course title in English.',
                 'example' => 'Updated Course Title',
             ],
-            'description' => [
-                'description' => 'Course description (base locale string).',
+            'title_translations.ar' => [
+                'description' => 'Course title in Arabic.',
+                'example' => 'عنوان الدورة المحدث',
+            ],
+            'description_translations' => [
+                'description' => 'Course description translations object.',
+                'example' => ['en' => 'Updated description.', 'ar' => 'الوصف المحدث.'],
+            ],
+            'description_translations.en' => [
+                'description' => 'Course description in English.',
                 'example' => 'Updated description.',
+            ],
+            'description_translations.ar' => [
+                'description' => 'Course description in Arabic.',
+                'example' => 'الوصف المحدث.',
             ],
             'category_id' => [
                 'description' => 'Category ID for the course.',
@@ -70,10 +87,6 @@ class UpdateCourseRequest extends FormRequest
                 'description' => 'Difficulty level slug.',
                 'example' => 'intermediate',
             ],
-            'language' => [
-                'description' => 'Primary language code.',
-                'example' => 'en',
-            ],
             'price' => [
                 'description' => 'Optional course price.',
                 'example' => 10.5,
@@ -81,14 +94,6 @@ class UpdateCourseRequest extends FormRequest
             'metadata' => [
                 'description' => 'Optional metadata array.',
                 'example' => ['key' => 'value'],
-            ],
-            'difficulty_level' => [
-                'description' => 'Mapped numeric difficulty (auto-set from difficulty).',
-                'example' => 2,
-            ],
-            'created_by' => [
-                'description' => 'User ID updating the course.',
-                'example' => 5,
             ],
         ];
     }

@@ -76,7 +76,6 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
                 'video_id' => null,
                 'order_index' => $this->nextPdfOrder($section),
                 'visible' => true,
-                'download_permission_override' => null,
             ]);
 
             return;

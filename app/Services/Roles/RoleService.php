@@ -4,11 +4,20 @@ declare(strict_types=1);
 
 namespace App\Services\Roles;
 
+use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Role;
+use App\Services\Roles\Contracts\RoleServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class RoleService
+class RoleService implements RoleServiceInterface
 {
+    use NormalizesTranslations;
+
+    private const TRANSLATION_FIELDS = [
+        'name_translations',
+        'description_translations',
+    ];
+
     /**
      * @return LengthAwarePaginator<Role>
      */
@@ -20,12 +29,20 @@ class RoleService
             ->paginate($perPage);
     }
 
+    public function find(int $id): ?Role
+    {
+        return Role::with('permissions')->find($id);
+    }
+
     /**
      * @param  array<string, mixed>  $data
      */
     public function create(array $data): Role
     {
-        return Role::create($this->normalizeRoleData($data));
+        $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS);
+        $data = $this->prepareRoleData($data);
+
+        return Role::create($data);
     }
 
     /**
@@ -33,9 +50,15 @@ class RoleService
      */
     public function update(Role $role, array $data): Role
     {
-        $role->update($this->normalizeRoleData($data, $role));
+        $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS, [
+            'name_translations' => $role->name_translations ?? [],
+            'description_translations' => $role->description_translations ?? [],
+        ]);
+        $data = $this->prepareRoleData($data, $role);
 
-        return $role->refresh() ?? $role;
+        $role->update($data);
+
+        return $role->fresh(['permissions']) ?? $role;
     }
 
     public function delete(Role $role): void
@@ -50,38 +73,21 @@ class RoleService
     {
         $role->permissions()->sync($permissionIds);
 
-        return $role->refresh() ?? $role;
+        return $role->fresh(['permissions']) ?? $role;
     }
 
     /**
      * @param  array<string, mixed>  $data
-     */
-    /**
-     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    private function normalizeRoleData(array $data, ?Role $role = null): array
+    private function prepareRoleData(array $data, ?Role $role = null): array
     {
-        $name = (string) ($data['name'] ?? $role?->name ?? '');
-        $description = $data['description'] ?? null;
+        $nameTranslations = $data['name_translations'] ?? $role?->name_translations ?? [];
+        $name = $nameTranslations['en'] ?? $role?->name ?? '';
 
-        $normalized = [
-            'name' => $name,
-            'slug' => (string) ($data['slug'] ?? $role?->slug ?? ''),
-            'name_translations' => [
-                'en' => $name,
-                'ar' => $name,
-            ],
-            'description_translations' => $description === null ? null : [
-                'en' => (string) $description,
-                'ar' => (string) $description,
-            ],
-        ];
+        $data['name'] = $name;
+        $data['slug'] = $data['slug'] ?? $role?->slug ?? '';
 
-        if ($normalized['description_translations'] === null) {
-            unset($normalized['description_translations']);
-        }
-
-        return $normalized;
+        return $data;
     }
 }

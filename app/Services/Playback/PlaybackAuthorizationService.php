@@ -37,7 +37,7 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
             $this->notFound('Video not available for this course.');
         }
 
-        if ((int) $course->status !== 3 || $course->is_published !== true) {
+        if ((int) $course->status !== Course::STATUS_PUBLISHED || $course->is_published !== true) {
             $this->notFound('Course not found.');
         }
 
@@ -123,7 +123,7 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
             return;
         }
 
-        if ((int) $center->type !== 0) {
+        if ((int) $center->type !== Center::TYPE_UNBRANDED) {
             $this->deny(ErrorCodes::CENTER_MISMATCH, 'Center mismatch.', 403);
         }
     }
@@ -158,7 +158,7 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
 
     private function assertVideoReady(Video $video): void
     {
-        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status !== 2) {
+        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status !== Video::LIFECYCLE_READY) {
             $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
 

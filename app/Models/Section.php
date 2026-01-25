@@ -76,7 +76,7 @@ class Section extends Model
     {
         return $this->belongsToMany(Pdf::class, 'course_pdf', 'section_id', 'pdf_id')
             ->using(CoursePdf::class)
-            ->withPivot(['course_id', 'video_id', 'order_index', 'visible', 'download_permission_override', 'created_at', 'updated_at', 'deleted_at'])
+            ->withPivot(['course_id', 'video_id', 'order_index', 'visible', 'created_at', 'updated_at', 'deleted_at'])
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
     }

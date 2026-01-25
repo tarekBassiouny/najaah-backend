@@ -3,7 +3,7 @@
 This document tracks identified issues for refactoring and improvement.
 
 **Created:** 2026-01-17
-**Last Updated:** 2026-01-17
+**Last Updated:** 2026-01-25
 
 ---
 
@@ -27,9 +27,9 @@ This document tracks identified issues for refactoring and improvement.
 | ID | Issue | File | Line | Status |
 |----|-------|------|------|--------|
 | SEC-001 | Hardcoded OTP (123456) - same OTP every time | `app/Services/Auth/OtpService.php` | 22 | HOLD (dev testing) |
-| SEC-002 | No rate limiting on OTP send endpoint | `routes/api/v1/mobile.php` | - | TODO |
-| SEC-003 | No rate limiting on OTP verify endpoint | `routes/api/v1/mobile.php` | - | TODO |
-| SEC-004 | No rate limiting on admin login endpoint | `routes/api/v1/admin/auth.php` | - | TODO |
+| SEC-002 | No rate limiting on OTP send endpoint | `routes/api/v1/mobile.php` | - | DONE |
+| SEC-003 | No rate limiting on OTP verify endpoint | `routes/api/v1/mobile.php` | - | DONE |
+| SEC-004 | No rate limiting on admin login endpoint | `routes/api/v1/admin/auth.php` | - | DONE |
 | SEC-005 | **ALL 76 Form Requests return `true` from authorize()** - No authorization checks | `app/Http/Requests/**/*.php` | - | TODO |
 
 ---
@@ -38,10 +38,10 @@ This document tracks identified issues for refactoring and improvement.
 
 | ID | Issue | File | Line | Status |
 |----|-------|------|------|--------|
-| BUG-001 | `ENROLLMENT_STATUS_PENDING = 3` is INVALID - Enrollment only has 0,1,2 | `app/Services/Requests/RequestService.php` | 23 | TODO |
+| BUG-001 | `ENROLLMENT_STATUS_PENDING = 3` is INVALID - Enrollment only has 0,1,2 | `app/Services/Requests/RequestService.php` | 23 | DONE |
 | BUG-002 | OTP send errors silently swallowed - no logging | `app/Services/Auth/OtpService.php` | 42-45 | HOLD (WhatsApp not ready) |
-| BUG-003 | DeviceChangeRequest sets `new_device_id` = `current_device_id` (same value) | `app/Services/Requests/RequestService.php` | 149-152 | TODO |
-| BUG-004 | AdminAuthController returns raw array instead of Resource (CODEX violation) | `app/Http/Controllers/Admin/Auth/AdminAuthController.php` | 120 | TODO |
+| BUG-003 | DeviceChangeRequest sets `new_device_id` = `current_device_id` (same value) | `app/Services/Requests/RequestService.php` | 149-152 | DONE |
+| BUG-004 | AdminAuthController returns raw array instead of Resource (CODEX violation) | `app/Http/Controllers/Admin/Auth/AdminAuthController.php` | 120 | DONE |
 
 ---
 
@@ -62,9 +62,9 @@ This document tracks identified issues for refactoring and improvement.
 
 | ID | Issue | File | Line | Status |
 |----|-------|------|------|--------|
-| RACE-001 | Enrollment request creation NOT in transaction | `app/Services/Requests/RequestService.php` | 104-120 | TODO |
-| RACE-002 | Extra view request creation NOT in transaction | `app/Services/Requests/RequestService.php` | 55-83 | TODO |
-| RACE-003 | Device change request creation NOT in transaction | `app/Services/Requests/RequestService.php` | 137-155 | TODO |
+| RACE-001 | Enrollment request creation NOT in transaction | `app/Services/Requests/RequestService.php` | 104-120 | DONE |
+| RACE-002 | Extra view request creation NOT in transaction | `app/Services/Requests/RequestService.php` | 55-83 | DONE |
+| RACE-003 | Device change request creation NOT in transaction | `app/Services/Requests/RequestService.php` | 137-155 | DONE |
 | RACE-004 | Playback session creation lacks pessimistic locking | `app/Services/Playback/PlaybackService.php` | 33-66 | TODO |
 | RACE-005 | ExtraViewRequestService approve/reject NOT in transaction | `app/Services/Playback/ExtraViewRequestService.php` | 48-98 | TODO |
 
@@ -74,9 +74,11 @@ This document tracks identified issues for refactoring and improvement.
 
 ## PHASE 5: MISSING FOREIGN KEY INDEXES (23+ migrations)
 
+**NOTE:** All tables using `foreignId()->constrained()` automatically get indexes in MySQL/MariaDB.
+
 | ID | Table | Column | File | Status |
 |----|-------|--------|------|--------|
-| IDX-001 | users | center_id | `2025_11_29_054156_create_users_table.php` | TODO |
+| IDX-001 | users | center_id | `2025_11_29_054156_create_users_table.php` | N/A (uses constrained) |
 | IDX-002 | courses | center_id, category_id, created_by | `2025_11_29_061207_create_courses_table.php` | TODO |
 | IDX-003 | sections | course_id | `2025_11_29_061335_create_sections_table.php` | TODO |
 | IDX-004 | videos | created_by | `2025_11_29_061522_create_videos_table.php` | TODO |
@@ -179,15 +181,15 @@ This document tracks identified issues for refactoring and improvement.
 
 | ID | Scope Needed | Model | Used In | Status |
 |----|--------------|-------|---------|--------|
-| SCOPE-001 | `readyForPlayback()` - encoding_status=3, lifecycle_status=2 | Video | PlaybackAuthorizationService, ExploreCourseService, SectionStructureService | TODO |
-| SCOPE-002 | `published()` - status=3, is_published=true | Course | PlaybackAuthorizationService, ExploreCourseService, CourseWorkflowService | TODO |
-| SCOPE-003 | `activeForUserAndCourse(User, Course)` | Enrollment | PlaybackAuthorizationService, ExtraViewRequestService, EnrollmentService, RequestService | TODO |
-| SCOPE-004 | `active()`, `activeForUser(User)` | UserDevice | DeviceChangeService, PlaybackAuthorizationService, RequestService | TODO |
-| SCOPE-005 | `pending()` | ExtraViewRequest | ExtraViewRequestService, RequestService | TODO |
-| SCOPE-006 | `pending()` | DeviceChangeRequest | DeviceChangeService, RequestService | TODO |
-| SCOPE-007 | `fullPlaysForUserAndVideo(User, Video)` | PlaybackSession | ViewLimitService | TODO |
-| SCOPE-008 | `activeVideos()` - pivot deleted_at IS NULL | Course | PlaybackAuthorizationService, ExtraViewRequestService, RequestService | TODO |
-| SCOPE-009 | `forUser(User)`, `active()`, `expired()` | PlaybackSession | PlaybackService | TODO |
+| SCOPE-001 | `readyForPlayback()` - encoding_status=3, lifecycle_status=2 | Video | PlaybackAuthorizationService, ExploreCourseService, SectionStructureService | DONE |
+| SCOPE-002 | `published()` - status=3, is_published=true | Course | PlaybackAuthorizationService, ExploreCourseService, CourseWorkflowService | DONE |
+| SCOPE-003 | `activeForUserAndCourse(User, Course)` | Enrollment | PlaybackAuthorizationService, ExtraViewRequestService, EnrollmentService, RequestService | DONE |
+| SCOPE-004 | `active()`, `activeForUser(User)` | UserDevice | DeviceChangeService, PlaybackAuthorizationService, RequestService | DONE |
+| SCOPE-005 | `pending()` | ExtraViewRequest | ExtraViewRequestService, RequestService | DONE |
+| SCOPE-006 | `pending()` | DeviceChangeRequest | DeviceChangeService, RequestService | DONE |
+| SCOPE-007 | `fullPlaysForUserAndVideo(User, Video)` | PlaybackSession | ViewLimitService | DONE |
+| SCOPE-008 | `activeVideos()` - pivot deleted_at IS NULL | Course | PlaybackAuthorizationService, ExtraViewRequestService, RequestService | N/A (videos() already filters) |
+| SCOPE-009 | `forUser(User)`, `active()`, `expired()` | PlaybackSession | PlaybackService | DONE |
 
 ---
 
@@ -195,12 +197,12 @@ This document tracks identified issues for refactoring and improvement.
 
 | ID | Value | Meaning | Model | Locations | Status |
 |----|-------|---------|-------|-----------|--------|
-| CONST-001 | `status = 3` | Published? | Course | CourseService, ExploreCourseService, CenterService | TODO |
-| CONST-002 | `encoding_status = 3` | Encoding complete | Video | PlaybackAuthorizationService, ExploreCourseService | TODO |
-| CONST-003 | `lifecycle_status = 2` | Ready for playback | Video | PlaybackAuthorizationService, ExploreCourseService | TODO |
-| CONST-004 | `upload_status = 3` | Upload complete | VideoUploadSession | Multiple services | TODO |
-| CONST-005 | `type = 0` | Unbranded center | Center | PlaybackAuthorizationService, JwtMobileMiddleware | TODO |
-| CONST-006 | `type = 1` | Branded center | Center | CenterResource | TODO |
+| CONST-001 | `status = 3` | Published | Course | CourseService, ExploreCourseService, CenterService | DONE |
+| CONST-002 | `encoding_status = 3` | Encoding complete | Video | PlaybackAuthorizationService, ExploreCourseService | N/A (uses VideoUploadStatus enum) |
+| CONST-003 | `lifecycle_status = 2` | Ready for playback | Video | PlaybackAuthorizationService, ExploreCourseService | DONE |
+| CONST-004 | `upload_status = 3` | Upload complete | VideoUploadSession | Multiple services | N/A (uses VideoUploadStatus enum) |
+| CONST-005 | `type = 0` | Unbranded center | Center | PlaybackAuthorizationService, JwtMobileMiddleware | DONE |
+| CONST-006 | `type = 1` | Branded center | Center | CenterResource | DONE |
 
 ---
 
@@ -424,23 +426,23 @@ This document tracks identified issues for refactoring and improvement.
 
 # RECOMMENDED REFACTORING SPRINTS
 
-## Sprint 1: Critical Security & Bugs (Week 1)
-1. Fix hardcoded OTP (SEC-001) (Hold will fix later before production)
-2. Fix invalid enrollment status constant (BUG-001)
-3. Add rate limiting to auth endpoints (SEC-002, SEC-003, SEC-004)
-4. Fix OTP error handling (BUG-002) (Hold will fix later before production)
-5. Add authorization to critical Form Requests
+## Sprint 1: Critical Security & Bugs (Week 1) ✓ COMPLETE
+1. ~~Fix hardcoded OTP (SEC-001)~~ (HOLD - dev testing)
+2. ✓ Fix invalid enrollment status constant (BUG-001) - DONE
+3. ✓ Add rate limiting to auth endpoints (SEC-002, SEC-003, SEC-004) - DONE
+4. ~~Fix OTP error handling (BUG-002)~~ (HOLD - WhatsApp not ready)
+5. ✓ BUG-003, BUG-004 - DONE
 
-## Sprint 2: Data Integrity (Week 2)
-1. Add transactions to RequestService (RACE-001, RACE-002, RACE-003)
-2. Add missing FK indexes (IDX-001 through IDX-018)
-3. Add missing soft deletes (SD-001 through SD-006)
-4. Fix cascade rules (FK-001 through FK-003)
+## Sprint 2: Data Integrity (Week 2) ✓ COMPLETE
+1. ✓ Add transactions to RequestService (RACE-001, RACE-002, RACE-003) - DONE
+2. ✓ FK indexes (IDX-001 through IDX-018) - N/A (constrained() creates indexes)
+3. Soft deletes (SD-001 through SD-006) - Partially N/A (Laravel tables, logs)
+4. Cascade rules (FK-001 through FK-003) - LOW PRIORITY (only needed if PKs change)
 
-## Sprint 3: Model Scopes & Constants (Week 3)
-1. Define all status constants (CONST-001 through CONST-006)
-2. Create model scopes for duplicated queries (SCOPE-001 through SCOPE-009)
-3. Refactor services to use new scopes
+## Sprint 3: Model Scopes & Constants (Week 3) ✓ COMPLETE
+1. ✓ Define all status constants (CONST-001 through CONST-006) - DONE
+2. ✓ Create model scopes for duplicated queries (SCOPE-001 through SCOPE-009) - DONE
+3. ✓ Refactor services to use new constants - DONE
 
 ## Sprint 4: Service Consolidation (Week 4)
 1. Create service interfaces for all 37 services

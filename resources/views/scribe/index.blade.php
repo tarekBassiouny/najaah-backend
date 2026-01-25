@@ -338,6 +338,21 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-">
                                 <a href="#endpoints-DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-">DELETE api/v1/admin/courses/{course_id}/instructors/{instructor_id}</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--categories">
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--categories">GET api/v1/admin/centers/{center_id}/categories</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--categories">
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--categories">POST api/v1/admin/centers/{center_id}/categories</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--categories--category_id-">
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--categories--category_id-">GET api/v1/admin/centers/{center_id}/categories/{category_id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center_id--categories--category_id-">
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--categories--category_id-">PUT api/v1/admin/centers/{center_id}/categories/{category_id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--categories--category_id-">
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--categories--category_id-">DELETE api/v1/admin/centers/{center_id}/categories/{category_id}</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--pdfs">
                                 <a href="#endpoints-GETapi-v1-admin-centers--center_id--pdfs">GET api/v1/admin/centers/{center_id}/pdfs</a>
                             </li>
@@ -385,6 +400,9 @@
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-roles">
                                 <a href="#endpoints-GETapi-v1-admin-roles">GET api/v1/admin/roles</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-roles--role_id-">
+                                <a href="#endpoints-GETapi-v1-admin-roles--role_id-">GET api/v1/admin/roles/{role_id}</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-roles">
                                 <a href="#endpoints-POSTapi-v1-admin-roles">POST api/v1/admin/roles</a>
@@ -439,7 +457,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: January 24, 2026</li>
+        <li>Last updated: January 25, 2026</li>
     </ul>
 </div>
 
@@ -795,12 +813,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"otp\": \"@{{otp_code}}\",
-    \"token\": \"@{{otp_token}}\",
-    \"device_uuid\": \"@{{device_uuid}}\",
-    \"device_name\": \"@{{device_name}}\",
-    \"device_os\": \"@{{device_os}}\",
-    \"device_type\": \"@{{device_type}}\"
+    \"otp\": \"{{otp_code}}\",
+    \"token\": \"{{otp_token}}\",
+    \"device_uuid\": \"{{device_uuid}}\",
+    \"device_name\": \"{{device_name}}\",
+    \"device_os\": \"{{device_os}}\",
+    \"device_type\": \"{{device_type}}\"
 }"
 </code></pre></div>
 
@@ -818,12 +836,12 @@ const headers = {
 };
 
 let body = {
-    "otp": "@{{otp_code}}",
-    "token": "@{{otp_token}}",
-    "device_uuid": "@{{device_uuid}}",
-    "device_name": "@{{device_name}}",
-    "device_os": "@{{device_os}}",
-    "device_type": "@{{device_type}}"
+    "otp": "{{otp_code}}",
+    "token": "{{otp_token}}",
+    "device_uuid": "{{device_uuid}}",
+    "device_name": "{{device_name}}",
+    "device_os": "{{device_os}}",
+    "device_type": "{{device_type}}"
 };
 
 fetch(url, {
@@ -939,10 +957,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="otp"                data-endpoint="POSTapi-v1-auth-verify"
-               value="@{{otp_code}}"
+               value="{{otp_code}}"
                data-component="body">
     <br>
-<p>The OTP code received by the user. Example: <code>@{{otp_code}}</code></p>
+<p>The OTP code received by the user. Example: <code>{{otp_code}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>token</code></b>&nbsp;&nbsp;
@@ -951,10 +969,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="token"                data-endpoint="POSTapi-v1-auth-verify"
-               value="@{{otp_token}}"
+               value="{{otp_token}}"
                data-component="body">
     <br>
-<p>The OTP token returned from send-otp. Example: <code>@{{otp_token}}</code></p>
+<p>The OTP token returned from send-otp. Example: <code>{{otp_token}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_uuid</code></b>&nbsp;&nbsp;
@@ -963,10 +981,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="device_uuid"                data-endpoint="POSTapi-v1-auth-verify"
-               value="@{{device_uuid}}"
+               value="{{device_uuid}}"
                data-component="body">
     <br>
-<p>The unique device identifier. Example: <code>@{{device_uuid}}</code></p>
+<p>The unique device identifier. Example: <code>{{device_uuid}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_name</code></b>&nbsp;&nbsp;
@@ -975,10 +993,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="device_name"                data-endpoint="POSTapi-v1-auth-verify"
-               value="@{{device_name}}"
+               value="{{device_name}}"
                data-component="body">
     <br>
-<p>The human readable device name. Example: <code>@{{device_name}}</code></p>
+<p>The human readable device name. Example: <code>{{device_name}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_os</code></b>&nbsp;&nbsp;
@@ -987,10 +1005,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="device_os"                data-endpoint="POSTapi-v1-auth-verify"
-               value="@{{device_os}}"
+               value="{{device_os}}"
                data-component="body">
     <br>
-<p>The OS or platform info. Example: <code>@{{device_os}}</code></p>
+<p>The OS or platform info. Example: <code>{{device_os}}</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>device_type</code></b>&nbsp;&nbsp;
@@ -999,10 +1017,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="device_type"                data-endpoint="POSTapi-v1-auth-verify"
-               value="@{{device_type}}"
+               value="{{device_type}}"
                data-component="body">
     <br>
-<p>The type of device. Example: <code>@{{device_type}}</code></p>
+<p>The type of device. Example: <code>{{device_type}}</code></p>
         </div>
         </form>
 
@@ -1025,7 +1043,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"refresh_token\": \"@{{mobile_refresh_token}}\"
+    \"refresh_token\": \"{{mobile_refresh_token}}\"
 }"
 </code></pre></div>
 
@@ -1043,7 +1061,7 @@ const headers = {
 };
 
 let body = {
-    "refresh_token": "@{{mobile_refresh_token}}"
+    "refresh_token": "{{mobile_refresh_token}}"
 };
 
 fetch(url, {
@@ -1159,10 +1177,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="refresh_token"                data-endpoint="POSTapi-v1-auth-refresh"
-               value="@{{mobile_refresh_token}}"
+               value="{{mobile_refresh_token}}"
                data-component="body">
     <br>
-<p>The refresh token issued at login. Example: <code>@{{mobile_refresh_token}}</code></p>
+<p>The refresh token issued at login. Example: <code>{{mobile_refresh_token}}</code></p>
         </div>
         </form>
 
@@ -7373,7 +7391,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
-    --form "logo=@/tmp/phpavma5kgul7b7agtXW3L" </code></pre></div>
+    --form "logo=@/tmp/phpjsms1hjv4s060YMDnfG" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7520,7 +7538,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpavma5kgul7b7agtXW3L</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpjsms1hjv4s060YMDnfG</code></p>
         </div>
         </form>
 
@@ -9209,17 +9227,23 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Sample Course\",
-    \"description\": \"This is an introductory course.\",
+    \"title_translations\": {
+        \"en\": \"Sample Course\",
+        \"ar\": \"دورة تجريبية\"
+    },
+    \"description_translations\": {
+        \"en\": \"This is an introductory course.\",
+        \"ar\": \"هذه دورة تمهيدية.\"
+    },
     \"category_id\": 1,
     \"difficulty\": \"beginner\",
-    \"language\": \"en\",
+    \"language\": \"bngzmi\",
     \"price\": 0,
     \"metadata\": {
         \"key\": \"value\"
     },
-    \"difficulty_level\": 1,
-    \"created_by\": 5
+    \"difficulty_level\": 16,
+    \"created_by\": 16
 }"
 </code></pre></div>
 
@@ -9237,17 +9261,23 @@ const headers = {
 };
 
 let body = {
-    "title": "Sample Course",
-    "description": "This is an introductory course.",
+    "title_translations": {
+        "en": "Sample Course",
+        "ar": "دورة تجريبية"
+    },
+    "description_translations": {
+        "en": "This is an introductory course.",
+        "ar": "هذه دورة تمهيدية."
+    },
     "category_id": 1,
     "difficulty": "beginner",
-    "language": "en",
+    "language": "bngzmi",
     "price": 0,
     "metadata": {
         "key": "value"
     },
-    "difficulty_level": 1,
-    "created_by": 5
+    "difficulty_level": 16,
+    "created_by": 16
 };
 
 fetch(url, {
@@ -9370,28 +9400,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>Course title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
+                              name="title_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
                value="Sample Course"
                data-component="body">
     <br>
-<p>Course title (base locale string). Must not be greater than 255 characters. Example: <code>Sample Course</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>Course title in English (required). Must not be greater than 255 characters. Example: <code>Sample Course</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
+                              name="title_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
+               value="دورة تجريبية"
+               data-component="body">
+    <br>
+<p>Course title in Arabic (optional). Must not be greater than 255 characters. Example: <code>دورة تجريبية</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Course description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
                value="This is an introductory course."
                data-component="body">
     <br>
-<p>Course description (base locale string). Example: <code>This is an introductory course.</code></p>
+<p>Course description in English. Example: <code>This is an introductory course.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
+               value="هذه دورة تمهيدية."
+               data-component="body">
+    <br>
+<p>Course description in Arabic. Example: <code>هذه دورة تمهيدية.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
@@ -9422,14 +9500,14 @@ Must be one of:
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>language</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="language"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
-               value="en"
+               value="bngzmi"
                data-component="body">
     <br>
-<p>Primary language code. Must not be greater than 10 characters. Example: <code>en</code></p>
+<p>Must not be greater than 10 characters. Example: <code>bngzmi</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>price</code></b>&nbsp;&nbsp;
@@ -9456,40 +9534,16 @@ Must be one of:
 <p>Optional metadata array.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
-               value=""
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
-               value=""
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>difficulty_level</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="difficulty_level"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
-               value="1"
+               value="16"
                data-component="body">
     <br>
-<p>Mapped numeric difficulty (auto-set from difficulty). Example: <code>1</code></p>
+<p>Example: <code>16</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>created_by</code></b>&nbsp;&nbsp;
@@ -9498,10 +9552,10 @@ Must be one of:
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="created_by"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses"
-               value="5"
+               value="16"
                data-component="body">
     <br>
-<p>User ID creating the course. The <code>id</code> of an existing record in the users table. Example: <code>5</code></p>
+<p>The <code>id</code> of an existing record in the users table. Example: <code>16</code></p>
         </div>
         </form>
 
@@ -9687,17 +9741,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Updated Course Title\",
-    \"description\": \"Updated description.\",
+    \"title_translations\": {
+        \"en\": \"Updated Course Title\",
+        \"ar\": \"عنوان الدورة المحدث\"
+    },
+    \"description_translations\": {
+        \"en\": \"Updated description.\",
+        \"ar\": \"الوصف المحدث.\"
+    },
     \"category_id\": 2,
     \"difficulty\": \"intermediate\",
-    \"language\": \"en\",
     \"price\": 10.5,
     \"metadata\": {
         \"key\": \"value\"
     },
-    \"difficulty_level\": 2,
-    \"created_by\": 5
+    \"difficulty_level\": 16,
+    \"created_by\": 16
 }"
 </code></pre></div>
 
@@ -9715,17 +9774,22 @@ const headers = {
 };
 
 let body = {
-    "title": "Updated Course Title",
-    "description": "Updated description.",
+    "title_translations": {
+        "en": "Updated Course Title",
+        "ar": "عنوان الدورة المحدث"
+    },
+    "description_translations": {
+        "en": "Updated description.",
+        "ar": "الوصف المحدث."
+    },
     "category_id": 2,
     "difficulty": "intermediate",
-    "language": "en",
     "price": 10.5,
     "metadata": {
         "key": "value"
     },
-    "difficulty_level": 2,
-    "created_by": 5
+    "difficulty_level": 16,
+    "created_by": 16
 };
 
 fetch(url, {
@@ -9860,28 +9924,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Course title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
+                              name="title_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
                value="Updated Course Title"
                data-component="body">
     <br>
-<p>Course title (base locale string). Must not be greater than 255 characters. Example: <code>Updated Course Title</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>Course title in English. Must not be greater than 255 characters. Example: <code>Updated Course Title</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
+                              name="title_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
+               value="عنوان الدورة المحدث"
+               data-component="body">
+    <br>
+<p>Course title in Arabic. Must not be greater than 255 characters. Example: <code>عنوان الدورة المحدث</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Course description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
                value="Updated description."
                data-component="body">
     <br>
-<p>Course description (base locale string). Example: <code>Updated description.</code></p>
+<p>Course description in English. Example: <code>Updated description.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
+               value="الوصف المحدث."
+               data-component="body">
+    <br>
+<p>Course description in Arabic. Example: <code>الوصف المحدث.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
@@ -9910,18 +10022,6 @@ Must be one of:
 <ul style="list-style-type: square;"><li><code>beginner</code></li> <li><code>intermediate</code></li> <li><code>advanced</code></li></ul>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>language</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="language"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
-               value="en"
-               data-component="body">
-    <br>
-<p>Primary language code. Must not be greater than 10 characters. Example: <code>en</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>price</code></b>&nbsp;&nbsp;
 <small>number</small>&nbsp;
 <i>optional</i> &nbsp;
@@ -9946,40 +10046,16 @@ Must be one of:
 <p>Optional metadata array.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
-               value=""
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
-               value=""
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>difficulty_level</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="difficulty_level"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
-               value="2"
+               value="16"
                data-component="body">
     <br>
-<p>Mapped numeric difficulty (auto-set from difficulty). Example: <code>2</code></p>
+<p>Example: <code>16</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>created_by</code></b>&nbsp;&nbsp;
@@ -9988,10 +10064,10 @@ Must be one of:
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="created_by"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id-"
-               value="5"
+               value="16"
                data-component="body">
     <br>
-<p>User ID updating the course. The <code>id</code> of an existing record in the users table. Example: <code>5</code></p>
+<p>The <code>id</code> of an existing record in the users table. Example: <code>16</code></p>
         </div>
         </form>
 
@@ -11239,8 +11315,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Introduction\",
-    \"description\": \"Overview of the course.\",
+    \"title_translations\": {
+        \"en\": \"Introduction\",
+        \"ar\": \"مقدمة\"
+    },
+    \"description_translations\": {
+        \"en\": \"Overview of the course.\",
+        \"ar\": \"نظرة عامة على الدورة.\"
+    },
     \"order_index\": 1
 }"
 </code></pre></div>
@@ -11259,8 +11341,14 @@ const headers = {
 };
 
 let body = {
-    "title": "Introduction",
-    "description": "Overview of the course.",
+    "title_translations": {
+        "en": "Introduction",
+        "ar": "مقدمة"
+    },
+    "description_translations": {
+        "en": "Overview of the course.",
+        "ar": "نظرة عامة على الدورة."
+    },
     "order_index": 1
 };
 
@@ -11396,28 +11484,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>Section title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
+                              name="title_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
                value="Introduction"
                data-component="body">
     <br>
-<p>Section title (base locale string). Must not be greater than 255 characters. Example: <code>Introduction</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>Section title in English (required). Must not be greater than 255 characters. Example: <code>Introduction</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
+                              name="title_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
+               value="مقدمة"
+               data-component="body">
+    <br>
+<p>Section title in Arabic (optional). Must not be greater than 255 characters. Example: <code>مقدمة</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Section description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
                value="Overview of the course."
                data-component="body">
     <br>
-<p>Section description (base locale string). Example: <code>Overview of the course.</code></p>
+<p>Example: <code>Overview of the course.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
+               value="نظرة عامة على الدورة."
+               data-component="body">
+    <br>
+<p>Example: <code>نظرة عامة على الدورة.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>order_index</code></b>&nbsp;&nbsp;
@@ -11430,30 +11566,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Optional ordering index. Must be at least 0. Example: <code>1</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
-               value=""
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections"
-               value=""
-               data-component="body">
-    <br>
-
         </div>
         </form>
 
@@ -11842,8 +11954,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Updated Section Title\",
-    \"description\": \"Updated description.\",
+    \"title_translations\": {
+        \"en\": \"Updated Section Title\",
+        \"ar\": \"عنوان القسم المحدث\"
+    },
+    \"description_translations\": {
+        \"en\": \"Updated description.\",
+        \"ar\": \"الوصف المحدث.\"
+    },
     \"order_index\": 2
 }"
 </code></pre></div>
@@ -11862,8 +11980,14 @@ const headers = {
 };
 
 let body = {
-    "title": "Updated Section Title",
-    "description": "Updated description.",
+    "title_translations": {
+        "en": "Updated Section Title",
+        "ar": "عنوان القسم المحدث"
+    },
+    "description_translations": {
+        "en": "Updated description.",
+        "ar": "الوصف المحدث."
+    },
     "order_index": 2
 };
 
@@ -12011,28 +12135,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Section title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-"
+                              name="title_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-"
                value="Updated Section Title"
                data-component="body">
     <br>
-<p>Section title (base locale string). Must not be greater than 255 characters. Example: <code>Updated Section Title</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>Section title in English. Must not be greater than 255 characters. Example: <code>Updated Section Title</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-"
+                              name="title_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-"
+               value="عنوان القسم المحدث"
+               data-component="body">
+    <br>
+<p>Section title in Arabic. Must not be greater than 255 characters. Example: <code>عنوان القسم المحدث</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Section description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-"
                value="Updated description."
                data-component="body">
     <br>
-<p>Section description (base locale string). Example: <code>Updated description.</code></p>
+<p>Example: <code>Updated description.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-"
+               value="الوصف المحدث."
+               data-component="body">
+    <br>
+<p>Example: <code>الوصف المحدث.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>order_index</code></b>&nbsp;&nbsp;
@@ -12045,30 +12217,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Optional ordering index. Must be at least 0. Example: <code>2</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-"
-               value=""
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-"
-               value=""
-               data-component="body">
-    <br>
-
         </div>
         </form>
 
@@ -12616,14 +12764,20 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Introduction\",
-    \"description\": \"Overview of the course.\",
+    \"title_translations\": {
+        \"en\": \"Introduction\",
+        \"ar\": \"مقدمة\"
+    },
+    \"description_translations\": {
+        \"en\": \"Overview of the course.\",
+        \"ar\": \"نظرة عامة على الدورة.\"
+    },
     \"sort_order\": 1,
     \"videos\": [
-        5
+        16
     ],
     \"pdfs\": [
-        3
+        16
     ]
 }"
 </code></pre></div>
@@ -12642,14 +12796,20 @@ const headers = {
 };
 
 let body = {
-    "title": "Introduction",
-    "description": "Overview of the course.",
+    "title_translations": {
+        "en": "Introduction",
+        "ar": "مقدمة"
+    },
+    "description_translations": {
+        "en": "Overview of the course.",
+        "ar": "نظرة عامة على الدورة."
+    },
     "sort_order": 1,
     "videos": [
-        5
+        16
     ],
     "pdfs": [
-        3
+        16
     ]
 };
 
@@ -12785,28 +12945,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>Section title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
+                              name="title_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
                value="Introduction"
                data-component="body">
     <br>
-<p>Section title (base locale string). Must not be greater than 255 characters. Example: <code>Introduction</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>Section title in English (required). Must not be greater than 255 characters. Example: <code>Introduction</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
+                              name="title_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
+               value="مقدمة"
+               data-component="body">
+    <br>
+<p>Section title in Arabic (optional). Must not be greater than 255 characters. Example: <code>مقدمة</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Section description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
                value="Overview of the course."
                data-component="body">
     <br>
-<p>Section description (base locale string). Example: <code>Overview of the course.</code></p>
+<p>Example: <code>Overview of the course.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
+               value="نظرة عامة على الدورة."
+               data-component="body">
+    <br>
+<p>Example: <code>نظرة عامة على الدورة.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>sort_order</code></b>&nbsp;&nbsp;
@@ -12832,7 +13040,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="videos[1]"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
                data-component="body">
     <br>
-<p>Video ID to attach. The <code>id</code> of an existing record in the videos table.</p>
+<p>The <code>id</code> of an existing record in the videos table.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pdfs</code></b>&nbsp;&nbsp;
@@ -12846,7 +13054,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="pdfs[1]"                data-endpoint="POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure"
                data-component="body">
     <br>
-<p>PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.</p>
+<p>The <code>id</code> of an existing record in the pdfs table.</p>
         </div>
         </form>
 
@@ -12869,14 +13077,20 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Updated Section\",
-    \"description\": \"Updated description.\",
+    \"title_translations\": {
+        \"en\": \"Updated Section\",
+        \"ar\": \"القسم المحدث\"
+    },
+    \"description_translations\": {
+        \"en\": \"Updated description.\",
+        \"ar\": \"الوصف المحدث.\"
+    },
     \"sort_order\": 2,
     \"videos\": [
-        5
+        16
     ],
     \"pdfs\": [
-        3
+        16
     ]
 }"
 </code></pre></div>
@@ -12895,14 +13109,20 @@ const headers = {
 };
 
 let body = {
-    "title": "Updated Section",
-    "description": "Updated description.",
+    "title_translations": {
+        "en": "Updated Section",
+        "ar": "القسم المحدث"
+    },
+    "description_translations": {
+        "en": "Updated description.",
+        "ar": "الوصف المحدث."
+    },
     "sort_order": 2,
     "videos": [
-        5
+        16
     ],
     "pdfs": [
-        3
+        16
     ]
 };
 
@@ -13050,28 +13270,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Section title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure"
+                              name="title_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure"
                value="Updated Section"
                data-component="body">
     <br>
-<p>Section title (base locale string). Must not be greater than 255 characters. Example: <code>Updated Section</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>Section title in English. Must not be greater than 255 characters. Example: <code>Updated Section</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure"
+                              name="title_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure"
+               value="القسم المحدث"
+               data-component="body">
+    <br>
+<p>Section title in Arabic. Must not be greater than 255 characters. Example: <code>القسم المحدث</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Section description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure"
                value="Updated description."
                data-component="body">
     <br>
-<p>Section description (base locale string). Example: <code>Updated description.</code></p>
+<p>Example: <code>Updated description.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure"
+               value="الوصف المحدث."
+               data-component="body">
+    <br>
+<p>Example: <code>الوصف المحدث.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>sort_order</code></b>&nbsp;&nbsp;
@@ -13097,7 +13365,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="videos[1]"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure"
                data-component="body">
     <br>
-<p>Video ID to attach. The <code>id</code> of an existing record in the videos table.</p>
+<p>The <code>id</code> of an existing record in the videos table.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pdfs</code></b>&nbsp;&nbsp;
@@ -13111,7 +13379,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="pdfs[1]"                data-endpoint="PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure"
                data-component="body">
     <br>
-<p>PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.</p>
+<p>The <code>id</code> of an existing record in the pdfs table.</p>
         </div>
         </form>
 
@@ -15404,8 +15672,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Introduction\",
-    \"description\": \"Overview of the lesson.\",
+    \"title_translations\": {
+        \"en\": \"Introduction\",
+        \"ar\": \"مقدمة\"
+    },
+    \"description_translations\": {
+        \"en\": \"Overview of the lesson.\",
+        \"ar\": \"نظرة عامة على الدرس.\"
+    },
     \"tags\": [
         \"b\"
     ]
@@ -15426,8 +15700,14 @@ const headers = {
 };
 
 let body = {
-    "title": "Introduction",
-    "description": "Overview of the lesson.",
+    "title_translations": {
+        "en": "Introduction",
+        "ar": "مقدمة"
+    },
+    "description_translations": {
+        "en": "Overview of the lesson.",
+        "ar": "نظرة عامة على الدرس."
+    },
     "tags": [
         "b"
     ]
@@ -15553,28 +15833,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>Video title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="POSTapi-v1-admin-centers--center_id--videos"
+                              name="title_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--videos"
                value="Introduction"
                data-component="body">
     <br>
-<p>Video title in the request locale. Must not be greater than 255 characters. Example: <code>Introduction</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>Video title in English (required). Must not be greater than 255 characters. Example: <code>Introduction</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="POSTapi-v1-admin-centers--center_id--videos"
+                              name="title_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--videos"
+               value="مقدمة"
+               data-component="body">
+    <br>
+<p>Video title in Arabic (optional). Must not be greater than 255 characters. Example: <code>مقدمة</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Video description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--videos"
                value="Overview of the lesson."
                data-component="body">
     <br>
-<p>Optional description in the request locale. Example: <code>Overview of the lesson.</code></p>
+<p>Example: <code>Overview of the lesson.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--videos"
+               value="نظرة عامة على الدرس."
+               data-component="body">
+    <br>
+<p>Example: <code>نظرة عامة على الدرس.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>tags</code></b>&nbsp;&nbsp;
@@ -15589,30 +15917,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Must not be greater than 255 characters.</p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--videos"
-               value=""
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--videos"
-               value=""
-               data-component="body">
-    <br>
-
         </div>
         </form>
 
@@ -15798,8 +16102,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Updated title\",
-    \"description\": \"Updated description\",
+    \"title_translations\": {
+        \"en\": \"Updated title\",
+        \"ar\": \"العنوان المحدث\"
+    },
+    \"description_translations\": {
+        \"en\": \"Updated description\",
+        \"ar\": \"الوصف المحدث\"
+    },
     \"tags\": [
         \"b\"
     ]
@@ -15820,8 +16130,14 @@ const headers = {
 };
 
 let body = {
-    "title": "Updated title",
-    "description": "Updated description",
+    "title_translations": {
+        "en": "Updated title",
+        "ar": "العنوان المحدث"
+    },
+    "description_translations": {
+        "en": "Updated description",
+        "ar": "الوصف المحدث"
+    },
     "tags": [
         "b"
     ]
@@ -15959,28 +16275,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Video title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="PUTapi-v1-admin-centers--center_id--videos--video_id-"
+                              name="title_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--videos--video_id-"
                value="Updated title"
                data-component="body">
     <br>
-<p>Updated video title. Must not be greater than 255 characters. Example: <code>Updated title</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>Video title in English. Must not be greater than 255 characters. Example: <code>Updated title</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="PUTapi-v1-admin-centers--center_id--videos--video_id-"
+                              name="title_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--videos--video_id-"
+               value="العنوان المحدث"
+               data-component="body">
+    <br>
+<p>Video title in Arabic. Must not be greater than 255 characters. Example: <code>العنوان المحدث</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Video description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--videos--video_id-"
                value="Updated description"
                data-component="body">
     <br>
-<p>Updated description. Example: <code>Updated description</code></p>
+<p>Example: <code>Updated description</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--videos--video_id-"
+               value="الوصف المحدث"
+               data-component="body">
+    <br>
+<p>Example: <code>الوصف المحدث</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>tags</code></b>&nbsp;&nbsp;
@@ -15995,30 +16359,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Must not be greater than 255 characters.</p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--videos--video_id-"
-               value=""
-               data-component="body">
-    <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--videos--video_id-"
-               value=""
-               data-component="body">
-    <br>
-
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
@@ -16780,7 +17120,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpd36hd7fqe4dleDV6c27" </code></pre></div>
+    --form "avatar=@/tmp/phpl9gdrns4fe298qdkOTA" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16987,7 +17327,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpd36hd7fqe4dleDV6c27</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpl9gdrns4fe298qdkOTA</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -17222,7 +17562,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpc05iq0c5t8186ZtOS7E" </code></pre></div>
+    --form "avatar=@/tmp/php7tje794gg3sfecsfkSa" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -17445,7 +17785,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpc05iq0c5t8186ZtOS7E</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php7tje794gg3sfecsfkSa</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -18000,6 +18340,1078 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--categories">GET api/v1/admin/centers/{center_id}/categories</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-centers--center_id--categories">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/centers/1/categories?per_page=15&amp;page=1&amp;search=Science&amp;is_active=1&amp;parent_id=10" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/categories"
+);
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "search": "Science",
+    "is_active": "1",
+    "parent_id": "10",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-centers--center_id--categories">
+    </span>
+<span id="execution-results-GETapi-v1-admin-centers--center_id--categories" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-centers--center_id--categories"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-centers--center_id--categories"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-centers--center_id--categories" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-centers--center_id--categories">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-centers--center_id--categories" data-method="GET"
+      data-path="api/v1/admin/centers/{center_id}/categories"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-centers--center_id--categories', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-centers--center_id--categories"
+                    onclick="tryItOut('GETapi-v1-admin-centers--center_id--categories');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-centers--center_id--categories"
+                    onclick="cancelTryOut('GETapi-v1-admin-centers--center_id--categories');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-centers--center_id--categories"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/centers/{center_id}/categories</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="Science"
+               data-component="query">
+    <br>
+<p>Search by category title. Example: <code>Science</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="GETapi-v1-admin-centers--center_id--categories" style="display: none">
+            <input type="radio" name="is_active"
+                   value="1"
+                   data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-v1-admin-centers--center_id--categories" style="display: none">
+            <input type="radio" name="is_active"
+                   value="0"
+                   data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Filter by active status. Example: <code>true</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>parent_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="parent_id"                data-endpoint="GETapi-v1-admin-centers--center_id--categories"
+               value="10"
+               data-component="query">
+    <br>
+<p>Filter by parent category id. The <code>id</code> of an existing record in the categories table. Example: <code>10</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--categories">POST api/v1/admin/centers/{center_id}/categories</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-centers--center_id--categories">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/centers/1/categories" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}" \
+    --data "{
+    \"title_translations\": {
+        \"en\": \"Science\",
+        \"ar\": \"العلوم\"
+    },
+    \"description_translations\": {
+        \"en\": \"STEM courses\",
+        \"ar\": \"دورات العلوم\"
+    },
+    \"parent_id\": 2,
+    \"order_index\": 1,
+    \"is_active\": false
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/categories"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+let body = {
+    "title_translations": {
+        "en": "Science",
+        "ar": "العلوم"
+    },
+    "description_translations": {
+        "en": "STEM courses",
+        "ar": "دورات العلوم"
+    },
+    "parent_id": 2,
+    "order_index": 1,
+    "is_active": false
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-centers--center_id--categories">
+</span>
+<span id="execution-results-POSTapi-v1-admin-centers--center_id--categories" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-centers--center_id--categories"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-centers--center_id--categories"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-centers--center_id--categories" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-centers--center_id--categories">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-centers--center_id--categories" data-method="POST"
+      data-path="api/v1/admin/centers/{center_id}/categories"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-centers--center_id--categories', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-centers--center_id--categories"
+                    onclick="tryItOut('POSTapi-v1-admin-centers--center_id--categories');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-centers--center_id--categories"
+                    onclick="cancelTryOut('POSTapi-v1-admin-centers--center_id--categories');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-centers--center_id--categories"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/centers/{center_id}/categories</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="title_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value=""
+               data-component="body">
+    <br>
+<p>Localized category title keyed by locale.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value=""
+               data-component="body">
+    <br>
+<p>Localized category description keyed by locale.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>parent_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="parent_id"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value="2"
+               data-component="body">
+    <br>
+<p>Optional parent category id. The <code>id</code> of an existing record in the categories table. Example: <code>2</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>order_index</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="order_index"                data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+               value="1"
+               data-component="body">
+    <br>
+<p>Optional ordering index (lower shows first). Must be at least 0. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-v1-admin-centers--center_id--categories" style="display: none">
+            <input type="radio" name="is_active"
+                   value="true"
+                   data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-v1-admin-centers--center_id--categories" style="display: none">
+            <input type="radio" name="is_active"
+                   value="false"
+                   data-endpoint="POSTapi-v1-admin-centers--center_id--categories"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Whether the category is active. Example: <code>false</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--categories--category_id-">GET api/v1/admin/centers/{center_id}/categories/{category_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-centers--center_id--categories--category_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/centers/1/categories/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/categories/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-centers--center_id--categories--category_id-">
+    </span>
+<span id="execution-results-GETapi-v1-admin-centers--center_id--categories--category_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-centers--center_id--categories--category_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-centers--center_id--categories--category_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-centers--center_id--categories--category_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-centers--center_id--categories--category_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-centers--center_id--categories--category_id-" data-method="GET"
+      data-path="api/v1/admin/centers/{center_id}/categories/{category_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-centers--center_id--categories--category_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-centers--center_id--categories--category_id-"
+                    onclick="tryItOut('GETapi-v1-admin-centers--center_id--categories--category_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-centers--center_id--categories--category_id-"
+                    onclick="cancelTryOut('GETapi-v1-admin-centers--center_id--categories--category_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-centers--center_id--categories--category_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/centers/{center_id}/categories/{category_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-centers--center_id--categories--category_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-centers--center_id--categories--category_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-centers--center_id--categories--category_id-"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-centers--center_id--categories--category_id-"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-centers--center_id--categories--category_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="GETapi-v1-admin-centers--center_id--categories--category_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the category. Example: <code>1</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--categories--category_id-">PUT api/v1/admin/centers/{center_id}/categories/{category_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PUTapi-v1-admin-centers--center_id--categories--category_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://xyz-lms.test/api/v1/admin/centers/1/categories/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}" \
+    --data "{
+    \"title_translations\": {
+        \"en\": \"Science\",
+        \"ar\": \"العلوم\"
+    },
+    \"description_translations\": {
+        \"en\": \"STEM courses\",
+        \"ar\": \"دورات العلوم\"
+    },
+    \"parent_id\": 2,
+    \"order_index\": 1,
+    \"is_active\": false
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/categories/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+let body = {
+    "title_translations": {
+        "en": "Science",
+        "ar": "العلوم"
+    },
+    "description_translations": {
+        "en": "STEM courses",
+        "ar": "دورات العلوم"
+    },
+    "parent_id": 2,
+    "order_index": 1,
+    "is_active": false
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-v1-admin-centers--center_id--categories--category_id-">
+</span>
+<span id="execution-results-PUTapi-v1-admin-centers--center_id--categories--category_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-v1-admin-centers--center_id--categories--category_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-v1-admin-centers--center_id--categories--category_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-v1-admin-centers--center_id--categories--category_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-v1-admin-centers--center_id--categories--category_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-v1-admin-centers--center_id--categories--category_id-" data-method="PUT"
+      data-path="api/v1/admin/centers/{center_id}/categories/{category_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-v1-admin-centers--center_id--categories--category_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-v1-admin-centers--center_id--categories--category_id-"
+                    onclick="tryItOut('PUTapi-v1-admin-centers--center_id--categories--category_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-v1-admin-centers--center_id--categories--category_id-"
+                    onclick="cancelTryOut('PUTapi-v1-admin-centers--center_id--categories--category_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-v1-admin-centers--center_id--categories--category_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/v1/admin/centers/{center_id}/categories/{category_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the category. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="title_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value=""
+               data-component="body">
+    <br>
+<p>Localized category title keyed by locale.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value=""
+               data-component="body">
+    <br>
+<p>Localized category description keyed by locale.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>parent_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="parent_id"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value="2"
+               data-component="body">
+    <br>
+<p>Optional parent category id. The <code>id</code> of an existing record in the categories table. Example: <code>2</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>order_index</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="order_index"                data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+               value="1"
+               data-component="body">
+    <br>
+<p>Optional ordering index (lower shows first). Must be at least 0. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-" style="display: none">
+            <input type="radio" name="is_active"
+                   value="true"
+                   data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-" style="display: none">
+            <input type="radio" name="is_active"
+                   value="false"
+                   data-endpoint="PUTapi-v1-admin-centers--center_id--categories--category_id-"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Whether the category is active. Example: <code>false</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--categories--category_id-">DELETE api/v1/admin/centers/{center_id}/categories/{category_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-v1-admin-centers--center_id--categories--category_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://xyz-lms.test/api/v1/admin/centers/1/categories/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/centers/1/categories/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-v1-admin-centers--center_id--categories--category_id-">
+</span>
+<span id="execution-results-DELETEapi-v1-admin-centers--center_id--categories--category_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-v1-admin-centers--center_id--categories--category_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-v1-admin-centers--center_id--categories--category_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-v1-admin-centers--center_id--categories--category_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-v1-admin-centers--center_id--categories--category_id-" data-method="DELETE"
+      data-path="api/v1/admin/centers/{center_id}/categories/{category_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-v1-admin-centers--center_id--categories--category_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+                    onclick="tryItOut('DELETEapi-v1-admin-centers--center_id--categories--category_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+                    onclick="cancelTryOut('DELETEapi-v1-admin-centers--center_id--categories--category_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/v1/admin/centers/{center_id}/categories/{category_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the center. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>category_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="category_id"                data-endpoint="DELETEapi-v1-admin-centers--center_id--categories--category_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the category. Example: <code>1</code></p>
+            </div>
+                    </form>
+
                     <h2 id="endpoints-GETapi-v1-admin-centers--center_id--pdfs">GET api/v1/admin/centers/{center_id}/pdfs</h2>
 
 <p>
@@ -18228,8 +19640,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Lesson Notes\",
-    \"description\": \"Downloadable notes.\",
+    \"title_translations\": {
+        \"en\": \"Lesson Notes\",
+        \"ar\": \"ملاحظات الدرس\"
+    },
+    \"description_translations\": {
+        \"en\": \"Downloadable notes.\",
+        \"ar\": \"ملاحظات قابلة للتنزيل.\"
+    },
     \"upload_session_id\": 12,
     \"source_id\": \"centers\\/1\\/pdfs\\/demo.pdf\",
     \"source_url\": \"https:\\/\\/cdn.example.com\\/demo.pdf\",
@@ -18252,8 +19670,14 @@ const headers = {
 };
 
 let body = {
-    "title": "Lesson Notes",
-    "description": "Downloadable notes.",
+    "title_translations": {
+        "en": "Lesson Notes",
+        "ar": "ملاحظات الدرس"
+    },
+    "description_translations": {
+        "en": "Downloadable notes.",
+        "ar": "ملاحظات قابلة للتنزيل."
+    },
     "upload_session_id": 12,
     "source_id": "centers\/1\/pdfs\/demo.pdf",
     "source_url": "https:\/\/cdn.example.com\/demo.pdf",
@@ -18381,52 +19805,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>PDF title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs"
+                              name="title_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs"
                value="Lesson Notes"
                data-component="body">
     <br>
-<p>PDF title in the request locale. Must not be greater than 255 characters. Example: <code>Lesson Notes</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>PDF title in English (required). Must not be greater than 255 characters. Example: <code>Lesson Notes</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs"
+                              name="title_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs"
+               value="ملاحظات الدرس"
+               data-component="body">
+    <br>
+<p>PDF title in Arabic (optional). Must not be greater than 255 characters. Example: <code>ملاحظات الدرس</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>PDF description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs"
                value="Downloadable notes."
                data-component="body">
     <br>
-<p>Optional description in the request locale. Example: <code>Downloadable notes.</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<p>Example: <code>Downloadable notes.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs"
-               value=""
+                              name="description_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs"
+               value="ملاحظات قابلة للتنزيل."
                data-component="body">
     <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs"
-               value=""
-               data-component="body">
-    <br>
-
+<p>Example: <code>ملاحظات قابلة للتنزيل.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>upload_session_id</code></b>&nbsp;&nbsp;
@@ -18672,8 +20120,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"title\": \"Updated Notes\",
-    \"description\": \"Updated description\"
+    \"title_translations\": {
+        \"en\": \"Updated Notes\",
+        \"ar\": \"الملاحظات المحدثة\"
+    },
+    \"description_translations\": {
+        \"en\": \"Updated description\",
+        \"ar\": \"الوصف المحدث\"
+    }
 }"
 </code></pre></div>
 
@@ -18691,8 +20145,14 @@ const headers = {
 };
 
 let body = {
-    "title": "Updated Notes",
-    "description": "Updated description"
+    "title_translations": {
+        "en": "Updated Notes",
+        "ar": "الملاحظات المحدثة"
+    },
+    "description_translations": {
+        "en": "Updated description",
+        "ar": "الوصف المحدث"
+    }
 };
 
 fetch(url, {
@@ -18827,52 +20287,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>PDF title translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-"
+                              name="title_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-"
                value="Updated Notes"
                data-component="body">
     <br>
-<p>Updated PDF title. Must not be greater than 255 characters. Example: <code>Updated Notes</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>PDF title in English. Must not be greater than 255 characters. Example: <code>Updated Notes</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-"
+                              name="title_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-"
+               value="الملاحظات المحدثة"
+               data-component="body">
+    <br>
+<p>PDF title in Arabic. Must not be greater than 255 characters. Example: <code>الملاحظات المحدثة</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>PDF description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-"
                value="Updated description"
                data-component="body">
     <br>
-<p>Updated description. Example: <code>Updated description</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<p>Example: <code>Updated description</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-"
-               value=""
+                              name="description_translations.ar"                data-endpoint="PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-"
+               value="الوصف المحدث"
                data-component="body">
     <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-"
-               value=""
-               data-component="body">
-    <br>
-
+<p>Example: <code>الوصف المحدث</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
@@ -19342,8 +20826,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
     \"pdf_id\": 12,
-    \"title\": \"Lesson Notes\",
-    \"description\": \"Downloadable notes.\",
+    \"title_translations\": {
+        \"en\": \"Lesson Notes\",
+        \"ar\": \"ملاحظات الدرس\"
+    },
+    \"description_translations\": {
+        \"en\": \"Downloadable notes.\",
+        \"ar\": \"ملاحظات قابلة للتنزيل.\"
+    },
     \"error_message\": \"Upload failed\"
 }"
 </code></pre></div>
@@ -19363,8 +20853,14 @@ const headers = {
 
 let body = {
     "pdf_id": 12,
-    "title": "Lesson Notes",
-    "description": "Downloadable notes.",
+    "title_translations": {
+        "en": "Lesson Notes",
+        "ar": "ملاحظات الدرس"
+    },
+    "description_translations": {
+        "en": "Downloadable notes.",
+        "ar": "ملاحظات قابلة للتنزيل."
+    },
     "error_message": "Upload failed"
 };
 
@@ -19512,52 +21008,76 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Existing PDF ID to link with the upload session. The <code>id</code> of an existing record in the pdfs table. Example: <code>12</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>PDF title translations object (required without pdf_id). This field is required when <code>pdf_id</code> is not present. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
+                              name="title_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
                value="Lesson Notes"
                data-component="body">
     <br>
-<p>PDF title when creating a new record. This field is required when <code>pdf_id</code> is not present. Must not be greater than 255 characters. Example: <code>Lesson Notes</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<p>PDF title in English. Must not be greater than 255 characters. Example: <code>Lesson Notes</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
+                              name="title_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
+               value="ملاحظات الدرس"
+               data-component="body">
+    <br>
+<p>PDF title in Arabic. Must not be greater than 255 characters. Example: <code>ملاحظات الدرس</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>PDF description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.en"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
                value="Downloadable notes."
                data-component="body">
     <br>
-<p>Optional description when creating a new record. Example: <code>Downloadable notes.</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title_translations</code></b>&nbsp;&nbsp;
+<p>Example: <code>Downloadable notes.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="title_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
-               value=""
+                              name="description_translations.ar"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
+               value="ملاحظات قابلة للتنزيل."
                data-component="body">
     <br>
-
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="description_translations"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
-               value=""
-               data-component="body">
-    <br>
-
+<p>Example: <code>ملاحظات قابلة للتنزيل.</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>error_message</code></b>&nbsp;&nbsp;
@@ -20887,7 +22407,13 @@ Must be one of:
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
-    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+    --header "X-Api-Key: @{{api_key}}" \
+    --data "{
+    \"new_device_id\": \"new-device-uuid\",
+    \"new_model\": \"iPhone 15\",
+    \"new_os_version\": \"iOS 17.2\"
+}"
+</code></pre></div>
 
 
 <div class="javascript-example">
@@ -20902,9 +22428,16 @@ const headers = {
     "X-Api-Key": "@{{api_key}}",
 };
 
+let body = {
+    "new_device_id": "new-device-uuid",
+    "new_model": "iPhone 15",
+    "new_os_version": "iOS 17.2"
+};
+
 fetch(url, {
     method: "POST",
     headers,
+    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -21019,7 +22552,44 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>The ID of the deviceChangeRequest. Example: <code>16</code></p>
             </div>
-                    </form>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>new_device_id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="new_device_id"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve"
+               value="new-device-uuid"
+               data-component="body">
+    <br>
+<p>New device identifier to apply during approval. Example: <code>new-device-uuid</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>new_model</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="new_model"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve"
+               value="iPhone 15"
+               data-component="body">
+    <br>
+<p>New device model name. Example: <code>iPhone 15</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>new_os_version</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="new_os_version"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve"
+               value="iOS 17.2"
+               data-component="body">
+    <br>
+<p>New device OS version string. Example: <code>iOS 17.2</code></p>
+        </div>
+        </form>
 
                     <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/reject</h2>
 
@@ -21351,6 +22921,157 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
+                    <h2 id="endpoints-GETapi-v1-admin-roles--role_id-">GET api/v1/admin/roles/{role_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-roles--role_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/roles/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/roles/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-roles--role_id-">
+    </span>
+<span id="execution-results-GETapi-v1-admin-roles--role_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-roles--role_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-roles--role_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-roles--role_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-roles--role_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-roles--role_id-" data-method="GET"
+      data-path="api/v1/admin/roles/{role_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-roles--role_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-roles--role_id-"
+                    onclick="tryItOut('GETapi-v1-admin-roles--role_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-roles--role_id-"
+                    onclick="cancelTryOut('GETapi-v1-admin-roles--role_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-roles--role_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/roles/{role_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-roles--role_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-roles--role_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-roles--role_id-"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-roles--role_id-"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>role_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="role_id"                data-endpoint="GETapi-v1-admin-roles--role_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the role. Example: <code>1</code></p>
+            </div>
+                    </form>
+
                     <h2 id="endpoints-POSTapi-v1-admin-roles">POST api/v1/admin/roles</h2>
 
 <p>
@@ -21370,9 +23091,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"name\": \"Content Admin\",
+    \"name_translations\": {
+        \"en\": \"Content Admin\",
+        \"ar\": \"مدير المحتوى\"
+    },
     \"slug\": \"content_admin\",
-    \"description\": \"Manages course and video content.\"
+    \"description_translations\": {
+        \"en\": \"Manages course and video content.\",
+        \"ar\": \"يدير محتوى الدورات والفيديو.\"
+    }
 }"
 </code></pre></div>
 
@@ -21390,9 +23117,15 @@ const headers = {
 };
 
 let body = {
-    "name": "Content Admin",
+    "name_translations": {
+        "en": "Content Admin",
+        "ar": "مدير المحتوى"
+    },
     "slug": "content_admin",
-    "description": "Manages course and video content."
+    "description_translations": {
+        "en": "Manages course and video content.",
+        "ar": "يدير محتوى الدورات والفيديو."
+    }
 };
 
 fetch(url, {
@@ -21502,16 +23235,40 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>Role name translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="name"                data-endpoint="POSTapi-v1-admin-roles"
+                              name="name_translations.en"                data-endpoint="POSTapi-v1-admin-roles"
                value="Content Admin"
                data-component="body">
     <br>
-<p>Role display name. Must not be greater than 100 characters. Example: <code>Content Admin</code></p>
+<p>Role name in English (required). Must not be greater than 100 characters. Example: <code>Content Admin</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name_translations.ar"                data-endpoint="POSTapi-v1-admin-roles"
+               value="مدير المحتوى"
+               data-component="body">
+    <br>
+<p>Role name in Arabic (optional). Must not be greater than 100 characters. Example: <code>مدير المحتوى</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
@@ -21526,16 +23283,40 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Unique role identifier. Must not be greater than 100 characters. Example: <code>content_admin</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Role description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="POSTapi-v1-admin-roles"
+                              name="description_translations.en"                data-endpoint="POSTapi-v1-admin-roles"
                value="Manages course and video content."
                data-component="body">
     <br>
-<p>Optional role description. Must not be greater than 255 characters. Example: <code>Manages course and video content.</code></p>
+<p>Role description in English. Must not be greater than 255 characters. Example: <code>Manages course and video content.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="POSTapi-v1-admin-roles"
+               value="يدير محتوى الدورات والفيديو."
+               data-component="body">
+    <br>
+<p>Role description in Arabic. Must not be greater than 255 characters. Example: <code>يدير محتوى الدورات والفيديو.</code></p>
+                    </div>
+                                    </details>
         </div>
         </form>
 
@@ -21558,9 +23339,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
     --data "{
-    \"name\": \"Support Admin\",
+    \"name_translations\": {
+        \"en\": \"Support Admin\",
+        \"ar\": \"مدير الدعم\"
+    },
     \"slug\": \"support_admin\",
-    \"description\": \"Handles support workflows.\"
+    \"description_translations\": {
+        \"en\": \"Handles support workflows.\",
+        \"ar\": \"يدير سير عمل الدعم.\"
+    }
 }"
 </code></pre></div>
 
@@ -21578,9 +23365,15 @@ const headers = {
 };
 
 let body = {
-    "name": "Support Admin",
+    "name_translations": {
+        "en": "Support Admin",
+        "ar": "مدير الدعم"
+    },
     "slug": "support_admin",
-    "description": "Handles support workflows."
+    "description_translations": {
+        "en": "Handles support workflows.",
+        "ar": "يدير سير عمل الدعم."
+    }
 };
 
 fetch(url, {
@@ -21703,16 +23496,40 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Role name translations object. Must have at least 1 items.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="name"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+                              name="name_translations.en"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
                value="Support Admin"
                data-component="body">
     <br>
-<p>Role display name. Must not be greater than 100 characters. Example: <code>Support Admin</code></p>
+<p>Role name in English. Must not be greater than 100 characters. Example: <code>Support Admin</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name_translations.ar"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="مدير الدعم"
+               data-component="body">
+    <br>
+<p>Role name in Arabic. Must not be greater than 100 characters. Example: <code>مدير الدعم</code></p>
+                    </div>
+                                    </details>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
@@ -21727,16 +23544,40 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Unique role identifier. Must not be greater than 100 characters. Example: <code>support_admin</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Role description translations object.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>en</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="description"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+                              name="description_translations.en"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
                value="Handles support workflows."
                data-component="body">
     <br>
-<p>Optional role description. Must not be greater than 255 characters. Example: <code>Handles support workflows.</code></p>
+<p>Role description in English. Must not be greater than 255 characters. Example: <code>Handles support workflows.</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>ar</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description_translations.ar"                data-endpoint="PUTapi-v1-admin-roles--role_id-"
+               value="يدير سير عمل الدعم."
+               data-component="body">
+    <br>
+<p>Role description in Arabic. Must not be greater than 255 characters. Example: <code>يدير سير عمل الدعم.</code></p>
+                    </div>
+                                    </details>
         </div>
         </form>
 

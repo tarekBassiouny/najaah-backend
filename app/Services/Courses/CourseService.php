@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Services\Courses;
 
 use App\Enums\VideoUploadStatus;
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
+use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
 use App\Support\Guards\RejectNonScalarInput;
@@ -39,12 +41,23 @@ class CourseService implements CourseServiceInterface
     public function create(array $data, ?User $actor = null): Course
     {
         RejectNonScalarInput::validate($data, ['title', 'description']);
-        $data['title_translations'] = $data['title'] ?? '';
-        $data['description_translations'] = $data['description'] ?? null;
+        // Support legacy 'title'/'description' fields by mapping to '_translations'
+        if (array_key_exists('title', $data) && ! array_key_exists('title_translations', $data)) {
+            $data['title_translations'] = $data['title'];
+        }
+
+        if (array_key_exists('description', $data) && ! array_key_exists('description_translations', $data)) {
+            $data['description_translations'] = $data['description'];
+        }
+
         unset($data['title'], $data['description']);
 
         if (! array_key_exists('difficulty_level', $data) || ! is_numeric($data['difficulty_level'])) {
             $data['difficulty_level'] = 0;
+        }
+
+        if (! array_key_exists('language', $data) || ! is_string($data['language']) || $data['language'] === '') {
+            $data['language'] = 'en';
         }
 
         $data['status'] = 0;
@@ -248,13 +261,13 @@ class CourseService implements CourseServiceInterface
             $query->where('center_id', (int) $student->center_id);
         } else {
             $query->whereHas('center', function ($query): void {
-                $query->where('type', 0);
+                $query->where('type', Center::TYPE_UNBRANDED);
             });
         }
 
         $query->whereDoesntHave('videos', function ($query): void {
             $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
-                ->orWhere('lifecycle_status', '!=', 2)
+                ->orWhere('lifecycle_status', '!=', Video::LIFECYCLE_READY)
                 ->orWhere(function ($query): void {
                     $query->whereNotNull('upload_session_id')
                         ->whereHas('uploadSession', function ($query): void {

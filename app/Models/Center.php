@@ -37,6 +37,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Center extends Model
 {
+    public const TYPE_UNBRANDED = 0;
+
+    public const TYPE_BRANDED = 1;
+
     public const ONBOARDING_DRAFT = 'DRAFT';
 
     public const ONBOARDING_IN_PROGRESS = 'IN_PROGRESS';

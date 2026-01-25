@@ -130,6 +130,11 @@
     </style>
 </head>
 <body>
+    <script>
+        if (!localStorage.getItem('test_admin_jwt')) {
+            window.location.href = 'login.html';
+        }
+    </script>
     <h1>Video Upload Test (TUS Resumable)</h1>
 
     <!-- Configuration -->
@@ -153,6 +158,12 @@
             <div>
                 <label>Video ID</label>
                 <input type="number" id="videoId" placeholder="Enter existing video ID" value="64">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>X-Api-Key</label>
+                <input type="text" id="apiKey" placeholder="system-key">
             </div>
         </div>
     </div>
@@ -200,6 +211,11 @@
         let uploadSession = null;
         let tusUpload = null;
         let selectedFile = null;
+        const storageKeys = {
+            apiBaseUrl: 'test_api_base_url',
+            apiKey: 'test_api_key',
+            adminToken: 'test_admin_jwt'
+        };
 
         // File selection handler
         document.getElementById('videoFile').addEventListener('change', function(e) {
@@ -211,6 +227,40 @@
                 log('info', `File selected: ${selectedFile.name} (${formatBytes(selectedFile.size)})`);
             }
         });
+
+        function loadDefaults() {
+            const baseUrl = localStorage.getItem(storageKeys.apiBaseUrl);
+            const apiKey = localStorage.getItem(storageKeys.apiKey);
+            const token = localStorage.getItem(storageKeys.adminToken);
+
+            if (baseUrl) {
+                document.getElementById('apiBaseUrl').value = baseUrl;
+            }
+            if (apiKey) {
+                document.getElementById('apiKey').value = apiKey;
+            }
+            if (token) {
+                document.getElementById('adminToken').value = token;
+            }
+        }
+
+        function persistDefaults() {
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const token = document.getElementById('adminToken').value.trim();
+
+            if (apiBaseUrl) {
+                localStorage.setItem(storageKeys.apiBaseUrl, apiBaseUrl);
+            }
+            if (apiKey) {
+                localStorage.setItem(storageKeys.apiKey, apiKey);
+            }
+            if (token) {
+                localStorage.setItem(storageKeys.adminToken, token);
+            }
+        }
+
+        loadDefaults();
 
         function formatBytes(bytes) {
             if (bytes === 0) return '0 Bytes';
@@ -258,9 +308,11 @@
             const apiBaseUrl = document.getElementById('apiBaseUrl').value;
             const centerId = document.getElementById('centerId').value;
             const adminToken = document.getElementById('adminToken').value;
+            const apiKey = document.getElementById('apiKey').value;
 
             log('info', 'Initializing upload session...');
             setStatus('pending', 'Initializing...');
+            persistDefaults();
 
             try {
                 const response = await fetch(`${apiBaseUrl}/admin/centers/${centerId}/videos/upload-sessions`, {
@@ -270,7 +322,7 @@
                         'Accept': 'application/json',
                         'Authorization': `Bearer ${adminToken}`,
                         'X-Locale': 'en',
-                        'X-Api-Key': '123456'
+                        'X-Api-Key': apiKey
                     },
                     body: JSON.stringify({
                         video_id: parseInt(videoId),

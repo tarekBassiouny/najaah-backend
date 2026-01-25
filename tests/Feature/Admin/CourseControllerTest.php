@@ -164,14 +164,15 @@ it('adds section', function (): void {
     $course = Course::factory()->create(['center_id' => $center->id]);
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections", [
-        'title' => 'Section 1',
-        'description' => 'Description',
+        'title_translations' => ['en' => 'Section 1', 'ar' => 'القسم 1'],
+        'description_translations' => ['en' => 'Description', 'ar' => 'الوصف'],
     ], $this->adminHeaders());
 
-    $response->assertOk()->assertJsonPath('success', true);
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.title', 'Section 1');
     $section = Section::where('course_id', $course->id)->latest('id')->first();
-    expect($section)->not->toBeNull()
-        ->and($section?->getRawOriginal('title_translations'))->toBe(json_encode('Section 1'));
+    expect($section)->not->toBeNull();
 });
 
 it('reorders sections', function (): void {

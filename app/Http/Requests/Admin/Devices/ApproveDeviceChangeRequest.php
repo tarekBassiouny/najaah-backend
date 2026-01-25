@@ -21,7 +21,9 @@ class ApproveDeviceChangeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // no body required for approve
+            'new_device_id' => ['sometimes', 'string'],
+            'new_model' => ['sometimes', 'string'],
+            'new_os_version' => ['sometimes', 'string'],
         ];
     }
 
@@ -30,7 +32,20 @@ class ApproveDeviceChangeRequest extends FormRequest
      */
     public function bodyParameters(): array
     {
-        return [];
+        return [
+            'new_device_id' => [
+                'description' => 'New device identifier to apply during approval.',
+                'example' => 'new-device-uuid',
+            ],
+            'new_model' => [
+                'description' => 'New device model name.',
+                'example' => 'iPhone 15',
+            ],
+            'new_os_version' => [
+                'description' => 'New device OS version string.',
+                'example' => 'iOS 17.2',
+            ],
+        ];
     }
 
     protected function failedValidation(Validator $validator): void

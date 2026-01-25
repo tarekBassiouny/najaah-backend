@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Enrollments;
 
 use App\Models\AuditLog;
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
@@ -43,7 +44,7 @@ class EnrollmentService implements EnrollmentServiceInterface
             ]);
         }
 
-        if (! is_numeric($student->center_id) && ($course->center?->type ?? 1) !== 0) {
+        if (! is_numeric($student->center_id) && ($course->center?->type ?? Center::TYPE_BRANDED) !== Center::TYPE_UNBRANDED) {
             throw ValidationException::withMessages([
                 'course_id' => ['Course is not available for system-level students.'],
             ]);

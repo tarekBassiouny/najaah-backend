@@ -24,7 +24,7 @@ return new class extends Migration
                 ->constrained('centers')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->tinyInteger('status')->default(0); // 0 active, 1 deactivated, 2 cancelled
+            $table->tinyInteger('status')->default(0); // 0 active, 1 deactivated, 2 cancelled, 3 pending
             $table->timestamp('enrolled_at');
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();

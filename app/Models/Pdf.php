@@ -92,7 +92,7 @@ class Pdf extends Model
     {
         return $this->belongsToMany(Course::class, 'course_pdf')
             ->using(CoursePdf::class)
-            ->withPivot(['section_id', 'video_id', 'order_index', 'visible', 'download_permission_override', 'created_at', 'updated_at', 'deleted_at'])
+            ->withPivot(['section_id', 'video_id', 'order_index', 'visible', 'created_at', 'updated_at', 'deleted_at'])
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
     }

@@ -114,20 +114,10 @@ class AdminAuthController extends Controller
 
         $user->loadMissing('roles.permissions');
 
-        $userData = (new AdminUserResource($user))->toArray(request());
-        $userData['roles'] = $user->roles
-            ->map(static function ($role): array {
-                return [
-                    'slug' => $role->slug,
-                    'permissions' => $role->permissions->pluck('name')->values(),
-                ];
-            })
-            ->values();
-
         return response()->json([
             'success' => true,
             'data' => [
-                'user' => $userData,
+                'user' => new AdminUserResource($user),
             ],
         ]);
     }

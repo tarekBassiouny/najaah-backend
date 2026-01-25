@@ -28,11 +28,13 @@ class UpdateSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
-            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
+            'title_translations' => ['sometimes', 'array', 'min:1'],
+            'title_translations.en' => ['nullable', 'string', 'max:255'],
+            'title_translations.ar' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['sometimes', 'nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string'],
+            'description_translations.ar' => ['nullable', 'string'],
             'order_index' => ['sometimes', 'integer', 'min:0'],
-            'title_translations' => ['prohibited'],
-            'description_translations' => ['prohibited'],
         ];
     }
 
@@ -42,13 +44,21 @@ class UpdateSectionRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'title' => [
-                'description' => 'Section title (base locale string).',
+            'title_translations' => [
+                'description' => 'Section title translations object.',
+                'example' => ['en' => 'Updated Section Title', 'ar' => 'عنوان القسم المحدث'],
+            ],
+            'title_translations.en' => [
+                'description' => 'Section title in English.',
                 'example' => 'Updated Section Title',
             ],
-            'description' => [
-                'description' => 'Section description (base locale string).',
-                'example' => 'Updated description.',
+            'title_translations.ar' => [
+                'description' => 'Section title in Arabic.',
+                'example' => 'عنوان القسم المحدث',
+            ],
+            'description_translations' => [
+                'description' => 'Section description translations object.',
+                'example' => ['en' => 'Updated description.', 'ar' => 'الوصف المحدث.'],
             ],
             'order_index' => [
                 'description' => 'Optional ordering index.',

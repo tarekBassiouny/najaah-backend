@@ -31,11 +31,15 @@ use App\Services\Pdfs\Contracts\PdfUploadSessionServiceInterface;
 use App\Services\Pdfs\PdfAccessService;
 use App\Services\Pdfs\PdfService;
 use App\Services\Pdfs\PdfUploadSessionService;
+use App\Services\Permissions\Contracts\PermissionServiceInterface;
+use App\Services\Permissions\PermissionService;
 use App\Services\Playback\Contracts\PlaybackAuthorizationServiceInterface;
 use App\Services\Playback\Contracts\PlaybackServiceInterface;
 use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackService;
 use App\Services\Playback\ViewLimitService;
+use App\Services\Roles\Contracts\RoleServiceInterface;
+use App\Services\Roles\RoleService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
 use App\Services\Sections\Contracts\SectionWorkflowServiceInterface;
@@ -54,7 +58,10 @@ use App\Services\Videos\Contracts\VideoServiceInterface;
 use App\Services\Videos\Contracts\VideoUploadServiceInterface;
 use App\Services\Videos\VideoService;
 use App\Services\Videos\VideoUploadService;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 
@@ -90,6 +97,8 @@ class AppServiceProvider extends ServiceProvider
             AdminVideoQueryServiceInterface::class => AdminVideoQueryService::class,
             PlaybackServiceInterface::class => PlaybackService::class,
             PlaybackAuthorizationServiceInterface::class => PlaybackAuthorizationService::class,
+            RoleServiceInterface::class => RoleService::class,
+            PermissionServiceInterface::class => PermissionService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {
@@ -142,6 +151,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        RateLimiter::for('otp-send', static function (Request $request): Limit {
+            $phone = (string) $request->input('phone', '');
+
+            return Limit::perMinute(5)->by($request->ip().'|'.$phone);
+        });
+
+        RateLimiter::for('otp-verify', static function (Request $request): Limit {
+            $token = (string) $request->input('token', '');
+
+            return Limit::perMinute(10)->by($request->ip().'|'.$token);
+        });
+
+        RateLimiter::for('admin-login', static function (Request $request): Limit {
+            $email = (string) $request->input('email', '');
+
+            return Limit::perMinute(5)->by($request->ip().'|'.$email);
+        });
     }
 }

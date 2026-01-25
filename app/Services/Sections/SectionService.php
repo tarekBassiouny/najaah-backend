@@ -47,8 +47,15 @@ class SectionService implements SectionServiceInterface
     public function create(array $data, ?User $actor = null): Section
     {
         RejectNonScalarInput::validate($data, ['title', 'description']);
-        $data['title_translations'] = $data['title'] ?? '';
-        $data['description_translations'] = $data['description'] ?? null;
+        // Support legacy 'title'/'description' fields by mapping to '_translations'
+        if (array_key_exists('title', $data) && ! array_key_exists('title_translations', $data)) {
+            $data['title_translations'] = $data['title'];
+        }
+
+        if (array_key_exists('description', $data) && ! array_key_exists('description_translations', $data)) {
+            $data['description_translations'] = $data['description'];
+        }
+
         unset($data['title'], $data['description']);
 
         $courseId = isset($data['course_id']) && is_numeric($data['course_id']) ? (int) $data['course_id'] : 0;

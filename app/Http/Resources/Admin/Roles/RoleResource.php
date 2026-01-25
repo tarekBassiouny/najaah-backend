@@ -23,9 +23,11 @@ class RoleResource extends JsonResource
 
         return [
             'id' => $role->id,
-            'name' => $role->name,
+            'name' => $role->translate('name'),
             'slug' => $role->slug,
-            'description' => $role->description_translations['en'] ?? null,
+            'description' => $role->translate('description'),
+            'name_translations' => $role->name_translations,
+            'description_translations' => $role->description_translations,
             'permissions' => $role->permissions->pluck('name')->values(),
         ];
     }

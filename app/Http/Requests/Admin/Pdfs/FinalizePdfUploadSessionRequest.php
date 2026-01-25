@@ -20,10 +20,12 @@ class FinalizePdfUploadSessionRequest extends FormRequest
     {
         return [
             'pdf_id' => ['sometimes', 'integer', 'exists:pdfs,id'],
-            'title' => ['required_without:pdf_id', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
-            'description' => ['sometimes', 'nullable', 'string', 'not_regex:/^\\s*[\\[{]/'],
-            'title_translations' => ['prohibited'],
-            'description_translations' => ['prohibited'],
+            'title_translations' => ['required_without:pdf_id', 'array', 'min:1'],
+            'title_translations.en' => ['nullable', 'string', 'max:255'],
+            'title_translations.ar' => ['nullable', 'string', 'max:255'],
+            'description_translations' => ['nullable', 'array'],
+            'description_translations.en' => ['nullable', 'string'],
+            'description_translations.ar' => ['nullable', 'string'],
             'error_message' => ['sometimes', 'nullable', 'string', 'max:2000'],
         ];
     }
@@ -38,13 +40,21 @@ class FinalizePdfUploadSessionRequest extends FormRequest
                 'description' => 'Existing PDF ID to link with the upload session.',
                 'example' => 12,
             ],
-            'title' => [
-                'description' => 'PDF title when creating a new record.',
+            'title_translations' => [
+                'description' => 'PDF title translations object (required without pdf_id).',
+                'example' => ['en' => 'Lesson Notes', 'ar' => 'ملاحظات الدرس'],
+            ],
+            'title_translations.en' => [
+                'description' => 'PDF title in English.',
                 'example' => 'Lesson Notes',
             ],
-            'description' => [
-                'description' => 'Optional description when creating a new record.',
-                'example' => 'Downloadable notes.',
+            'title_translations.ar' => [
+                'description' => 'PDF title in Arabic.',
+                'example' => 'ملاحظات الدرس',
+            ],
+            'description_translations' => [
+                'description' => 'PDF description translations object.',
+                'example' => ['en' => 'Downloadable notes.', 'ar' => 'ملاحظات قابلة للتنزيل.'],
             ],
             'error_message' => [
                 'description' => 'Optional error message to record if finalize fails.',

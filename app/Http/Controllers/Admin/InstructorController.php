@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
-use App\Actions\Instructors\CreateInstructorAction;
-use App\Actions\Instructors\DeleteInstructorAction;
-use App\Actions\Instructors\ShowInstructorAction;
-use App\Actions\Instructors\UpdateInstructorAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Instructors\ListInstructorsRequest;
 use App\Http\Requests\Admin\Instructors\StoreInstructorRequest;
@@ -17,15 +13,13 @@ use App\Models\Instructor;
 use App\Models\User;
 use App\Services\Admin\InstructorQueryService;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class InstructorController extends Controller
 {
     public function __construct(
-        private readonly CreateInstructorAction $createAction,
-        private readonly UpdateInstructorAction $updateAction,
-        private readonly DeleteInstructorAction $deleteAction,
-        private readonly ShowInstructorAction $showAction,
+        private readonly InstructorServiceInterface $instructorService,
         private readonly InstructorQueryService $queryService,
         private readonly CenterScopeService $centerScopeService
     ) {}
@@ -55,9 +49,16 @@ class InstructorController extends Controller
             'message' => 'Operation completed',
             'data' => InstructorResource::collection($paginator->items()),
             'meta' => [
-                'page' => $paginator->currentPage(),
+                'current_page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
+            ],
+            'links' => [
+                'first' => $paginator->url(1),
+                'last' => $paginator->url($paginator->lastPage()),
+                'prev' => $paginator->previousPageUrl(),
+                'next' => $paginator->nextPageUrl(),
             ],
         ]);
     }
@@ -87,7 +88,7 @@ class InstructorController extends Controller
             $data['center_id'] = (int) $admin->center_id;
         }
 
-        $instructor = $this->createAction->execute($data);
+        $instructor = $this->instructorService->create($data);
 
         return response()->json([
             'success' => true,
@@ -105,7 +106,7 @@ class InstructorController extends Controller
             $this->centerScopeService->assertAdminSameCenter($admin, $instructor);
         }
 
-        $instructor = $this->showAction->execute($instructor);
+        $instructor->loadMissing(['center', 'creator', 'courses']);
 
         return response()->json([
             'success' => true,
@@ -141,7 +142,7 @@ class InstructorController extends Controller
             $data['center_id'] = $instructor->center_id;
         }
 
-        $updated = $this->updateAction->execute($instructor, $data);
+        $updated = $this->instructorService->update($instructor, $data);
 
         return response()->json([
             'success' => true,
@@ -159,7 +160,7 @@ class InstructorController extends Controller
             $this->centerScopeService->assertAdminSameCenter($admin, $instructor);
         }
 
-        $this->deleteAction->execute($instructor);
+        $this->instructorService->delete($instructor);
 
         return response()->json([
             'success' => true,

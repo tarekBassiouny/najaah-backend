@@ -27,7 +27,6 @@ class CoursePdfResource extends JsonResource
             'pdf_id' => $pivot->pdf_id,
             'order_index' => $pivot->order_index,
             'visible' => $pivot->visible,
-            'download_permission_override' => $pivot->download_permission_override,
             'pdf' => new PdfResource($this->whenLoaded('pdf')),
         ];
     }

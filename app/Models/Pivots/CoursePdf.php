@@ -28,13 +28,11 @@ class CoursePdf extends Pivot
         'video_id',
         'order_index',
         'visible',
-        'download_permission_override',
     ];
 
     protected $casts = [
         'order_index' => 'integer',
         'visible' => 'boolean',
-        'download_permission_override' => 'integer',
     ];
 
     /** @return BelongsTo<Course, self> */

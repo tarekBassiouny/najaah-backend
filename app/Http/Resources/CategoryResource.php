@@ -23,8 +23,8 @@ class CategoryResource extends JsonResource
 
         return [
             'id' => $category->id,
-            'title' => $category->title,
-            'description' => $category->description,
+            'title' => $category->translate('title'),
+            'description' => $category->translate('description'),
         ];
     }
 }

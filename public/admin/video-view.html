@@ -119,7 +119,13 @@
     </style>
 </head>
 <body>
+    <script>
+        if (!localStorage.getItem('test_admin_jwt')) {
+            window.location.href = 'login.html';
+        }
+    </script>
     <h1>Video View Test (Bunny Embed)</h1>
+    <button onclick="logout()" style="margin-bottom: 20px;">Logout</button>
 
     <div class="card">
         <h2>1. Configuration</h2>
@@ -209,6 +215,11 @@
     <script>
         let currentSessionId = null;
         let currentEmbedUrl = null;
+        const storageKeys = {
+            apiBaseUrl: 'test_api_base_url',
+            apiKey: 'test_api_key',
+            studentToken: 'test_student_jwt'
+        };
 
         function log(type, message) {
             const container = document.getElementById('logContainer');
@@ -218,6 +229,42 @@
             container.appendChild(entry);
             container.scrollTop = container.scrollHeight;
         }
+
+        function loadDefaults() {
+            const baseUrl = localStorage.getItem(storageKeys.apiBaseUrl);
+            const apiKey = localStorage.getItem(storageKeys.apiKey);
+            const token = localStorage.getItem(storageKeys.studentToken);
+
+            if (baseUrl) {
+                document.getElementById('apiBaseUrl').value = baseUrl;
+            }
+            if (apiKey) {
+                document.getElementById('apiKey').value = apiKey;
+            }
+            if (token) {
+                document.getElementById('jwtToken').value = token;
+            }
+        }
+
+        function persistDefaults() {
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (apiBaseUrl) {
+                localStorage.setItem(storageKeys.apiBaseUrl, apiBaseUrl);
+            }
+            if (apiKey) {
+                localStorage.setItem(storageKeys.apiKey, apiKey);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem(storageKeys.studentToken);
+            localStorage.removeItem('test_admin_jwt');
+            localStorage.removeItem('test_student_refresh');
+            window.location.href = 'login.html';
+        }
+
 
         function setStatus(status, message) {
             const container = document.getElementById('statusContainer');
@@ -280,6 +327,7 @@
 
             log('info', `Requesting playback as ${userType}...`);
             setStatus('pending', 'Requesting playback...');
+            persistDefaults();
 
             try {
                 const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/videos/${videoId}/request_playback`, {
@@ -318,6 +366,7 @@
 
             log('info', 'Refreshing embed token...');
             setStatus('pending', 'Refreshing token...');
+            persistDefaults();
 
             try {
                 const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/videos/${videoId}/refresh_token`, {
@@ -356,6 +405,7 @@
 
             log('info', `Sending progress: ${percent}%`);
             setStatus('pending', 'Sending progress...');
+            persistDefaults();
 
             try {
                 const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/videos/${videoId}/playback_progress`, {
@@ -392,6 +442,7 @@
 
             log('warn', 'Closing session...');
             setStatus('pending', 'Closing session...');
+            persistDefaults();
 
             try {
                 const response = await fetch(`${apiBaseUrl}/centers/${centerId}/courses/${courseId}/videos/${videoId}/close_session`, {
@@ -413,6 +464,8 @@
                 setStatus('error', `Error: ${error.message}`);
             }
         }
+
+        loadDefaults();
     </script>
 </body>
 </html>

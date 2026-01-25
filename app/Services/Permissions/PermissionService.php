@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Services\Permissions;
 
 use App\Models\Permission;
+use App\Services\Permissions\Contracts\PermissionServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 
-class PermissionService
+class PermissionService implements PermissionServiceInterface
 {
     /**
      * @return Collection<int, Permission>

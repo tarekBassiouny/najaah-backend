@@ -189,7 +189,7 @@ class BunnyWebhookService
         }
 
         $video->encoding_status = $status;
-        $video->lifecycle_status = $status === VideoUploadStatus::Ready ? 2 : 1;
+        $video->lifecycle_status = $status === VideoUploadStatus::Ready ? Video::LIFECYCLE_READY : Video::LIFECYCLE_PROCESSING;
         $video->save();
     }
 

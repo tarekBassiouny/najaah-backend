@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/admin/">
     <title>XYZ LMS - Upload Test Pages</title>
     <style>
         * { box-sizing: border-box; }
@@ -36,6 +37,17 @@
         .card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
         }
         .card h2 {
             margin: 0 0 10px 0;
@@ -85,8 +97,9 @@
 <body>
     <h1>XYZ LMS Upload Tests</h1>
     <p class="subtitle">Test pages for file upload functionality</p>
+    <button onclick="logout()" style="margin-bottom: 20px;">Logout</button>
 
-    <a href="test/video-upload.html" class="card">
+    <a href="video-upload.html" class="card">
         <h2>
             <span class="icon video">🎬</span>
             Video Upload
@@ -95,7 +108,7 @@
         <p>Test video uploads using TUS protocol with presigned authentication. Supports pause/resume and large files.</p>
     </a>
 
-    <a href="test/video-view.html" class="card">
+    <a href="video-view.html" class="card">
         <h2>
             <span class="icon video">▶</span>
             Video View
@@ -104,7 +117,7 @@
         <p>Request a playback session and render the Bunny iframe with an embed token.</p>
     </a>
 
-    <a href="test/pdf-upload.html" class="card">
+    <a href="pdf-upload.html" class="card">
         <h2>
             <span class="icon pdf">📄</span>
             PDF Upload
@@ -113,7 +126,7 @@
         <p>Test PDF uploads using presigned S3 URLs. Simple PUT request with automatic session management.</p>
     </a>
 
-    <a href="test/pdf-view.html" class="card">
+    <a href="pdf-view.html" class="card">
         <h2>
             <span class="icon pdf">📘</span>
             PDF View
@@ -126,5 +139,18 @@
         <p>These pages are for development testing only.</p>
         <p>Do not expose in production environments.</p>
     </footer>
+    <script>
+        const adminToken = localStorage.getItem('test_admin_jwt');
+        if (!adminToken) {
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('test_admin_jwt');
+            localStorage.removeItem('test_student_jwt');
+            localStorage.removeItem('test_student_refresh');
+            window.location.href = 'login.html';
+        }
+    </script>
 </body>
 </html>
