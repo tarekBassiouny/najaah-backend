@@ -13,6 +13,7 @@ use App\Models\CenterSetting;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
+use App\Models\Video;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -206,13 +207,13 @@ class CenterService implements CenterServiceInterface
      */
     private function unbrandedCourseQuery(User $student, Center $center): Builder
     {
-        if ((int) $center->type !== 0) {
+        if ((int) $center->type !== Center::TYPE_UNBRANDED) {
             $this->notFound();
         }
 
         return Course::query()
             ->where('center_id', $center->id)
-            ->where('status', 3)
+            ->where('status', Course::STATUS_PUBLISHED)
             ->where('is_published', true)
             ->with(['center', 'category', 'instructors'])
             ->withExists([
@@ -224,7 +225,7 @@ class CenterService implements CenterServiceInterface
             ])
             ->whereDoesntHave('videos', function ($query): void {
                 $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
-                    ->orWhere('lifecycle_status', '!=', 2)
+                    ->orWhere('lifecycle_status', '!=', Video::LIFECYCLE_READY)
                     ->orWhere(function ($query): void {
                         $query->whereNotNull('upload_session_id')
                             ->whereHas('uploadSession', function ($query): void {

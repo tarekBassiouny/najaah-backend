@@ -44,7 +44,7 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
             throw new PublishBlockedException('Course is deleted.', 422);
         }
 
-        if ($course->status === 3) {
+        if ($course->status === Course::STATUS_PUBLISHED) {
             Log::channel('domain')->warning('course_publish_blocked', [
                 'course_id' => $course->id,
                 'center_id' => $course->center_id,
@@ -137,7 +137,7 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
             }
         }
 
-        $course->status = 3;
+        $course->status = Course::STATUS_PUBLISHED;
         $course->is_published = true;
         $course->publish_at = now();
         $course->save();
@@ -167,7 +167,7 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
             $course->loadMissing(['sections', 'videos', 'pdfs']);
 
             $clone = $course->replicate();
-            $clone->status = 0;
+            $clone->status = Course::STATUS_DRAFT;
             $clone->is_published = false;
             $clone->publish_at = null;
             $clone->cloned_from_id = $course->id;

@@ -457,7 +457,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: January 24, 2026</li>
+        <li>Last updated: January 25, 2026</li>
     </ul>
 </div>
 
@@ -7391,7 +7391,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
-    --form "logo=@/tmp/phpfqls5t0bihc49CQ3VQB" </code></pre></div>
+    --form "logo=@/tmp/phpjsms1hjv4s060YMDnfG" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7538,7 +7538,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpfqls5t0bihc49CQ3VQB</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpjsms1hjv4s060YMDnfG</code></p>
         </div>
         </form>
 
@@ -17120,7 +17120,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/php3pf5rkbbf221cIdghVo" </code></pre></div>
+    --form "avatar=@/tmp/phpl9gdrns4fe298qdkOTA" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -17327,7 +17327,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php3pf5rkbbf221cIdghVo</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpl9gdrns4fe298qdkOTA</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -17562,7 +17562,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpsn3bvp1rfbhd8x5ZuVE" </code></pre></div>
+    --form "avatar=@/tmp/php7tje794gg3sfecsfkSa" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -17785,7 +17785,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpsn3bvp1rfbhd8x5ZuVE</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php7tje794gg3sfecsfkSa</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -22407,7 +22407,13 @@ Must be one of:
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
-    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+    --header "X-Api-Key: @{{api_key}}" \
+    --data "{
+    \"new_device_id\": \"new-device-uuid\",
+    \"new_model\": \"iPhone 15\",
+    \"new_os_version\": \"iOS 17.2\"
+}"
+</code></pre></div>
 
 
 <div class="javascript-example">
@@ -22422,9 +22428,16 @@ const headers = {
     "X-Api-Key": "@{{api_key}}",
 };
 
+let body = {
+    "new_device_id": "new-device-uuid",
+    "new_model": "iPhone 15",
+    "new_os_version": "iOS 17.2"
+};
+
 fetch(url, {
     method: "POST",
     headers,
+    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -22539,7 +22552,44 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>The ID of the deviceChangeRequest. Example: <code>16</code></p>
             </div>
-                    </form>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>new_device_id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="new_device_id"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve"
+               value="new-device-uuid"
+               data-component="body">
+    <br>
+<p>New device identifier to apply during approval. Example: <code>new-device-uuid</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>new_model</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="new_model"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve"
+               value="iPhone 15"
+               data-component="body">
+    <br>
+<p>New device model name. Example: <code>iPhone 15</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>new_os_version</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="new_os_version"                data-endpoint="POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve"
+               value="iOS 17.2"
+               data-component="body">
+    <br>
+<p>New device OS version string. Example: <code>iOS 17.2</code></p>
+        </div>
+        </form>
 
                     <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/reject</h2>
 

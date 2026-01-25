@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\VideoUploadStatus;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CourseVideo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,6 +45,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Video extends Model
 {
+    public const LIFECYCLE_PROCESSING = 1;
+
+    public const LIFECYCLE_READY = 2;
+
     /** @use HasFactory<\Database\Factories\VideoFactory> */
     use HasFactory;
 
@@ -131,5 +136,17 @@ class Video extends Model
     public function playbackSessions(): HasMany
     {
         return $this->hasMany(PlaybackSession::class);
+    }
+
+    /**
+     * Scope to filter videos ready for playback (encoding complete and lifecycle ready).
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeReadyForPlayback(Builder $query): Builder
+    {
+        return $query->where('encoding_status', VideoUploadStatus::Ready)
+            ->where('lifecycle_status', self::LIFECYCLE_READY);
     }
 }

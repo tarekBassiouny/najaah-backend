@@ -44,7 +44,7 @@ class resolvedCenterResource extends JsonResource
     private function resolveType(?int $type): string
     {
         return match ($type) {
-            1 => 'branded',
+            Center::TYPE_BRANDED => 'branded',
             default => 'unbranded',
         };
     }

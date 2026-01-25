@@ -58,7 +58,10 @@ use App\Services\Videos\Contracts\VideoServiceInterface;
 use App\Services\Videos\Contracts\VideoUploadServiceInterface;
 use App\Services\Videos\VideoService;
 use App\Services\Videos\VideoUploadService;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 
@@ -148,6 +151,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        RateLimiter::for('otp-send', static function (Request $request): Limit {
+            $phone = (string) $request->input('phone', '');
+
+            return Limit::perMinute(5)->by($request->ip().'|'.$phone);
+        });
+
+        RateLimiter::for('otp-verify', static function (Request $request): Limit {
+            $token = (string) $request->input('token', '');
+
+            return Limit::perMinute(10)->by($request->ip().'|'.$token);
+        });
+
+        RateLimiter::for('admin-login', static function (Request $request): Limit {
+            $email = (string) $request->input('email', '');
+
+            return Limit::perMinute(5)->by($request->ip().'|'.$email);
+        });
     }
 }

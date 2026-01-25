@@ -23,7 +23,7 @@ class ExploreCourseService
     public function explore(User $student, CourseFilters $filters): LengthAwarePaginator
     {
         $query = Course::query()
-            ->where('status', 3)
+            ->where('status', Course::STATUS_PUBLISHED)
             ->where('is_published', true)
             ->with(['center', 'category', 'instructors'])
             ->withExists([
@@ -38,7 +38,7 @@ class ExploreCourseService
             $query->where('center_id', (int) $student->center_id);
         } else {
             $query->whereHas('center', function ($query): void {
-                $query->where('type', 0);
+                $query->where('type', Center::TYPE_UNBRANDED);
             });
         }
 
@@ -80,7 +80,7 @@ class ExploreCourseService
 
         $query->whereDoesntHave('videos', function ($query): void {
             $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
-                ->orWhere('lifecycle_status', '!=', 2)
+                ->orWhere('lifecycle_status', '!=', Video::LIFECYCLE_READY)
                 ->orWhere(function ($query): void {
                     $query->whereNotNull('upload_session_id')
                         ->whereHas('uploadSession', function ($query): void {
@@ -99,7 +99,7 @@ class ExploreCourseService
 
     public function show(User $student, Course $course): Course
     {
-        if ((int) $course->status !== 3 || $course->is_published !== true) {
+        if ((int) $course->status !== Course::STATUS_PUBLISHED || $course->is_published !== true) {
             $this->notFound();
         }
 
@@ -122,7 +122,7 @@ class ExploreCourseService
         } else {
             $isUnbranded = Center::query()
                 ->where('id', $course->center_id)
-                ->where('type', 0)
+                ->where('type', Center::TYPE_UNBRANDED)
                 ->exists();
 
             if (! $isUnbranded) {
@@ -157,7 +157,7 @@ class ExploreCourseService
 
     private function isVideoReady(Video $video): bool
     {
-        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status !== 2) {
+        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status !== Video::LIFECYCLE_READY) {
             return false;
         }
 

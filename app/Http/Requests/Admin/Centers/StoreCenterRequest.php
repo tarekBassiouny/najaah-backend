@@ -127,7 +127,7 @@ class StoreCenterRequest extends FormRequest
 
     private function resolveType(string $type): int
     {
-        return $type === 'branded' ? 1 : 0;
+        return $type === 'branded' ? Center::TYPE_BRANDED : Center::TYPE_UNBRANDED;
     }
 
     private function resolveTier(string $tier): int

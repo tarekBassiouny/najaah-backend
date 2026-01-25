@@ -36,7 +36,7 @@ class CreateCenterAction
             'logo_url' => $this->pathResolver->defaultCenterLogo(),
         ];
 
-        if ((int) $data['type'] === 1) {
+        if ((int) $data['type'] === Center::TYPE_BRANDED) {
             $centerData['api_key'] = $this->generateApiKey();
         }
 

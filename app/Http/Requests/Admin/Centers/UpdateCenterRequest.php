@@ -56,9 +56,9 @@ class UpdateCenterRequest extends FormRequest
         $validator->after(function (Validator $validator): void {
             $centerId = $this->route('center');
             $center = is_numeric($centerId) ? \App\Models\Center::find((int) $centerId) : null;
-            $type = (int) ($center?->type ?? 0);
+            $type = (int) ($center?->type ?? \App\Models\Center::TYPE_UNBRANDED);
 
-            if ($type !== 1) {
+            if ($type !== \App\Models\Center::TYPE_BRANDED) {
                 if ($this->has('branding_metadata')) {
                     $validator->errors()->add('branding_metadata', 'Branding metadata is only allowed for branded centers.');
                 }

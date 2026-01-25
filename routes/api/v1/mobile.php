@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Route;
 | Auth (Public)
 |--------------------------------------------------------------------------
 */
-Route::post('/auth/send-otp', [AuthController::class, 'send']);
-Route::post('/auth/verify', [AuthController::class, 'verify']);
+Route::post('/auth/send-otp', [AuthController::class, 'send'])->middleware('throttle:otp-send');
+Route::post('/auth/verify', [AuthController::class, 'verify'])->middleware('throttle:otp-verify');
 Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
 /*

@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "5c08983e-12d2-46a0-b944-72d2dd1d79c2",
+        "_postman_id": "51f24131-c222-4b79-8f0c-0c1d865288a0",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -5863,7 +5863,10 @@
                                 "value": "{{api_key}}"
                             }
                         ],
-                        "body": null,
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"new_device_id\":\"new-device-uuid\",\"new_model\":\"iPhone 15\",\"new_os_version\":\"iOS 17.2\"}"
+                        },
                         "description": "",
                         "auth": {
                             "type": "noauth"

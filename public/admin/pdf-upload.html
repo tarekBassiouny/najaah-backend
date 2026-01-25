@@ -147,6 +147,11 @@
     </style>
 </head>
 <body>
+    <script>
+        if (!localStorage.getItem('test_admin_jwt')) {
+            window.location.href = 'login.html';
+        }
+    </script>
     <h1>PDF Upload Test (Presigned S3 URL)</h1>
 
     <!-- Step Indicator -->
@@ -172,6 +177,8 @@
         </div>
         <label>Admin Token (JWT)</label>
         <input type="text" id="adminToken" placeholder="eyJhbGciOiJIUzI1NiIs...">
+        <label>X-Api-Key</label>
+        <input type="text" id="apiKey" placeholder="system-key">
     </div>
 
     <!-- File Selection -->
@@ -224,6 +231,11 @@
     <script>
         let uploadSession = null;
         let selectedFile = null;
+        const storageKeys = {
+            apiBaseUrl: 'test_api_base_url',
+            apiKey: 'test_api_key',
+            adminToken: 'test_admin_jwt'
+        };
 
         // File selection handler
         document.getElementById('pdfFile').addEventListener('change', function(e) {
@@ -237,6 +249,40 @@
                 setStep(1);
             }
         });
+
+        function loadDefaults() {
+            const baseUrl = localStorage.getItem(storageKeys.apiBaseUrl);
+            const apiKey = localStorage.getItem(storageKeys.apiKey);
+            const token = localStorage.getItem(storageKeys.adminToken);
+
+            if (baseUrl) {
+                document.getElementById('apiBaseUrl').value = baseUrl;
+            }
+            if (apiKey) {
+                document.getElementById('apiKey').value = apiKey;
+            }
+            if (token) {
+                document.getElementById('adminToken').value = token;
+            }
+        }
+
+        function persistDefaults() {
+            const apiBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const token = document.getElementById('adminToken').value.trim();
+
+            if (apiBaseUrl) {
+                localStorage.setItem(storageKeys.apiBaseUrl, apiBaseUrl);
+            }
+            if (apiKey) {
+                localStorage.setItem(storageKeys.apiKey, apiKey);
+            }
+            if (token) {
+                localStorage.setItem(storageKeys.adminToken, token);
+            }
+        }
+
+        loadDefaults();
 
         function formatBytes(bytes) {
             if (bytes === 0) return '0 Bytes';
@@ -287,10 +333,12 @@
             const apiBaseUrl = document.getElementById('apiBaseUrl').value;
             const centerId = document.getElementById('centerId').value;
             const adminToken = document.getElementById('adminToken').value;
+            const apiKey = document.getElementById('apiKey').value;
 
             log('info', 'Initializing upload session...');
             setStatus('pending', 'Initializing session...');
             setStep(2);
+            persistDefaults();
 
             try {
                 const response = await fetch(`${apiBaseUrl}/admin/centers/${centerId}/pdfs/upload-sessions`, {
@@ -300,7 +348,7 @@
                         'Accept': 'application/json',
                         'Authorization': `Bearer ${adminToken}`,
                         'X-Locale': 'en',
-                        'X-Api-Key': '123456'
+                        'X-Api-Key': apiKey
                     },
                     body: JSON.stringify({
                         original_filename: selectedFile.name,
@@ -394,10 +442,12 @@
             const adminToken = document.getElementById('adminToken').value;
             const title = document.getElementById('pdfTitle').value || selectedFile.name;
             const description = document.getElementById('pdfDescription').value;
+            const apiKey = document.getElementById('apiKey').value;
 
             log('info', 'Finalizing upload...');
             setStatus('pending', 'Finalizing...');
             setStep(4);
+            persistDefaults();
 
             try {
                 const response = await fetch(
@@ -409,7 +459,7 @@
                             'Accept': 'application/json',
                             'Authorization': `Bearer ${adminToken}`,
                             'X-Locale': 'en',
-                            'X-Api-Key': '123456'
+                            'X-Api-Key': apiKey
                         },
                         body: JSON.stringify({
                             title: title,

@@ -62,15 +62,32 @@ class DeviceChangeService
         return $request->fresh() ?? $request;
     }
 
-    public function approve(User $admin, DeviceChangeRequest $request): DeviceChangeRequest
-    {
+    public function approve(
+        User $admin,
+        DeviceChangeRequest $request,
+        ?string $newDeviceId = null,
+        ?string $model = null,
+        ?string $osVersion = null
+    ): DeviceChangeRequest {
         $this->assertAdminScope($admin, $request);
 
         if ($request->status !== DeviceChangeRequest::STATUS_PENDING) {
             $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be approved.', 409);
         }
 
-        return DB::transaction(function () use ($admin, $request): DeviceChangeRequest {
+        $resolvedDeviceId = $newDeviceId ?? $request->new_device_id;
+        $resolvedModel = $model ?? $request->new_model;
+        $resolvedOsVersion = $osVersion ?? $request->new_os_version;
+
+        if ($resolvedDeviceId === '' || $resolvedDeviceId === $request->current_device_id) {
+            $this->deny(ErrorCodes::INVALID_STATE, 'A new device identifier is required to approve this request.', 422);
+        }
+
+        if ($resolvedModel === '' || $resolvedOsVersion === '') {
+            $this->deny(ErrorCodes::INVALID_STATE, 'Device model and OS version are required to approve this request.', 422);
+        }
+
+        return DB::transaction(function () use ($admin, $request, $resolvedDeviceId, $resolvedModel, $resolvedOsVersion): DeviceChangeRequest {
             /** @var UserDevice|null $current */
             $current = UserDevice::where('user_id', $request->user_id)
                 ->where('device_id', $request->current_device_id)
@@ -85,11 +102,11 @@ class DeviceChangeService
             $newDevice = UserDevice::updateOrCreate(
                 [
                     'user_id' => $request->user_id,
-                    'device_id' => $request->new_device_id,
+                    'device_id' => $resolvedDeviceId,
                 ],
                 [
-                    'model' => $request->new_model,
-                    'os_version' => $request->new_os_version,
+                    'model' => $resolvedModel,
+                    'os_version' => $resolvedOsVersion,
                     'status' => UserDevice::STATUS_ACTIVE,
                     'approved_at' => Carbon::now(),
                     'last_used_at' => Carbon::now(),
@@ -101,6 +118,9 @@ class DeviceChangeService
                 ->update(['status' => UserDevice::STATUS_REVOKED]);
 
             $request->status = DeviceChangeRequest::STATUS_APPROVED;
+            $request->new_device_id = $resolvedDeviceId;
+            $request->new_model = $resolvedModel;
+            $request->new_os_version = $resolvedOsVersion;
             $request->decided_by = $admin->id;
             $request->decided_at = Carbon::now();
             $request->save();
@@ -108,7 +128,7 @@ class DeviceChangeService
             $this->audit($admin, 'device_change_request_approved', [
                 'request_id' => $request->id,
                 'old_device_id' => $request->current_device_id,
-                'new_device_id' => $request->new_device_id,
+                'new_device_id' => $resolvedDeviceId,
             ], $request->id);
 
             return $request->fresh() ?? $request;

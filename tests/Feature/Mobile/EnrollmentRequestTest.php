@@ -11,8 +11,6 @@ use Tests\Helpers\ApiTestHelper;
 
 uses(RefreshDatabase::class, ApiTestHelper::class)->group('mobile', 'enrollment-requests');
 
-const ENROLLMENT_PENDING_STATUS = 3;
-
 it('creates enrollment request when not enrolled', function (): void {
     $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
     $course = Course::factory()->create([
@@ -39,7 +37,7 @@ it('creates enrollment request when not enrolled', function (): void {
     $this->assertDatabaseHas('enrollments', [
         'user_id' => $student->id,
         'course_id' => $course->id,
-        'status' => ENROLLMENT_PENDING_STATUS,
+        'status' => Enrollment::STATUS_PENDING,
     ]);
 });
 
@@ -90,7 +88,7 @@ it('blocks duplicate pending enrollment request', function (): void {
         'user_id' => $student->id,
         'course_id' => $course->id,
         'center_id' => $center->id,
-        'status' => ENROLLMENT_PENDING_STATUS,
+        'status' => Enrollment::STATUS_PENDING,
         'enrolled_at' => now(),
     ]);
 

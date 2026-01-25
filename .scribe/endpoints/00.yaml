@@ -9476,8 +9476,44 @@ endpoints:
       deviceChangeRequest_id: 16
     queryParameters: []
     cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
+    bodyParameters:
+      new_device_id:
+        custom: []
+        name: new_device_id
+        description: 'New device identifier to apply during approval.'
+        required: false
+        example: new-device-uuid
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      new_model:
+        custom: []
+        name: new_model
+        description: 'New device model name.'
+        required: false
+        example: 'iPhone 15'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      new_os_version:
+        custom: []
+        name: new_os_version
+        description: 'New device OS version string.'
+        required: false
+        example: 'iOS 17.2'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      new_device_id: new-device-uuid
+      new_model: 'iPhone 15'
+      new_os_version: 'iOS 17.2'
     fileParameters: []
     responses: []
     responseFields: []

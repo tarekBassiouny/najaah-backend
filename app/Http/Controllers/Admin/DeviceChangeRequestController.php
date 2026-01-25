@@ -69,7 +69,16 @@ class DeviceChangeRequestController extends Controller
             ], 401);
         }
 
-        $approved = $this->service->approve($admin, $deviceChangeRequest);
+        /** @var array<string, mixed> $data */
+        $data = $request->validated();
+
+        $approved = $this->service->approve(
+            $admin,
+            $deviceChangeRequest,
+            $data['new_device_id'] ?? null,
+            $data['new_model'] ?? null,
+            $data['new_os_version'] ?? null
+        );
 
         return response()->json([
             'success' => true,

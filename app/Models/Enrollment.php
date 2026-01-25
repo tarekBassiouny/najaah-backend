@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,8 @@ class Enrollment extends Model
     public const STATUS_DEACTIVATED = 1;
 
     public const STATUS_CANCELLED = 2;
+
+    public const STATUS_PENDING = 3;
 
     /** @use HasFactory<\Database\Factories\EnrollmentFactory> */
     use HasFactory;
@@ -56,6 +59,7 @@ class Enrollment extends Model
             self::STATUS_ACTIVE => 'ACTIVE',
             self::STATUS_DEACTIVATED => 'DEACTIVATED',
             self::STATUS_CANCELLED => 'CANCELLED',
+            self::STATUS_PENDING => 'PENDING',
         ];
     }
 
@@ -80,5 +84,40 @@ class Enrollment extends Model
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);
+    }
+
+    /**
+     * Scope to filter active enrollments for a specific user and course.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeActiveForUserAndCourse(Builder $query, User $user, Course $course): Builder
+    {
+        return $query->where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->where('status', self::STATUS_ACTIVE);
+    }
+
+    /**
+     * Scope to filter active enrollments.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    /**
+     * Scope to filter pending enrollments.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_PENDING);
     }
 }

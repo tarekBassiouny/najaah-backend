@@ -134,4 +134,40 @@ class PlaybackSession extends Model
         return $this->scopeActive($query)
             ->where('last_activity_at', '<', now()->subSeconds($seconds));
     }
+
+    /**
+     * Scope to filter sessions for a specific user.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForUser(Builder $query, User $user): Builder
+    {
+        return $query->where('user_id', $user->id);
+    }
+
+    /**
+     * Scope to filter expired sessions.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeExpired(Builder $query): Builder
+    {
+        return $query->whereNotNull('expires_at')
+            ->where('expires_at', '<', now());
+    }
+
+    /**
+     * Scope to filter full plays for a specific user and video.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeFullPlaysForUserAndVideo(Builder $query, User $user, Video $video): Builder
+    {
+        return $query->where('user_id', $user->id)
+            ->where('video_id', $video->id)
+            ->where('is_full_play', true);
+    }
 }

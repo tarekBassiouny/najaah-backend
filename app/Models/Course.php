@@ -9,6 +9,7 @@ use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CourseInstructor;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,6 +52,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Course extends Model
 {
+    public const STATUS_DRAFT = 0;
+
+    public const STATUS_PUBLISHED = 3;
+
     /** @use HasFactory<\Database\Factories\CourseFactory> */
     use HasFactory;
 
@@ -183,5 +188,17 @@ class Course extends Model
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    /**
+     * Scope to filter published courses.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_PUBLISHED)
+            ->where('is_published', true);
     }
 }

@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\Auth\AdminAuthController;
 use App\Http\Controllers\Admin\Auth\AdminPasswordResetController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/auth/login', [AdminAuthController::class, 'login']);
+Route::post('/auth/login', [AdminAuthController::class, 'login'])->middleware('throttle:admin-login');
 Route::post('/auth/password/reset', [AdminPasswordResetController::class, 'reset']);
 
 Route::middleware('jwt.admin')->group(function (): void {

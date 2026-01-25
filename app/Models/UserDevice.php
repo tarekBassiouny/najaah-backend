@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -68,5 +69,28 @@ class UserDevice extends Model
     public function playbackSessions(): HasMany
     {
         return $this->hasMany(PlaybackSession::class, 'device_id');
+    }
+
+    /**
+     * Scope to filter active devices.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    /**
+     * Scope to filter active devices for a specific user.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeActiveForUser(Builder $query, User $user): Builder
+    {
+        return $query->where('user_id', $user->id)
+            ->where('status', self::STATUS_ACTIVE);
     }
 }
