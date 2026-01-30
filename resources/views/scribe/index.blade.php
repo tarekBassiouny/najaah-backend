@@ -95,6 +95,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-logout">
                                 <a href="#endpoints-POSTapi-v1-auth-logout">POST api/v1/auth/logout</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-settings-device-change">
+                                <a href="#endpoints-POSTapi-v1-settings-device-change">POST api/v1/settings/device-change</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-courses-explore">
                                 <a href="#endpoints-GETapi-v1-courses-explore">GET api/v1/courses/explore</a>
                             </li>
@@ -1861,6 +1864,166 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Example: <code>@{{api_key}}</code></p>
             </div>
                         </form>
+
+                    <h2 id="endpoints-POSTapi-v1-settings-device-change">POST api/v1/settings/device-change</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-settings-device-change">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/settings/device-change" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}" \
+    --data "{
+    \"reason\": \"Lost my phone and need to register a new device.\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/settings/device-change"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+let body = {
+    "reason": "Lost my phone and need to register a new device."
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-settings-device-change">
+</span>
+<span id="execution-results-POSTapi-v1-settings-device-change" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-settings-device-change"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-settings-device-change"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-settings-device-change" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-settings-device-change">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-settings-device-change" data-method="POST"
+      data-path="api/v1/settings/device-change"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-settings-device-change', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-settings-device-change"
+                    onclick="tryItOut('POSTapi-v1-settings-device-change');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-settings-device-change"
+                    onclick="cancelTryOut('POSTapi-v1-settings-device-change');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-settings-device-change"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/settings/device-change</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-settings-device-change"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-settings-device-change"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-settings-device-change"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-settings-device-change"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>reason</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="reason"                data-endpoint="POSTapi-v1-settings-device-change"
+               value="Lost my phone and need to register a new device."
+               data-component="body">
+    <br>
+<p>Optional reason for requesting a device change. Must not be greater than 255 characters. Example: <code>Lost my phone and need to register a new device.</code></p>
+        </div>
+        </form>
 
                     <h2 id="endpoints-GETapi-v1-courses-explore">GET api/v1/courses/explore</h2>
 
@@ -7473,7 +7636,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
-    --form "logo=@/tmp/phpq7ltd7qluhn700zr4V3" </code></pre></div>
+    --form "logo=@/tmp/phpa01f8s217vrtdAWf9aK" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7620,7 +7783,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpq7ltd7qluhn700zr4V3</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpa01f8s217vrtdAWf9aK</code></p>
         </div>
         </form>
 
@@ -17491,7 +17654,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpvka6pt833oba5HoJ6F0" </code></pre></div>
+    --form "avatar=@/tmp/phpuplu9o9l3u2t38qefI7" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -17698,7 +17861,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpvka6pt833oba5HoJ6F0</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpuplu9o9l3u2t38qefI7</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -17933,7 +18096,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpstojafipmm2u52djKEq" </code></pre></div>
+    --form "avatar=@/tmp/phpk3r82gtahrbpcibBzuu" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -18156,7 +18319,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpstojafipmm2u52djKEq</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpk3r82gtahrbpcibBzuu</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;

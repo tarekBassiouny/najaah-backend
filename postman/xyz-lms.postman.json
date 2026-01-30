@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "99f03fd0-b5fd-416d-8ef6-a00a8441efe6",
+    "_postman_id": "f4351962-24d6-4d96-b7b0-f86889e3e600",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -6666,6 +6666,45 @@
             "body": {
               "mode": "raw",
               "raw": "{\"otp\":\"123456\",\"token\":\"uuid-token-string\",\"device_uuid\":\"device-uuid-123\",\"device_model\":\"iPhone 15 Pro\",\"device_os\":\"iOS 17.2\",\"reason\":\"Lost my phone and need to register a new device.\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/settings/device-change",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/settings/device-change",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/settings/device-change"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Lost my phone and need to register a new device.\"}"
             },
             "description": "",
             "auth": {

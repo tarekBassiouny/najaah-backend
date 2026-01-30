@@ -462,6 +462,51 @@ endpoints:
   -
     custom: []
     httpMethods:
+      - POST
+    uri: api/v1/settings/device-change
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      reason:
+        custom: []
+        name: reason
+        description: 'Optional reason for requesting a device change. Must not be greater than 255 characters.'
+        required: false
+        example: 'Lost my phone and need to register a new device.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      reason: 'Lost my phone and need to register a new device.'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
       - GET
     uri: api/v1/courses/explore
     metadata:
