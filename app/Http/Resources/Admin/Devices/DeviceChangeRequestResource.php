@@ -30,6 +30,8 @@ class DeviceChangeRequestResource extends JsonResource
             'new_model' => $req->new_model,
             'new_os_version' => $req->new_os_version,
             'status' => $req->status,
+            'request_source' => $req->request_source,
+            'otp_verified_at' => $req->otp_verified_at,
             'reason' => $req->reason,
             'decision_reason' => $req->decision_reason,
             'decided_by' => $req->decided_by,

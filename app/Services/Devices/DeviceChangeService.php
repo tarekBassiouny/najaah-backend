@@ -159,6 +159,173 @@ class DeviceChangeService
         return $request->fresh() ?? $request;
     }
 
+    public function createFromOtp(
+        User $student,
+        string $newDeviceId,
+        string $model,
+        string $osVersion,
+        ?string $reason,
+        Carbon $otpVerifiedAt
+    ): DeviceChangeRequest {
+        $this->assertStudent($student);
+
+        $pending = DeviceChangeRequest::where('user_id', $student->id)
+            ->whereIn('status', [DeviceChangeRequest::STATUS_PENDING, DeviceChangeRequest::STATUS_PRE_APPROVED])
+            ->whereNull('deleted_at')
+            ->exists();
+
+        if ($pending) {
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists.', 422);
+        }
+
+        /** @var UserDevice|null $active */
+        $active = $student->devices()
+            ->where('status', UserDevice::STATUS_ACTIVE)
+            ->whereNull('deleted_at')
+            ->first();
+
+        /** @var DeviceChangeRequest $request */
+        $request = DeviceChangeRequest::create([
+            'user_id' => $student->id,
+            'center_id' => $student->center_id,
+            'current_device_id' => $active?->device_id,
+            'new_device_id' => $newDeviceId,
+            'new_model' => $model,
+            'new_os_version' => $osVersion,
+            'status' => DeviceChangeRequest::STATUS_PENDING,
+            'request_source' => DeviceChangeRequest::SOURCE_OTP,
+            'otp_verified_at' => $otpVerifiedAt,
+            'reason' => $reason,
+        ]);
+
+        $this->audit($student, 'device_change_request_created_via_otp', [
+            'old_device_id' => $active?->device_id,
+            'new_device_id' => $newDeviceId,
+        ], $request->id);
+
+        return $request->fresh() ?? $request;
+    }
+
+    public function createByAdmin(User $admin, User $student, ?string $reason = null): DeviceChangeRequest
+    {
+        $this->assertStudent($student);
+        $this->centerScopeService->assertAdminSameCenter($admin, $student);
+
+        $pending = DeviceChangeRequest::where('user_id', $student->id)
+            ->whereIn('status', [DeviceChangeRequest::STATUS_PENDING, DeviceChangeRequest::STATUS_PRE_APPROVED])
+            ->whereNull('deleted_at')
+            ->exists();
+
+        if ($pending) {
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists for this student.', 422);
+        }
+
+        /** @var UserDevice|null $active */
+        $active = $student->devices()
+            ->where('status', UserDevice::STATUS_ACTIVE)
+            ->whereNull('deleted_at')
+            ->first();
+
+        /** @var DeviceChangeRequest $request */
+        $request = DeviceChangeRequest::create([
+            'user_id' => $student->id,
+            'center_id' => $student->center_id,
+            'current_device_id' => $active?->device_id,
+            'new_device_id' => '',
+            'new_model' => '',
+            'new_os_version' => '',
+            'status' => DeviceChangeRequest::STATUS_PENDING,
+            'request_source' => DeviceChangeRequest::SOURCE_ADMIN,
+            'reason' => $reason,
+        ]);
+
+        $this->audit($admin, 'device_change_request_created_by_admin', [
+            'student_id' => $student->id,
+            'old_device_id' => $active?->device_id,
+        ], $request->id);
+
+        return $request->fresh() ?? $request;
+    }
+
+    public function preApprove(User $admin, DeviceChangeRequest $request, ?string $reason = null): DeviceChangeRequest
+    {
+        $this->assertAdminScope($admin, $request);
+
+        if ($request->status !== DeviceChangeRequest::STATUS_PENDING) {
+            $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be pre-approved.', 409);
+        }
+
+        return DB::transaction(function () use ($admin, $request, $reason): DeviceChangeRequest {
+            /** @var UserDevice|null $current */
+            $current = UserDevice::where('user_id', $request->user_id)
+                ->where('status', UserDevice::STATUS_ACTIVE)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if ($current !== null) {
+                $current->update(['status' => UserDevice::STATUS_REVOKED]);
+            }
+
+            $request->status = DeviceChangeRequest::STATUS_PRE_APPROVED;
+            $request->decision_reason = $reason;
+            $request->decided_by = $admin->id;
+            $request->decided_at = Carbon::now();
+            $request->save();
+
+            $this->audit($admin, 'device_change_request_pre_approved', [
+                'request_id' => $request->id,
+                'old_device_id' => $request->current_device_id,
+            ], $request->id);
+
+            return $request->fresh() ?? $request;
+        });
+    }
+
+    public function completePreApproved(
+        DeviceChangeRequest $request,
+        string $deviceId,
+        string $model,
+        string $osVersion
+    ): UserDevice {
+        return DB::transaction(function () use ($request, $deviceId, $model, $osVersion): UserDevice {
+            /** @var UserDevice $device */
+            $device = UserDevice::updateOrCreate(
+                [
+                    'user_id' => $request->user_id,
+                    'device_id' => $deviceId,
+                ],
+                [
+                    'model' => $model,
+                    'os_version' => $osVersion,
+                    'status' => UserDevice::STATUS_ACTIVE,
+                    'approved_at' => Carbon::now(),
+                    'last_used_at' => Carbon::now(),
+                ]
+            );
+
+            UserDevice::where('user_id', $request->user_id)
+                ->where('id', '!=', $device->id)
+                ->update(['status' => UserDevice::STATUS_REVOKED]);
+
+            $request->status = DeviceChangeRequest::STATUS_APPROVED;
+            $request->new_device_id = $deviceId;
+            $request->new_model = $model;
+            $request->new_os_version = $osVersion;
+            $request->save();
+
+            /** @var User $user */
+            $user = User::find($request->user_id);
+
+            $this->audit($user, 'device_change_request_completed_via_login', [
+                'request_id' => $request->id,
+                'old_device_id' => $request->current_device_id,
+                'new_device_id' => $deviceId,
+            ], $request->id);
+
+            return $device;
+        });
+    }
+
     private function assertStudent(User $user): void
     {
         if (! $user->is_student) {

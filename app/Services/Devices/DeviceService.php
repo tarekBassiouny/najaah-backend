@@ -6,6 +6,7 @@ namespace App\Services\Devices;
 
 use App\Exceptions\DomainException;
 use App\Models\AuditLog;
+use App\Models\DeviceChangeRequest;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
@@ -16,12 +17,22 @@ use Illuminate\Support\Facades\Log;
 
 class DeviceService implements DeviceServiceInterface
 {
+    public function __construct(
+        private readonly DeviceChangeService $deviceChangeService
+    ) {}
+
     /** @param array<string, mixed> $meta */
     public function register(User $user, string $uuid, array $meta): UserDevice
     {
         return DB::transaction(function () use ($user, $uuid, $meta): UserDevice {
             $model = $meta['device_type'] ?? $meta['device_name'] ?? 'Unknown';
             $osVersion = $meta['device_os'] ?? 'unknown';
+
+            // Check for pre-approved device change request first
+            $preApprovedDevice = $this->handlePreApprovedRequest($user, $uuid, $model, $osVersion);
+            if ($preApprovedDevice !== null) {
+                return $preApprovedDevice;
+            }
 
             // Try reinstall detection first
             $reinstallDevice = $this->handleReinstall($user, $uuid, $model, $osVersion);
@@ -129,6 +140,32 @@ class DeviceService implements DeviceServiceInterface
         }
 
         return null;
+    }
+
+    /**
+     * Handle pre-approved device change request during login.
+     */
+    public function handlePreApprovedRequest(User $user, string $deviceId, string $model, string $osVersion): ?UserDevice
+    {
+        /** @var DeviceChangeRequest|null $preApproved */
+        $preApproved = DeviceChangeRequest::where('user_id', $user->id)
+            ->where('status', DeviceChangeRequest::STATUS_PRE_APPROVED)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if ($preApproved === null) {
+            return null;
+        }
+
+        Log::info('Pre-approved device change request found, completing.', $this->resolveLogContext([
+            'source' => 'api',
+            'user_id' => $user->id,
+            'center_id' => $user->center_id,
+            'request_id' => $preApproved->id,
+            'new_device_id' => $deviceId,
+        ]));
+
+        return $this->deviceChangeService->completePreApproved($preApproved, $deviceId, $model, $osVersion);
     }
 
     public function assertActiveDevice(User $user, string $uuid): UserDevice

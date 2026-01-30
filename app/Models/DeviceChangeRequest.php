@@ -14,11 +14,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $user_id
  * @property int|null $center_id
- * @property string $current_device_id
+ * @property string|null $current_device_id
  * @property string $new_device_id
  * @property string $new_model
  * @property string $new_os_version
  * @property string $status
+ * @property string $request_source
+ * @property \Illuminate\Support\Carbon|null $otp_verified_at
  * @property string|null $reason
  * @property string|null $decision_reason
  * @property int|null $decided_by
@@ -40,6 +42,14 @@ class DeviceChangeRequest extends Model
 
     public const STATUS_REJECTED = 'REJECTED';
 
+    public const STATUS_PRE_APPROVED = 'PRE_APPROVED';
+
+    public const SOURCE_MOBILE = 'MOBILE';
+
+    public const SOURCE_OTP = 'OTP';
+
+    public const SOURCE_ADMIN = 'ADMIN';
+
     protected $fillable = [
         'user_id',
         'center_id',
@@ -48,6 +58,8 @@ class DeviceChangeRequest extends Model
         'new_model',
         'new_os_version',
         'status',
+        'request_source',
+        'otp_verified_at',
         'reason',
         'decision_reason',
         'decided_by',
@@ -56,6 +68,7 @@ class DeviceChangeRequest extends Model
 
     protected $casts = [
         'decided_at' => 'datetime',
+        'otp_verified_at' => 'datetime',
     ];
 
     /** @return BelongsTo<User, self> */
@@ -85,5 +98,16 @@ class DeviceChangeRequest extends Model
     public function scopePending(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PENDING);
+    }
+
+    /**
+     * Scope to filter pre-approved requests.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopePreApproved(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_PRE_APPROVED);
     }
 }

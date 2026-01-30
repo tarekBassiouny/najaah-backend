@@ -37,7 +37,8 @@ test('it creates playback session when views remain', function (): void {
     $response->assertOk()
         ->assertJsonPath('data.session_id', fn ($value) => is_int($value) && $value > 0)
         ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'iframe.mediadelivery.net'))
-        ->assertJsonPath('data.expires_at', fn ($value) => is_int($value) && $value > 0);
+        ->assertJsonPath('data.session_expires_in', fn ($value) => is_int($value) && $value > 0)
+        ->assertJsonPath('data.session_expires_at', fn ($value) => is_string($value) && ! empty($value));
 
     // Verify embed URL contains expected components
     $embedUrl = $response->json('data.embed_url');
@@ -360,7 +361,8 @@ test('it returns playback session with embed url', function (): void {
     $response->assertOk()
         ->assertJsonPath('data.session_id', fn ($value) => is_int($value) && $value > 0)
         ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'iframe.mediadelivery.net'))
-        ->assertJsonPath('data.expires_at', fn ($value) => is_int($value) && $value > 0);
+        ->assertJsonPath('data.session_expires_in', fn ($value) => is_int($value) && $value > 0)
+        ->assertJsonPath('data.session_expires_at', fn ($value) => is_string($value) && ! empty($value));
 });
 
 test('it closes session with user reason', function (): void {

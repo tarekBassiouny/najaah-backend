@@ -62,6 +62,24 @@ class CenterScopeService
         }
     }
 
+    /**
+     * Get center IDs the admin can access.
+     *
+     * @return array<int>|null Returns null for super admins (all centers), array of IDs otherwise
+     */
+    public function getAccessibleCenterIds(User $user): ?array
+    {
+        if ($this->isSuperAdmin($user)) {
+            return null;
+        }
+
+        return $user->centers()
+            ->wherePivotIn('type', ['admin', 'owner'])
+            ->pluck('centers.id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
     private function assertMember(User $user, ?int $centerId): void
     {
         if ($centerId === null || ! $user->belongsToCenter($centerId)) {

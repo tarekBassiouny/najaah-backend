@@ -31,6 +31,7 @@ class CourseDetailsResource extends JsonResource
             'thumbnail' => $course->thumbnail_url ?? null,
             'status' => $course->status,
             'is_enrolled' => (bool) ($course->is_enrolled ?? false),
+            'enrollment_status' => $course->enrollment_status ?? null,
             'published_at' => $course->publish_at,
             'duration_minutes' => $course->duration_minutes,
             'primary_instructor_id' => $course->primary_instructor_id,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin;
 
 use App\Http\Resources\Admin\Courses\CourseSummaryResource;
+use App\Http\Resources\Admin\Users\StudentResource;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,6 +32,7 @@ class EnrollmentResource extends JsonResource
             'enrolled_at' => $enrollment->enrolled_at,
             'expires_at' => $enrollment->expires_at,
             'course' => new CourseSummaryResource($this->whenLoaded('course')),
+            'student' => new StudentResource($this->whenLoaded('user')),
         ];
     }
 }

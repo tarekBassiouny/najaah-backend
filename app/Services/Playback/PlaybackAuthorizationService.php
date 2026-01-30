@@ -93,6 +93,10 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
             $this->deny(ErrorCodes::SESSION_ENDED, 'Playback session has ended.', 409);
         }
 
+        if ($session->expires_at !== null && $session->expires_at->lte(now())) {
+            $this->deny(ErrorCodes::SESSION_EXPIRED, 'Playback session has expired.', 409);
+        }
+
         $this->assertVideoReady($video);
         $this->assertEnrollmentActive($student, $course);
     }
@@ -199,6 +203,24 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
 
     private function resolveActiveDevice(User $student): UserDevice
     {
+        // First, try to get the authenticated device from the request (set by JWT middleware)
+        $authenticatedDevice = request()->attributes->get('authenticated_device');
+
+        if ($authenticatedDevice instanceof UserDevice) {
+            // Verify the device belongs to this student
+            if ((int) $authenticatedDevice->user_id !== (int) $student->id) {
+                $this->deny(ErrorCodes::DEVICE_MISMATCH, 'Device does not belong to the user.', 403);
+            }
+
+            // Verify the device is still active
+            if ($authenticatedDevice->status !== UserDevice::STATUS_ACTIVE) {
+                $this->deny(ErrorCodes::DEVICE_REVOKED, 'Device has been revoked.', 403);
+            }
+
+            return $authenticatedDevice;
+        }
+
+        // Fallback: Query for active device (for backwards compatibility or tests)
         /** @var UserDevice|null $device */
         $device = UserDevice::query()
             ->where('user_id', $student->id)

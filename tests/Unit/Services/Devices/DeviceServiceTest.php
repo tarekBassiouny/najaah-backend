@@ -14,7 +14,7 @@ test('register creates new device', function (): void {
     /** @var User $user */
     $user = User::factory()->create();
 
-    $service = new DeviceService;
+    $service = app(DeviceService::class);
     $device = $service->register($user, 'device-123', [
         'device_name' => 'iPhone',
         'device_os' => 'iOS',
@@ -35,7 +35,7 @@ test('register updates existing device', function (): void {
         'status' => 1,
     ]);
 
-    $service = new DeviceService;
+    $service = app(DeviceService::class);
     $device = $service->register($user, 'device-123', [
         'device_name' => 'New Name',
         'device_os' => 'NewOS',
@@ -57,7 +57,7 @@ test('handleReinstall detects same device with different uuid', function (): voi
         'status' => UserDevice::STATUS_ACTIVE,
     ]);
 
-    $service = new DeviceService;
+    $service = app(DeviceService::class);
     $result = $service->handleReinstall($user, 'new-device-uuid', 'iPhone 14 Pro', 'iOS 17.1');
 
     expect($result)->not->toBeNull()
@@ -89,7 +89,7 @@ test('handleReinstall returns null when no matching fingerprint', function (): v
         'status' => UserDevice::STATUS_ACTIVE,
     ]);
 
-    $service = new DeviceService;
+    $service = app(DeviceService::class);
     $result = $service->handleReinstall($user, 'new-device-uuid', 'Samsung Galaxy S24', 'Android 14');
 
     expect($result)->toBeNull();
@@ -108,7 +108,7 @@ test('handleReinstall returns null when same device uuid', function (): void {
         'status' => UserDevice::STATUS_ACTIVE,
     ]);
 
-    $service = new DeviceService;
+    $service = app(DeviceService::class);
     $result = $service->handleReinstall($user, 'same-device-uuid', 'iPhone 14 Pro', 'iOS 17.1');
 
     expect($result)->toBeNull();
@@ -127,7 +127,7 @@ test('register uses handleReinstall for app reinstall scenario', function (): vo
         'status' => UserDevice::STATUS_ACTIVE,
     ]);
 
-    $service = new DeviceService;
+    $service = app(DeviceService::class);
     $device = $service->register($user, 'new-uuid-after-reinstall', [
         'device_type' => 'iPhone 14 Pro',
         'device_os' => 'iOS 17.1',

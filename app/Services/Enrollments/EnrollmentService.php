@@ -11,6 +11,7 @@ use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use App\Services\Students\Contracts\StudentNotificationServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,10 @@ use Illuminate\Validation\ValidationException;
 
 class EnrollmentService implements EnrollmentServiceInterface
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly StudentNotificationServiceInterface $notificationService
+    ) {}
 
     public function enroll(User $student, Course $course, string $status, ?User $actor = null): Enrollment
     {
@@ -56,7 +60,7 @@ class EnrollmentService implements EnrollmentServiceInterface
             ]);
         }
 
-        return DB::transaction(function () use ($student, $course, $statusValue, $actor): Enrollment {
+        $result = DB::transaction(function () use ($student, $course, $statusValue, $actor): Enrollment {
             $existing = Enrollment::withTrashed()
                 ->where('user_id', $student->id)
                 ->where('course_id', $course->id)
@@ -89,6 +93,19 @@ class EnrollmentService implements EnrollmentServiceInterface
 
             return $enrollment->fresh(['course', 'user']) ?? $enrollment;
         });
+
+        // Send enrollment notification (non-blocking)
+        $this->notificationService->sendEnrollmentNotification($result);
+
+        return $result;
+    }
+
+    /**
+     * Manually send enrollment notification to a student.
+     */
+    public function sendEnrollmentNotification(Enrollment $enrollment): bool
+    {
+        return $this->notificationService->sendEnrollmentNotification($enrollment);
     }
 
     public function updateStatus(Enrollment $enrollment, string $status, ?User $actor = null): Enrollment
@@ -143,6 +160,47 @@ class EnrollmentService implements EnrollmentServiceInterface
         }
 
         return $query->paginate($perPage);
+    }
+
+    /**
+     * @param  array{center_id?: int|null, course_id?: int|null, user_id?: int|null, status?: string|null}  $filters
+     */
+    public function paginateForAdmin(User $admin, array $filters = [], int $perPage = 15): LengthAwarePaginator
+    {
+        $query = Enrollment::query()
+            ->with(['course', 'user', 'center'])
+            ->orderByDesc('enrolled_at');
+
+        // Scope to admin's accessible centers
+        $centerIds = $this->centerScopeService->getAccessibleCenterIds($admin);
+        if ($centerIds !== null) {
+            $query->whereIn('center_id', $centerIds);
+        }
+
+        // Apply filters
+        if (! empty($filters['center_id'])) {
+            $query->where('center_id', $filters['center_id']);
+        }
+
+        if (! empty($filters['course_id'])) {
+            $query->where('course_id', $filters['course_id']);
+        }
+
+        if (! empty($filters['user_id'])) {
+            $query->where('user_id', $filters['user_id']);
+        }
+
+        if (! empty($filters['status'])) {
+            $statusValue = $this->normalizeStatus($filters['status']);
+            $query->where('status', $statusValue);
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    public function assertAdminCanAccess(User $admin, Enrollment $enrollment): void
+    {
+        $this->centerScopeService->assertAdminSameCenter($admin, $enrollment);
     }
 
     public function getActiveEnrollment(User $student, Course $course): ?Enrollment

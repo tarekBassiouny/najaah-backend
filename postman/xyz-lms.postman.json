@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "51f24131-c222-4b79-8f0c-0c1d865288a0",
+    "_postman_id": "f4351962-24d6-4d96-b7b0-f86889e3e600",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -2957,6 +2957,86 @@
       "name": "🧑‍💼 Admin – Enrollment & Controls",
       "item": [
         {
+          "name": "GET api/v1/admin/enrollments",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/enrollments",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/enrollments"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/enrollments/{enrollment_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/enrollments/:enrollment_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/enrollments/:enrollment_id",
+              "variable": [
+                {
+                  "id": "enrollment_id",
+                  "key": "enrollment_id",
+                  "value": "1",
+                  "description": "The ID of the enrollment."
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
           "name": "POST api/v1/admin/enrollments",
           "request": {
             "url": {
@@ -3424,6 +3504,53 @@
             "body": {
               "mode": "raw",
               "raw": "{\"decision_reason\":\"Device policy violation\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/pre-approve",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/device-change-requests/:deviceChangeRequest_id/pre-approve",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/device-change-requests/:deviceChangeRequest_id/pre-approve",
+              "variable": [
+                {
+                  "id": "deviceChangeRequest_id",
+                  "key": "deviceChangeRequest_id",
+                  "value": "16",
+                  "description": "The ID of the deviceChangeRequest."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"decision_reason\":\"Student verified via phone call.\"}"
             },
             "description": "",
             "auth": {
@@ -5087,6 +5214,53 @@
       "name": "🧑‍💼 Admin – Students",
       "item": [
         {
+          "name": "POST api/v1/admin/students/{student_id}/device-change-requests",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/students/:student_id/device-change-requests",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/students/:student_id/device-change-requests",
+              "variable": [
+                {
+                  "id": "student_id",
+                  "key": "student_id",
+                  "value": "1",
+                  "description": "The ID of the student."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Student called support and reported lost device.\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
           "name": "GET api/v1/admin/students",
           "request": {
             "url": {
@@ -6462,6 +6636,84 @@
       "name": "📱 Student – Requests",
       "item": [
         {
+          "name": "POST api/v1/device-change/submit",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/device-change/submit",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/device-change/submit"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"otp\":\"123456\",\"token\":\"uuid-token-string\",\"device_uuid\":\"device-uuid-123\",\"device_model\":\"iPhone 15 Pro\",\"device_os\":\"iOS 17.2\",\"reason\":\"Lost my phone and need to register a new device.\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/settings/device-change",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/settings/device-change",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/settings/device-change"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Lost my phone and need to register a new device.\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
           "name": "POST api/v1/centers/{center_id}/courses/{course_id}/videos/{video_id}/extra-view",
           "request": {
             "url": {
@@ -6512,45 +6764,6 @@
             "body": {
               "mode": "raw",
               "raw": "{\"reason\":\"Need more time to finish the lecture.\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST api/v1/settings/device-change",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/settings/device-change",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/settings/device-change"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "X-Api-Key",
-                "value": "{{api_key}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"reason\":\"Lost my phone and need to register a new device.\"}"
             },
             "description": "",
             "auth": {

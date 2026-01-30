@@ -32,6 +32,8 @@ final class ErrorCodes
 
     public const SESSION_ENDED = 'SESSION_ENDED';
 
+    public const SESSION_EXPIRED = 'SESSION_EXPIRED';
+
     public const SESSION_NOT_FOUND = 'SESSION_NOT_FOUND';
 
     public const NO_ACTIVE_DEVICE = 'NO_ACTIVE_DEVICE';
@@ -39,6 +41,8 @@ final class ErrorCodes
     public const VIEW_LIMIT_EXCEEDED = 'VIEW_LIMIT_EXCEEDED';
 
     public const DEVICE_MISMATCH = 'DEVICE_MISMATCH';
+
+    public const DEVICE_REVOKED = 'DEVICE_REVOKED';
 
     public const INVALID_STATE = 'INVALID_STATE';
 
@@ -55,6 +59,10 @@ final class ErrorCodes
     public const NOT_ADMIN = 'NOT_ADMIN';
 
     public const NOT_STUDENT = 'NOT_STUDENT';
+
+    public const OTP_INVALID = 'OTP_INVALID';
+
+    public const USER_NOT_FOUND_FOR_OTP = 'USER_NOT_FOUND_FOR_OTP';
 
     private function __construct() {}
 }

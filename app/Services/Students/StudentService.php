@@ -7,13 +7,15 @@ namespace App\Services\Students;
 use App\Exceptions\DomainException;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Students\Contracts\StudentNotificationServiceInterface;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Str;
 
 class StudentService
 {
     public function __construct(
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly StudentNotificationServiceInterface $notificationService
     ) {}
 
     /**
@@ -39,7 +41,22 @@ class StudentService
             ]);
         }
 
-        return $user->refresh() ?? $user;
+        $user = $user->refresh() ?? $user;
+
+        // Send welcome message with app download links (non-blocking)
+        $this->notificationService->sendWelcomeMessage($user);
+
+        return $user;
+    }
+
+    /**
+     * Manually send welcome message to a student.
+     */
+    public function sendWelcomeMessage(User $user): bool
+    {
+        $this->assertStudent($user);
+
+        return $this->notificationService->sendWelcomeMessage($user);
     }
 
     /**

@@ -55,7 +55,8 @@ test('it refreshes playback token for active session', function (): void {
     $refreshResponse->assertOk()
         ->assertJsonPath('data.session_id', $sessionId)
         ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'iframe.mediadelivery.net'))
-        ->assertJsonPath('data.expires_at', fn ($value) => is_int($value) && $value > 0);
+        ->assertJsonPath('data.session_expires_in', fn ($value) => is_int($value) && $value > 0)
+        ->assertJsonPath('data.session_expires_at', fn ($value) => is_string($value) && ! empty($value));
 
     // Verify the embed URL changed (new token)
     $newEmbedUrl = $refreshResponse->json('data.embed_url');

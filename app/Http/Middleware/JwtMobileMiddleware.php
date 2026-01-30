@@ -88,6 +88,8 @@ class JwtMobileMiddleware
         | Device validation
         |--------------------------------------------------------------------------
         */
+        $authenticatedDevice = null;
+
         if ($record->device_id !== null) {
             /** @var UserDevice|null $device */
             $device = UserDevice::find($record->device_id);
@@ -95,10 +97,15 @@ class JwtMobileMiddleware
             if ($device === null || $device->status !== UserDevice::STATUS_ACTIVE) {
                 return $this->deny('DEVICE_MISMATCH', 'Device is not authorized for this user.');
             }
+
+            $authenticatedDevice = $device;
         }
 
         // Bind resolved user to request
         $request->setUserResolver(fn (): User => $user);
+
+        // Store authenticated device in request for downstream use
+        $request->attributes->set('authenticated_device', $authenticatedDevice);
 
         return $next($request);
     }

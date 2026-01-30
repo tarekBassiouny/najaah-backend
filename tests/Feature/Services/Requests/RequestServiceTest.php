@@ -13,9 +13,8 @@ use App\Models\Video;
 use App\Services\Playback\ViewLimitService;
 use App\Services\Requests\RequestService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-uses(TestCase::class, RefreshDatabase::class)->group('requests', 'services');
+uses(RefreshDatabase::class)->group('requests', 'services');
 
 beforeEach(function (): void {
     $this->viewLimitService = Mockery::mock(ViewLimitService::class);

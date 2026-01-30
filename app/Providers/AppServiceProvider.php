@@ -52,6 +52,8 @@ use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Services\Settings\SettingsResolverService;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use App\Services\Storage\SpacesStorageService;
+use App\Services\Students\Contracts\StudentNotificationServiceInterface;
+use App\Services\Students\StudentNotificationService;
 use App\Services\Videos\AdminVideoQueryService;
 use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
 use App\Services\Videos\Contracts\VideoServiceInterface;
@@ -99,6 +101,7 @@ class AppServiceProvider extends ServiceProvider
             PlaybackAuthorizationServiceInterface::class => PlaybackAuthorizationService::class,
             RoleServiceInterface::class => RoleService::class,
             PermissionServiceInterface::class => PermissionService::class,
+            StudentNotificationServiceInterface::class => StudentNotificationService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {

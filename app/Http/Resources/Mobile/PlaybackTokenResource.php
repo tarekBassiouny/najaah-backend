@@ -23,7 +23,10 @@ class PlaybackTokenResource extends JsonResource
         return array_filter([
             'session_id' => $data['session_id'] ?? null,
             'embed_url' => $data['embed_url'] ?? null,
-            'expires_at' => $data['expires_at'] ?? null,
+            'embed_token_expires_at' => $data['embed_token_expires_at'] ?? null,
+            'embed_token_expires' => $data['embed_token_expires'] ?? null,
+            'session_expires_at' => $data['session_expires_at'] ?? null,
+            'session_expires_in' => $data['session_expires_in'] ?? null,
         ], static fn ($value): bool => $value !== null);
     }
 }

@@ -36,8 +36,8 @@ class PlaybackService implements PlaybackServiceInterface
      *   embed_token:string,
      *   embed_token_expires_at:string,
      *   embed_token_expires:int,
-     *   expires_in:int,
-     *   expires_at:int,
+     *   session_expires_at:string,
+     *   session_expires_in:int,
      *   embed_url:string,
      *   is_locked:bool,
      *   remaining_views:int|null,
@@ -70,7 +70,6 @@ class PlaybackService implements PlaybackServiceInterface
         );
         $embedTokenExpires = (int) $embedTokenData['expires'];
         $embedTokenExpiresAt = Carbon::createFromTimestamp($embedTokenExpires);
-        $embedTokenExpiresIn = max(0, $embedTokenExpires - (int) now()->timestamp);
 
         $session = DB::transaction(function () use ($student, $video, $course, $enrollmentId, $device, $embedTokenData, $embedTokenExpiresAt): PlaybackSession {
             $now = now();
@@ -123,6 +122,11 @@ class PlaybackService implements PlaybackServiceInterface
         $viewLimit = $this->viewLimitService->getEffectiveLimit($student, $video, $course);
         $isLocked = $this->viewLimitService->isLocked($student, $video, $course);
 
+        $sessionExpiresAt = $session->expires_at;
+        $sessionExpiresIn = $sessionExpiresAt !== null
+            ? max(0, (int) $sessionExpiresAt->timestamp - (int) now()->timestamp)
+            : 0;
+
         return [
             'library_id' => (string) $libraryId,
             'video_uuid' => $videoUuid,
@@ -130,8 +134,8 @@ class PlaybackService implements PlaybackServiceInterface
             'embed_token' => $embedTokenData['token'],
             'embed_token_expires_at' => $session->embed_token_expires_at?->toIso8601String() ?? '',
             'embed_token_expires' => $embedTokenExpires,
-            'expires_in' => $embedTokenExpiresIn,
-            'expires_at' => $embedTokenExpires,
+            'session_expires_at' => $sessionExpiresAt?->toIso8601String() ?? '',
+            'session_expires_in' => $sessionExpiresIn,
             'embed_url' => $embedUrl,
             'is_locked' => $isLocked,
             'remaining_views' => $remainingViews,
@@ -143,8 +147,10 @@ class PlaybackService implements PlaybackServiceInterface
      * @return array{
      *   session_id:int,
      *   embed_token:string,
-     *   expires_in:int,
-     *   expires_at:int,
+     *   embed_token_expires:int,
+     *   embed_token_expires_at:string,
+     *   session_expires_at:string,
+     *   session_expires_in:int,
      *   embed_url:string
      * }
      */
@@ -170,13 +176,13 @@ class PlaybackService implements PlaybackServiceInterface
         );
 
         $tokenExpires = (int) $tokenData['expires'];
-        $expiresAt = Carbon::createFromTimestamp($tokenExpires);
-        $expiresIn = max(0, $tokenExpires - (int) now()->timestamp);
+        $embedTokenExpiresAt = Carbon::createFromTimestamp($tokenExpires);
+        $sessionExpiresAt = now()->addSeconds((int) config('playback.session_ttl'));
 
         $session->update([
             'embed_token' => $tokenData['token'],
-            'embed_token_expires_at' => $expiresAt,
-            'expires_at' => now()->addSeconds((int) config('playback.session_ttl')),
+            'embed_token_expires_at' => $embedTokenExpiresAt,
+            'expires_at' => $sessionExpiresAt,
             'last_activity_at' => now(),
         ]);
 
@@ -187,12 +193,16 @@ class PlaybackService implements PlaybackServiceInterface
             $tokenExpires
         );
 
+        $sessionExpiresIn = max(0, (int) $sessionExpiresAt->timestamp - (int) now()->timestamp);
+
         return [
             'session_id' => $session->id,
             'embed_token' => $tokenData['token'],
-            'expires_in' => $expiresIn,
+            'embed_token_expires' => $tokenExpires,
+            'embed_token_expires_at' => $embedTokenExpiresAt->toIso8601String(),
+            'session_expires_at' => $sessionExpiresAt->toIso8601String(),
+            'session_expires_in' => $sessionExpiresIn,
             'embed_url' => $embedUrl,
-            'expires_at' => $tokenExpires,
         ];
     }
 

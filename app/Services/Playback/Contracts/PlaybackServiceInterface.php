@@ -20,8 +20,8 @@ interface PlaybackServiceInterface
      *   embed_token: string,
      *   embed_token_expires_at: string,
      *   embed_token_expires: int,
-     *   expires_in: int,
-     *   expires_at: int,
+     *   session_expires_at: string,
+     *   session_expires_in: int,
      *   embed_url: string,
      *   is_locked: bool,
      *   remaining_views: int|null,
@@ -34,8 +34,10 @@ interface PlaybackServiceInterface
      * @return array{
      *   session_id: int,
      *   embed_token: string,
-     *   expires_in: int,
-     *   expires_at: int,
+     *   embed_token_expires: int,
+     *   embed_token_expires_at: string,
+     *   session_expires_at: string,
+     *   session_expires_in: int,
      *   embed_url: string
      * }
      */

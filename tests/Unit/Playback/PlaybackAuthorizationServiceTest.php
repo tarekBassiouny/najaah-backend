@@ -110,6 +110,24 @@ test('it rejects progress update when session has ended', function (): void {
     assertHttpError($thrown, 409, 'SESSION_ENDED');
 });
 
+test('it rejects progress update when session has expired', function (): void {
+    [$student, $center, $course, $video] = buildAuthorizationPlaybackContext();
+
+    $session = PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'ended_at' => null,
+        'expires_at' => now()->subMinutes(5), // Expired 5 minutes ago
+    ]);
+
+    $service = app(PlaybackAuthorizationService::class);
+
+    $thrown = captureException(fn () => $service->assertCanUpdateProgress($student, $center, $course, $video, $session));
+
+    assertHttpError($thrown, 409, 'SESSION_EXPIRED');
+});
+
 /**
  * @return array{0:User,1:Center,2:Course,3:Video}
  */

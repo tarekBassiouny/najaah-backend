@@ -21,6 +21,45 @@ class EnrollmentController extends Controller
         private readonly EnrollmentServiceInterface $enrollmentService
     ) {}
 
+    public function index(): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+
+        $filters = [
+            'center_id' => request()->integer('center_id') ?: null,
+            'course_id' => request()->integer('course_id') ?: null,
+            'user_id' => request()->integer('user_id') ?: null,
+            'status' => request()->string('status')->toString() ?: null,
+        ];
+
+        $perPage = min(request()->integer('per_page', 15), 100);
+
+        $enrollments = $this->enrollmentService->paginateForAdmin($admin, $filters, $perPage);
+
+        return response()->json([
+            'success' => true,
+            'data' => EnrollmentResource::collection($enrollments),
+            'meta' => [
+                'current_page' => $enrollments->currentPage(),
+                'per_page' => $enrollments->perPage(),
+                'total' => $enrollments->total(),
+                'last_page' => $enrollments->lastPage(),
+            ],
+        ]);
+    }
+
+    public function show(Enrollment $enrollment): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+
+        $this->enrollmentService->assertAdminCanAccess($admin, $enrollment);
+
+        return response()->json([
+            'success' => true,
+            'data' => new EnrollmentResource($enrollment->load(['course', 'user', 'center'])),
+        ]);
+    }
+
     public function store(StoreEnrollmentRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();

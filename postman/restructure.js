@@ -104,6 +104,7 @@ function route(item) {
 
   // Device change
   if (path === "/api/v1/settings/device-change") return tree.studentRequests;
+  if (path === "/api/v1/device-change/submit") return tree.studentRequests;
 
   // Enrollment request
   if (path.endsWith("/enroll-request")) return tree.studentEnrollments;

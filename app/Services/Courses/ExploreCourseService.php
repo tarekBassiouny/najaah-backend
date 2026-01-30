@@ -130,14 +130,15 @@ class ExploreCourseService
             }
         }
 
-        $isEnrolled = Enrollment::query()
+        /** @var Enrollment|null $enrollment */
+        $enrollment = Enrollment::query()
             ->where('user_id', $student->id)
             ->where('course_id', $course->id)
-            ->where('status', Enrollment::STATUS_ACTIVE)
             ->whereNull('deleted_at')
-            ->exists();
+            ->first();
 
-        $course->setAttribute('is_enrolled', $isEnrolled);
+        $course->setAttribute('is_enrolled', $enrollment !== null && $enrollment->status === Enrollment::STATUS_ACTIVE);
+        $course->setAttribute('enrollment_status', $enrollment?->statusLabel());
         $this->filterReadyVideos($course);
 
         return $course;

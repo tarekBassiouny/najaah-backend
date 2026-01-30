@@ -38,7 +38,9 @@ test('request playback returns embed url and enforces 80 percent full play', fun
     $response->assertOk()
         ->assertJsonPath('data.session_id', fn ($value) => is_int($value) && $value > 0)
         ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'iframe.mediadelivery.net'))
-        ->assertJsonPath('data.expires_at', fn ($value) => is_int($value) && $value > 0);
+        ->assertJsonPath('data.session_expires_in', fn ($value) => is_int($value) && $value > 0)
+        ->assertJsonPath('data.session_expires_at', fn ($value) => is_string($value) && ! empty($value))
+        ->assertJsonPath('data.embed_token_expires', fn ($value) => is_int($value) && $value > 0);
 
     $payload = $response->json('data');
 
@@ -48,8 +50,8 @@ test('request playback returns embed url and enforces 80 percent full play', fun
         ->toContain('token=')
         ->toContain('expires=');
 
-    $expectedExpires = Carbon::now()->addSeconds(240)->timestamp;
-    expect($payload['expires_at'])->toBe($expectedExpires);
+    $expectedEmbedExpires = Carbon::now()->addSeconds(240)->timestamp;
+    expect($payload['embed_token_expires'])->toBe($expectedEmbedExpires);
 
     $sessionId = $payload['session_id'];
     $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [

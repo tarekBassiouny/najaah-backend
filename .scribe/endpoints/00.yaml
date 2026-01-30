@@ -244,6 +244,111 @@ endpoints:
   -
     custom: []
     httpMethods:
+      - POST
+    uri: api/v1/device-change/submit
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      otp:
+        custom: []
+        name: otp
+        description: 'The OTP code sent to the user phone.'
+        required: true
+        example: '123456'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      token:
+        custom: []
+        name: token
+        description: 'The OTP token returned from /auth/send-otp.'
+        required: true
+        example: uuid-token-string
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      device_uuid:
+        custom: []
+        name: device_uuid
+        description: 'The unique device identifier for the new device. Must not be greater than 255 characters.'
+        required: true
+        example: device-uuid-123
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      device_model:
+        custom: []
+        name: device_model
+        description: 'The model name of the new device. Must not be greater than 255 characters.'
+        required: true
+        example: 'iPhone 15 Pro'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      device_os:
+        custom: []
+        name: device_os
+        description: 'The operating system version of the new device. Must not be greater than 255 characters.'
+        required: true
+        example: 'iOS 17.2'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      reason:
+        custom: []
+        name: reason
+        description: 'Optional reason for requesting a device change. Must not be greater than 1000 characters.'
+        required: false
+        example: 'Lost my phone and need to register a new device.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      otp: '123456'
+      token: uuid-token-string
+      device_uuid: device-uuid-123
+      device_model: 'iPhone 15 Pro'
+      device_os: 'iOS 17.2'
+      reason: 'Lost my phone and need to register a new device.'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
       - GET
     uri: api/v1/auth/me
     metadata:
@@ -345,6 +450,51 @@ endpoints:
     cleanQueryParameters: []
     bodyParameters: []
     cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/settings/device-change
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      reason:
+        custom: []
+        name: reason
+        description: 'Optional reason for requesting a device change. Must not be greater than 255 characters.'
+        required: false
+        example: 'Lost my phone and need to register a new device.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      reason: 'Lost my phone and need to register a new device.'
     fileParameters: []
     responses: []
     responseFields: []
@@ -1500,51 +1650,6 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       reason: 'Need more time to finish the lecture.'
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/v1/settings/device-change
-    metadata:
-      custom: []
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-      X-Locale: '@{{locale}}'
-      X-Api-Key: '@{{api_key}}'
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      reason:
-        custom: []
-        name: reason
-        description: 'Optional reason for requesting a device change. Must not be greater than 255 characters.'
-        required: false
-        example: 'Lost my phone and need to register a new device.'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      reason: 'Lost my phone and need to register a new device.'
     fileParameters: []
     responses: []
     responseFields: []
@@ -2882,6 +2987,84 @@ endpoints:
         branding:
           logo_url: 'https://example.com/logo.png'
           primary_color: '#000000'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/admin/enrollments
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/admin/enrollments/{enrollment_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      enrollment_id:
+        custom: []
+        name: enrollment_id
+        description: 'The ID of the enrollment.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      enrollment_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses: []
     responseFields: []
@@ -9571,6 +9754,120 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       decision_reason: 'Device policy violation'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/admin/device-change-requests/{deviceChangeRequest_id}/pre-approve'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      deviceChangeRequest_id:
+        custom: []
+        name: deviceChangeRequest_id
+        description: 'The ID of the deviceChangeRequest.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      deviceChangeRequest_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      decision_reason:
+        custom: []
+        name: decision_reason
+        description: 'Optional reason for pre-approving the device change. Must not be greater than 1000 characters.'
+        required: false
+        example: 'Student verified via phone call.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      decision_reason: 'Student verified via phone call.'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/admin/students/{student_id}/device-change-requests'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      student_id:
+        custom: []
+        name: student_id
+        description: 'The ID of the student.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      student_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      reason:
+        custom: []
+        name: reason
+        description: 'Optional reason for creating the device change request on behalf of the student. Must not be greater than 1000 characters.'
+        required: false
+        example: 'Student called support and reported lost device.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      reason: 'Student called support and reported lost device.'
     fileParameters: []
     responses: []
     responseFields: []
