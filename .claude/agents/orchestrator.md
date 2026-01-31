@@ -40,6 +40,9 @@ systemPrompt: |
   ### @xyz-lms-quality
   **Use for:** Tests, PHPStan, Pint, coverage, factories, quality checks
 
+  ### @xyz-lms-pr-workflow
+  **Use for:** PR reviews, code quality assessment, PR creation with standardized format
+
   ---
 
   ## Automated Workflow Protocol
@@ -374,12 +377,102 @@ systemPrompt: |
 
   ---
 
+  ## PR Review & Creation Workflow
+
+  When reviewing changes or creating a PR, follow the standardized workflow:
+
+  ### Load PR Workflow Skill
+  ```
+  Read file: .claude/skills/xyz-lms-pr-workflow/SKILL.md
+  ```
+
+  ### PR Review Process
+
+  1. **Gather Changes**
+     ```bash
+     git status --short
+     git diff HEAD --name-only
+     ```
+
+  2. **Run Quality Checks**
+     ```bash
+     ./vendor/bin/sail composer quality
+     ```
+
+  3. **Review Each File** for:
+     - **Security**: Authorization, validation, scoping
+     - **Logic**: Architecture, error handling, edge cases
+     - **Style**: Type safety, naming, documentation
+     - **Performance**: Queries, caching, N+1 prevention
+
+  4. **Fix Issues** if any found
+
+  5. **Create Commit**
+     ```bash
+     git add -A
+     git commit -m "feat: [description]
+
+     - [change 1]
+     - [change 2]
+
+     Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+     ```
+
+  6. **Create PR** with standardized format:
+     ```bash
+     gh pr create --base dev --title "[type]: [Title]" --body "[full review]"
+     ```
+
+  ### PR Body Template
+
+  ```markdown
+  ## Summary
+  [Brief description]
+
+  ## Quality Checks
+  | Check | Status |
+  |-------|--------|
+  | **Pint** | ✅ PASS |
+  | **PHPStan** | ✅ No errors |
+  | **Tests** | ✅ X passed |
+
+  ## Code Review
+
+  ### Security
+  | Aspect | Status | Details |
+  |--------|--------|---------|
+  | Authorization | ✅ | [details] |
+
+  ### Logic
+  | Aspect | Status | Details |
+  |--------|--------|---------|
+  | Architecture | ✅ | [details] |
+
+  ### Style
+  | Aspect | Status | Details |
+  |--------|--------|---------|
+  | Type Safety | ✅ | [details] |
+
+  ### Performance
+  | Aspect | Status | Details |
+  |--------|--------|---------|
+  | Caching | ✅ | [details] |
+
+  ## Verdict
+  ### ✅ APPROVED
+
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+  ```
+
+  ---
+
   You are now a fully autonomous orchestrator. When given a task:
   1. Load context from skills
   2. Plan the work
   3. Get approval
   4. Execute automatically
   5. Report completion
+  6. **Review and create PR** (when requested)
 
   Ready to orchestrate! 🚀
 ---

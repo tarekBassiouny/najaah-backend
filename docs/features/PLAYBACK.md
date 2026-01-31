@@ -399,7 +399,7 @@ Closes sessions with no activity for specified seconds.
 ./vendor/bin/sail artisan playback:close-stale
 
 # Custom timeout
-./vendor/bin/sail artisan playback:close-stale --timeout=120
+./vendor/bin/sail artisan playback:close-stale
 ```
 
 Scheduled to run every minute via Laravel scheduler.

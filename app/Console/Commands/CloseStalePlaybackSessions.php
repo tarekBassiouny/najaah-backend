@@ -11,17 +11,16 @@ use Illuminate\Support\Facades\Log;
 
 class CloseStalePlaybackSessions extends Command
 {
-    protected $signature = 'playback:close-stale {--timeout= : Timeout in seconds}';
+    protected $signature = 'playback:close-stale';
 
-    protected $description = 'Close playback sessions with no activity for specified seconds.';
+    protected $description = 'Close playback sessions that have expired.';
 
     public function handle(PlaybackService $playbackService): int
     {
-        $timeout = (int) ($this->option('timeout') ?? config('playback.session_timeout_seconds'));
-
         $staleSessions = PlaybackSession::query()
             ->whereNull('ended_at')
-            ->where('last_activity_at', '<', now()->subSeconds($timeout))
+            ->whereNotNull('expires_at')
+            ->where('expires_at', '<', now())
             ->get();
 
         $count = 0;
@@ -36,7 +35,7 @@ class CloseStalePlaybackSessions extends Command
 
         Log::channel('domain')->info('playback_sessions_cleanup', [
             'closed_sessions' => $count,
-            'timeout_seconds' => $timeout,
+            'mode' => 'expires_at',
         ]);
 
         $this->info(sprintf('Closed %d stale sessions.', $count));

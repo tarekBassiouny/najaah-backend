@@ -116,7 +116,11 @@ test('extra view request creation is audited with actor', function (): void {
         'is_student' => true,
         'center_id' => $center->id,
     ]);
-    $course = Course::factory()->create(['center_id' => $center->id]);
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
     $video = Video::factory()->create(['center_id' => $center->id]);
 
     CourseVideo::create([
@@ -164,7 +168,11 @@ test('enrollment request creation is audited with actor', function (): void {
         'is_student' => true,
         'center_id' => $center->id,
     ]);
-    $course = Course::factory()->create(['center_id' => $center->id]);
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
 
     $service = new RequestService(
         new ViewLimitService(new SettingsResolverService),

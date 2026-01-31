@@ -389,6 +389,18 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-audit-logs">
                                 <a href="#endpoints-GETapi-v1-admin-audit-logs">GET api/v1/admin/audit-logs</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-analytics-overview">
+                                <a href="#endpoints-GETapi-v1-admin-analytics-overview">GET api/v1/admin/analytics/overview</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-analytics-courses-media">
+                                <a href="#endpoints-GETapi-v1-admin-analytics-courses-media">GET api/v1/admin/analytics/courses-media</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-analytics-learners-enrollments">
+                                <a href="#endpoints-GETapi-v1-admin-analytics-learners-enrollments">GET api/v1/admin/analytics/learners-enrollments</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-analytics-devices-requests">
+                                <a href="#endpoints-GETapi-v1-admin-analytics-devices-requests">GET api/v1/admin/analytics/devices-requests</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-extra-view-requests">
                                 <a href="#endpoints-GETapi-v1-admin-extra-view-requests">GET api/v1/admin/extra-view-requests</a>
                             </li>
@@ -7662,7 +7674,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
-    --form "logo=@/tmp/php5b82rvv2sevn4nkgAn8" </code></pre></div>
+    --form "logo=@/tmp/phpa3ef3893i9t3f5iHb0s" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7809,7 +7821,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/php5b82rvv2sevn4nkgAn8</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpa3ef3893i9t3f5iHb0s</code></p>
         </div>
         </form>
 
@@ -17764,7 +17776,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpu290adp8amq82PV72Mo" </code></pre></div>
+    --form "avatar=@/tmp/phpv4n9qd448phg6fWKmw1" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -17971,7 +17983,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpu290adp8amq82PV72Mo</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpv4n9qd448phg6fWKmw1</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -18206,7 +18218,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpmcqrdbqgskkmbsqlaXM" </code></pre></div>
+    --form "avatar=@/tmp/php9rj4eg78rmgmcDw0Uu5" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -18429,7 +18441,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpmcqrdbqgskkmbsqlaXM</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php9rj4eg78rmgmcDw0Uu5</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -21463,7 +21475,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/v1/admin/centers/1/pdfs/upload-sessions/1/finalize" \
+    "http://xyz-lms.test/api/v1/admin/centers/1/pdfs/upload-sessions/11/finalize" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
@@ -21485,7 +21497,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/centers/1/pdfs/upload-sessions/1/finalize"
+    "http://xyz-lms.test/api/v1/admin/centers/1/pdfs/upload-sessions/11/finalize"
 );
 
 const headers = {
@@ -21633,10 +21645,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="pdfUploadSession_id"                data-endpoint="POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize"
-               value="1"
+               value="11"
                data-component="url">
     <br>
-<p>The ID of the pdfUploadSession. Example: <code>1</code></p>
+<p>The ID of the pdfUploadSession. Example: <code>11</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -22197,6 +22209,790 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="query">
     <br>
 <p>Filter logs up to this date. Must be a valid date. Example: <code>2025-12-31</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-analytics-overview">GET api/v1/admin/analytics/overview</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-analytics-overview">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/analytics/overview?center_id=12&amp;from=2026-01-01&amp;to=2026-01-31&amp;timezone=UTC" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/analytics/overview"
+);
+
+const params = {
+    "center_id": "12",
+    "from": "2026-01-01",
+    "to": "2026-01-31",
+    "timezone": "UTC",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-analytics-overview">
+    </span>
+<span id="execution-results-GETapi-v1-admin-analytics-overview" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-analytics-overview"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-analytics-overview"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-analytics-overview" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-analytics-overview">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-analytics-overview" data-method="GET"
+      data-path="api/v1/admin/analytics/overview"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-analytics-overview', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-analytics-overview"
+                    onclick="tryItOut('GETapi-v1-admin-analytics-overview');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-analytics-overview"
+                    onclick="cancelTryOut('GETapi-v1-admin-analytics-overview');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-analytics-overview"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/analytics/overview</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-analytics-overview"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-analytics-overview"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-analytics-overview"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-analytics-overview"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-analytics-overview"
+               value="12"
+               data-component="query">
+    <br>
+<p>Filter analytics by center ID. The <code>id</code> of an existing record in the centers table. Example: <code>12</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="from"                data-endpoint="GETapi-v1-admin-analytics-overview"
+               value="2026-01-01"
+               data-component="query">
+    <br>
+<p>Start date (YYYY-MM-DD). Must be a valid date. Example: <code>2026-01-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="to"                data-endpoint="GETapi-v1-admin-analytics-overview"
+               value="2026-01-31"
+               data-component="query">
+    <br>
+<p>End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to <code>from</code>. Example: <code>2026-01-31</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>timezone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="timezone"                data-endpoint="GETapi-v1-admin-analytics-overview"
+               value="UTC"
+               data-component="query">
+    <br>
+<p>Timezone for date filters (default UTC). Must be a valid time zone, such as <code>Africa/Accra</code>. Example: <code>UTC</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-analytics-courses-media">GET api/v1/admin/analytics/courses-media</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-analytics-courses-media">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/analytics/courses-media?center_id=12&amp;from=2026-01-01&amp;to=2026-01-31&amp;timezone=UTC" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/analytics/courses-media"
+);
+
+const params = {
+    "center_id": "12",
+    "from": "2026-01-01",
+    "to": "2026-01-31",
+    "timezone": "UTC",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-analytics-courses-media">
+    </span>
+<span id="execution-results-GETapi-v1-admin-analytics-courses-media" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-analytics-courses-media"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-analytics-courses-media"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-analytics-courses-media" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-analytics-courses-media">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-analytics-courses-media" data-method="GET"
+      data-path="api/v1/admin/analytics/courses-media"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-analytics-courses-media', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-analytics-courses-media"
+                    onclick="tryItOut('GETapi-v1-admin-analytics-courses-media');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-analytics-courses-media"
+                    onclick="cancelTryOut('GETapi-v1-admin-analytics-courses-media');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-analytics-courses-media"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/analytics/courses-media</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-analytics-courses-media"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-analytics-courses-media"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-analytics-courses-media"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-analytics-courses-media"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-analytics-courses-media"
+               value="12"
+               data-component="query">
+    <br>
+<p>Filter analytics by center ID. The <code>id</code> of an existing record in the centers table. Example: <code>12</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="from"                data-endpoint="GETapi-v1-admin-analytics-courses-media"
+               value="2026-01-01"
+               data-component="query">
+    <br>
+<p>Start date (YYYY-MM-DD). Must be a valid date. Example: <code>2026-01-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="to"                data-endpoint="GETapi-v1-admin-analytics-courses-media"
+               value="2026-01-31"
+               data-component="query">
+    <br>
+<p>End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to <code>from</code>. Example: <code>2026-01-31</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>timezone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="timezone"                data-endpoint="GETapi-v1-admin-analytics-courses-media"
+               value="UTC"
+               data-component="query">
+    <br>
+<p>Timezone for date filters (default UTC). Must be a valid time zone, such as <code>Africa/Accra</code>. Example: <code>UTC</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-analytics-learners-enrollments">GET api/v1/admin/analytics/learners-enrollments</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-analytics-learners-enrollments">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/analytics/learners-enrollments?center_id=12&amp;from=2026-01-01&amp;to=2026-01-31&amp;timezone=UTC" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/analytics/learners-enrollments"
+);
+
+const params = {
+    "center_id": "12",
+    "from": "2026-01-01",
+    "to": "2026-01-31",
+    "timezone": "UTC",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-analytics-learners-enrollments">
+    </span>
+<span id="execution-results-GETapi-v1-admin-analytics-learners-enrollments" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-analytics-learners-enrollments"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-analytics-learners-enrollments"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-analytics-learners-enrollments" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-analytics-learners-enrollments">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-analytics-learners-enrollments" data-method="GET"
+      data-path="api/v1/admin/analytics/learners-enrollments"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-analytics-learners-enrollments', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-analytics-learners-enrollments"
+                    onclick="tryItOut('GETapi-v1-admin-analytics-learners-enrollments');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-analytics-learners-enrollments"
+                    onclick="cancelTryOut('GETapi-v1-admin-analytics-learners-enrollments');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-analytics-learners-enrollments"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/analytics/learners-enrollments</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-analytics-learners-enrollments"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-analytics-learners-enrollments"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-analytics-learners-enrollments"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-analytics-learners-enrollments"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-analytics-learners-enrollments"
+               value="12"
+               data-component="query">
+    <br>
+<p>Filter analytics by center ID. The <code>id</code> of an existing record in the centers table. Example: <code>12</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="from"                data-endpoint="GETapi-v1-admin-analytics-learners-enrollments"
+               value="2026-01-01"
+               data-component="query">
+    <br>
+<p>Start date (YYYY-MM-DD). Must be a valid date. Example: <code>2026-01-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="to"                data-endpoint="GETapi-v1-admin-analytics-learners-enrollments"
+               value="2026-01-31"
+               data-component="query">
+    <br>
+<p>End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to <code>from</code>. Example: <code>2026-01-31</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>timezone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="timezone"                data-endpoint="GETapi-v1-admin-analytics-learners-enrollments"
+               value="UTC"
+               data-component="query">
+    <br>
+<p>Timezone for date filters (default UTC). Must be a valid time zone, such as <code>Africa/Accra</code>. Example: <code>UTC</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-analytics-devices-requests">GET api/v1/admin/analytics/devices-requests</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-analytics-devices-requests">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/analytics/devices-requests?center_id=12&amp;from=2026-01-01&amp;to=2026-01-31&amp;timezone=UTC" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/analytics/devices-requests"
+);
+
+const params = {
+    "center_id": "12",
+    "from": "2026-01-01",
+    "to": "2026-01-31",
+    "timezone": "UTC",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-analytics-devices-requests">
+    </span>
+<span id="execution-results-GETapi-v1-admin-analytics-devices-requests" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-analytics-devices-requests"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-analytics-devices-requests"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-analytics-devices-requests" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-analytics-devices-requests">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-analytics-devices-requests" data-method="GET"
+      data-path="api/v1/admin/analytics/devices-requests"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-analytics-devices-requests', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-analytics-devices-requests"
+                    onclick="tryItOut('GETapi-v1-admin-analytics-devices-requests');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-analytics-devices-requests"
+                    onclick="cancelTryOut('GETapi-v1-admin-analytics-devices-requests');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-analytics-devices-requests"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/analytics/devices-requests</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-analytics-devices-requests"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-analytics-devices-requests"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-analytics-devices-requests"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-analytics-devices-requests"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-analytics-devices-requests"
+               value="12"
+               data-component="query">
+    <br>
+<p>Filter analytics by center ID. The <code>id</code> of an existing record in the centers table. Example: <code>12</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="from"                data-endpoint="GETapi-v1-admin-analytics-devices-requests"
+               value="2026-01-01"
+               data-component="query">
+    <br>
+<p>Start date (YYYY-MM-DD). Must be a valid date. Example: <code>2026-01-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="to"                data-endpoint="GETapi-v1-admin-analytics-devices-requests"
+               value="2026-01-31"
+               data-component="query">
+    <br>
+<p>End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to <code>from</code>. Example: <code>2026-01-31</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>timezone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="timezone"                data-endpoint="GETapi-v1-admin-analytics-devices-requests"
+               value="UTC"
+               data-component="query">
+    <br>
+<p>Timezone for date filters (default UTC). Must be a valid time zone, such as <code>Africa/Accra</code>. Example: <code>UTC</code></p>
             </div>
                 </form>
 

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services\Access;
 
+use App\Enums\UserStatus;
 use App\Exceptions\DomainException;
 use App\Models\User;
+use App\Services\Access\Contracts\StudentAccessServiceInterface;
 use App\Support\ErrorCodes;
 use Illuminate\Validation\ValidationException;
 
-class StudentAccessService
+class StudentAccessService implements StudentAccessServiceInterface
 {
     /**
      * @param  array<string, array<int, string>>|null  $validationErrors
@@ -22,6 +24,12 @@ class StudentAccessService
         ?array $validationErrors = null
     ): void {
         if ($user->is_student) {
+            if ((int) $user->status !== UserStatus::Active->value) {
+                $message = $message ?? 'Student is not active.';
+                $code = $code ?? ErrorCodes::FORBIDDEN;
+                throw new DomainException($message, $code, $status);
+            }
+
             return;
         }
 
