@@ -6,6 +6,7 @@ namespace App\Services\Analytics\Contracts;
 
 use App\Filters\Admin\AnalyticsFilters;
 use App\Models\User;
+use Closure;
 
 interface AnalyticsSupportServiceInterface
 {
@@ -19,10 +20,10 @@ interface AnalyticsSupportServiceInterface
     /**
      * Cache and return analytics data.
      *
-     * @param  \Closure(): array<string, mixed>  $callback
+     * @param  Closure(): array<string, mixed>  $callback
      * @return array<string, mixed>
      */
-    public function remember(string $key, User $admin, AnalyticsFilters $filters, \Closure $callback): array;
+    public function remember(string $key, User $admin, AnalyticsFilters $filters, Closure $callback): array;
 
     /**
      * Resolve center scope based on admin permissions.

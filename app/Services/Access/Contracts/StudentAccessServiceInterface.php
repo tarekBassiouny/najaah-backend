@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Access\Contracts;
 
+use App\Exceptions\DomainException;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 interface StudentAccessServiceInterface
 {
@@ -13,8 +15,8 @@ interface StudentAccessServiceInterface
      *
      * @param  array<string, array<int, string>>|null  $validationErrors
      *
-     * @throws \App\Exceptions\DomainException
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws DomainException
+     * @throws ValidationException
      */
     public function assertStudent(
         User $user,
