@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "16a643eb-0240-488d-8bca-9bee4988b6d6",
+    "_postman_id": "8810420b-c8fa-48bd-abb8-d1ec2db3ed40",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -169,6 +169,255 @@
               "raw": "{{baseUrl}}/api/v1/admin/auth/logout"
             },
             "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧑‍💼 Admin – Analytics",
+      "item": [
+        {
+          "name": "GET api/v1/admin/analytics/overview",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/analytics/overview",
+              "query": [
+                {
+                  "key": "center_id",
+                  "value": "12",
+                  "description": "Filter analytics by center ID. The id of an existing record in the centers table.",
+                  "disabled": false
+                },
+                {
+                  "key": "from",
+                  "value": "2026-01-01",
+                  "description": "Start date (YYYY-MM-DD). Must be a valid date.",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-01-31",
+                  "description": "End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to from.",
+                  "disabled": false
+                },
+                {
+                  "key": "timezone",
+                  "value": "UTC",
+                  "description": "Timezone for date filters (default UTC). Must be a valid time zone, such as Africa/Accra.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/analytics/overview?center_id=12&from=2026-01-01&to=2026-01-31&timezone=UTC"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/analytics/courses-media",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/analytics/courses-media",
+              "query": [
+                {
+                  "key": "center_id",
+                  "value": "12",
+                  "description": "Filter analytics by center ID. The id of an existing record in the centers table.",
+                  "disabled": false
+                },
+                {
+                  "key": "from",
+                  "value": "2026-01-01",
+                  "description": "Start date (YYYY-MM-DD). Must be a valid date.",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-01-31",
+                  "description": "End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to from.",
+                  "disabled": false
+                },
+                {
+                  "key": "timezone",
+                  "value": "UTC",
+                  "description": "Timezone for date filters (default UTC). Must be a valid time zone, such as Africa/Accra.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/analytics/courses-media?center_id=12&from=2026-01-01&to=2026-01-31&timezone=UTC"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/analytics/learners-enrollments",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/analytics/learners-enrollments",
+              "query": [
+                {
+                  "key": "center_id",
+                  "value": "12",
+                  "description": "Filter analytics by center ID. The id of an existing record in the centers table.",
+                  "disabled": false
+                },
+                {
+                  "key": "from",
+                  "value": "2026-01-01",
+                  "description": "Start date (YYYY-MM-DD). Must be a valid date.",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-01-31",
+                  "description": "End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to from.",
+                  "disabled": false
+                },
+                {
+                  "key": "timezone",
+                  "value": "UTC",
+                  "description": "Timezone for date filters (default UTC). Must be a valid time zone, such as Africa/Accra.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/analytics/learners-enrollments?center_id=12&from=2026-01-01&to=2026-01-31&timezone=UTC"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/analytics/devices-requests",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/analytics/devices-requests",
+              "query": [
+                {
+                  "key": "center_id",
+                  "value": "12",
+                  "description": "Filter analytics by center ID. The id of an existing record in the centers table.",
+                  "disabled": false
+                },
+                {
+                  "key": "from",
+                  "value": "2026-01-01",
+                  "description": "Start date (YYYY-MM-DD). Must be a valid date.",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-01-31",
+                  "description": "End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to from.",
+                  "disabled": false
+                },
+                {
+                  "key": "timezone",
+                  "value": "UTC",
+                  "description": "Timezone for date filters (default UTC). Must be a valid time zone, such as Africa/Accra.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/analytics/devices-requests?center_id=12&from=2026-01-01&to=2026-01-31&timezone=UTC"
+            },
+            "method": "GET",
             "header": [
               {
                 "key": "Content-Type",
@@ -3467,7 +3716,7 @@
                 {
                   "id": "deviceChangeRequest_id",
                   "key": "deviceChangeRequest_id",
-                  "value": "16",
+                  "value": "1",
                   "description": "The ID of the deviceChangeRequest."
                 }
               ]
@@ -3514,7 +3763,7 @@
                 {
                   "id": "deviceChangeRequest_id",
                   "key": "deviceChangeRequest_id",
-                  "value": "16",
+                  "value": "1",
                   "description": "The ID of the deviceChangeRequest."
                 }
               ]
@@ -3561,7 +3810,7 @@
                 {
                   "id": "deviceChangeRequest_id",
                   "key": "deviceChangeRequest_id",
-                  "value": "16",
+                  "value": "1",
                   "description": "The ID of the deviceChangeRequest."
                 }
               ]
@@ -4675,7 +4924,7 @@
                 {
                   "id": "pdfUploadSession_id",
                   "key": "pdfUploadSession_id",
-                  "value": "1",
+                  "value": "11",
                   "description": "The ID of the pdfUploadSession."
                 }
               ]
