@@ -7674,7 +7674,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
-    --form "logo=@/tmp/phpadnujng5r2k1cChMdfh" </code></pre></div>
+    --form "logo=@/tmp/phpa3ef3893i9t3f5iHb0s" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7821,7 +7821,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpadnujng5r2k1cChMdfh</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpa3ef3893i9t3f5iHb0s</code></p>
         </div>
         </form>
 
@@ -17776,7 +17776,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/php61ofq3a0faic2hl374S" </code></pre></div>
+    --form "avatar=@/tmp/phpv4n9qd448phg6fWKmw1" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -17983,7 +17983,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php61ofq3a0faic2hl374S</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpv4n9qd448phg6fWKmw1</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -18218,7 +18218,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpdn989hfh4c6efL7oa71" </code></pre></div>
+    --form "avatar=@/tmp/php9rj4eg78rmgmcDw0Uu5" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -18441,7 +18441,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpdn989hfh4c6efL7oa71</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php9rj4eg78rmgmcDw0Uu5</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;

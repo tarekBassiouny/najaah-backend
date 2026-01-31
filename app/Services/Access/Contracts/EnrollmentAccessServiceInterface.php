@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Access\Contracts;
 
+use App\Exceptions\DomainException;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
@@ -18,7 +19,7 @@ interface EnrollmentAccessServiceInterface
     /**
      * Assert that a student has an active enrollment for a course.
      *
-     * @throws \App\Exceptions\DomainException
+     * @throws DomainException
      */
     public function assertActiveEnrollment(
         User $student,
