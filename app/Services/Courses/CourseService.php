@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Enums\CourseStatus;
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
-use App\Models\Center;
+use App\Filters\Mobile\CourseFilters;
 use App\Models\Course;
-use App\Models\Enrollment;
+use App\Models\Instructor;
 use App\Models\User;
-use App\Models\Video;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
+use App\Support\AuditActions;
 use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +22,10 @@ use Illuminate\Support\Collection;
 
 class CourseService implements CourseServiceInterface
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
     /** @return LengthAwarePaginator<Course> */
     public function paginate(int $perPage = 15, ?User $actor = null): LengthAwarePaginator
@@ -60,7 +66,7 @@ class CourseService implements CourseServiceInterface
             $data['language'] = 'en';
         }
 
-        $data['status'] = 0;
+        $data['status'] = CourseStatus::Draft;
         $data['is_published'] = false;
         $data['publish_at'] = null;
 
@@ -70,6 +76,10 @@ class CourseService implements CourseServiceInterface
         }
 
         $course = Course::create($data);
+
+        $this->auditLogService->log($actor, $course, AuditActions::COURSE_CREATED, [
+            'center_id' => $course->center_id,
+        ]);
 
         return $course->fresh(['center', 'category', 'primaryInstructor', 'instructors']) ?? $course;
     }
@@ -94,6 +104,10 @@ class CourseService implements CourseServiceInterface
 
         $course->update($data);
 
+        $this->auditLogService->log($actor, $course, AuditActions::COURSE_UPDATED, [
+            'updated_fields' => array_keys($data),
+        ]);
+
         return $course->fresh(['center', 'category', 'primaryInstructor', 'instructors']) ?? $course;
     }
 
@@ -104,6 +118,8 @@ class CourseService implements CourseServiceInterface
         }
 
         $course->delete();
+
+        $this->auditLogService->log($actor, $course, AuditActions::COURSE_DELETED);
     }
 
     public function find(int $id, ?User $actor = null): ?Course
@@ -170,14 +186,10 @@ class CourseService implements CourseServiceInterface
     /**
      * @return LengthAwarePaginator<Course>
      */
-    public function enrolled(User $student, \App\Filters\Mobile\CourseFilters $filters): LengthAwarePaginator
+    public function enrolled(User $student, CourseFilters $filters): LengthAwarePaginator
     {
         $builder = $this->mobileBaseQuery($student)
-            ->whereHas('enrollments', function (Builder $query) use ($student): void {
-                $query->where('user_id', $student->id)
-                    ->where('status', Enrollment::STATUS_ACTIVE)
-                    ->whereNull('deleted_at');
-            });
+            ->enrolledBy($student);
 
         if ($filters->categoryId !== null) {
             $builder->where('category_id', $filters->categoryId);
@@ -198,24 +210,14 @@ class CourseService implements CourseServiceInterface
     }
 
     /**
-     * @return Collection<int, \App\Models\Instructor>
+     * @return Collection<int, Instructor>
      */
-    public function enrolledGroupedByInstructor(User $student, \App\Filters\Mobile\CourseFilters $filters): Collection
+    public function enrolledGroupedByInstructor(User $student, CourseFilters $filters): Collection
     {
         $query = Course::query()
-            ->where('status', 3)
-            ->where('is_published', true)
-            ->whereHas('enrollments', function (Builder $query) use ($student): void {
-                $query->where('user_id', $student->id)
-                    ->where('status', Enrollment::STATUS_ACTIVE)
-                    ->whereNull('deleted_at');
-            })
-            ->when(is_numeric($student->center_id), function (Builder $query) use ($student): void {
-                $query->where('center_id', (int) $student->center_id);
-            })
-            ->when(! is_numeric($student->center_id), function (Builder $query): void {
-                $query->whereHas('center', fn ($q) => $q->where('type', 0));
-            });
+            ->published()
+            ->enrolledBy($student)
+            ->visibleToStudent($student);
 
         if ($filters->categoryId !== null) {
             $query->where('category_id', $filters->categoryId);
@@ -227,7 +229,7 @@ class CourseService implements CourseServiceInterface
             return collect();
         }
 
-        return \App\Models\Instructor::query()
+        return Instructor::query()
             ->whereHas('courses', function (Builder $query) use ($enrolledCourseIds): void {
                 $query->whereIn('courses.id', $enrolledCourseIds);
             })
@@ -246,28 +248,14 @@ class CourseService implements CourseServiceInterface
     private function mobileBaseQuery(User $student): Builder
     {
         $query = Course::query()
-            ->where('status', 3)
-            ->where('is_published', true)
+            ->published()
             ->with(['center', 'category', 'instructors'])
-            ->withExists([
-                'enrollments as is_enrolled' => function ($query) use ($student): void {
-                    $query->where('user_id', $student->id)
-                        ->where('status', Enrollment::STATUS_ACTIVE)
-                        ->whereNull('deleted_at');
-                },
-            ]);
-
-        if (is_numeric($student->center_id)) {
-            $query->where('center_id', (int) $student->center_id);
-        } else {
-            $query->whereHas('center', function ($query): void {
-                $query->where('type', Center::TYPE_UNBRANDED);
-            });
-        }
+            ->withEnrollmentMeta($student)
+            ->visibleToStudent($student);
 
         $query->whereDoesntHave('videos', function ($query): void {
             $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
-                ->orWhere('lifecycle_status', '!=', Video::LIFECYCLE_READY)
+                ->orWhere('lifecycle_status', '!=', VideoLifecycleStatus::Ready->value)
                 ->orWhere(function ($query): void {
                     $query->whereNotNull('upload_session_id')
                         ->whereHas('uploadSession', function ($query): void {

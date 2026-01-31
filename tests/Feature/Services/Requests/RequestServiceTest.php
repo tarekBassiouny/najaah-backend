@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\DeviceChangeRequest;
@@ -18,7 +19,8 @@ uses(RefreshDatabase::class)->group('requests', 'services');
 
 beforeEach(function (): void {
     $this->viewLimitService = Mockery::mock(ViewLimitService::class);
-    $this->service = new RequestService($this->viewLimitService);
+    app()->instance(ViewLimitService::class, $this->viewLimitService);
+    $this->service = app(RequestService::class);
 });
 
 afterEach(function (): void {
@@ -70,7 +72,7 @@ test('createEnrollmentRequest prevents duplicate pending requests', function ():
 
     // Attempt to create duplicate should throw
     expect(fn () => $this->service->createEnrollmentRequest($student, $center, $course, null))
-        ->toThrow(\App\Exceptions\DomainException::class, 'A pending enrollment request already exists.');
+        ->toThrow(DomainException::class, 'A pending enrollment request already exists.');
 });
 
 test('createEnrollmentRequest prevents request when already enrolled', function (): void {
@@ -94,7 +96,7 @@ test('createEnrollmentRequest prevents request when already enrolled', function 
     ]);
 
     expect(fn () => $this->service->createEnrollmentRequest($student, $center, $course, null))
-        ->toThrow(\App\Exceptions\DomainException::class, 'Student is already enrolled.');
+        ->toThrow(DomainException::class, 'Student is already enrolled.');
 });
 
 test('createDeviceChangeRequest creates pending request in transaction', function (): void {
@@ -144,7 +146,7 @@ test('createDeviceChangeRequest prevents duplicate pending requests', function (
     ]);
 
     expect(fn () => $this->service->createDeviceChangeRequest($student, 'Second request'))
-        ->toThrow(\App\Exceptions\DomainException::class, 'A pending device change request already exists.');
+        ->toThrow(DomainException::class, 'A pending device change request already exists.');
 });
 
 test('createDeviceChangeRequest requires active device', function (): void {
@@ -155,7 +157,7 @@ test('createDeviceChangeRequest requires active device', function (): void {
     ]);
 
     expect(fn () => $this->service->createDeviceChangeRequest($student, 'No device'))
-        ->toThrow(\App\Exceptions\DomainException::class, 'Active device required to request a change.');
+        ->toThrow(DomainException::class, 'Active device required to request a change.');
 });
 
 test('createExtraViewRequest creates pending request in transaction', function (): void {
@@ -232,7 +234,7 @@ test('createExtraViewRequest prevents request when views remain', function (): v
         ->andReturn(5);
 
     expect(fn () => $this->service->createExtraViewRequest($student, $center, $course, $video, null))
-        ->toThrow(\App\Exceptions\DomainException::class, 'Extra views are not allowed while views remain.');
+        ->toThrow(DomainException::class, 'Extra views are not allowed while views remain.');
 });
 
 test('only students can create requests', function (): void {
@@ -244,5 +246,5 @@ test('only students can create requests', function (): void {
     ]);
 
     expect(fn () => $this->service->createEnrollmentRequest($admin, $center, $course, null))
-        ->toThrow(\App\Exceptions\UnauthorizedException::class, 'Only students can perform this action.');
+        ->toThrow(DomainException::class, 'Only students can perform this action.');
 });

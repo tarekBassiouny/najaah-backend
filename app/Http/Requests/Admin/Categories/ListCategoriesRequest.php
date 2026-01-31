@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Categories;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Filters\Admin\CategoryFilters;
+use App\Http\Requests\Admin\AdminListRequest;
+use App\Support\Filters\FilterInput;
 
-class ListCategoriesRequest extends FormRequest
+class ListCategoriesRequest extends AdminListRequest
 {
     public function authorize(): bool
     {
@@ -18,13 +20,11 @@ class ListCategoriesRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'page' => ['sometimes', 'integer', 'min:1'],
+        return array_merge($this->listRules(), [
             'search' => ['sometimes', 'string'],
             'is_active' => ['sometimes', 'boolean'],
             'parent_id' => ['sometimes', 'integer', 'exists:categories,id'],
-        ];
+        ]);
     }
 
     /**
@@ -54,5 +54,19 @@ class ListCategoriesRequest extends FormRequest
                 'example' => '10',
             ],
         ];
+    }
+
+    public function filters(): CategoryFilters
+    {
+        /** @var array<string, mixed> $data */
+        $data = $this->validated();
+
+        return new CategoryFilters(
+            page: FilterInput::page($data),
+            perPage: FilterInput::perPage($data),
+            search: FilterInput::stringOrNull($data, 'search'),
+            isActive: FilterInput::boolOrNull($data, 'is_active'),
+            parentId: FilterInput::intOrNull($data, 'parent_id')
+        );
     }
 }

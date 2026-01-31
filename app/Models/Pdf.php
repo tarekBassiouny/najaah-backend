@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\MediaSourceType;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CoursePdf;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,7 +59,7 @@ class Pdf extends Model
         'title_translations' => 'array',
         'description_translations' => 'array',
         'file_size_kb' => 'integer',
-        'source_type' => 'integer',
+        'source_type' => MediaSourceType::class,
         'is_demo' => 'boolean',
         'upload_session_id' => 'integer',
     ];

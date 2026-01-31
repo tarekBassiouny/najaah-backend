@@ -4,26 +4,41 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
+use App\Enums\ExtraViewRequestStatus;
 use App\Exceptions\DomainException;
-use App\Models\AuditLog;
 use App\Models\Course;
-use App\Models\Enrollment;
 use App\Models\ExtraViewRequest;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Access\CourseAccessService;
+use App\Services\Access\EnrollmentAccessService;
+use App\Services\Access\StudentAccessService;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
+use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
 
 class ExtraViewRequestService
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly StudentAccessService $studentAccessService,
+        private readonly EnrollmentAccessService $enrollmentAccessService,
+        private readonly CourseAccessService $courseAccessService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
     public function create(User $student, Course $course, Video $video, ?string $reason = null): ExtraViewRequest
     {
-        $this->assertStudent($student);
-        $this->assertEnrollment($student, $course);
-        $this->assertVideoInCourse($course, $video);
+        $this->studentAccessService->assertStudent(
+            $student,
+            'Only students can request extra views.',
+            ErrorCodes::UNAUTHORIZED,
+            403
+        );
+        $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
+        $this->courseAccessService->assertVideoInCourse($course, $video);
         $this->assertNoPendingRequest($student, $video);
 
         /** @var ExtraViewRequest $request */
@@ -32,11 +47,11 @@ class ExtraViewRequestService
             'video_id' => $video->id,
             'course_id' => $course->id,
             'center_id' => $course->center_id,
-            'status' => ExtraViewRequest::STATUS_PENDING,
+            'status' => ExtraViewRequestStatus::Pending,
             'reason' => $reason,
         ]);
 
-        $this->audit($student, 'extra_view_request_created', [
+        $this->audit($student, AuditActions::EXTRA_VIEW_REQUEST_CREATED, [
             'video_id' => $video->id,
             'course_id' => $course->id,
             'center_id' => $course->center_id,
@@ -49,7 +64,7 @@ class ExtraViewRequestService
     {
         $this->assertAdminScope($admin, $request);
 
-        if ($request->status !== ExtraViewRequest::STATUS_PENDING) {
+        if ($request->status !== ExtraViewRequestStatus::Pending) {
             $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be approved.', 409);
         }
 
@@ -57,14 +72,14 @@ class ExtraViewRequestService
             $this->deny(ErrorCodes::INVALID_VIEWS, 'Granted views must be positive.', 422);
         }
 
-        $request->status = ExtraViewRequest::STATUS_APPROVED;
+        $request->status = ExtraViewRequestStatus::Approved;
         $request->granted_views = $grantedViews;
         $request->decision_reason = $decisionReason;
         $request->decided_by = $admin->id;
         $request->decided_at = Carbon::now();
         $request->save();
 
-        $this->audit($admin, 'extra_view_request_approved', [
+        $this->audit($admin, AuditActions::EXTRA_VIEW_REQUEST_APPROVED, [
             'request_id' => $request->id,
             'video_id' => $request->video_id,
             'granted_views' => $grantedViews,
@@ -78,17 +93,17 @@ class ExtraViewRequestService
     {
         $this->assertAdminScope($admin, $request);
 
-        if ($request->status !== ExtraViewRequest::STATUS_PENDING) {
+        if ($request->status !== ExtraViewRequestStatus::Pending) {
             $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be rejected.', 409);
         }
 
-        $request->status = ExtraViewRequest::STATUS_REJECTED;
+        $request->status = ExtraViewRequestStatus::Rejected;
         $request->decision_reason = $decisionReason;
         $request->decided_by = $admin->id;
         $request->decided_at = Carbon::now();
         $request->save();
 
-        $this->audit($admin, 'extra_view_request_rejected', [
+        $this->audit($admin, AuditActions::EXTRA_VIEW_REQUEST_REJECTED, [
             'request_id' => $request->id,
             'video_id' => $request->video_id,
             'decision_reason' => $decisionReason,
@@ -97,43 +112,10 @@ class ExtraViewRequestService
         return $request->fresh() ?? $request;
     }
 
-    private function assertStudent(User $user): void
-    {
-        if (! $user->is_student) {
-            $this->deny(ErrorCodes::UNAUTHORIZED, 'Only students can request extra views.', 403);
-        }
-    }
-
-    private function assertEnrollment(User $student, Course $course): void
-    {
-        $enrollment = Enrollment::where('user_id', $student->id)
-            ->where('course_id', $course->id)
-            ->where('status', Enrollment::STATUS_ACTIVE)
-            ->first();
-
-        if ($enrollment === null) {
-            $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
-        }
-    }
-
-    private function assertVideoInCourse(Course $course, Video $video): void
-    {
-        $exists = $course->videos()
-            ->where('videos.id', $video->id)
-            ->wherePivotNull('deleted_at')
-            ->exists();
-
-        if (! $exists) {
-            $this->deny(ErrorCodes::VIDEO_NOT_IN_COURSE, 'Video not available for this course.', 404);
-        }
-    }
-
     private function assertNoPendingRequest(User $student, Video $video): void
     {
-        $pending = ExtraViewRequest::where('user_id', $student->id)
-            ->where('video_id', $video->id)
-            ->where('status', ExtraViewRequest::STATUS_PENDING)
-            ->whereNull('deleted_at')
+        $pending = ExtraViewRequest::query()
+            ->pendingForUserAndVideo($student, $video)
             ->exists();
 
         if ($pending) {
@@ -155,13 +137,7 @@ class ExtraViewRequestService
      */
     private function audit(User $actor, string $action, array $metadata, int $entityId): void
     {
-        AuditLog::create([
-            'user_id' => $actor->id,
-            'action' => $action,
-            'entity_type' => ExtraViewRequest::class,
-            'entity_id' => $entityId,
-            'metadata' => $metadata,
-        ]);
+        $this->auditLogService->logByType($actor, ExtraViewRequest::class, $entityId, $action, $metadata);
     }
 
     /**

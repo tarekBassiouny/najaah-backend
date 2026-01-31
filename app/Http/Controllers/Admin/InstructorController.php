@@ -39,26 +39,18 @@ class InstructorController extends Controller
             ], 401);
         }
 
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
-        $paginator = $this->queryService->build($admin, $filters)->paginate($perPage);
+        $filters = $request->filters();
+        $paginator = $this->queryService->paginate($admin, $filters);
 
         return response()->json([
             'success' => true,
             'message' => 'Operation completed',
             'data' => InstructorResource::collection($paginator->items()),
             'meta' => [
-                'current_page' => $paginator->currentPage(),
+                'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
                 'last_page' => $paginator->lastPage(),
-            ],
-            'links' => [
-                'first' => $paginator->url(1),
-                'last' => $paginator->url($paginator->lastPage()),
-                'prev' => $paginator->previousPageUrl(),
-                'next' => $paginator->nextPageUrl(),
             ],
         ]);
     }

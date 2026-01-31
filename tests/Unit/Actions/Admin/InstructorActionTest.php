@@ -137,7 +137,7 @@ test('list with pagination', function (): void {
 
     $response->assertOk()
         ->assertJsonPath('meta.per_page', 2)
-        ->assertJsonPath('meta.current_page', 1)
+        ->assertJsonPath('meta.page', 1)
         ->assertJsonPath('meta.total', 3);
 
     /** @var array<mixed> $data */

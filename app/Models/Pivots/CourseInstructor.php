@@ -6,6 +6,7 @@ namespace App\Models\Pivots;
 
 use App\Models\Course;
 use App\Models\Instructor;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -50,5 +51,34 @@ class CourseInstructor extends Pivot
     public function instructor(): BelongsTo
     {
         return $this->belongsTo(Instructor::class);
+    }
+
+    /**
+     * Scope to exclude soft-deleted pivots.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeNotDeleted(Builder $query): Builder
+    {
+        return $query->whereNull('deleted_at');
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForCourse(Builder $query, Course $course): Builder
+    {
+        return $query->where('course_id', $course->id);
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForInstructor(Builder $query, Instructor $instructor): Builder
+    {
+        return $query->where('instructor_id', $instructor->id);
     }
 }

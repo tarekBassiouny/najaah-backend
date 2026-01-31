@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\Centers\UpdateCenterRequest;
 use App\Http\Resources\Admin\Centers\CenterResource;
 use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\Center;
+use App\Models\User;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -34,15 +35,17 @@ class CenterController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
 
     public function store(StoreCenterRequest $request, CreateCenterAction $action): JsonResponse
     {
+        $admin = $request->user();
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $result = $action->execute($data);
+        $result = $action->execute($data, $admin instanceof User ? $admin : null);
         $centerData = (new CenterResource($result['center']))->toArray($request);
         $centerData['api_key'] = $result['center']->api_key;
 
@@ -93,7 +96,8 @@ class CenterController extends Controller
 
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $updated = $this->centerService->update($center, $data);
+        $admin = $request->user();
+        $updated = $this->centerService->update($center, $data, $admin instanceof User ? $admin : null);
 
         return response()->json([
             'success' => true,
@@ -116,7 +120,8 @@ class CenterController extends Controller
             ], 404);
         }
 
-        $this->centerService->delete($center);
+        $admin = request()->user();
+        $this->centerService->delete($center, $admin instanceof User ? $admin : null);
 
         return response()->json([
             'success' => true,
@@ -127,7 +132,8 @@ class CenterController extends Controller
 
     public function restore(int $center): JsonResponse
     {
-        $restored = $this->centerService->restore($center);
+        $admin = request()->user();
+        $restored = $this->centerService->restore($center, $admin instanceof User ? $admin : null);
 
         if ($restored === null) {
             return response()->json([

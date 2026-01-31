@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Pivots\RoleUser;
+use App\Models\Pivots\UserCenter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -88,7 +90,7 @@ class User extends Authenticatable implements JWTSubject
     public function centers(): BelongsToMany
     {
         return $this->belongsToMany(Center::class, 'user_centers')
-            ->using(\App\Models\Pivots\UserCenter::class)
+            ->using(UserCenter::class)
             ->withTimestamps()
             ->withPivot(['type'])
             ->wherePivotNull('deleted_at');
@@ -98,7 +100,7 @@ class User extends Authenticatable implements JWTSubject
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_user')
-            ->using(\App\Models\Pivots\RoleUser::class)
+            ->using(RoleUser::class)
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
     }

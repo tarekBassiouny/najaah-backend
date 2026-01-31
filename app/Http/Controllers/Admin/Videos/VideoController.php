@@ -30,11 +30,9 @@ class VideoController extends Controller
     {
         $admin = $this->requireAdmin();
 
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
+        $filters = $request->filters();
 
-        $paginator = $this->queryService->paginateForCenter($admin, $center, $perPage, $filters);
+        $paginator = $this->queryService->paginateForCenter($admin, $center, $filters);
 
         return response()->json([
             'success' => true,
@@ -43,6 +41,7 @@ class VideoController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }

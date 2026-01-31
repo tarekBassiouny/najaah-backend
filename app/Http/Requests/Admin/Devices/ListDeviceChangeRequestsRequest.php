@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Devices;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Filters\Admin\DeviceChangeRequestFilters;
+use App\Http\Requests\Admin\AdminListRequest;
+use App\Support\Filters\FilterInput;
 
-class ListDeviceChangeRequestsRequest extends FormRequest
+class ListDeviceChangeRequestsRequest extends AdminListRequest
 {
     public function authorize(): bool
     {
@@ -18,15 +20,13 @@ class ListDeviceChangeRequestsRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'page' => ['sometimes', 'integer', 'min:1'],
+        return array_merge($this->listRules(), [
             'status' => ['sometimes', 'string', 'in:PENDING,APPROVED,REJECTED'],
             'center_id' => ['sometimes', 'integer'],
             'user_id' => ['sometimes', 'integer'],
             'date_from' => ['sometimes', 'date'],
             'date_to' => ['sometimes', 'date'],
-        ];
+        ]);
     }
 
     /**
@@ -72,5 +72,21 @@ class ListDeviceChangeRequestsRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [];
+    }
+
+    public function filters(): DeviceChangeRequestFilters
+    {
+        /** @var array<string, mixed> $data */
+        $data = $this->validated();
+
+        return new DeviceChangeRequestFilters(
+            page: FilterInput::page($data),
+            perPage: FilterInput::perPage($data),
+            status: FilterInput::stringOrNull($data, 'status'),
+            centerId: FilterInput::intOrNull($data, 'center_id'),
+            userId: FilterInput::intOrNull($data, 'user_id'),
+            dateFrom: FilterInput::stringOrNull($data, 'date_from'),
+            dateTo: FilterInput::stringOrNull($data, 'date_to')
+        );
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
+use App\Models\User;
 use App\Models\Video;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -22,7 +23,7 @@ trait CourseTestHelper
     {
         if (! array_key_exists('center_id', $attributes)
             && property_exists($this, 'apiUser')
-            && $this->apiUser instanceof \App\Models\User
+            && $this->apiUser instanceof User
             && $this->apiUser->is_student
             && is_numeric($this->apiUser->center_id)
         ) {

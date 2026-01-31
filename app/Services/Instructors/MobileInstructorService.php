@@ -18,15 +18,8 @@ class MobileInstructorService implements MobileInstructorServiceInterface
     public function list(User $student, InstructorFilters $filters): LengthAwarePaginator
     {
         $query = Instructor::query()
+            ->visibleToStudent($student)
             ->orderByDesc('created_at');
-
-        if (is_numeric($student->center_id)) {
-            $query->where('center_id', (int) $student->center_id);
-        } else {
-            $query->whereHas('center', function ($query): void {
-                $query->where('type', 0);
-            });
-        }
 
         if ($filters->search !== null) {
             $query->whereTranslationLike(

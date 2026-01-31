@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class JwtAdminMiddleware
         }
 
         // must not allow students
-        if ($user instanceof \App\Models\User && $user->is_student) {
+        if ($user instanceof User && $user->is_student) {
             return response()->json(['success' => false, 'error' => 'Not an admin'], 401);
         }
 

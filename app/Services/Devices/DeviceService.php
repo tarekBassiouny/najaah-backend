@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\Devices;
 
+use App\Enums\UserDeviceStatus;
 use App\Exceptions\DomainException;
-use App\Models\AuditLog;
 use App\Models\DeviceChangeRequest;
 use App\Models\User;
 use App\Models\UserDevice;
+use App\Services\Audit\AuditLogService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Logging\LogContextResolver;
+use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +20,8 @@ use Illuminate\Support\Facades\Log;
 class DeviceService implements DeviceServiceInterface
 {
     public function __construct(
-        private readonly DeviceChangeService $deviceChangeService
+        private readonly DeviceChangeService $deviceChangeService,
+        private readonly AuditLogService $auditLogService
     ) {}
 
     /** @param array<string, mixed> $meta */
@@ -63,7 +66,7 @@ class DeviceService implements DeviceServiceInterface
                     'device_id' => $uuid,
                     'model' => $model,
                     'os_version' => $osVersion,
-                    'status' => UserDevice::STATUS_ACTIVE,
+                    'status' => UserDeviceStatus::Active,
                     'approved_at' => now(),
                     'last_used_at' => now(),
                 ]);
@@ -71,7 +74,7 @@ class DeviceService implements DeviceServiceInterface
                 $device->update([
                     'model' => $model,
                     'os_version' => $osVersion,
-                    'status' => UserDevice::STATUS_ACTIVE,
+                    'status' => UserDeviceStatus::Active,
                     'approved_at' => $device->approved_at ?? now(),
                     'last_used_at' => now(),
                 ]);
@@ -79,7 +82,7 @@ class DeviceService implements DeviceServiceInterface
 
             UserDevice::where('user_id', $user->id)
                 ->where('id', '!=', $device->id)
-                ->update(['status' => UserDevice::STATUS_REVOKED]);
+                ->update(['status' => UserDeviceStatus::Revoked->value]);
 
             return $device;
         });
@@ -91,10 +94,10 @@ class DeviceService implements DeviceServiceInterface
     public function findByFingerprint(User $user, string $model, string $osVersion): ?UserDevice
     {
         /** @var UserDevice|null $device */
-        $device = UserDevice::where('user_id', $user->id)
+        $device = UserDevice::query()
+            ->activeForUser($user)
             ->where('model', $model)
             ->where('os_version', $osVersion)
-            ->where('status', UserDevice::STATUS_ACTIVE)
             ->first();
 
         return $device;
@@ -116,16 +119,10 @@ class DeviceService implements DeviceServiceInterface
                 'last_used_at' => now(),
             ]);
 
-            AuditLog::create([
-                'user_id' => $user->id,
-                'action' => 'device_uuid_updated',
-                'entity_type' => UserDevice::class,
-                'entity_id' => $existing->id,
-                'metadata' => [
-                    'old_device_id' => $oldDeviceId,
-                    'new_device_id' => $newDeviceId,
-                    'reason' => 'reinstall_detected',
-                ],
+            $this->auditLogService->log($user, $existing, AuditActions::DEVICE_UUID_UPDATED, [
+                'old_device_id' => $oldDeviceId,
+                'new_device_id' => $newDeviceId,
+                'reason' => 'reinstall_detected',
             ]);
 
             Log::info('Device reinstall detected.', $this->resolveLogContext([
@@ -148,9 +145,10 @@ class DeviceService implements DeviceServiceInterface
     public function handlePreApprovedRequest(User $user, string $deviceId, string $model, string $osVersion): ?UserDevice
     {
         /** @var DeviceChangeRequest|null $preApproved */
-        $preApproved = DeviceChangeRequest::where('user_id', $user->id)
-            ->where('status', DeviceChangeRequest::STATUS_PRE_APPROVED)
-            ->whereNull('deleted_at')
+        $preApproved = DeviceChangeRequest::query()
+            ->forUser($user)
+            ->preApproved()
+            ->notDeleted()
             ->first();
 
         if ($preApproved === null) {
@@ -187,9 +185,9 @@ class DeviceService implements DeviceServiceInterface
     private function getActiveDevice(User $user): ?UserDevice
     {
         /** @var UserDevice|null $device */
-        $device = UserDevice::where('user_id', $user->id)
-            ->where('status', UserDevice::STATUS_ACTIVE)
-            ->whereNull('deleted_at')
+        $device = UserDevice::query()
+            ->activeForUser($user)
+            ->notDeleted()
             ->first();
 
         return $device;

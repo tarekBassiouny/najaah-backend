@@ -6,6 +6,7 @@ use App\Models\AuditLog;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Devices\DeviceService;
+use App\Support\AuditActions;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(Tests\TestCase::class, DatabaseTransactions::class)->group('devices', 'services', 'mobile');
@@ -65,7 +66,7 @@ test('handleReinstall detects same device with different uuid', function (): voi
         ->and($result?->device_id)->toBe('new-device-uuid')
         ->and($result?->os_version)->toBe('iOS 17.1');
 
-    $auditLog = AuditLog::where('action', 'device_uuid_updated')
+    $auditLog = AuditLog::where('action', AuditActions::DEVICE_UUID_UPDATED)
         ->where('entity_type', UserDevice::class)
         ->where('entity_id', $existing->id)
         ->first();

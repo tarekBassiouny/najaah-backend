@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
-use App\Enums\VideoUploadStatus;
+use App\Enums\CenterType;
+use App\Enums\CourseStatus;
+use App\Enums\UserDeviceStatus;
 use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
-use App\Models\Enrollment;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Services\Access\CourseAccessService;
+use App\Services\Access\EnrollmentAccessService;
+use App\Services\Access\StudentAccessService;
+use App\Services\Access\VideoAccessService;
 use App\Services\Playback\Contracts\PlaybackAuthorizationServiceInterface;
 use App\Support\ErrorCodes;
 
@@ -20,29 +25,39 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
 {
     private ?UserDevice $activeDevice = null;
 
-    public function __construct(private readonly ViewLimitService $viewLimitService) {}
+    public function __construct(
+        private readonly ViewLimitService $viewLimitService,
+        private readonly StudentAccessService $studentAccessService,
+        private readonly CourseAccessService $courseAccessService,
+        private readonly EnrollmentAccessService $enrollmentAccessService,
+        private readonly VideoAccessService $videoAccessService
+    ) {}
 
     public function assertCanStartPlayback(User $student, Center $center, Course $course, Video $video): void
     {
-        $this->assertStudent($student);
+        $this->studentAccessService->assertStudent(
+            $student,
+            'Only students can access this endpoint.',
+            ErrorCodes::UNAUTHORIZED,
+            403
+        );
         $this->assertCenterAccess($student, $center);
-        $this->assertCourseInCenter($course, $center);
+        $this->courseAccessService->assertCourseInCenter($course, $center);
 
-        $pivot = $course->videos()
-            ->where('videos.id', $video->id)
-            ->wherePivotNull('deleted_at')
-            ->first();
+        $pivot = $this->courseAccessService->getVideoPivotOrFail(
+            $course,
+            $video,
+            'Video not available for this course.',
+            ErrorCodes::NOT_FOUND,
+            404
+        );
 
-        if ($pivot === null) {
-            $this->notFound('Video not available for this course.');
-        }
-
-        if ((int) $course->status !== Course::STATUS_PUBLISHED || $course->is_published !== true) {
+        if ($course->status !== CourseStatus::Published || $course->is_published !== true) {
             $this->notFound('Course not found.');
         }
 
-        $this->assertVideoReady($video);
-        $this->assertEnrollmentActive($student, $course);
+        $this->videoAccessService->assertReadyForPlayback($video);
+        $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
 
         $override = $pivot->pivot?->view_limit_override;
         $this->viewLimitService->assertWithinLimit($student, $video, $course, $override);
@@ -57,7 +72,12 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         Video $video,
         PlaybackSession $session
     ): void {
-        $this->assertStudent($student);
+        $this->studentAccessService->assertStudent(
+            $student,
+            'Only students can access this endpoint.',
+            ErrorCodes::UNAUTHORIZED,
+            403
+        );
         $this->assertSessionExists($session);
 
         if ($session->ended_at !== null) {
@@ -69,8 +89,8 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         }
 
         $this->assertCourseContext($student, $center, $course, $video, $session);
-        $this->assertVideoReady($video);
-        $this->assertEnrollmentActive($student, $course);
+        $this->videoAccessService->assertReadyForPlayback($video);
+        $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
         $this->assertVideoUuid($video);
     }
 
@@ -83,7 +103,12 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
     ): void {
         $this->assertSessionExists($session);
         $this->assertCourseContext($student, $center, $course, $video, $session);
-        $this->assertStudent($student);
+        $this->studentAccessService->assertStudent(
+            $student,
+            'Only students can access this endpoint.',
+            ErrorCodes::UNAUTHORIZED,
+            403
+        );
 
         if ($session->user_id !== $student->id) {
             $this->deny(ErrorCodes::UNAUTHORIZED, 'Session does not belong to the user.', 403);
@@ -97,8 +122,8 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
             $this->deny(ErrorCodes::SESSION_EXPIRED, 'Playback session has expired.', 409);
         }
 
-        $this->assertVideoReady($video);
-        $this->assertEnrollmentActive($student, $course);
+        $this->videoAccessService->assertReadyForPlayback($video);
+        $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
     }
 
     public function getActiveDevice(): UserDevice
@@ -108,13 +133,6 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         }
 
         return $this->activeDevice;
-    }
-
-    private function assertStudent(User $user): void
-    {
-        if (! $user->is_student) {
-            $this->deny(ErrorCodes::UNAUTHORIZED, 'Only students can access this endpoint.', 403);
-        }
     }
 
     private function assertCenterAccess(User $student, Center $center): void
@@ -127,15 +145,8 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
             return;
         }
 
-        if ((int) $center->type !== Center::TYPE_UNBRANDED) {
+        if ($center->type !== CenterType::Unbranded) {
             $this->deny(ErrorCodes::CENTER_MISMATCH, 'Center mismatch.', 403);
-        }
-    }
-
-    private function assertCourseInCenter(Course $course, Center $center): void
-    {
-        if ((int) $course->center_id !== (int) $center->id) {
-            $this->notFound('Course not found.');
         }
     }
 
@@ -146,44 +157,15 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         Video $video,
         PlaybackSession $session
     ): void {
-        $this->assertCourseInCenter($course, $center);
+        $this->courseAccessService->assertCourseInCenter($course, $center);
 
-        $videoInCourse = $course->videos()
-            ->where('videos.id', $video->id)
-            ->wherePivotNull('deleted_at')
-            ->exists();
+        $videoInCourse = $this->courseAccessService->isVideoInCourse($course, $video);
 
         if (! $videoInCourse || $session->video_id !== $video->id) {
             $this->deny(ErrorCodes::NOT_FOUND, 'Video not found.', 404);
         }
 
         $this->assertCenterAccess($student, $center);
-    }
-
-    private function assertVideoReady(Video $video): void
-    {
-        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status !== Video::LIFECYCLE_READY) {
-            $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
-        }
-
-        $session = $video->uploadSession;
-        if ($session !== null && $session->upload_status !== VideoUploadStatus::Ready) {
-            $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
-        }
-    }
-
-    private function assertEnrollmentActive(User $student, Course $course): void
-    {
-        $enrolled = Enrollment::query()
-            ->where('user_id', $student->id)
-            ->where('course_id', $course->id)
-            ->where('status', Enrollment::STATUS_ACTIVE)
-            ->whereNull('deleted_at')
-            ->exists();
-
-        if (! $enrolled) {
-            $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
-        }
     }
 
     private function assertVideoUuid(Video $video): void
@@ -213,7 +195,7 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
             }
 
             // Verify the device is still active
-            if ($authenticatedDevice->status !== UserDevice::STATUS_ACTIVE) {
+            if ($authenticatedDevice->status !== UserDeviceStatus::Active) {
                 $this->deny(ErrorCodes::DEVICE_REVOKED, 'Device has been revoked.', 403);
             }
 
@@ -223,9 +205,8 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         // Fallback: Query for active device (for backwards compatibility or tests)
         /** @var UserDevice|null $device */
         $device = UserDevice::query()
-            ->where('user_id', $student->id)
-            ->where('status', UserDevice::STATUS_ACTIVE)
-            ->whereNull('deleted_at')
+            ->activeForUser($student)
+            ->notDeleted()
             ->first();
 
         if ($device === null) {

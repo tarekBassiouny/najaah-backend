@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace App\Services\Pdfs;
 
+use App\Enums\MediaSourceType;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Pdfs\Contracts\PdfServiceInterface;
+use App\Support\AuditActions;
 use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Validation\ValidationException;
 
 class PdfService implements PdfServiceInterface
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
     /**
      * @param  array<string, mixed>  $data
@@ -51,7 +57,7 @@ class PdfService implements PdfServiceInterface
                 ]);
             }
 
-            $payload['source_type'] = 1;
+            $payload['source_type'] = MediaSourceType::Upload;
             $payload['source_provider'] = 'spaces';
             $payload['source_id'] = $session->object_key;
             $payload['source_url'] = null;
@@ -66,6 +72,10 @@ class PdfService implements PdfServiceInterface
 
         /** @var Pdf $pdf */
         $pdf = Pdf::create($payload);
+
+        $this->auditLogService->log($admin, $pdf, AuditActions::PDF_CREATED, [
+            'center_id' => $center->id,
+        ]);
 
         return $pdf;
     }
@@ -93,6 +103,10 @@ class PdfService implements PdfServiceInterface
 
         $pdf->update($payload);
 
+        $this->auditLogService->log($admin, $pdf, AuditActions::PDF_UPDATED, [
+            'updated_fields' => array_keys($payload),
+        ]);
+
         return $pdf->fresh(['creator']) ?? $pdf;
     }
 
@@ -103,5 +117,7 @@ class PdfService implements PdfServiceInterface
         }
 
         $pdf->delete();
+
+        $this->auditLogService->log($admin, $pdf, AuditActions::PDF_DELETED);
     }
 }

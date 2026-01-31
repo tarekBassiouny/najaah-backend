@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Centers;
 
+use App\Enums\CenterTier;
+use App\Enums\CenterType;
 use App\Models\Center;
 use App\Services\Branding\CenterLogoUrlResolver;
 use Illuminate\Http\Request;
@@ -47,7 +49,7 @@ class CenterResource extends JsonResource
         ];
     }
 
-    private function resolveType(?int $type): string
+    private function resolveType(?CenterType $type): string
     {
         return match ($type) {
             Center::TYPE_BRANDED => 'branded',
@@ -55,7 +57,7 @@ class CenterResource extends JsonResource
         };
     }
 
-    private function resolveTier(?int $tier): string
+    private function resolveTier(?CenterTier $tier): string
     {
         return match ($tier) {
             Center::TIER_PREMIUM => 'premium',

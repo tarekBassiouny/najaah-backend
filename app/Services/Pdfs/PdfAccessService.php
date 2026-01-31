@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Pdfs;
 
 use App\Models\Course;
+use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\User;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
@@ -27,9 +28,10 @@ class PdfAccessService implements PdfAccessServiceInterface
     {
         $this->enforceEnrollment($student, $course);
 
-        $pivot = CoursePdf::where('course_id', $course->id)
+        $pivot = CoursePdf::query()
+            ->forCourse($course)
             ->where('pdf_id', $pdfId)
-            ->whereNull('deleted_at')
+            ->notDeleted()
             ->first();
 
         if ($pivot === null) {
@@ -40,7 +42,7 @@ class PdfAccessService implements PdfAccessServiceInterface
             throw new AccessDeniedHttpException('PDF download is not permitted.');
         }
 
-        /** @var \App\Models\Pdf $pdf */
+        /** @var Pdf $pdf */
         $pdf = $pivot->pdf()->first();
 
         if (! $this->canDownload($student, $course)) {
@@ -65,9 +67,10 @@ class PdfAccessService implements PdfAccessServiceInterface
     {
         $this->enforceEnrollment($student, $course);
 
-        $pivot = CoursePdf::where('course_id', $course->id)
+        $pivot = CoursePdf::query()
+            ->forCourse($course)
             ->where('pdf_id', $pdfId)
-            ->whereNull('deleted_at')
+            ->notDeleted()
             ->first();
 
         if ($pivot === null) {
@@ -82,7 +85,7 @@ class PdfAccessService implements PdfAccessServiceInterface
             throw new AccessDeniedHttpException('PDF download is not permitted.');
         }
 
-        /** @var \App\Models\Pdf $pdf */
+        /** @var Pdf $pdf */
         $pdf = $pivot->pdf()->first();
 
         $path = $pdf->source_id;

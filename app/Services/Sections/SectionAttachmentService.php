@@ -9,11 +9,14 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\Video;
+use App\Services\Access\AttachmentAccessService;
 use App\Services\Sections\Contracts\SectionAttachmentServiceInterface;
 use Illuminate\Validation\ValidationException;
 
 class SectionAttachmentService implements SectionAttachmentServiceInterface
 {
+    public function __construct(private readonly AttachmentAccessService $attachmentAccessService) {}
+
     public function moveVideoToSection(Video $video, Section $section): void
     {
         $this->assertVideoBelongsToCourse($section, $video);
@@ -95,27 +98,30 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
 
     public function isVideoAttached(Video $video, Section $section): bool
     {
-        return CourseVideo::where('course_id', $section->course_id)
-            ->where('section_id', $section->id)
-            ->where('video_id', $video->id)
-            ->whereNull('deleted_at')
+        return CourseVideo::query()
+            ->forCourseId((int) $section->course_id)
+            ->forSectionId((int) $section->id)
+            ->forVideo($video)
+            ->notDeleted()
             ->exists();
     }
 
     public function isPdfAttached(Pdf $pdf, Section $section): bool
     {
-        return CoursePdf::where('course_id', $section->course_id)
-            ->where('section_id', $section->id)
-            ->where('pdf_id', $pdf->id)
-            ->whereNull('deleted_at')
+        return CoursePdf::query()
+            ->forCourseId((int) $section->course_id)
+            ->forSectionId((int) $section->id)
+            ->forPdf($pdf)
+            ->notDeleted()
             ->exists();
     }
 
     private function nextVideoOrder(Section $section): int
     {
-        $maxOrder = CourseVideo::where('course_id', $section->course_id)
-            ->where('section_id', $section->id)
-            ->whereNull('deleted_at')
+        $maxOrder = CourseVideo::query()
+            ->forCourseId((int) $section->course_id)
+            ->forSectionId((int) $section->id)
+            ->notDeleted()
             ->max('order_index');
 
         return is_numeric($maxOrder) ? (int) $maxOrder + 1 : 1;
@@ -123,9 +129,10 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
 
     private function nextPdfOrder(Section $section): int
     {
-        $maxOrder = CoursePdf::where('course_id', $section->course_id)
-            ->where('section_id', $section->id)
-            ->whereNull('deleted_at')
+        $maxOrder = CoursePdf::query()
+            ->forCourseId((int) $section->course_id)
+            ->forSectionId((int) $section->id)
+            ->notDeleted()
             ->max('order_index');
 
         return is_numeric($maxOrder) ? (int) $maxOrder + 1 : 1;
@@ -133,10 +140,7 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
 
     private function assertVideoBelongsToCourse(Section $section, Video $video): void
     {
-        $attachedToOtherCourse = CourseVideo::where('video_id', $video->id)
-            ->where('course_id', '!=', $section->course_id)
-            ->whereNull('deleted_at')
-            ->exists();
+        $attachedToOtherCourse = $this->attachmentAccessService->isVideoAttachedToOtherCourse($section, $video);
 
         if ($attachedToOtherCourse) {
             throw ValidationException::withMessages([
@@ -147,10 +151,7 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
 
     private function assertPdfBelongsToCourse(Section $section, Pdf $pdf): void
     {
-        $attachedToOtherCourse = CoursePdf::where('pdf_id', $pdf->id)
-            ->where('course_id', '!=', $section->course_id)
-            ->whereNull('deleted_at')
-            ->exists();
+        $attachedToOtherCourse = $this->attachmentAccessService->isPdfAttachedToOtherCourse($section, $pdf);
 
         if ($attachedToOtherCourse) {
             throw ValidationException::withMessages([

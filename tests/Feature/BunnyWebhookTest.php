@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Models\BunnyWebhookLog;
 use App\Models\Video;
@@ -42,7 +43,7 @@ it('updates upload session and video to ready', function (): void {
     expect($session->upload_status)->toBe(VideoUploadStatus::Ready);
     expect($session->library_id)->toBe(123);
     expect($video->encoding_status)->toBe(VideoUploadStatus::Ready);
-    expect($video->lifecycle_status)->toBe(2);
+    expect($video->lifecycle_status)->toBe(VideoLifecycleStatus::Ready);
 
     $this->assertDatabaseHas('bunny_webhook_logs', [
         'video_guid' => 'video-123',

@@ -7,13 +7,18 @@ namespace App\Services\Courses;
 use App\Models\Course;
 use App\Models\Section;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseStructureServiceInterface;
+use App\Support\AuditActions;
 use Illuminate\Support\Facades\DB;
 
 class CourseStructureService implements CourseStructureServiceInterface
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
     /** @param array<string, mixed> $data */
     public function addSection(Course $course, array $data, User $actor): Section
@@ -25,6 +30,10 @@ class CourseStructureService implements CourseStructureServiceInterface
         $section = $course->sections()->create([
             ...$data,
             'order_index' => $data['order_index'] ?? $nextOrder,
+        ]);
+
+        $this->auditLogService->log($actor, $section, AuditActions::COURSE_SECTION_ADDED, [
+            'course_id' => $course->id,
         ]);
 
         return $section->fresh(['videos', 'pdfs']) ?? $section;
@@ -48,6 +57,10 @@ class CourseStructureService implements CourseStructureServiceInterface
                 $section->save();
             }
         });
+
+        $this->auditLogService->log($actor, $course, AuditActions::COURSE_SECTIONS_REORDERED, [
+            'ordered_ids' => $orderedIds,
+        ]);
     }
 
     public function toggleSectionVisibility(Section $section, User $actor): Section
@@ -56,6 +69,10 @@ class CourseStructureService implements CourseStructureServiceInterface
         $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
         $section->visible = ! $section->visible;
         $section->save();
+
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_VISIBILITY_TOGGLED, [
+            'visible' => $section->visible,
+        ]);
 
         return $section;
     }

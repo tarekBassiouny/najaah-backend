@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Enums\CourseStatus;
+use App\Enums\VideoLifecycleStatus;
+use App\Enums\VideoUploadStatus;
 use App\Exceptions\DomainException;
 use App\Filters\Mobile\CourseFilters;
 use App\Models\Center;
@@ -202,13 +205,13 @@ it('excludes courses with non-ready videos in explore service', function (): voi
     ]);
 
     $readyVideo = Video::factory()->create([
-        'encoding_status' => 3,
-        'lifecycle_status' => 2,
+        'encoding_status' => VideoUploadStatus::Ready,
+        'lifecycle_status' => VideoLifecycleStatus::Ready,
         'upload_session_id' => $readySession->id,
     ]);
     $pendingVideo = Video::factory()->create([
-        'encoding_status' => 2,
-        'lifecycle_status' => 1,
+        'encoding_status' => VideoUploadStatus::Processing,
+        'lifecycle_status' => VideoLifecycleStatus::Processing,
     ]);
 
     CourseVideo::create([
@@ -243,7 +246,7 @@ it('returns not found for unpublished courses', function (): void {
 
     $course = Course::factory()->create([
         'center_id' => $center->id,
-        'status' => 1,
+        'status' => CourseStatus::Draft,
         'is_published' => false,
     ]);
 

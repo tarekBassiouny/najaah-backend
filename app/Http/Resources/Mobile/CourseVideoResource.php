@@ -7,7 +7,7 @@ namespace App\Http\Resources\Mobile;
 use App\Models\Pivots\CourseVideo;
 use App\Models\User;
 use App\Models\Video;
-use App\Services\Contracts\ViewLimitServiceInterface;
+use App\Services\Playback\Contracts\ViewLimitServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

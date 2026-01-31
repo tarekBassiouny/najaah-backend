@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Filters\Admin\CourseFilters;
 use App\Models\Course;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class CourseQueryService
@@ -16,34 +18,33 @@ class CourseQueryService
     ) {}
 
     /**
-     * @param  array<string, mixed>  $filters
      * @return Builder<Course>
      */
-    public function build(User $admin, array $filters): Builder
+    public function build(User $admin, CourseFilters $filters): Builder
     {
         $query = Course::query()
             ->with(['center', 'category', 'primaryInstructor', 'instructors'])
             ->orderByDesc('created_at');
 
-        if (isset($filters['category_id']) && is_numeric($filters['category_id'])) {
-            $query->where('category_id', (int) $filters['category_id']);
+        if ($filters->categoryId !== null) {
+            $query->where('category_id', $filters->categoryId);
         }
 
-        if (isset($filters['primary_instructor_id']) && is_numeric($filters['primary_instructor_id'])) {
-            $query->where('primary_instructor_id', (int) $filters['primary_instructor_id']);
+        if ($filters->primaryInstructorId !== null) {
+            $query->where('primary_instructor_id', $filters->primaryInstructorId);
         }
 
-        if (isset($filters['search']) && is_string($filters['search'])) {
-            $term = trim($filters['search']);
-            if ($term !== '') {
-                // Search targets the stored base string; not locale-aware yet.
-                $query->where('title_translations', 'like', '%'.$term.'%');
-            }
+        if ($filters->search !== null) {
+            $query->whereTranslationLike(
+                ['title'],
+                $filters->search,
+                ['en', 'ar']
+            );
         }
 
         if ($admin->hasRole('super_admin')) {
-            if (isset($filters['center_id']) && is_numeric($filters['center_id'])) {
-                $query->where('center_id', (int) $filters['center_id']);
+            if ($filters->centerId !== null) {
+                $query->where('center_id', $filters->centerId);
             }
         } else {
             $centerId = $admin->center_id;
@@ -52,5 +53,54 @@ class CourseQueryService
         }
 
         return $query;
+    }
+
+    /**
+     * @return LengthAwarePaginator<Course>
+     */
+    public function paginate(User $admin, CourseFilters $filters): LengthAwarePaginator
+    {
+        return $this->build($admin, $filters)->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
+    }
+
+    /**
+     * @return LengthAwarePaginator<Course>
+     */
+    public function paginateForCenter(User $admin, int $centerId, CourseFilters $filters): LengthAwarePaginator
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+
+        $query = Course::query()
+            ->with(['center', 'category', 'primaryInstructor', 'instructors'])
+            ->orderByDesc('created_at')
+            ->where('center_id', $centerId);
+
+        if ($filters->categoryId !== null) {
+            $query->where('category_id', $filters->categoryId);
+        }
+
+        if ($filters->primaryInstructorId !== null) {
+            $query->where('primary_instructor_id', $filters->primaryInstructorId);
+        }
+
+        if ($filters->search !== null) {
+            $query->whereTranslationLike(
+                ['title'],
+                $filters->search,
+                ['en', 'ar']
+            );
+        }
+
+        return $query->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 }

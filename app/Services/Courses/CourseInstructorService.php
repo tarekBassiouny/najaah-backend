@@ -7,12 +7,17 @@ namespace App\Services\Courses;
 use App\Models\Course;
 use App\Models\Instructor;
 use App\Models\Pivots\CourseInstructor;
+use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
+use App\Support\AuditActions;
 use Illuminate\Database\Eloquent\Builder;
 
 class CourseInstructorService implements CourseInstructorServiceInterface
 {
-    public function assign(Course $course, Instructor $instructor, ?string $role = null): CourseInstructor
+    public function __construct(private readonly AuditLogService $auditLogService) {}
+
+    public function assign(Course $course, Instructor $instructor, ?string $role = null, ?User $actor = null): CourseInstructor
     {
         $existing = CourseInstructor::withTrashed()
             ->where('course_id', $course->id)
@@ -39,13 +44,19 @@ class CourseInstructorService implements CourseInstructorServiceInterface
             $course->save();
         }
 
+        $this->auditLogService->log($actor, $course, AuditActions::COURSE_INSTRUCTOR_ASSIGNED, [
+            'instructor_id' => $instructor->id,
+            'role' => $role,
+        ]);
+
         return $assignment;
     }
 
-    public function remove(Course $course, Instructor $instructor): void
+    public function remove(Course $course, Instructor $instructor, ?User $actor = null): void
     {
-        $assignment = CourseInstructor::where('course_id', $course->id)
-            ->where('instructor_id', $instructor->id)
+        $assignment = CourseInstructor::query()
+            ->forCourse($course)
+            ->forInstructor($instructor)
             ->first();
 
         if ($assignment !== null) {
@@ -53,8 +64,9 @@ class CourseInstructorService implements CourseInstructorServiceInterface
         }
 
         if ($course->primary_instructor_id === $instructor->id) {
-            $replacement = CourseInstructor::where('course_id', $course->id)
-                ->whereNull('deleted_at')
+            $replacement = CourseInstructor::query()
+                ->forCourse($course)
+                ->notDeleted()
                 ->where(function (Builder $query) use ($instructor): void {
                     $query->where('instructor_id', '!=', $instructor->id);
                 })
@@ -64,5 +76,9 @@ class CourseInstructorService implements CourseInstructorServiceInterface
             $course->primary_instructor_id = is_int($replacementId) ? $replacementId : (is_numeric($replacementId) ? (int) $replacementId : null);
             $course->save();
         }
+
+        $this->auditLogService->log($actor, $course, AuditActions::COURSE_INSTRUCTOR_REMOVED, [
+            'instructor_id' => $instructor->id,
+        ]);
     }
 }

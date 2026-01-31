@@ -11,6 +11,7 @@ use App\Http\Requests\Mobile\SendOtpRequest;
 use App\Http\Requests\Mobile\VerifyOtpRequest;
 use App\Http\Resources\Mobile\StudentUserResource;
 use App\Http\Resources\Mobile\TokenResource;
+use App\Models\User;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use Illuminate\Http\JsonResponse;
@@ -52,7 +53,7 @@ class AuthController extends Controller
             return $this->deny($result);
         }
 
-        /** @var array{user:\App\Models\User,token:array{access_token:string,refresh_token:string}} $result */
+        /** @var array{user:User,token:array{access_token:string,refresh_token:string}} $result */
         return response()->json([
             'success' => true,
             'data' => new StudentUserResource($result['user']),

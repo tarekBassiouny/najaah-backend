@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\UserDeviceStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,11 +27,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class UserDevice extends Model
 {
-    public const STATUS_ACTIVE = 0;
+    public const STATUS_ACTIVE = UserDeviceStatus::Active;
 
-    public const STATUS_REVOKED = 1;
+    public const STATUS_REVOKED = UserDeviceStatus::Revoked;
 
-    public const STATUS_PENDING = 2;
+    public const STATUS_PENDING = UserDeviceStatus::Pending;
 
     /** @use HasFactory<\Database\Factories\UserDeviceFactory> */
     use HasFactory;
@@ -48,7 +49,7 @@ class UserDevice extends Model
     ];
 
     protected $casts = [
-        'status' => 'integer',
+        'status' => UserDeviceStatus::class,
         'approved_at' => 'datetime',
         'last_used_at' => 'datetime',
     ];
@@ -79,7 +80,40 @@ class UserDevice extends Model
      */
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE);
+        return $query->where('status', self::STATUS_ACTIVE->value);
+    }
+
+    /**
+     * Scope to exclude soft-deleted devices.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeNotDeleted(Builder $query): Builder
+    {
+        return $query->whereNull('deleted_at');
+    }
+
+    /**
+     * Scope to filter devices for a specific user.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForUser(Builder $query, User $user): Builder
+    {
+        return $query->where('user_id', $user->id);
+    }
+
+    /**
+     * Scope to filter devices for a specific user id.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForUserId(Builder $query, int $userId): Builder
+    {
+        return $query->where('user_id', $userId);
     }
 
     /**
@@ -90,7 +124,7 @@ class UserDevice extends Model
      */
     public function scopeActiveForUser(Builder $query, User $user): Builder
     {
-        return $query->where('user_id', $user->id)
-            ->where('status', self::STATUS_ACTIVE);
+        return $query->forUser($user)
+            ->where('status', self::STATUS_ACTIVE->value);
     }
 }

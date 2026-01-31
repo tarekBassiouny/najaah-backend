@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Students;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Filters\Admin\StudentFilters;
+use App\Http\Requests\Admin\AdminListRequest;
+use App\Support\Filters\FilterInput;
 
-class ListStudentsRequest extends FormRequest
+class ListStudentsRequest extends AdminListRequest
 {
     public function authorize(): bool
     {
@@ -18,13 +20,11 @@ class ListStudentsRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'page' => ['sometimes', 'integer', 'min:1'],
+        return array_merge($this->listRules(), [
             'center_id' => ['sometimes', 'integer'],
             'status' => ['sometimes', 'integer', 'in:0,1,2'],
             'search' => ['sometimes', 'string'],
-        ];
+        ]);
     }
 
     /**
@@ -62,5 +62,19 @@ class ListStudentsRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [];
+    }
+
+    public function filters(): StudentFilters
+    {
+        /** @var array<string, mixed> $data */
+        $data = $this->validated();
+
+        return new StudentFilters(
+            page: FilterInput::page($data),
+            perPage: FilterInput::perPage($data),
+            centerId: FilterInput::intOrNull($data, 'center_id'),
+            status: FilterInput::intOrNull($data, 'status'),
+            search: FilterInput::stringOrNull($data, 'search')
+        );
     }
 }

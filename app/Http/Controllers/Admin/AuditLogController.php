@@ -32,11 +32,8 @@ class AuditLogController extends Controller
             ], 401);
         }
 
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
-
-        $paginator = $this->queryService->paginate($admin, $perPage, $filters);
+        $filters = $request->filters();
+        $paginator = $this->queryService->paginate($admin, $filters);
 
         return response()->json([
             'success' => true,
@@ -46,6 +43,7 @@ class AuditLogController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }

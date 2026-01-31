@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\AuditLogs;
 
+use App\Filters\Admin\AuditLogFilters;
+use App\Http\Requests\Admin\AdminListRequest;
 use App\Models\Course;
+use App\Support\Filters\FilterInput;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ListAuditLogsRequest extends FormRequest
+class ListAuditLogsRequest extends AdminListRequest
 {
     public function authorize(): bool
     {
@@ -21,7 +23,7 @@ class ListAuditLogsRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        return array_merge($this->listRules(), [
             'center_id' => ['sometimes', 'integer'],
             'entity_type' => ['sometimes', 'string', 'max:255'],
             'entity_id' => ['sometimes', 'integer'],
@@ -29,9 +31,7 @@ class ListAuditLogsRequest extends FormRequest
             'user_id' => ['sometimes', 'integer'],
             'date_from' => ['sometimes', 'date'],
             'date_to' => ['sometimes', 'date'],
-            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'page' => ['sometimes', 'integer', 'min:1'],
-        ];
+        ]);
     }
 
     /**
@@ -85,6 +85,24 @@ class ListAuditLogsRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [];
+    }
+
+    public function filters(): AuditLogFilters
+    {
+        /** @var array<string, mixed> $data */
+        $data = $this->validated();
+
+        return new AuditLogFilters(
+            page: FilterInput::page($data),
+            perPage: FilterInput::perPage($data),
+            centerId: FilterInput::intOrNull($data, 'center_id'),
+            entityType: FilterInput::stringOrNull($data, 'entity_type'),
+            entityId: FilterInput::intOrNull($data, 'entity_id'),
+            action: FilterInput::stringOrNull($data, 'action'),
+            userId: FilterInput::intOrNull($data, 'user_id'),
+            dateFrom: FilterInput::stringOrNull($data, 'date_from'),
+            dateTo: FilterInput::stringOrNull($data, 'date_to')
+        );
     }
 
     protected function failedValidation(Validator $validator): void

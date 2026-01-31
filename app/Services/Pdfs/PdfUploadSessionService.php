@@ -9,10 +9,12 @@ use App\Exceptions\UploadFailedException;
 use App\Models\Center;
 use App\Models\PdfUploadSession;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Pdfs\Contracts\PdfUploadSessionServiceInterface;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use App\Services\Storage\StoragePathResolver;
+use App\Support\AuditActions;
 use Illuminate\Support\Facades\Log;
 
 class PdfUploadSessionService implements PdfUploadSessionServiceInterface
@@ -20,7 +22,8 @@ class PdfUploadSessionService implements PdfUploadSessionServiceInterface
     public function __construct(
         private readonly StorageServiceInterface $storageService,
         private readonly StoragePathResolver $pathResolver,
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService
     ) {}
 
     public function initialize(Center $center, User $admin, string $originalFilename, ?int $fileSizeKb = null): PdfUploadSession
@@ -56,6 +59,10 @@ class PdfUploadSessionService implements PdfUploadSessionServiceInterface
             'center_id' => $center->id,
         ]);
 
+        $this->auditLogService->log($admin, $session, AuditActions::PDF_UPLOAD_SESSION_CREATED, [
+            'center_id' => $center->id,
+        ]);
+
         return $session;
     }
 
@@ -79,6 +86,11 @@ class PdfUploadSessionService implements PdfUploadSessionServiceInterface
                 'center_id' => $session->center_id,
             ]);
 
+            $this->auditLogService->log($admin, $session, AuditActions::PDF_UPLOAD_SESSION_FAILED, [
+                'center_id' => $session->center_id,
+                'error_message' => $session->error_message,
+            ]);
+
             throw new UploadFailedException($session->error_message ?? 'Upload failed.', 422);
         }
 
@@ -90,6 +102,11 @@ class PdfUploadSessionService implements PdfUploadSessionServiceInterface
             Log::channel('domain')->warning('pdf_upload_session_failed', [
                 'session_id' => $session->id,
                 'center_id' => $session->center_id,
+            ]);
+
+            $this->auditLogService->log($admin, $session, AuditActions::PDF_UPLOAD_SESSION_FAILED, [
+                'center_id' => $session->center_id,
+                'error_message' => $session->error_message,
             ]);
 
             throw new UploadFailedException($session->error_message ?? 'Upload failed.', 422);
@@ -105,6 +122,11 @@ class PdfUploadSessionService implements PdfUploadSessionServiceInterface
                 'center_id' => $session->center_id,
             ]);
 
+            $this->auditLogService->log($admin, $session, AuditActions::PDF_UPLOAD_SESSION_FAILED, [
+                'center_id' => $session->center_id,
+                'error_message' => $session->error_message,
+            ]);
+
             throw new UploadFailedException($session->error_message ?? 'Upload failed.', 422);
         }
 
@@ -114,6 +136,10 @@ class PdfUploadSessionService implements PdfUploadSessionServiceInterface
 
         Log::channel('domain')->info('pdf_upload_session_finalized', [
             'session_id' => $session->id,
+            'center_id' => $session->center_id,
+        ]);
+
+        $this->auditLogService->log($admin, $session, AuditActions::PDF_UPLOAD_SESSION_FINALIZED, [
             'center_id' => $session->center_id,
         ]);
 

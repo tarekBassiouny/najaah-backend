@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\CenterType;
 use App\Models\Concerns\HasTranslatableSearch;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CourseInstructor;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -86,5 +88,22 @@ class Instructor extends Model
             ->withPivot(['role', 'created_at', 'updated_at', 'deleted_at'])
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
+    }
+
+    /**
+     * Scope to filter instructors visible to a student.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeVisibleToStudent(Builder $query, User $student): Builder
+    {
+        if (is_numeric($student->center_id)) {
+            return $query->where('center_id', (int) $student->center_id);
+        }
+
+        return $query->whereHas('center', function ($query): void {
+            $query->where('type', CenterType::Unbranded->value);
+        });
     }
 }

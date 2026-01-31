@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\Categories\UpdateCategoryRequest;
 use App\Http\Resources\Admin\Categories\CategoryResource;
 use App\Models\Category;
 use App\Models\Center;
+use App\Services\Categories\AdminCategoryQueryService;
 use App\Services\Centers\CenterScopeService;
 use Illuminate\Http\JsonResponse;
 
@@ -19,38 +20,16 @@ class CategoryController extends Controller
 {
     use AdminAuthenticates;
 
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AdminCategoryQueryService $queryService
+    ) {}
 
     public function index(ListCategoriesRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
-        $this->centerScopeService->assertAdminCenterId($admin, (int) $center->id);
-
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
-
-        $query = Category::query()
-            ->where('center_id', $center->id)
-            ->orderBy('order_index')
-            ->orderByDesc('created_at');
-
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', (bool) $filters['is_active']);
-        }
-
-        if (isset($filters['parent_id']) && is_numeric($filters['parent_id'])) {
-            $query->where('parent_id', (int) $filters['parent_id']);
-        }
-
-        if (isset($filters['search']) && is_string($filters['search'])) {
-            $term = trim($filters['search']);
-            if ($term !== '') {
-                $query->where('title_translations', 'like', '%'.$term.'%');
-            }
-        }
-
-        $paginator = $query->paginate($perPage);
+        $filters = $request->filters();
+        $paginator = $this->queryService->paginate($admin, $center, $filters);
 
         return response()->json([
             'success' => true,
@@ -59,6 +38,7 @@ class CategoryController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }

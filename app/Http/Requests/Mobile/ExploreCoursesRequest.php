@@ -82,6 +82,10 @@ class ExploreCoursesRequest extends FormRequest
                 'description' => 'Filter by enrollment status.',
                 'example' => 'true',
             ],
+            'is_featured' => [
+                'description' => 'Filter by featured flag.',
+                'example' => '0',
+            ],
             'publish_from' => [
                 'description' => 'Filter courses published on or after this date.',
                 'example' => '2025-01-01',

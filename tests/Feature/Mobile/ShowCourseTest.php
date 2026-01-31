@@ -155,7 +155,7 @@ it('returns not found for unpublished courses', function (): void {
 
     $course = Course::factory()->create([
         'center_id' => $center->id,
-        'status' => 1,
+        'status' => 0,
         'is_published' => false,
     ]);
 

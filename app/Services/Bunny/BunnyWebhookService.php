@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Bunny;
 
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Models\BunnyWebhookLog;
 use App\Models\Video;
@@ -89,7 +90,7 @@ class BunnyWebhookService
                 Log::channel('domain')->info('bunny_webhook_ignored', [
                     'reason' => 'duplicate_or_invalid_transition',
                     'session_id' => $session->id,
-                    'status' => $mappedStatus->value,
+                    'status' => $this->statusValue($mappedStatus),
                 ]);
 
                 return;
@@ -111,7 +112,7 @@ class BunnyWebhookService
             Log::channel('domain')->info('bunny_webhook_applied', [
                 'session_id' => $session->id,
                 'video_guid' => $videoGuid,
-                'status' => $mappedStatus->value,
+                'status' => $this->statusValue($mappedStatus),
             ]);
 
             $videos = Video::where('source_id', $videoGuid)
@@ -176,7 +177,7 @@ class BunnyWebhookService
 
         if ($status === VideoUploadStatus::Failed) {
             $video->encoding_status = VideoUploadStatus::Pending;
-            $video->lifecycle_status = 0;
+            $video->lifecycle_status = VideoLifecycleStatus::Pending;
             $video->save();
 
             return;
@@ -189,11 +190,24 @@ class BunnyWebhookService
         }
 
         $video->encoding_status = $status;
-        $video->lifecycle_status = $status === VideoUploadStatus::Ready ? Video::LIFECYCLE_READY : Video::LIFECYCLE_PROCESSING;
+        $video->lifecycle_status = $status === VideoUploadStatus::Ready
+            ? VideoLifecycleStatus::Ready
+            : VideoLifecycleStatus::Processing;
         $video->save();
     }
 
     private function priority(VideoUploadStatus $status): int
+    {
+        return match ($status) {
+            VideoUploadStatus::Pending => 0,
+            VideoUploadStatus::Uploading => 1,
+            VideoUploadStatus::Processing => 2,
+            VideoUploadStatus::Ready => 3,
+            VideoUploadStatus::Failed => 4,
+        };
+    }
+
+    private function statusValue(VideoUploadStatus $status): int
     {
         return match ($status) {
             VideoUploadStatus::Pending => 0,

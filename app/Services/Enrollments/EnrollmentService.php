@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace App\Services\Enrollments;
 
-use App\Models\AuditLog;
-use App\Models\Center;
+use App\Enums\CenterType;
+use App\Enums\EnrollmentStatus;
+use App\Filters\Admin\EnrollmentFilters;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
+use App\Services\Access\StudentAccessService;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Students\Contracts\StudentNotificationServiceInterface;
+use App\Support\AuditActions;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -21,12 +25,20 @@ class EnrollmentService implements EnrollmentServiceInterface
 {
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly StudentNotificationServiceInterface $notificationService
+        private readonly StudentNotificationServiceInterface $notificationService,
+        private readonly StudentAccessService $studentAccessService,
+        private readonly AuditLogService $auditLogService
     ) {}
 
     public function enroll(User $student, Course $course, string $status, ?User $actor = null): Enrollment
     {
-        $this->assertStudent($student);
+        $this->studentAccessService->assertStudent(
+            $student,
+            null,
+            null,
+            403,
+            ['user_id' => ['Enrollment can only be created for students.']]
+        );
         $statusValue = $this->normalizeStatus($status);
 
         if ($actor instanceof User) {
@@ -48,7 +60,7 @@ class EnrollmentService implements EnrollmentServiceInterface
             ]);
         }
 
-        if (! is_numeric($student->center_id) && ($course->center?->type ?? Center::TYPE_BRANDED) !== Center::TYPE_UNBRANDED) {
+        if (! is_numeric($student->center_id) && ($course->center?->type ?? CenterType::Branded) !== CenterType::Unbranded) {
             throw ValidationException::withMessages([
                 'course_id' => ['Course is not available for system-level students.'],
             ]);
@@ -89,7 +101,7 @@ class EnrollmentService implements EnrollmentServiceInterface
             $enrollment->enrolled_at = $enrollment->enrolled_at ?? Carbon::now();
             $enrollment->save();
 
-            $this->log('enrollment_created', $actor, $course, $enrollment);
+            $this->log(AuditActions::ENROLLMENT_CREATED, $actor, $course, $enrollment);
 
             return $enrollment->fresh(['course', 'user']) ?? $enrollment;
         });
@@ -123,7 +135,7 @@ class EnrollmentService implements EnrollmentServiceInterface
         $enrollment->status = $statusValue;
         $enrollment->save();
 
-        $this->log('enrollment_status_updated', $actor, $enrollment->course, $enrollment, [
+        $this->log(AuditActions::ENROLLMENT_STATUS_UPDATED, $actor, $enrollment->course, $enrollment, [
             'status' => $enrollment->statusLabel(),
         ]);
 
@@ -138,14 +150,14 @@ class EnrollmentService implements EnrollmentServiceInterface
 
         $enrollment->delete();
 
-        $this->log('enrollment_deleted', $actor, $enrollment->course, $enrollment);
+        $this->log(AuditActions::ENROLLMENT_DELETED, $actor, $enrollment->course, $enrollment);
     }
 
     public function paginateForStudent(User $student, int $perPage = 15): LengthAwarePaginator
     {
         $query = Enrollment::query()
-            ->where('user_id', $student->id)
-            ->whereNull('deleted_at')
+            ->forUser($student)
+            ->notDeleted()
             ->with(['course', 'course.category', 'course.center'])
             ->orderByDesc('enrolled_at');
 
@@ -155,17 +167,14 @@ class EnrollmentService implements EnrollmentServiceInterface
             });
         } else {
             $query->whereHas('course.center', function ($query): void {
-                $query->where('type', 0);
+                $query->where('type', CenterType::Unbranded->value);
             });
         }
 
         return $query->paginate($perPage);
     }
 
-    /**
-     * @param  array{center_id?: int|null, course_id?: int|null, user_id?: int|null, status?: string|null}  $filters
-     */
-    public function paginateForAdmin(User $admin, array $filters = [], int $perPage = 15): LengthAwarePaginator
+    public function paginateForAdmin(User $admin, EnrollmentFilters $filters): LengthAwarePaginator
     {
         $query = Enrollment::query()
             ->with(['course', 'user', 'center'])
@@ -178,24 +187,29 @@ class EnrollmentService implements EnrollmentServiceInterface
         }
 
         // Apply filters
-        if (! empty($filters['center_id'])) {
-            $query->where('center_id', $filters['center_id']);
+        if ($filters->centerId !== null) {
+            $query->where('center_id', $filters->centerId);
         }
 
-        if (! empty($filters['course_id'])) {
-            $query->where('course_id', $filters['course_id']);
+        if ($filters->courseId !== null) {
+            $query->where('course_id', $filters->courseId);
         }
 
-        if (! empty($filters['user_id'])) {
-            $query->where('user_id', $filters['user_id']);
+        if ($filters->userId !== null) {
+            $query->where('user_id', $filters->userId);
         }
 
-        if (! empty($filters['status'])) {
-            $statusValue = $this->normalizeStatus($filters['status']);
+        if ($filters->status !== null) {
+            $statusValue = $this->normalizeStatus($filters->status);
             $query->where('status', $statusValue);
         }
 
-        return $query->paginate($perPage);
+        return $query->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 
     public function assertAdminCanAccess(User $admin, Enrollment $enrollment): void
@@ -205,20 +219,18 @@ class EnrollmentService implements EnrollmentServiceInterface
 
     public function getActiveEnrollment(User $student, Course $course): ?Enrollment
     {
-        return Enrollment::where('user_id', $student->id)
-            ->where('course_id', $course->id)
-            ->where('status', Enrollment::STATUS_ACTIVE)
-            ->whereNull('deleted_at')
+        return Enrollment::query()
+            ->activeForUserAndCourse($student, $course)
             ->first();
     }
 
-    private function normalizeStatus(string $status): int
+    private function normalizeStatus(string $status): EnrollmentStatus
     {
         $value = strtoupper(trim($status));
         $map = [
-            'ACTIVE' => Enrollment::STATUS_ACTIVE,
-            'DEACTIVATED' => Enrollment::STATUS_DEACTIVATED,
-            'CANCELLED' => Enrollment::STATUS_CANCELLED,
+            'ACTIVE' => EnrollmentStatus::Active,
+            'DEACTIVATED' => EnrollmentStatus::Deactivated,
+            'CANCELLED' => EnrollmentStatus::Cancelled,
         ];
 
         if (! array_key_exists($value, $map)) {
@@ -230,30 +242,17 @@ class EnrollmentService implements EnrollmentServiceInterface
         return $map[$value];
     }
 
-    private function assertStudent(User $user): void
-    {
-        if (! $user->is_student) {
-            throw ValidationException::withMessages([
-                'user_id' => ['Enrollment can only be created for students.'],
-            ]);
-        }
-    }
-
     /**
      * @param  array<string, mixed>  $metadata
      */
     private function log(string $action, ?User $actor, ?Course $course, Enrollment $enrollment, array $metadata = []): void
     {
-        AuditLog::create([
-            'user_id' => $actor?->id,
-            'action' => $action,
-            'entity_type' => Enrollment::class,
-            'entity_id' => $enrollment->id,
-            'metadata' => array_filter([
-                'course_id' => $course?->id ?? $enrollment->course_id,
-                'student_id' => $enrollment->user_id,
-                ...$metadata,
-            ]),
+        $payload = array_filter([
+            'course_id' => $course?->id ?? $enrollment->course_id,
+            'student_id' => $enrollment->user_id,
+            ...$metadata,
         ]);
+
+        $this->auditLogService->log($actor, $enrollment, $action, $payload);
     }
 }

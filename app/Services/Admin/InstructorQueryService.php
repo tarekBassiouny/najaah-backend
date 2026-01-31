@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Admin;
 
+use App\Filters\Admin\InstructorFilters;
 use App\Models\Instructor;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class InstructorQueryService
@@ -16,32 +18,32 @@ class InstructorQueryService
     ) {}
 
     /**
-     * @param  array<string, mixed>  $filters
      * @return Builder<Instructor>
      */
-    public function build(User $admin, array $filters): Builder
+    public function build(User $admin, InstructorFilters $filters): Builder
     {
         $query = Instructor::query()
             ->with(['center', 'creator'])
             ->orderByDesc('created_at');
 
-        if (isset($filters['course_id']) && is_numeric($filters['course_id'])) {
-            $courseId = (int) $filters['course_id'];
+        if ($filters->courseId !== null) {
+            $courseId = $filters->courseId;
             $query->whereHas('courses', static function (Builder $builder) use ($courseId): void {
                 $builder->where('courses.id', $courseId);
             });
         }
 
-        if (isset($filters['search']) && is_string($filters['search'])) {
-            $term = trim($filters['search']);
-            if ($term !== '') {
-                $query->where('name_translations', 'like', '%'.$term.'%');
-            }
+        if ($filters->search !== null) {
+            $query->whereTranslationLike(
+                ['name'],
+                $filters->search,
+                ['en', 'ar']
+            );
         }
 
         if ($admin->hasRole('super_admin')) {
-            if (isset($filters['center_id']) && is_numeric($filters['center_id'])) {
-                $query->where('center_id', (int) $filters['center_id']);
+            if ($filters->centerId !== null) {
+                $query->where('center_id', $filters->centerId);
             }
         } else {
             $centerId = $admin->center_id;
@@ -50,5 +52,18 @@ class InstructorQueryService
         }
 
         return $query;
+    }
+
+    /**
+     * @return LengthAwarePaginator<Instructor>
+     */
+    public function paginate(User $admin, InstructorFilters $filters): LengthAwarePaginator
+    {
+        return $this->build($admin, $filters)->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 }

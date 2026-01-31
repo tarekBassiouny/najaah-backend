@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -33,7 +34,7 @@ class UserSeeder extends Seeder
         );
 
         // Center owners/admins
-        $centers = \App\Models\Center::all();
+        $centers = Center::all();
         foreach ($centers as $center) {
             $owner = User::factory()->create([
                 'center_id' => $center->id,

@@ -43,8 +43,7 @@ it('lists roles with permission', function (): void {
             'data' => [
                 '*' => ['id', 'name', 'slug', 'name_translations', 'permissions'],
             ],
-            'meta' => ['page', 'per_page', 'total'],
-            'links' => ['first', 'last', 'prev', 'next'],
+            'meta' => ['page', 'per_page', 'total', 'last_page'],
         ])
         ->assertJsonFragment([
             'id' => $role->id,

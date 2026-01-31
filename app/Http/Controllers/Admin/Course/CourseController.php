@@ -30,10 +30,8 @@ class CourseController extends Controller
         CourseQueryService $queryService
     ): JsonResponse {
         $admin = $this->requireAdmin();
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
-        $paginator = $queryService->build($admin, $filters)->paginate($perPage);
+        $filters = $request->filters();
+        $paginator = $queryService->paginate($admin, $filters);
 
         return response()->json([
             'success' => true,
@@ -43,43 +41,19 @@ class CourseController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
 
     public function centerIndex(
         ListCoursesRequest $request,
-        Center $center
+        Center $center,
+        CourseQueryService $queryService
     ): JsonResponse {
         $admin = $this->requireAdmin();
-        $this->centerScopeService->assertAdminCenterId($admin, (int) $center->id);
-
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
-        $centerId = (int) $center->id;
-
-        $query = Course::query()
-            ->with(['center', 'category', 'primaryInstructor', 'instructors'])
-            ->orderByDesc('created_at')
-            ->where('center_id', $centerId);
-
-        if (isset($filters['category_id']) && is_numeric($filters['category_id'])) {
-            $query->where('category_id', (int) $filters['category_id']);
-        }
-
-        if (isset($filters['primary_instructor_id']) && is_numeric($filters['primary_instructor_id'])) {
-            $query->where('primary_instructor_id', (int) $filters['primary_instructor_id']);
-        }
-
-        if (isset($filters['search']) && is_string($filters['search'])) {
-            $term = trim($filters['search']);
-            if ($term !== '') {
-                $query->where('title_translations', 'like', '%'.$term.'%');
-            }
-        }
-
-        $paginator = $query->paginate($perPage);
+        $filters = $request->filters();
+        $paginator = $queryService->paginateForCenter($admin, (int) $center->id, $filters);
 
         return response()->json([
             'success' => true,
@@ -89,6 +63,7 @@ class CourseController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }

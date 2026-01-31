@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\MediaSourceType;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\User;
@@ -30,7 +31,7 @@ class PdfFactory extends Factory
                 'ar' => 'وصف الملف',
             ],
 
-            'source_type' => 0,
+            'source_type' => MediaSourceType::Upload,
             'source_provider' => 's3',
             'source_id' => Str::uuid()->toString(),
             'source_url' => 'https://example.com/file.pdf',

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\MediaSourceType;
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\User;
@@ -32,12 +34,12 @@ class VideoFactory extends Factory
                 'ar' => 'وصف الفيديو',
             ],
 
-            'source_type' => 0,
+            'source_type' => MediaSourceType::Upload,
             'source_provider' => 'bunny',
             'source_id' => Str::uuid()->toString(),
             'source_url' => 'https://example.com/video.mp4',
             'duration_seconds' => 120,
-            'lifecycle_status' => 2,
+            'lifecycle_status' => VideoLifecycleStatus::Ready,
             'tags' => [
                 'type' => 'intro',
             ],
