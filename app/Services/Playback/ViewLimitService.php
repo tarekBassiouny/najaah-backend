@@ -10,7 +10,7 @@ use App\Models\ExtraViewRequest;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
-use App\Services\Contracts\ViewLimitServiceInterface;
+use App\Services\Playback\Contracts\ViewLimitServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Support\ErrorCodes;
 
@@ -130,10 +130,8 @@ class ViewLimitService implements ViewLimitServiceInterface
 
         $base = is_numeric($extraViews) ? (int) $extraViews : 0;
 
-        $approved = ExtraViewRequest::where('user_id', $user->id)
-            ->where('video_id', $video->id)
-            ->where('status', ExtraViewRequest::STATUS_APPROVED)
-            ->whereNull('deleted_at')
+        $approved = ExtraViewRequest::query()
+            ->approvedForUserAndVideo($user, $video)
             ->sum('granted_views');
 
         return $base + (int) $approved;
@@ -141,10 +139,9 @@ class ViewLimitService implements ViewLimitServiceInterface
 
     private function countFullPlays(User $user, Video $video): int
     {
-        return PlaybackSession::where('user_id', $user->id)
-            ->where('video_id', $video->id)
-            ->where('is_full_play', true)
-            ->whereNull('deleted_at')
+        return PlaybackSession::query()
+            ->fullPlaysForUserAndVideo($user, $video)
+            ->notDeleted()
             ->count();
     }
 }

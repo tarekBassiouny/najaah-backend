@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "f4351962-24d6-4d96-b7b0-f86889e3e600",
+    "_postman_id": "16a643eb-0240-488d-8bca-9bee4988b6d6",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -2962,8 +2962,45 @@
             "url": {
               "host": "{{baseUrl}}",
               "path": "api/v1/admin/enrollments",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/enrollments"
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
+                  "key": "center_id",
+                  "value": "2",
+                  "description": "Filter enrollments by center ID.",
+                  "disabled": false
+                },
+                {
+                  "key": "course_id",
+                  "value": "10",
+                  "description": "Filter enrollments by course ID.",
+                  "disabled": false
+                },
+                {
+                  "key": "user_id",
+                  "value": "5",
+                  "description": "Filter enrollments by user ID.",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "Filter by enrollment status.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/enrollments?per_page=15&page=1&center_id=2&course_id=10&user_id=5&status=ACTIVE"
             },
             "method": "GET",
             "header": [
@@ -4690,9 +4727,15 @@
                   "value": "15",
                   "description": "Items per page.",
                   "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/admin/roles?per_page=15"
+              "raw": "{{baseUrl}}/api/v1/admin/roles?per_page=15&page=1"
             },
             "method": "GET",
             "header": [
@@ -5000,9 +5043,15 @@
                   "value": "15",
                   "description": "Items per page.",
                   "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/admin/users?per_page=15"
+              "raw": "{{baseUrl}}/api/v1/admin/users?per_page=15&page=1"
             },
             "method": "GET",
             "header": [
@@ -5514,6 +5563,18 @@
               "path": "api/v1/admin/audit-logs",
               "query": [
                 {
+                  "key": "per_page",
+                  "value": "20",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
                   "key": "center_id",
                   "value": "2",
                   "description": "Filter by center ID (super admin only).",
@@ -5554,21 +5615,9 @@
                   "value": "2025-12-31",
                   "description": "Filter logs up to this date. Must be a valid date.",
                   "disabled": false
-                },
-                {
-                  "key": "per_page",
-                  "value": "20",
-                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
-                  "disabled": false
-                },
-                {
-                  "key": "page",
-                  "value": "1",
-                  "description": "Page number to retrieve. Must be at least 1.",
-                  "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/admin/audit-logs?center_id=2&entity_type=App%5CModels%5CCourse&entity_id=12&action=enrollment_created&user_id=3&date_from=2025-01-01&date_to=2025-12-31&per_page=20&page=1"
+              "raw": "{{baseUrl}}/api/v1/admin/audit-logs?per_page=20&page=1&center_id=2&entity_type=App%5CModels%5CCourse&entity_id=12&action=enrollment_created&user_id=3&date_from=2025-01-01&date_to=2025-12-31"
             },
             "method": "GET",
             "header": [
@@ -6083,7 +6132,7 @@
                 {
                   "key": "is_featured",
                   "value": "",
-                  "description": "",
+                  "description": "Filter by featured flag.",
                   "disabled": true
                 },
                 {
@@ -6357,13 +6406,25 @@
               "path": "api/v1/courses/enrolled/by-instructor",
               "query": [
                 {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
                   "key": "category_id",
                   "value": "3",
                   "description": "Filter courses by category ID.",
                   "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/courses/enrolled/by-instructor?category_id=3"
+              "raw": "{{baseUrl}}/api/v1/courses/enrolled/by-instructor?per_page=15&page=1&category_id=3"
             },
             "method": "GET",
             "header": [

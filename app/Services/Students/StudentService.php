@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Students;
 
-use App\Exceptions\DomainException;
+use App\Enums\UserStatus;
 use App\Models\User;
+use App\Services\Access\StudentAccessService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Students\Contracts\StudentNotificationServiceInterface;
 use App\Support\ErrorCodes;
@@ -15,7 +16,8 @@ class StudentService
 {
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly StudentNotificationServiceInterface $notificationService
+        private readonly StudentNotificationServiceInterface $notificationService,
+        private readonly StudentAccessService $studentAccessService
     ) {}
 
     /**
@@ -31,7 +33,7 @@ class StudentService
             'center_id' => $data['center_id'] ?? null,
             'password' => Str::random(32),
             'is_student' => true,
-            'status' => 1,
+            'status' => UserStatus::Active,
         ]);
 
         if (isset($data['center_id']) && is_numeric($data['center_id'])) {
@@ -54,7 +56,12 @@ class StudentService
      */
     public function sendWelcomeMessage(User $user): bool
     {
-        $this->assertStudent($user);
+        $this->studentAccessService->assertStudent(
+            $user,
+            'User is not a student.',
+            ErrorCodes::NOT_STUDENT,
+            422
+        );
 
         return $this->notificationService->sendWelcomeMessage($user);
     }
@@ -64,7 +71,12 @@ class StudentService
      */
     public function update(User $user, array $data, ?User $actor = null): User
     {
-        $this->assertStudent($user);
+        $this->studentAccessService->assertStudent(
+            $user,
+            'User is not a student.',
+            ErrorCodes::NOT_STUDENT,
+            422
+        );
 
         if ($actor instanceof User) {
             $this->centerScopeService->assertAdminSameCenter($actor, $user);
@@ -83,19 +95,17 @@ class StudentService
 
     public function delete(User $user, ?User $actor = null): void
     {
-        $this->assertStudent($user);
+        $this->studentAccessService->assertStudent(
+            $user,
+            'User is not a student.',
+            ErrorCodes::NOT_STUDENT,
+            422
+        );
 
         if ($actor instanceof User) {
             $this->centerScopeService->assertAdminSameCenter($actor, $user);
         }
 
         $user->delete();
-    }
-
-    private function assertStudent(User $user): void
-    {
-        if (! $user->is_student) {
-            throw new DomainException('User is not a student.', ErrorCodes::NOT_STUDENT, 422);
-        }
     }
 }

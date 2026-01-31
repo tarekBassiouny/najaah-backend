@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Admin\Centers;
 
+use App\Enums\CenterType;
 use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\Role;
@@ -27,16 +28,23 @@ class CreateCenterAction
      * @param  array<string, mixed>  $data
      * @return array{center: Center, owner: User, email_sent: bool}
      */
-    public function execute(array $data): array
+    public function execute(array $data, ?User $actor = null): array
     {
+        $type = $data['type'] ?? CenterType::Unbranded;
+        if (is_string($type)) {
+            $type = $type === 'branded' ? CenterType::Branded : CenterType::Unbranded;
+        } elseif (! $type instanceof CenterType) {
+            $type = CenterType::from((int) $type);
+        }
+
         $centerData = [
             'slug' => $data['slug'],
-            'type' => $data['type'],
+            'type' => $type,
             'name' => $data['name'],
             'logo_url' => $this->pathResolver->defaultCenterLogo(),
         ];
 
-        if ((int) $data['type'] === Center::TYPE_BRANDED) {
+        if ($type === Center::TYPE_BRANDED) {
             $centerData['api_key'] = $this->generateApiKey();
         }
 
@@ -55,7 +63,7 @@ class CreateCenterAction
         $adminPayload = $data['admin'] ?? null;
         $ownerPayload = is_array($adminPayload) ? $adminPayload : null;
 
-        $center = $this->centerService->create($centerData);
+        $center = $this->centerService->create($centerData, $actor);
 
         return $this->runOnboarding($center, $ownerPayload);
     }

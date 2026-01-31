@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Users\ListAdminUsersRequest;
 use App\Http\Requests\Admin\Users\StoreAdminUserRequest;
 use App\Http\Requests\Admin\Users\SyncAdminUserRolesRequest;
 use App\Http\Requests\Admin\Users\UpdateAdminUserRequest;
@@ -22,10 +23,10 @@ class AdminUserController extends Controller
     /**
      * @queryParam per_page int Items per page. Example: 15
      */
-    public function index(): JsonResponse
+    public function index(ListAdminUsersRequest $request): JsonResponse
     {
-        $perPage = (int) request()->query('per_page', 15);
-        $paginator = $this->adminUserService->list($perPage);
+        $filters = $request->filters();
+        $paginator = $this->adminUserService->list($filters);
 
         return response()->json([
             'success' => true,
@@ -34,6 +35,7 @@ class AdminUserController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -42,7 +44,8 @@ class AdminUserController extends Controller
     {
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $admin = $this->adminUserService->create($data);
+        $actor = $request->user();
+        $admin = $this->adminUserService->create($data, $actor instanceof User ? $actor : null);
 
         return response()->json([
             'success' => true,
@@ -54,7 +57,8 @@ class AdminUserController extends Controller
     {
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $admin = $this->adminUserService->update($user, $data);
+        $actor = $request->user();
+        $admin = $this->adminUserService->update($user, $data, $actor instanceof User ? $actor : null);
 
         return response()->json([
             'success' => true,
@@ -64,7 +68,8 @@ class AdminUserController extends Controller
 
     public function destroy(User $user): JsonResponse
     {
-        $this->adminUserService->delete($user);
+        $actor = request()->user();
+        $this->adminUserService->delete($user, $actor instanceof User ? $actor : null);
 
         return response()->json([
             'success' => true,
@@ -76,7 +81,12 @@ class AdminUserController extends Controller
     {
         /** @var array{role_ids: array<int, int>} $data */
         $data = $request->validated();
-        $admin = $this->adminUserService->syncRoles($user, $data['role_ids']);
+        $actor = $request->user();
+        $admin = $this->adminUserService->syncRoles(
+            $user,
+            $data['role_ids'],
+            $actor instanceof User ? $actor : null
+        );
 
         return response()->json([
             'success' => true,

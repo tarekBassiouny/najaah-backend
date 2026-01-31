@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Enums\CenterType;
+use App\Enums\CourseStatus;
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Exceptions\CenterMismatchException;
 use App\Exceptions\NotFoundException;
@@ -14,6 +17,7 @@ use App\Models\Enrollment;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Carbon;
 
 class ExploreCourseService
 {
@@ -23,24 +27,10 @@ class ExploreCourseService
     public function explore(User $student, CourseFilters $filters): LengthAwarePaginator
     {
         $query = Course::query()
-            ->where('status', Course::STATUS_PUBLISHED)
-            ->where('is_published', true)
+            ->published()
             ->with(['center', 'category', 'instructors'])
-            ->withExists([
-                'enrollments as is_enrolled' => function ($query) use ($student): void {
-                    $query->where('user_id', $student->id)
-                        ->where('status', Enrollment::STATUS_ACTIVE)
-                        ->whereNull('deleted_at');
-                },
-            ]);
-
-        if (is_numeric($student->center_id)) {
-            $query->where('center_id', (int) $student->center_id);
-        } else {
-            $query->whereHas('center', function ($query): void {
-                $query->where('type', Center::TYPE_UNBRANDED);
-            });
-        }
+            ->withEnrollmentMeta($student)
+            ->visibleToStudent($student);
 
         if ($filters->categoryId !== null) {
             $query->where('category_id', $filters->categoryId);
@@ -57,30 +47,22 @@ class ExploreCourseService
         }
 
         if ($filters->enrolled === true) {
-            $query->whereHas('enrollments', function ($query) use ($student): void {
-                $query->where('user_id', $student->id)
-                    ->where('status', Enrollment::STATUS_ACTIVE)
-                    ->whereNull('deleted_at');
-            });
+            $query->enrolledBy($student);
         } elseif ($filters->enrolled === false) {
-            $query->whereDoesntHave('enrollments', function ($query) use ($student): void {
-                $query->where('user_id', $student->id)
-                    ->where('status', Enrollment::STATUS_ACTIVE)
-                    ->whereNull('deleted_at');
-            });
+            $query->notEnrolledBy($student);
         }
 
         if ($filters->publishFrom !== null) {
-            $query->where('publish_at', '>=', $filters->publishFrom);
+            $query->where('publish_at', '>=', Carbon::parse($filters->publishFrom)->startOfDay());
         }
 
         if ($filters->publishTo !== null) {
-            $query->where('publish_at', '<=', $filters->publishTo);
+            $query->where('publish_at', '<=', Carbon::parse($filters->publishTo)->endOfDay());
         }
 
         $query->whereDoesntHave('videos', function ($query): void {
             $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
-                ->orWhere('lifecycle_status', '!=', Video::LIFECYCLE_READY)
+                ->orWhere('lifecycle_status', '!=', VideoLifecycleStatus::Ready->value)
                 ->orWhere(function ($query): void {
                     $query->whereNotNull('upload_session_id')
                         ->whereHas('uploadSession', function ($query): void {
@@ -99,7 +81,12 @@ class ExploreCourseService
 
     public function show(User $student, Course $course): Course
     {
-        if ((int) $course->status !== Course::STATUS_PUBLISHED || $course->is_published !== true) {
+        $course = Course::query()
+            ->withEnrollmentMeta($student, true)
+            ->whereKey($course->id)
+            ->firstOrFail();
+
+        if ($course->status !== CourseStatus::Published || $course->is_published !== true) {
             $this->notFound();
         }
 
@@ -122,7 +109,7 @@ class ExploreCourseService
         } else {
             $isUnbranded = Center::query()
                 ->where('id', $course->center_id)
-                ->where('type', Center::TYPE_UNBRANDED)
+                ->where('type', CenterType::Unbranded->value)
                 ->exists();
 
             if (! $isUnbranded) {
@@ -130,15 +117,15 @@ class ExploreCourseService
             }
         }
 
-        /** @var Enrollment|null $enrollment */
-        $enrollment = Enrollment::query()
-            ->where('user_id', $student->id)
-            ->where('course_id', $course->id)
-            ->whereNull('deleted_at')
-            ->first();
+        $activeStatus = $course->active_enrollment_status ?? null;
+        $latestStatus = $course->latest_enrollment_status ?? null;
+        $statusValue = $activeStatus ?? $latestStatus;
 
-        $course->setAttribute('is_enrolled', $enrollment !== null && $enrollment->status === Enrollment::STATUS_ACTIVE);
-        $course->setAttribute('enrollment_status', $enrollment?->statusLabel());
+        $course->setAttribute('is_enrolled', (bool) ($course->is_enrolled ?? false));
+        $course->setAttribute(
+            'enrollment_status',
+            $statusValue !== null ? (Enrollment::statusLabels()[$statusValue] ?? 'UNKNOWN') : null
+        );
         $this->filterReadyVideos($course);
 
         return $course;
@@ -158,7 +145,7 @@ class ExploreCourseService
 
     private function isVideoReady(Video $video): bool
     {
-        if ($video->encoding_status !== VideoUploadStatus::Ready || (int) $video->lifecycle_status !== Video::LIFECYCLE_READY) {
+        if ($video->encoding_status !== VideoUploadStatus::Ready || $video->lifecycle_status !== VideoLifecycleStatus::Ready) {
             return false;
         }
 

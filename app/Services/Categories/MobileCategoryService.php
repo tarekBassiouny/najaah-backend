@@ -18,20 +18,16 @@ class MobileCategoryService
     {
         $query = Category::query()
             ->where('is_active', true)
+            ->visibleToStudent($student)
             ->orderByDesc('created_at');
-
-        if (is_numeric($student->center_id)) {
-            $query->where('center_id', (int) $student->center_id);
-        } else {
-            $query->whereNull('center_id')
-                ->orWhereHas('center', function ($query): void {
-                    $query->where('type', 0);
-                });
-        }
 
         if ($filters->search !== null) {
             $term = $filters->search;
-            $query->where('title_translations', 'like', '%'.$term.'%');
+            $query->whereTranslationLike(
+                ['title'],
+                $term,
+                ['en', 'ar']
+            );
         }
 
         return $query->paginate(

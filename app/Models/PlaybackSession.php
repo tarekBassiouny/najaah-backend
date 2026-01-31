@@ -126,6 +126,17 @@ class PlaybackSession extends Model
     }
 
     /**
+     * Scope to exclude soft-deleted sessions.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeNotDeleted(Builder $query): Builder
+    {
+        return $query->whereNull('deleted_at');
+    }
+
+    /**
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
@@ -144,6 +155,17 @@ class PlaybackSession extends Model
     public function scopeForUser(Builder $query, User $user): Builder
     {
         return $query->where('user_id', $user->id);
+    }
+
+    /**
+     * Scope to filter sessions for a specific video.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForVideo(Builder $query, Video $video): Builder
+    {
+        return $query->where('video_id', $video->id);
     }
 
     /**
@@ -166,8 +188,8 @@ class PlaybackSession extends Model
      */
     public function scopeFullPlaysForUserAndVideo(Builder $query, User $user, Video $video): Builder
     {
-        return $query->where('user_id', $user->id)
-            ->where('video_id', $video->id)
+        return $query->forUser($user)
+            ->forVideo($video)
             ->where('is_full_play', true);
     }
 }

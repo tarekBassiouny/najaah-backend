@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Course;
 use App\Models\Video;
+use App\Models\VideoSetting;
 use Illuminate\Database\Seeder;
 
 class VideoSeeder extends Seeder
@@ -24,7 +25,7 @@ class VideoSeeder extends Seeder
                             'view_limit_override' => null,
                         ]);
 
-                        \App\Models\VideoSetting::factory()->create([
+                        VideoSetting::factory()->create([
                             'video_id' => $video->id,
                         ]);
                     });

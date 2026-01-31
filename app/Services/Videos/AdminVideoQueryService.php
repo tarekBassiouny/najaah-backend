@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Filters\Admin\VideoFilters;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
@@ -20,10 +21,9 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
      * @return LengthAwarePaginator<Video>
      */
     /**
-     * @param  array<string, mixed>  $filters
      * @return LengthAwarePaginator<Video>
      */
-    public function paginate(User $admin, int $perPage = 15, array $filters = []): LengthAwarePaginator
+    public function paginate(User $admin, VideoFilters $filters): LengthAwarePaginator
     {
         $query = Video::query()
             ->with(['uploadSession', 'creator'])
@@ -32,14 +32,18 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
         $query = $this->applyScope($query, $admin);
         $query = $this->applyFilters($query, $admin, $filters);
 
-        return $query->paginate($perPage);
+        return $query->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 
     /**
-     * @param  array<string, mixed>  $filters
      * @return LengthAwarePaginator<Video>
      */
-    public function paginateForCenter(User $admin, Center $center, int $perPage = 15, array $filters = []): LengthAwarePaginator
+    public function paginateForCenter(User $admin, Center $center, VideoFilters $filters): LengthAwarePaginator
     {
         if (! $admin->hasRole('super_admin')) {
             $this->centerScopeService->assertAdminCenterId($admin, $center->id);
@@ -52,7 +56,12 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
 
         $query = $this->applyFilters($query, $admin, $filters);
 
-        return $query->paginate($perPage);
+        return $query->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 
     /**
@@ -73,29 +82,28 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
 
     /**
      * @param  Builder<Video>  $query
-     * @param  array<string, mixed>  $filters
      * @return Builder<Video>
      */
-    private function applyFilters(Builder $query, User $admin, array $filters): Builder
+    private function applyFilters(Builder $query, User $admin, VideoFilters $filters): Builder
     {
-        if (isset($filters['course_id']) && is_numeric($filters['course_id'])) {
-            $courseId = (int) $filters['course_id'];
+        if ($filters->courseId !== null) {
+            $courseId = $filters->courseId;
             $query->whereHas('courses', static function (Builder $builder) use ($courseId): void {
                 $builder->where('courses.id', $courseId);
             });
         }
 
-        if (isset($filters['search']) && is_string($filters['search'])) {
-            $term = trim($filters['search']);
-            if ($term !== '') {
-                // Search targets the stored base string; not locale-aware yet.
-                $query->where('title_translations', 'like', '%'.$term.'%');
-            }
+        if ($filters->search !== null) {
+            $query->whereTranslationLike(
+                ['title'],
+                $filters->search,
+                ['en', 'ar']
+            );
         }
 
         if ($admin->hasRole('super_admin')) {
-            if (isset($filters['center_id']) && is_numeric($filters['center_id'])) {
-                $centerId = (int) $filters['center_id'];
+            if ($filters->centerId !== null) {
+                $centerId = $filters->centerId;
                 $query->where('center_id', $centerId);
             }
         }

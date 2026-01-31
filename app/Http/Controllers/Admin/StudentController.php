@@ -36,10 +36,8 @@ class StudentController extends Controller
             ], 401);
         }
 
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->validated();
-        $paginator = $this->queryService->build($admin, $filters)->paginate($perPage);
+        $filters = $request->filters();
+        $paginator = $this->queryService->paginate($admin, $filters);
 
         return response()->json([
             'success' => true,
@@ -49,6 +47,7 @@ class StudentController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }

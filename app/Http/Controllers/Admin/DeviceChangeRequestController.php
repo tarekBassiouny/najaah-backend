@@ -41,9 +41,8 @@ class DeviceChangeRequestController extends Controller
             ], 401);
         }
 
-        $perPage = (int) $request->integer('per_page', 15);
-        $filters = $request->validated();
-        $paginator = $this->queryService->build($admin, $filters)->paginate($perPage);
+        $filters = $request->filters();
+        $paginator = $this->queryService->paginate($admin, $filters);
 
         return response()->json([
             'success' => true,
@@ -53,6 +52,7 @@ class DeviceChangeRequestController extends Controller
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }

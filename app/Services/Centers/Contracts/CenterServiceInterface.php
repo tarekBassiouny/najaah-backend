@@ -7,20 +7,21 @@ namespace App\Services\Centers\Contracts;
 use App\Filters\Admin\CenterFilters as AdminCenterFilters;
 use App\Filters\Mobile\CenterFilters;
 use App\Models\Center;
+use App\Models\Course;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface CenterServiceInterface
 {
     /** @param array<string, mixed> $data */
-    public function create(array $data): Center;
+    public function create(array $data, ?User $actor = null): Center;
 
     /** @param array<string, mixed> $data */
-    public function update(Center $center, array $data): Center;
+    public function update(Center $center, array $data, ?User $actor = null): Center;
 
-    public function delete(Center $center): void;
+    public function delete(Center $center, ?User $actor = null): void;
 
-    public function restore(int $id): ?Center;
+    public function restore(int $id, ?User $actor = null): ?Center;
 
     /**
      * @return LengthAwarePaginator<Center>
@@ -33,7 +34,7 @@ interface CenterServiceInterface
     public function listUnbranded(CenterFilters $filters): LengthAwarePaginator;
 
     /**
-     * @return array{center: Center, courses: LengthAwarePaginator<\App\Models\Course>}
+     * @return array{center: Center, courses: LengthAwarePaginator<Course>}
      */
     public function showWithCourses(User $student, Center $center, int $perPage = 15): array;
 }

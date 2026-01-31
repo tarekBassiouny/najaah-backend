@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Centers;
 
+use App\Enums\CenterTier;
+use App\Enums\CenterType;
+use App\Models\Center;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -55,10 +58,10 @@ class UpdateCenterRequest extends FormRequest
     {
         $validator->after(function (Validator $validator): void {
             $centerId = $this->route('center');
-            $center = is_numeric($centerId) ? \App\Models\Center::find((int) $centerId) : null;
-            $type = (int) ($center?->type ?? \App\Models\Center::TYPE_UNBRANDED);
+            $center = is_numeric($centerId) ? Center::find((int) $centerId) : null;
+            $type = $center?->type ?? CenterType::Unbranded;
 
-            if ($type !== \App\Models\Center::TYPE_BRANDED) {
+            if ($type !== CenterType::Branded) {
                 if ($this->has('branding_metadata')) {
                     $validator->errors()->add('branding_metadata', 'Branding metadata is only allowed for branded centers.');
                 }
@@ -104,12 +107,12 @@ class UpdateCenterRequest extends FormRequest
         ];
     }
 
-    private function resolveTier(string $tier): int
+    private function resolveTier(string $tier): CenterTier
     {
         return match ($tier) {
-            'premium' => \App\Models\Center::TIER_PREMIUM,
-            'vip' => \App\Models\Center::TIER_VIP,
-            default => \App\Models\Center::TIER_STANDARD,
+            'premium' => CenterTier::Premium,
+            'vip' => CenterTier::Vip,
+            default => CenterTier::Standard,
         };
     }
 

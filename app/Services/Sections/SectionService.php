@@ -9,14 +9,21 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
+use App\Support\AuditActions;
 use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class SectionService implements SectionServiceInterface
 {
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService
+    ) {}
+
     /** @return Collection<int, Section> */
     public function listForCourse(int $courseId, ?User $actor = null): Collection
     {
@@ -74,6 +81,8 @@ class SectionService implements SectionServiceInterface
 
         $section = Section::create($payload);
 
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_CREATED);
+
         return $section->fresh(['videos', 'pdfs']) ?? $section;
     }
 
@@ -98,6 +107,10 @@ class SectionService implements SectionServiceInterface
 
         $section->update($data);
 
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_UPDATED, [
+            'updated_fields' => array_keys($data),
+        ]);
+
         return $section->fresh(['videos', 'pdfs']) ?? $section;
     }
 
@@ -109,6 +122,8 @@ class SectionService implements SectionServiceInterface
         }
 
         $section->delete();
+
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_DELETED);
     }
 
     public function restore(Section $section, ?User $actor = null): Section
@@ -131,6 +146,8 @@ class SectionService implements SectionServiceInterface
                 ->where('section_id', $section->id)
                 ->restore();
         });
+
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_RESTORED);
 
         return $section->fresh(['videos', 'pdfs']) ?? $section;
     }
@@ -160,6 +177,10 @@ class SectionService implements SectionServiceInterface
                 }
             }
         });
+
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_REORDERED, [
+            'new_index' => $newIndex,
+        ]);
     }
 
     private function nextOrderIndex(int $courseId): int
@@ -168,6 +189,4 @@ class SectionService implements SectionServiceInterface
 
         return is_numeric($maxOrder) ? (int) $maxOrder + 1 : 1;
     }
-
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
 }

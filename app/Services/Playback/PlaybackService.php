@@ -7,13 +7,13 @@ namespace App\Services\Playback;
 use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
-use App\Models\Enrollment;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Access\EnrollmentAccessService;
 use App\Services\Bunny\BunnyEmbedTokenService;
-use App\Services\Contracts\ViewLimitServiceInterface;
 use App\Services\Playback\Contracts\PlaybackServiceInterface;
+use App\Services\Playback\Contracts\ViewLimitServiceInterface;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +25,8 @@ class PlaybackService implements PlaybackServiceInterface
     public function __construct(
         private readonly PlaybackAuthorizationService $authorizationService,
         private readonly BunnyEmbedTokenService $embedTokenService,
-        private readonly ViewLimitServiceInterface $viewLimitService
+        private readonly ViewLimitServiceInterface $viewLimitService,
+        private readonly EnrollmentAccessService $enrollmentAccessService
     ) {}
 
     /**
@@ -74,16 +75,18 @@ class PlaybackService implements PlaybackServiceInterface
         $session = DB::transaction(function () use ($student, $video, $course, $enrollmentId, $device, $embedTokenData, $embedTokenExpiresAt): PlaybackSession {
             $now = now();
 
-            PlaybackSession::where('user_id', $student->id)
-                ->whereNull('ended_at')
-                ->whereNull('deleted_at')
+            PlaybackSession::query()
+                ->forUser($student)
+                ->active()
+                ->notDeleted()
                 ->where('expires_at', '<', $now)
                 ->update(['ended_at' => $now]);
 
             /** @var PlaybackSession|null $active */
-            $active = PlaybackSession::where('user_id', $student->id)
-                ->whereNull('ended_at')
-                ->whereNull('deleted_at')
+            $active = PlaybackSession::query()
+                ->forUser($student)
+                ->active()
+                ->notDeleted()
                 ->where('expires_at', '>', $now)
                 ->first();
 
@@ -337,16 +340,7 @@ class PlaybackService implements PlaybackServiceInterface
 
     private function resolveEnrollmentId(User $student, Course $course): int
     {
-        $enrollment = Enrollment::query()
-            ->where('user_id', $student->id)
-            ->where('course_id', $course->id)
-            ->where('status', Enrollment::STATUS_ACTIVE)
-            ->whereNull('deleted_at')
-            ->first();
-
-        if (! $enrollment instanceof Enrollment) {
-            $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
-        }
+        $enrollment = $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
 
         return (int) $enrollment->id;
     }

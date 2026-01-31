@@ -4,25 +4,32 @@ declare(strict_types=1);
 
 namespace App\Services\Sections;
 
-use App\Enums\PdfUploadStatus;
-use App\Enums\VideoUploadStatus;
 use App\Exceptions\AttachmentNotAllowedException;
-use App\Exceptions\UploadNotReadyException;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Access\AttachmentAccessService;
+use App\Services\Access\PdfAccessService;
+use App\Services\Access\VideoAccessService;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
+use App\Support\AuditActions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SectionStructureService implements SectionStructureServiceInterface
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AttachmentAccessService $attachmentAccessService,
+        private readonly VideoAccessService $videoAccessService,
+        private readonly PdfAccessService $pdfAccessService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
     /** @return Collection<int, Video> */
     public function listVideos(Section $section, ?User $actor = null): Collection
@@ -49,7 +56,7 @@ class SectionStructureService implements SectionStructureServiceInterface
         $this->assertCenterScope($section, $actor);
         $this->assertSectionActive($section);
         $this->assertVideoBelongsToCourse($section, $video);
-        $this->assertVideoReady($video);
+        $this->videoAccessService->assertReadyForAttachment($video);
 
         $pivot = CourseVideo::withTrashed()
             ->where('video_id', $video->id)
@@ -73,6 +80,10 @@ class SectionStructureService implements SectionStructureServiceInterface
                 'view_limit_override' => null,
             ]);
 
+            $this->auditLogService->log($actor, $section, AuditActions::SECTION_VIDEO_ATTACHED, [
+                'video_id' => $video->id,
+            ]);
+
             return;
         }
 
@@ -89,14 +100,19 @@ class SectionStructureService implements SectionStructureServiceInterface
         if ($previousSectionId !== null && is_numeric($previousSectionId) && $previousSectionId !== $section->id) {
             $this->syncVideoOrderForSection((int) $section->course_id, (int) $previousSectionId);
         }
+
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_VIDEO_ATTACHED, [
+            'video_id' => $video->id,
+        ]);
     }
 
     public function detachVideo(Section $section, Video $video, ?User $actor = null): void
     {
         $this->assertCenterScope($section, $actor);
-        $pivot = CourseVideo::where('course_id', $section->course_id)
-            ->where('video_id', $video->id)
-            ->where('section_id', $section->id)
+        $pivot = CourseVideo::query()
+            ->forCourseId((int) $section->course_id)
+            ->forVideo($video)
+            ->forSectionId((int) $section->id)
             ->first();
 
         if ($pivot === null) {
@@ -108,6 +124,10 @@ class SectionStructureService implements SectionStructureServiceInterface
         $pivot->save();
 
         $this->syncVideoOrder($section, $this->currentVideoIds($section));
+
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_VIDEO_DETACHED, [
+            'video_id' => $video->id,
+        ]);
     }
 
     public function attachPdf(Section $section, Pdf $pdf, ?User $actor = null): void
@@ -115,7 +135,7 @@ class SectionStructureService implements SectionStructureServiceInterface
         $this->assertCenterScope($section, $actor);
         $this->assertSectionActive($section);
         $this->assertPdfBelongsToCourse($section, $pdf);
-        $this->assertPdfReady($pdf);
+        $this->pdfAccessService->assertReadyForAttachment($pdf);
 
         $pivot = CoursePdf::withTrashed()
             ->where('pdf_id', $pdf->id)
@@ -139,6 +159,10 @@ class SectionStructureService implements SectionStructureServiceInterface
                 'visible' => true,
             ]);
 
+            $this->auditLogService->log($actor, $section, AuditActions::SECTION_PDF_ATTACHED, [
+                'pdf_id' => $pdf->id,
+            ]);
+
             return;
         }
 
@@ -156,14 +180,19 @@ class SectionStructureService implements SectionStructureServiceInterface
         if ($previousSectionId !== null && is_numeric($previousSectionId) && $previousSectionId !== $section->id) {
             $this->syncPdfOrderForSection((int) $section->course_id, (int) $previousSectionId);
         }
+
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_PDF_ATTACHED, [
+            'pdf_id' => $pdf->id,
+        ]);
     }
 
     public function detachPdf(Section $section, Pdf $pdf, ?User $actor = null): void
     {
         $this->assertCenterScope($section, $actor);
-        $pivot = CoursePdf::where('course_id', $section->course_id)
-            ->where('pdf_id', $pdf->id)
-            ->where('section_id', $section->id)
+        $pivot = CoursePdf::query()
+            ->forCourseId((int) $section->course_id)
+            ->forPdf($pdf)
+            ->forSectionId((int) $section->id)
             ->first();
 
         if ($pivot === null) {
@@ -175,15 +204,20 @@ class SectionStructureService implements SectionStructureServiceInterface
         $pivot->save();
 
         $this->syncPdfOrder($section, $this->currentPdfIds($section));
+
+        $this->auditLogService->log($actor, $section, AuditActions::SECTION_PDF_DETACHED, [
+            'pdf_id' => $pdf->id,
+        ]);
     }
 
     /** @param array<int, int> $orderedIds */
     public function syncVideoOrder(Section $section, array $orderedIds): void
     {
         DB::transaction(function () use ($section, $orderedIds): void {
-            $pivots = CourseVideo::where('course_id', $section->course_id)
-                ->where('section_id', $section->id)
-                ->whereNull('deleted_at')
+            $pivots = CourseVideo::query()
+                ->forCourseId((int) $section->course_id)
+                ->forSectionId((int) $section->id)
+                ->notDeleted()
                 ->whereIn('video_id', $orderedIds)
                 ->get()
                 ->keyBy('video_id');
@@ -205,9 +239,10 @@ class SectionStructureService implements SectionStructureServiceInterface
     public function syncPdfOrder(Section $section, array $orderedIds): void
     {
         DB::transaction(function () use ($section, $orderedIds): void {
-            $pivots = CoursePdf::where('course_id', $section->course_id)
-                ->where('section_id', $section->id)
-                ->whereNull('deleted_at')
+            $pivots = CoursePdf::query()
+                ->forCourseId((int) $section->course_id)
+                ->forSectionId((int) $section->id)
+                ->notDeleted()
                 ->whereIn('pdf_id', $orderedIds)
                 ->get()
                 ->keyBy('pdf_id');
@@ -228,9 +263,10 @@ class SectionStructureService implements SectionStructureServiceInterface
     /** @return array<int, int> */
     private function currentVideoIds(Section $section): array
     {
-        $rawIds = CourseVideo::where('course_id', $section->course_id)
-            ->where('section_id', $section->id)
-            ->whereNull('deleted_at')
+        $rawIds = CourseVideo::query()
+            ->forCourseId((int) $section->course_id)
+            ->forSectionId((int) $section->id)
+            ->notDeleted()
             ->orderBy('order_index')
             ->pluck('video_id')
             ->all();
@@ -243,9 +279,10 @@ class SectionStructureService implements SectionStructureServiceInterface
 
     private function nextVideoOrder(Section $section): int
     {
-        $maxOrder = CourseVideo::where('course_id', $section->course_id)
-            ->where('section_id', $section->id)
-            ->whereNull('deleted_at')
+        $maxOrder = CourseVideo::query()
+            ->forCourseId((int) $section->course_id)
+            ->forSectionId((int) $section->id)
+            ->notDeleted()
             ->max('order_index');
 
         return is_numeric($maxOrder) ? (int) $maxOrder + 1 : 1;
@@ -254,9 +291,10 @@ class SectionStructureService implements SectionStructureServiceInterface
     /** @return array<int, int> */
     private function currentPdfIds(Section $section): array
     {
-        $rawIds = CoursePdf::where('course_id', $section->course_id)
-            ->where('section_id', $section->id)
-            ->whereNull('deleted_at')
+        $rawIds = CoursePdf::query()
+            ->forCourseId((int) $section->course_id)
+            ->forSectionId((int) $section->id)
+            ->notDeleted()
             ->orderBy('order_index')
             ->pluck('pdf_id')
             ->all();
@@ -269,9 +307,10 @@ class SectionStructureService implements SectionStructureServiceInterface
 
     private function nextPdfOrder(Section $section): int
     {
-        $maxOrder = CoursePdf::where('course_id', $section->course_id)
-            ->where('section_id', $section->id)
-            ->whereNull('deleted_at')
+        $maxOrder = CoursePdf::query()
+            ->forCourseId((int) $section->course_id)
+            ->forSectionId((int) $section->id)
+            ->notDeleted()
             ->max('order_index');
 
         return is_numeric($maxOrder) ? (int) $maxOrder + 1 : 1;
@@ -279,9 +318,10 @@ class SectionStructureService implements SectionStructureServiceInterface
 
     private function syncVideoOrderForSection(int $courseId, int $sectionId): void
     {
-        $rawIds = CourseVideo::where('course_id', $courseId)
-            ->where('section_id', $sectionId)
-            ->whereNull('deleted_at')
+        $rawIds = CourseVideo::query()
+            ->forCourseId($courseId)
+            ->forSectionId($sectionId)
+            ->notDeleted()
             ->orderBy('order_index')
             ->pluck('video_id')
             ->all();
@@ -294,9 +334,10 @@ class SectionStructureService implements SectionStructureServiceInterface
 
     private function syncPdfOrderForSection(int $courseId, int $sectionId): void
     {
-        $rawIds = CoursePdf::where('course_id', $courseId)
-            ->where('section_id', $sectionId)
-            ->whereNull('deleted_at')
+        $rawIds = CoursePdf::query()
+            ->forCourseId($courseId)
+            ->forSectionId($sectionId)
+            ->notDeleted()
             ->orderBy('order_index')
             ->pluck('pdf_id')
             ->all();
@@ -309,81 +350,19 @@ class SectionStructureService implements SectionStructureServiceInterface
 
     private function assertVideoBelongsToCourse(Section $section, Video $video): void
     {
-        $attachedToOtherCourse = CourseVideo::where('video_id', $video->id)
-            ->where('course_id', '!=', $section->course_id)
-            ->whereNull('deleted_at')
-            ->exists();
+        $attachedToOtherCourse = $this->attachmentAccessService->isVideoAttachedToOtherCourse($section, $video);
 
         if ($attachedToOtherCourse) {
             throw new AttachmentNotAllowedException('Video is already attached to another course.', 422);
         }
     }
 
-    private function assertVideoReady(Video $video): void
-    {
-        if ($video->encoding_status !== VideoUploadStatus::Ready) {
-            throw new AttachmentNotAllowedException('Video is not ready to be attached.', 422);
-        }
-
-        if ($video->upload_session_id === null) {
-            throw new UploadNotReadyException('Video upload session is required.', 422);
-        }
-
-        $video->loadMissing('uploadSession');
-        $session = $video->uploadSession;
-
-        if ($session === null) {
-            throw new UploadNotReadyException('Video upload session is required.', 422);
-        }
-
-        if ($session->expires_at !== null && $session->expires_at <= now()) {
-            Log::channel('domain')->warning('upload_session_expired', [
-                'video_id' => $video->id,
-                'session_id' => $session->id,
-            ]);
-            throw new UploadNotReadyException('Video upload session has expired.', 422);
-        }
-
-        if ($session->upload_status !== VideoUploadStatus::Ready) {
-            throw new UploadNotReadyException('Video upload session is not ready.', 422);
-        }
-    }
-
     private function assertPdfBelongsToCourse(Section $section, Pdf $pdf): void
     {
-        $attachedToOtherCourse = CoursePdf::where('pdf_id', $pdf->id)
-            ->where('course_id', '!=', $section->course_id)
-            ->whereNull('deleted_at')
-            ->exists();
+        $attachedToOtherCourse = $this->attachmentAccessService->isPdfAttachedToOtherCourse($section, $pdf);
 
         if ($attachedToOtherCourse) {
             throw new AttachmentNotAllowedException('PDF is already attached to another course.', 422);
-        }
-    }
-
-    private function assertPdfReady(Pdf $pdf): void
-    {
-        if ($pdf->upload_session_id === null) {
-            throw new AttachmentNotAllowedException('PDF is not ready to be attached.', 422);
-        }
-
-        $pdf->loadMissing('uploadSession');
-        $session = $pdf->uploadSession;
-
-        if ($session === null) {
-            throw new UploadNotReadyException('PDF upload session is required.', 422);
-        }
-
-        if ($session->expires_at !== null && $session->expires_at <= now()) {
-            Log::channel('domain')->warning('upload_session_expired', [
-                'pdf_id' => $pdf->id,
-                'session_id' => $session->id,
-            ]);
-            throw new UploadNotReadyException('PDF upload session has expired.', 422);
-        }
-
-        if ($session->upload_status !== PdfUploadStatus::Ready) {
-            throw new UploadNotReadyException('PDF upload session is not ready.', 422);
         }
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Enrollments\Contracts;
 
+use App\Filters\Admin\EnrollmentFilters;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
@@ -20,11 +21,8 @@ interface EnrollmentServiceInterface
     /** @return LengthAwarePaginator<Enrollment> */
     public function paginateForStudent(User $student, int $perPage = 15): LengthAwarePaginator;
 
-    /**
-     * @param  array{center_id?: int|null, course_id?: int|null, user_id?: int|null, status?: string|null}  $filters
-     * @return LengthAwarePaginator<Enrollment>
-     */
-    public function paginateForAdmin(User $admin, array $filters = [], int $perPage = 15): LengthAwarePaginator;
+    /** @return LengthAwarePaginator<Enrollment> */
+    public function paginateForAdmin(User $admin, EnrollmentFilters $filters): LengthAwarePaginator;
 
     public function assertAdminCanAccess(User $admin, Enrollment $enrollment): void;
 

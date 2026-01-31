@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Mobile;
 
+use App\Enums\UserDeviceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mobile\UpdateProfileRequest;
 use App\Http\Resources\Mobile\StudentUserResource;
-use App\Models\UserDevice;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Students\StudentService;
 use Illuminate\Http\JsonResponse;
@@ -30,7 +30,7 @@ class MeController extends Controller
         $user->load([
             'center',
             'roles',
-            'devices' => fn ($q) => $q->where('status', UserDevice::STATUS_ACTIVE),
+            'devices' => fn ($q) => $q->where('status', UserDeviceStatus::Active->value),
         ]);
         $user->setRelation('activeDevice', $user->devices->first());
 

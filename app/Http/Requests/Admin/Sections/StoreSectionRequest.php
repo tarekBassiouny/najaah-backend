@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Sections;
 
+use App\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSectionRequest extends FormRequest
@@ -25,7 +26,7 @@ class StoreSectionRequest extends FormRequest
             $course = $this->route('course');
             $courseId = null;
 
-            if ($course instanceof \App\Models\Course) {
+            if ($course instanceof Course) {
                 $courseId = $course->getKey();
             } elseif (is_numeric($course)) {
                 $courseId = (int) $course;

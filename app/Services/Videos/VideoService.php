@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Enums\MediaSourceType;
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Videos\Contracts\VideoServiceInterface;
+use App\Support\AuditActions;
 use App\Support\Guards\RejectNonScalarInput;
 
 class VideoService implements VideoServiceInterface
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
     /**
      * @param  array<string, mixed>  $data
@@ -34,12 +41,18 @@ class VideoService implements VideoServiceInterface
 
         $payload['center_id'] = $center->id;
         $payload['created_by'] = $admin->id;
-        $payload['source_type'] = $payload['source_type'] ?? 1;
+        $payload['source_type'] = $payload['source_type'] ?? MediaSourceType::Upload;
         $payload['source_provider'] = $payload['source_provider'] ?? 'bunny';
         $payload['encoding_status'] = VideoUploadStatus::Pending;
-        $payload['lifecycle_status'] = 0;
+        $payload['lifecycle_status'] = VideoLifecycleStatus::Pending;
 
-        return Video::create($payload);
+        $video = Video::create($payload);
+
+        $this->auditLogService->log($admin, $video, AuditActions::VIDEO_CREATED, [
+            'center_id' => $center->id,
+        ]);
+
+        return $video;
     }
 
     /**
@@ -65,6 +78,10 @@ class VideoService implements VideoServiceInterface
 
         $video->update($payload);
 
+        $this->auditLogService->log($admin, $video, AuditActions::VIDEO_UPDATED, [
+            'updated_fields' => array_keys($payload),
+        ]);
+
         return $video->fresh(['uploadSession', 'creator']) ?? $video;
     }
 
@@ -75,5 +92,7 @@ class VideoService implements VideoServiceInterface
         }
 
         $video->delete();
+
+        $this->auditLogService->log($admin, $video, AuditActions::VIDEO_DELETED);
     }
 }

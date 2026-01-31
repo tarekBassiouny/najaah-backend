@@ -29,7 +29,7 @@ it('lists enrollments for admin', function (): void {
             'data' => [
                 '*' => ['id', 'status', 'user_id', 'course_id', 'center_id', 'enrolled_at'],
             ],
-            'meta' => ['current_page', 'per_page', 'total', 'last_page'],
+            'meta' => ['page', 'per_page', 'total', 'last_page'],
         ]);
 });
 

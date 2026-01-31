@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Contracts;
+namespace App\Services\Playback\Contracts;
 
 use App\Models\Course;
 use App\Models\User;

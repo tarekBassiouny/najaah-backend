@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Enums\VideoLifecycleStatus;
+use App\Enums\VideoUploadStatus;
 use App\Exceptions\AttachmentNotAllowedException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Section;
 use App\Models\Video;
-use App\Services\Centers\CenterScopeService;
 use App\Services\Sections\SectionStructureService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Helpers\AdminTestHelper;
@@ -24,12 +25,12 @@ it('blocks attaching videos to deleted sections', function (): void {
 
     $video = Video::factory()->create([
         'center_id' => $center->id,
-        'encoding_status' => 3,
-        'lifecycle_status' => 2,
+        'encoding_status' => VideoUploadStatus::Ready,
+        'lifecycle_status' => VideoLifecycleStatus::Ready,
         'created_by' => $admin->id,
     ]);
 
-    $service = new SectionStructureService(new CenterScopeService);
+    $service = app(SectionStructureService::class);
 
     $service->attachVideo($section, $video, $admin);
 })->throws(AttachmentNotAllowedException::class);

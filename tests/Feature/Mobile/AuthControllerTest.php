@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Actions\Mobile\LoginAction;
+use App\Models\Center;
 use App\Models\JwtToken;
 use App\Models\OtpCode;
 use App\Models\User;
@@ -121,8 +122,8 @@ test('verify otp issues tokens', function (): void {
 });
 
 test('verify rejects center mismatch', function (): void {
-    $centerA = \App\Models\Center::factory()->create(['api_key' => 'center-a-key']);
-    $centerB = \App\Models\Center::factory()->create(['api_key' => 'center-b-key']);
+    $centerA = Center::factory()->create(['api_key' => 'center-a-key']);
+    $centerB = Center::factory()->create(['api_key' => 'center-b-key']);
 
     /** @var User $user */
     $user = User::factory()->create([
@@ -152,7 +153,7 @@ test('verify rejects center mismatch', function (): void {
 });
 
 test('verify binds new user to center when using center api key', function (): void {
-    $center = \App\Models\Center::factory()->create(['api_key' => 'center-key']);
+    $center = Center::factory()->create(['api_key' => 'center-key']);
 
     OtpCode::factory()->create([
         'user_id' => null,

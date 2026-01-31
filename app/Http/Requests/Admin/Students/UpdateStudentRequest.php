@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Students;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -22,8 +23,8 @@ class UpdateStudentRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->route('user');
-        $userId = $user instanceof \App\Models\User ? $user->id : null;
-        $centerId = $user instanceof \App\Models\User ? $user->center_id : null;
+        $userId = $user instanceof User ? $user->id : null;
+        $centerId = $user instanceof User ? $user->center_id : null;
 
         return [
             'name' => ['sometimes', 'string', 'max:100'],

@@ -14,10 +14,11 @@ use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
-use App\Services\Contracts\ViewLimitServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
 use App\Services\Courses\CourseInstructorService;
+use App\Services\Devices\Contracts\DeviceChangeServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Devices\DeviceChangeService;
 use App\Services\Devices\DeviceService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
@@ -35,6 +36,7 @@ use App\Services\Permissions\Contracts\PermissionServiceInterface;
 use App\Services\Permissions\PermissionService;
 use App\Services\Playback\Contracts\PlaybackAuthorizationServiceInterface;
 use App\Services\Playback\Contracts\PlaybackServiceInterface;
+use App\Services\Playback\Contracts\ViewLimitServiceInterface;
 use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackService;
 use App\Services\Playback\ViewLimitService;
@@ -79,6 +81,7 @@ class AppServiceProvider extends ServiceProvider
             OtpSenderInterface::class => WhatsAppOtpSender::class,
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
+            DeviceChangeServiceInterface::class => DeviceChangeService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,

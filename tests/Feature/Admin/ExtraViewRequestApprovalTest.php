@@ -69,7 +69,7 @@ it('admin approves and allowance affects view limit', function (): void {
     ], $this->adminHeaders());
 
     $approve->assertOk()
-        ->assertJsonPath('data.status', ExtraViewRequest::STATUS_APPROVED)
+        ->assertJsonPath('data.status', ExtraViewRequest::STATUS_APPROVED->value)
         ->assertJsonPath('data.granted_views', 1);
 });
 
@@ -104,6 +104,6 @@ it('admin can reject pending requests', function (): void {
     ], $this->adminHeaders());
 
     $reject->assertOk()
-        ->assertJsonPath('data.status', ExtraViewRequest::STATUS_REJECTED)
+        ->assertJsonPath('data.status', ExtraViewRequest::STATUS_REJECTED->value)
         ->assertJsonPath('data.decision_reason', 'Not eligible');
 });

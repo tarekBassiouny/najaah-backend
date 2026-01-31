@@ -20,6 +20,8 @@ class EnrolledCoursesByInstructorRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'page' => ['sometimes', 'integer', 'min:1'],
             'category_id' => ['sometimes', 'integer'],
         ];
     }
@@ -30,8 +32,8 @@ class EnrolledCoursesByInstructorRequest extends FormRequest
         $data = $this->validated();
 
         return new CourseFilters(
-            page: 1,
-            perPage: 100,
+            page: (int) ($data['page'] ?? 1),
+            perPage: (int) ($data['per_page'] ?? 15),
             categoryId: isset($data['category_id']) ? (int) $data['category_id'] : null,
             instructorId: null,
             enrolled: true,
@@ -47,6 +49,14 @@ class EnrolledCoursesByInstructorRequest extends FormRequest
     public function queryParameters(): array
     {
         return [
+            'per_page' => [
+                'description' => 'Items per page (max 100).',
+                'example' => '15',
+            ],
+            'page' => [
+                'description' => 'Page number to retrieve.',
+                'example' => '1',
+            ],
             'category_id' => [
                 'description' => 'Filter courses by category ID.',
                 'example' => '3',

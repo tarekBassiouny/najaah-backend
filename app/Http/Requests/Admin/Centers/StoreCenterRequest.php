@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Centers;
 
-use App\Models\Center;
+use App\Enums\CenterTier;
+use App\Enums\CenterType;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -125,17 +126,19 @@ class StoreCenterRequest extends FormRequest
         ];
     }
 
-    private function resolveType(string $type): int
+    private function resolveType(string $type): CenterType
     {
-        return $type === 'branded' ? Center::TYPE_BRANDED : Center::TYPE_UNBRANDED;
+        return $type === 'branded'
+            ? CenterType::Branded
+            : CenterType::Unbranded;
     }
 
-    private function resolveTier(string $tier): int
+    private function resolveTier(string $tier): CenterTier
     {
         return match ($tier) {
-            'premium' => Center::TIER_PREMIUM,
-            'vip' => Center::TIER_VIP,
-            default => Center::TIER_STANDARD,
+            'premium' => CenterTier::Premium,
+            'vip' => CenterTier::Vip,
+            default => CenterTier::Standard,
         };
     }
 

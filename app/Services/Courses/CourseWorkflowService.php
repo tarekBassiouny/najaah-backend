@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Enums\CourseStatus;
 use App\Enums\PdfUploadStatus;
 use App\Exceptions\PublishBlockedException;
-use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseWorkflowServiceInterface;
 use App\Services\Videos\VideoPublishingService;
+use App\Support\AuditActions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -24,6 +26,7 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
 
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService,
         ?VideoPublishingService $videoPublishingService = null
     ) {
         $this->videoPublishingService = $videoPublishingService ?? new VideoPublishingService;
@@ -44,7 +47,7 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
             throw new PublishBlockedException('Course is deleted.', 422);
         }
 
-        if ($course->status === Course::STATUS_PUBLISHED) {
+        if ($course->status === CourseStatus::Published) {
             Log::channel('domain')->warning('course_publish_blocked', [
                 'course_id' => $course->id,
                 'center_id' => $course->center_id,
@@ -137,20 +140,14 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
             }
         }
 
-        $course->status = Course::STATUS_PUBLISHED;
+        $course->status = CourseStatus::Published;
         $course->is_published = true;
         $course->publish_at = now();
         $course->save();
 
-        AuditLog::create([
-            'user_id' => null,
-            'action' => 'course_published',
-            'entity_type' => Course::class,
-            'entity_id' => $course->id,
-            'metadata' => [
-                'course_id' => $course->id,
-                'published_at' => $course->publish_at,
-            ],
+        $this->auditLogService->logByType($actor, Course::class, (int) $course->id, AuditActions::COURSE_PUBLISHED, [
+            'course_id' => $course->id,
+            'published_at' => $course->publish_at,
         ]);
 
         $fresh = $course->fresh(['sections', 'videos']);
@@ -163,11 +160,11 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
     {
         $this->centerScopeService->assertAdminSameCenter($actor, $course);
 
-        return DB::transaction(function () use ($course, $options): Course {
+        return DB::transaction(function () use ($course, $options, $actor): Course {
             $course->loadMissing(['sections', 'videos', 'pdfs']);
 
             $clone = $course->replicate();
-            $clone->status = Course::STATUS_DRAFT;
+            $clone->status = CourseStatus::Draft;
             $clone->is_published = false;
             $clone->publish_at = null;
             $clone->cloned_from_id = $course->id;
@@ -183,8 +180,9 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
                 $sectionMap[$section->id] = $newSection->id;
             }
 
-            $courseVideos = CourseVideo::where('course_id', $course->id)
-                ->whereNull('deleted_at')
+            $courseVideos = CourseVideo::query()
+                ->forCourse($course)
+                ->notDeleted()
                 ->get();
 
             foreach ($courseVideos as $pivot) {
@@ -198,8 +196,9 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
                 ]);
             }
 
-            $coursePdfs = CoursePdf::where('course_id', $course->id)
-                ->whereNull('deleted_at')
+            $coursePdfs = CoursePdf::query()
+                ->forCourse($course)
+                ->notDeleted()
                 ->get();
 
             foreach ($coursePdfs as $pivot) {
@@ -213,15 +212,9 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
                 ]);
             }
 
-            AuditLog::create([
-                'user_id' => null,
-                'action' => 'course_cloned',
-                'entity_type' => Course::class,
-                'entity_id' => $clone->id,
-                'metadata' => [
-                    'source_course_id' => $course->id,
-                    'cloned_course_id' => $clone->id,
-                ],
+            $this->auditLogService->logByType($actor, Course::class, (int) $clone->id, AuditActions::COURSE_CLONED, [
+                'source_course_id' => $course->id,
+                'cloned_course_id' => $clone->id,
             ]);
 
             return $clone->fresh(['sections', 'videos', 'pdfs']) ?? $clone;

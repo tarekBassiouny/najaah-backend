@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\CenterTier;
+use App\Enums\CenterType;
 use App\Models\Concerns\HasTranslatableSearch;
 use App\Models\Concerns\HasTranslations;
+use App\Models\Pivots\UserCenter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,7 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property int $id
  * @property string $slug
- * @property int $type
+ * @property CenterType $type
+ * @property CenterTier $tier
  * @property array<string, string> $name_translations
  * @property array<string, string>|null $description_translations
  * @property string|null $logo_url
@@ -37,10 +41,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Center extends Model
 {
-    public const TYPE_UNBRANDED = 0;
-
-    public const TYPE_BRANDED = 1;
-
     public const ONBOARDING_DRAFT = 'DRAFT';
 
     public const ONBOARDING_IN_PROGRESS = 'IN_PROGRESS';
@@ -49,11 +49,15 @@ class Center extends Model
 
     public const ONBOARDING_ACTIVE = 'ACTIVE';
 
-    public const TIER_STANDARD = 0;
+    public const TIER_STANDARD = CenterTier::Standard;
 
-    public const TIER_PREMIUM = 1;
+    public const TIER_PREMIUM = CenterTier::Premium;
 
-    public const TIER_VIP = 2;
+    public const TIER_VIP = CenterTier::Vip;
+
+    public const TYPE_UNBRANDED = CenterType::Unbranded;
+
+    public const TYPE_BRANDED = CenterType::Branded;
 
     /** @use HasFactory<\Database\Factories\CenterFactory> */
     use HasFactory;
@@ -90,7 +94,8 @@ class Center extends Model
         'branding_metadata' => 'array',
         'storage_driver' => 'string',
         'storage_root' => 'string',
-        'tier' => 'integer',
+        'type' => CenterType::class,
+        'tier' => CenterTier::class,
         'is_featured' => 'boolean',
         'is_demo' => 'boolean',
         'allow_extra_view_requests' => 'boolean',
@@ -109,7 +114,7 @@ class Center extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_centers')
-            ->using(\App\Models\Pivots\UserCenter::class)
+            ->using(UserCenter::class)
             ->withTimestamps()
             ->withPivot(['type'])
             ->wherePivotNull('deleted_at');

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Requests;
 
+use App\Enums\DeviceChangeRequestStatus;
+use App\Enums\EnrollmentStatus;
+use App\Enums\ExtraViewRequestStatus;
 use App\Exceptions\DomainException;
-use App\Exceptions\UnauthorizedException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\DeviceChangeRequest;
@@ -14,14 +16,25 @@ use App\Models\ExtraViewRequest;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Services\Access\CourseAccessService;
+use App\Services\Access\EnrollmentAccessService;
+use App\Services\Access\StudentAccessService;
+use App\Services\Audit\AuditLogService;
 use App\Services\Playback\ViewLimitService;
+use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class RequestService
 {
-    public function __construct(private readonly ViewLimitService $viewLimitService) {}
+    public function __construct(
+        private readonly ViewLimitService $viewLimitService,
+        private readonly StudentAccessService $studentAccessService,
+        private readonly CourseAccessService $courseAccessService,
+        private readonly EnrollmentAccessService $enrollmentAccessService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
     public function createExtraViewRequest(
         User $student,
@@ -30,32 +43,15 @@ class RequestService
         Video $video,
         ?string $reason
     ): void {
-        $this->assertStudent($student);
-        $this->assertCourseInCenter($center, $course);
+        $this->studentAccessService->assertStudent($student);
+        $this->courseAccessService->assertCourseInCenter($course, $center);
 
         DB::transaction(function () use ($student, $course, $video, $reason): void {
-            $pivot = $course->videos()
-                ->where('videos.id', $video->id)
-                ->wherePivotNull('deleted_at')
-                ->first();
+            $pivot = $this->courseAccessService->getVideoPivotOrFail($course, $video);
+            $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
 
-            if ($pivot === null) {
-                $this->deny(ErrorCodes::VIDEO_NOT_IN_COURSE, 'Video not available for this course.', 404);
-            }
-
-            $enrollment = Enrollment::where('user_id', $student->id)
-                ->where('course_id', $course->id)
-                ->where('status', Enrollment::STATUS_ACTIVE)
-                ->first();
-
-            if ($enrollment === null) {
-                $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
-            }
-
-            $pending = ExtraViewRequest::where('user_id', $student->id)
-                ->where('video_id', $video->id)
-                ->where('status', ExtraViewRequest::STATUS_PENDING)
-                ->whereNull('deleted_at')
+            $pending = ExtraViewRequest::query()
+                ->pendingForUserAndVideo($student, $video)
                 ->lockForUpdate()
                 ->exists();
 
@@ -74,13 +70,19 @@ class RequestService
                 $this->deny(ErrorCodes::VIEWS_AVAILABLE, 'Extra views are not allowed while views remain.', 422);
             }
 
-            ExtraViewRequest::create([
+            $request = ExtraViewRequest::create([
                 'user_id' => $student->id,
                 'video_id' => $video->id,
                 'course_id' => $course->id,
                 'center_id' => $course->center_id,
-                'status' => ExtraViewRequest::STATUS_PENDING,
+                'status' => ExtraViewRequestStatus::Pending,
                 'reason' => $reason,
+            ]);
+
+            $this->auditLogService->logByType($student, ExtraViewRequest::class, (int) $request->id, AuditActions::EXTRA_VIEW_REQUEST_CREATED, [
+                'video_id' => $video->id,
+                'course_id' => $course->id,
+                'center_id' => $course->center_id,
             ]);
         });
     }
@@ -91,24 +93,18 @@ class RequestService
         Course $course,
         ?string $reason
     ): void {
-        $this->assertStudent($student);
-        $this->assertCourseInCenter($center, $course);
+        $this->studentAccessService->assertStudent($student);
+        $this->courseAccessService->assertCourseInCenter($course, $center);
 
         DB::transaction(function () use ($student, $course): void {
-            $enrollment = Enrollment::where('user_id', $student->id)
-                ->where('course_id', $course->id)
-                ->where('status', Enrollment::STATUS_ACTIVE)
-                ->lockForUpdate()
-                ->first();
+            $enrolled = $this->enrollmentAccessService->hasActiveEnrollment($student, $course, true);
 
-            if ($enrollment !== null) {
+            if ($enrolled) {
                 $this->deny(ErrorCodes::ALREADY_ENROLLED, 'Student is already enrolled.', 422);
             }
 
-            $pending = Enrollment::where('user_id', $student->id)
-                ->where('course_id', $course->id)
-                ->where('status', Enrollment::STATUS_PENDING)
-                ->whereNull('deleted_at')
+            $pending = Enrollment::query()
+                ->pendingForUserAndCourse($student, $course)
                 ->lockForUpdate()
                 ->exists();
 
@@ -116,25 +112,30 @@ class RequestService
                 $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending enrollment request already exists.', 422);
             }
 
-            Enrollment::create([
+            $enrollment = Enrollment::create([
                 'user_id' => $student->id,
                 'course_id' => $course->id,
                 'center_id' => $course->center_id,
-                'status' => Enrollment::STATUS_PENDING,
+                'status' => EnrollmentStatus::Pending,
                 'enrolled_at' => Carbon::now(),
+            ]);
+
+            $this->auditLogService->logByType($student, Enrollment::class, (int) $enrollment->id, AuditActions::ENROLLMENT_REQUEST_CREATED, [
+                'course_id' => $course->id,
+                'center_id' => $course->center_id,
             ]);
         });
     }
 
     public function createDeviceChangeRequest(User $student, ?string $reason): void
     {
-        $this->assertStudent($student);
+        $this->studentAccessService->assertStudent($student);
 
         DB::transaction(function () use ($student, $reason): void {
             /** @var UserDevice|null $active */
-            $active = UserDevice::where('user_id', $student->id)
-                ->where('status', UserDevice::STATUS_ACTIVE)
-                ->whereNull('deleted_at')
+            $active = UserDevice::query()
+                ->activeForUser($student)
+                ->notDeleted()
                 ->lockForUpdate()
                 ->first();
 
@@ -142,9 +143,10 @@ class RequestService
                 $this->deny(ErrorCodes::NO_ACTIVE_DEVICE, 'Active device required to request a change.', 422);
             }
 
-            $pending = DeviceChangeRequest::where('user_id', $student->id)
-                ->where('status', DeviceChangeRequest::STATUS_PENDING)
-                ->whereNull('deleted_at')
+            $pending = DeviceChangeRequest::query()
+                ->forUser($student)
+                ->pending()
+                ->notDeleted()
                 ->lockForUpdate()
                 ->exists();
 
@@ -152,31 +154,21 @@ class RequestService
                 $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists.', 422);
             }
 
-            DeviceChangeRequest::create([
+            $request = DeviceChangeRequest::create([
                 'user_id' => $student->id,
                 'center_id' => $student->center_id,
                 'current_device_id' => $active->device_id,
                 'new_device_id' => '',
                 'new_model' => '',
                 'new_os_version' => '',
-                'status' => DeviceChangeRequest::STATUS_PENDING,
+                'status' => DeviceChangeRequestStatus::Pending,
                 'reason' => $reason,
             ]);
+
+            $this->auditLogService->logByType($student, DeviceChangeRequest::class, (int) $request->id, AuditActions::DEVICE_CHANGE_REQUEST_CREATED, [
+                'old_device_id' => $active->device_id,
+            ]);
         });
-    }
-
-    private function assertStudent(User $user): void
-    {
-        if (! $user->is_student) {
-            throw new UnauthorizedException('Only students can perform this action.', 403);
-        }
-    }
-
-    private function assertCourseInCenter(Center $center, Course $course): void
-    {
-        if ((int) $course->center_id !== (int) $center->id) {
-            $this->deny(ErrorCodes::NOT_FOUND, 'Course not found.', 404);
-        }
     }
 
     /**

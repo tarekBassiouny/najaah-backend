@@ -7,20 +7,25 @@ namespace App\Services\Settings;
 use App\Models\Center;
 use App\Models\CenterSetting;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
+use App\Support\AuditActions;
 use Illuminate\Support\Facades\DB;
 
 class CenterSettingsService implements CenterSettingsServiceInterface
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
     /** @param array<string, mixed> $settings */
     public function update(User $actor, Center $center, array $settings): CenterSetting
     {
         $this->centerScopeService->assertAdminSameCenter($actor, $center);
 
-        return DB::transaction(function () use ($center, $settings): CenterSetting {
+        return DB::transaction(function () use ($center, $settings, $actor): CenterSetting {
             /** @var CenterSetting|null $existing */
             $existing = $center->setting()->withTrashed()->first();
 
@@ -37,7 +42,14 @@ class CenterSettingsService implements CenterSettingsServiceInterface
                 ['settings' => $mergedSettings],
             );
 
-            return $setting->fresh() ?? $setting;
+            $fresh = $setting->fresh() ?? $setting;
+
+            $this->auditLogService->log($actor, $setting, AuditActions::CENTER_SETTINGS_UPDATED, [
+                'center_id' => $center->id,
+                'updated_keys' => array_keys($settings),
+            ]);
+
+            return $fresh;
         });
     }
 
@@ -51,6 +63,12 @@ class CenterSettingsService implements CenterSettingsServiceInterface
         ], [
             'settings' => [],
         ]);
+
+        if ($setting->wasRecentlyCreated) {
+            $this->auditLogService->log($actor, $setting, AuditActions::CENTER_SETTINGS_CREATED, [
+                'center_id' => $center->id,
+            ]);
+        }
 
         return $setting->fresh() ?? $setting;
     }

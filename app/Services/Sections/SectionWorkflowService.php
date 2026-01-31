@@ -53,17 +53,19 @@ class SectionWorkflowService implements SectionWorkflowServiceInterface
         $this->sectionService->find($section->id, $actor);
 
         DB::transaction(function () use ($section, $actor): void {
-            CourseVideo::where('course_id', $section->course_id)
-                ->where('section_id', $section->id)
-                ->whereNull('deleted_at')
+            CourseVideo::query()
+                ->forCourseId((int) $section->course_id)
+                ->forSectionId((int) $section->id)
+                ->notDeleted()
                 ->get()
                 ->each(function (CourseVideo $pivot): void {
                     $pivot->delete();
                 });
 
-            CoursePdf::where('course_id', $section->course_id)
-                ->where('section_id', $section->id)
-                ->whereNull('deleted_at')
+            CoursePdf::query()
+                ->forCourseId((int) $section->course_id)
+                ->forSectionId((int) $section->id)
+                ->notDeleted()
                 ->get()
                 ->each(function (CoursePdf $pivot): void {
                     $pivot->delete();

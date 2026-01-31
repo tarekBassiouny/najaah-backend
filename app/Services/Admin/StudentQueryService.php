@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Admin;
 
+use App\Filters\Admin\StudentFilters;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class StudentQueryService
@@ -15,33 +17,30 @@ class StudentQueryService
     ) {}
 
     /**
-     * @param  array<string, mixed>  $filters
      * @return Builder<User>
      */
-    public function build(User $admin, array $filters): Builder
+    public function build(User $admin, StudentFilters $filters): Builder
     {
         $query = User::query()
             ->where('is_student', true)
             ->orderByDesc('created_at');
 
-        if (isset($filters['status']) && is_numeric($filters['status'])) {
-            $query->where('status', (int) $filters['status']);
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
         }
 
-        if (isset($filters['search']) && is_string($filters['search'])) {
-            $term = trim($filters['search']);
-            if ($term !== '') {
-                $query->where(static function (Builder $builder) use ($term): void {
-                    $builder->where('name', 'like', '%'.$term.'%')
-                        ->orWhere('username', 'like', '%'.$term.'%')
-                        ->orWhere('email', 'like', '%'.$term.'%');
-                });
-            }
+        if ($filters->search !== null) {
+            $term = $filters->search;
+            $query->where(static function (Builder $builder) use ($term): void {
+                $builder->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('username', 'like', '%'.$term.'%')
+                    ->orWhere('email', 'like', '%'.$term.'%');
+            });
         }
 
         if ($admin->hasRole('super_admin')) {
-            if (isset($filters['center_id']) && is_numeric($filters['center_id'])) {
-                $query->where('center_id', (int) $filters['center_id']);
+            if ($filters->centerId !== null) {
+                $query->where('center_id', $filters->centerId);
             }
         } else {
             $centerId = $admin->center_id;
@@ -50,5 +49,18 @@ class StudentQueryService
         }
 
         return $query;
+    }
+
+    /**
+     * @return LengthAwarePaginator<User>
+     */
+    public function paginate(User $admin, StudentFilters $filters): LengthAwarePaginator
+    {
+        return $this->build($admin, $filters)->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 }

@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Enums\MediaSourceType;
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Exceptions\DomainException;
+use App\Exceptions\UploadFailedException;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
+use App\Services\Audit\AuditLogService;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Videos\Contracts\VideoUploadServiceInterface;
+use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Facades\Log;
 
@@ -20,7 +25,8 @@ class VideoUploadService implements VideoUploadServiceInterface
 {
     public function __construct(
         private readonly BunnyStreamService $bunnyService,
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AuditLogService $auditLogService
     ) {}
 
     public function initializeUpload(User $admin, Center $center, string $originalFilename, ?Video $video = null): VideoUploadSession
@@ -69,7 +75,7 @@ class VideoUploadService implements VideoUploadServiceInterface
             $video->upload_session_id = $session->id;
             $video->original_filename = $originalFilename;
             $video->source_provider = $video->source_provider ?: 'bunny';
-            $video->source_type = $video->source_type ?: 1;
+            $video->source_type = $video->source_type ?: MediaSourceType::Upload;
             $video->source_id = $bunnyId;
             $video->library_id = $video->library_id ?? $libraryIdValue;
             $this->applyVideoState($video, VideoUploadStatus::Pending, []);
@@ -95,6 +101,12 @@ class VideoUploadService implements VideoUploadServiceInterface
                 'retry_from_session_id' => $previousSessionId,
             ]);
         }
+
+        $this->auditLogService->log($admin, $session, AuditActions::VIDEO_UPLOAD_SESSION_CREATED, [
+            'center_id' => $center->id,
+            'video_id' => $video?->id,
+            'retry_from_session_id' => $previousSessionId,
+        ]);
 
         return $session;
     }
@@ -140,7 +152,7 @@ class VideoUploadService implements VideoUploadServiceInterface
         $this->centerScopeService->assertAdminSameCenter($admin, $session);
 
         if ($session->expires_at !== null && $session->expires_at->isPast()) {
-            throw new \App\Exceptions\UploadFailedException('Upload session expired.', 422);
+            throw new UploadFailedException('Upload session expired.', 422);
         }
 
         $status = $this->statusFromLabel($statusLabel);
@@ -162,6 +174,17 @@ class VideoUploadService implements VideoUploadServiceInterface
         }
 
         $session->save();
+
+        $this->auditLogService->log($admin, $session, AuditActions::VIDEO_UPLOAD_SESSION_TRANSITIONED, [
+            'center_id' => $session->center_id,
+            'status' => match ($status) {
+                VideoUploadStatus::Pending => 0,
+                VideoUploadStatus::Uploading => 1,
+                VideoUploadStatus::Processing => 2,
+                VideoUploadStatus::Ready => 3,
+                VideoUploadStatus::Failed => 4,
+            },
+        ]);
 
         if ($status === VideoUploadStatus::Ready) {
             Log::channel('domain')->info('video_upload_session_ready', [
@@ -208,11 +231,11 @@ class VideoUploadService implements VideoUploadServiceInterface
             ? VideoUploadStatus::Pending
             : $status;
         $video->lifecycle_status = match ($status) {
-            VideoUploadStatus::Pending => 0,
-            VideoUploadStatus::Uploading => 1,
-            VideoUploadStatus::Processing => 1,
-            VideoUploadStatus::Ready => 2,
-            VideoUploadStatus::Failed => 0,
+            VideoUploadStatus::Pending => VideoLifecycleStatus::Pending,
+            VideoUploadStatus::Uploading => VideoLifecycleStatus::Processing,
+            VideoUploadStatus::Processing => VideoLifecycleStatus::Processing,
+            VideoUploadStatus::Ready => VideoLifecycleStatus::Ready,
+            VideoUploadStatus::Failed => VideoLifecycleStatus::Pending,
         };
 
         if ($status === VideoUploadStatus::Ready) {

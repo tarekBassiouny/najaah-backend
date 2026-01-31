@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\CenterType;
+use App\Models\Concerns\HasTranslatableSearch;
 use App\Models\Concerns\HasTranslations;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,6 +32,7 @@ class Category extends Model
     /** @use HasFactory<\Database\Factories\CategoryFactory> */
     use HasFactory;
 
+    use HasTranslatableSearch;
     use HasTranslations;
     use SoftDeletes;
 
@@ -77,5 +81,23 @@ class Category extends Model
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
+    }
+
+    /**
+     * Scope to filter categories visible to a student.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeVisibleToStudent(Builder $query, User $student): Builder
+    {
+        if (is_numeric($student->center_id)) {
+            return $query->where('center_id', (int) $student->center_id);
+        }
+
+        return $query->whereNull('center_id')
+            ->orWhereHas('center', function ($query): void {
+                $query->where('type', CenterType::Unbranded->value);
+            });
     }
 }

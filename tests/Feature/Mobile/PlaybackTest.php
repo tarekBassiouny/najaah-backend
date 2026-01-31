@@ -307,7 +307,7 @@ test('it blocks branded student playback for another center', function (): void 
 
 test('it rejects playback when course is not published', function (): void {
     [$student, $center, $course, $video] = buildPlaybackContext();
-    $course->update(['status' => 1, 'is_published' => false]);
+    $course->update(['status' => 0, 'is_published' => false]);
 
     $this->asApiUser($student);
     $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);

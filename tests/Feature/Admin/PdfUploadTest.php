@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Enums\MediaSourceType;
 use App\Enums\PdfUploadStatus;
+use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
 use App\Services\Storage\Contracts\StorageServiceInterface;
@@ -15,7 +17,7 @@ afterEach(function (): void {
 });
 
 it('creates pdf from upload session', function (): void {
-    $center = \App\Models\Center::factory()->create();
+    $center = Center::factory()->create();
     $admin = $this->asAdmin();
     $admin->update(['center_id' => $center->id]);
 
@@ -53,13 +55,13 @@ it('creates pdf from upload session', function (): void {
 
     $pdf = Pdf::first();
     expect($pdf)->not->toBeNull()
-        ->and($pdf?->source_type)->toBe(1)
+        ->and($pdf?->source_type)->toBe(MediaSourceType::Upload)
         ->and($pdf?->source_provider)->toBe('spaces')
         ->and($pdf?->source_id)->toBe($session->object_key);
 });
 
 it('fails finalize when uploaded object is missing', function (): void {
-    $center = \App\Models\Center::factory()->create();
+    $center = Center::factory()->create();
     $admin = $this->asAdmin();
     $admin->update(['center_id' => $center->id]);
     $session = PdfUploadSession::factory()->create([
@@ -88,7 +90,7 @@ it('fails finalize when uploaded object is missing', function (): void {
 });
 
 it('finalizes upload session and creates pdf when object exists', function (): void {
-    $center = \App\Models\Center::factory()->create();
+    $center = Center::factory()->create();
     $admin = $this->asAdmin();
     $admin->update(['center_id' => $center->id]);
     $session = PdfUploadSession::factory()->create([

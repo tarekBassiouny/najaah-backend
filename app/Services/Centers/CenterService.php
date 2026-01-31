@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
+use App\Enums\CenterType;
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Exceptions\NotFoundException;
 use App\Filters\Admin\CenterFilters as AdminCenterFilters;
@@ -11,10 +13,10 @@ use App\Filters\Mobile\CenterFilters;
 use App\Models\Center;
 use App\Models\CenterSetting;
 use App\Models\Course;
-use App\Models\Enrollment;
 use App\Models\User;
-use App\Models\Video;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
+use App\Support\AuditActions;
 use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,18 +25,25 @@ use Illuminate\Support\Facades\DB;
 
 class CenterService implements CenterServiceInterface
 {
+    public function __construct(private readonly AuditLogService $auditLogService) {}
+
     /**
      * @return LengthAwarePaginator<Center>
      */
     public function listAdmin(AdminCenterFilters $filters): LengthAwarePaginator
     {
-        return $this->adminQuery($filters)->paginate($filters->perPage);
+        return $this->adminQuery($filters)->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 
     /** @param array<string, mixed> $data */
-    public function create(array $data): Center
+    public function create(array $data, ?User $actor = null): Center
     {
-        return DB::transaction(function () use ($data): Center {
+        return DB::transaction(function () use ($data, $actor): Center {
             $settings = $data['settings'] ?? null;
             unset($data['settings']);
 
@@ -59,14 +68,18 @@ class CenterService implements CenterServiceInterface
                 ]);
             }
 
-            return $center->fresh(['setting']) ?? $center;
+            $fresh = $center->fresh(['setting']) ?? $center;
+
+            $this->auditLogService->log($actor, $center, AuditActions::CENTER_CREATED);
+
+            return $fresh;
         });
     }
 
     /** @param array<string, mixed> $data */
-    public function update(Center $center, array $data): Center
+    public function update(Center $center, array $data, ?User $actor = null): Center
     {
-        return DB::transaction(function () use ($center, $data): Center {
+        return DB::transaction(function () use ($center, $data, $actor): Center {
             $settings = $data['settings'] ?? null;
             unset($data['settings'], $data['slug']);
 
@@ -92,16 +105,22 @@ class CenterService implements CenterServiceInterface
 
             $center->refresh();
 
+            $this->auditLogService->log($actor, $center, AuditActions::CENTER_UPDATED, [
+                'updated_fields' => array_keys($data),
+            ]);
+
             return $center->load('setting');
         });
     }
 
-    public function delete(Center $center): void
+    public function delete(Center $center, ?User $actor = null): void
     {
         $center->delete();
+
+        $this->auditLogService->log($actor, $center, AuditActions::CENTER_DELETED);
     }
 
-    public function restore(int $id): ?Center
+    public function restore(int $id, ?User $actor = null): ?Center
     {
         /** @var Center|null $center */
         $center = Center::withTrashed()->find($id);
@@ -111,6 +130,8 @@ class CenterService implements CenterServiceInterface
         }
 
         $center->restore();
+
+        $this->auditLogService->log($actor, $center, AuditActions::CENTER_RESTORED);
 
         return $center->fresh(['setting']) ?? $center;
     }
@@ -122,7 +143,7 @@ class CenterService implements CenterServiceInterface
     {
         $query = Center::query()
             ->with('setting')
-            ->where('type', 0)
+            ->where('type', CenterType::Unbranded->value)
             ->orderByDesc('id');
 
         if ($filters->search !== null && $filters->search !== '') {
@@ -137,7 +158,12 @@ class CenterService implements CenterServiceInterface
             $query->where('is_featured', $filters->isFeatured);
         }
 
-        return $query->paginate($filters->perPage);
+        return $query->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 
     /**
@@ -171,8 +197,11 @@ class CenterService implements CenterServiceInterface
         }
 
         if ($filters->search !== null && $filters->search !== '') {
-            // Search targets the stored base string; not locale-aware yet.
-            $query->where('name_translations', 'like', '%'.$filters->search.'%');
+            $query->whereTranslationLike(
+                ['name'],
+                $filters->search,
+                ['en', 'ar']
+            );
         }
 
         if ($filters->createdFrom !== null) {
@@ -207,25 +236,18 @@ class CenterService implements CenterServiceInterface
      */
     private function unbrandedCourseQuery(User $student, Center $center): Builder
     {
-        if ((int) $center->type !== Center::TYPE_UNBRANDED) {
+        if ($center->type !== CenterType::Unbranded) {
             $this->notFound();
         }
 
         return Course::query()
             ->where('center_id', $center->id)
-            ->where('status', Course::STATUS_PUBLISHED)
-            ->where('is_published', true)
+            ->published()
             ->with(['center', 'category', 'instructors'])
-            ->withExists([
-                'enrollments as is_enrolled' => function ($query) use ($student): void {
-                    $query->where('user_id', $student->id)
-                        ->where('status', Enrollment::STATUS_ACTIVE)
-                        ->whereNull('deleted_at');
-                },
-            ])
+            ->withEnrollmentMeta($student)
             ->whereDoesntHave('videos', function ($query): void {
                 $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
-                    ->orWhere('lifecycle_status', '!=', Video::LIFECYCLE_READY)
+                    ->orWhere('lifecycle_status', '!=', VideoLifecycleStatus::Ready->value)
                     ->orWhere(function ($query): void {
                         $query->whereNotNull('upload_session_id')
                             ->whereHas('uploadSession', function ($query): void {

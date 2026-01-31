@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Enrollments\ListEnrollmentsRequest;
 use App\Http\Requests\Admin\Enrollments\StoreEnrollmentRequest;
 use App\Http\Requests\Admin\Enrollments\UpdateEnrollmentStatusRequest;
 use App\Http\Resources\Admin\EnrollmentResource;
@@ -21,26 +22,17 @@ class EnrollmentController extends Controller
         private readonly EnrollmentServiceInterface $enrollmentService
     ) {}
 
-    public function index(): JsonResponse
+    public function index(ListEnrollmentsRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();
-
-        $filters = [
-            'center_id' => request()->integer('center_id') ?: null,
-            'course_id' => request()->integer('course_id') ?: null,
-            'user_id' => request()->integer('user_id') ?: null,
-            'status' => request()->string('status')->toString() ?: null,
-        ];
-
-        $perPage = min(request()->integer('per_page', 15), 100);
-
-        $enrollments = $this->enrollmentService->paginateForAdmin($admin, $filters, $perPage);
+        $filters = $request->filters();
+        $enrollments = $this->enrollmentService->paginateForAdmin($admin, $filters);
 
         return response()->json([
             'success' => true,
             'data' => EnrollmentResource::collection($enrollments),
             'meta' => [
-                'current_page' => $enrollments->currentPage(),
+                'page' => $enrollments->currentPage(),
                 'per_page' => $enrollments->perPage(),
                 'total' => $enrollments->total(),
                 'last_page' => $enrollments->lastPage(),

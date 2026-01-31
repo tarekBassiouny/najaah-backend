@@ -4,6 +4,7 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\Section;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\CourseStructureService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -12,7 +13,7 @@ use Tests\TestCase;
 uses(TestCase::class, DatabaseTransactions::class)->group('course', 'services', 'content', 'admin');
 
 it('adds section to course', function (): void {
-    $service = new CourseStructureService(new CenterScopeService);
+    $service = new CourseStructureService(new CenterScopeService, new AuditLogService);
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
     $actor = User::factory()->create(['center_id' => $course->center_id]);
@@ -24,7 +25,7 @@ it('adds section to course', function (): void {
 });
 
 it('reorders sections', function (): void {
-    $service = new CourseStructureService(new CenterScopeService);
+    $service = new CourseStructureService(new CenterScopeService, new AuditLogService);
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
     $actor = User::factory()->create(['center_id' => $course->center_id]);
@@ -39,7 +40,7 @@ it('reorders sections', function (): void {
 });
 
 it('toggles visibility', function (): void {
-    $service = new CourseStructureService(new CenterScopeService);
+    $service = new CourseStructureService(new CenterScopeService, new AuditLogService);
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
     $section = Section::factory()->create(['course_id' => $course->id, 'visible' => true]);

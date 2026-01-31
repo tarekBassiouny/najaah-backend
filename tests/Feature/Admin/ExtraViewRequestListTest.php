@@ -80,7 +80,7 @@ it('applies filters and pagination', function (): void {
         'created_at' => now()->subDays(10),
     ]);
 
-    $response = $this->actingAs($super, 'admin')->getJson('/api/v1/admin/extra-view-requests?status='.ExtraViewRequest::STATUS_APPROVED.'&user_id='.$user->id.'&date_from='.now()->subDays(3)->toDateString().'&per_page=1', $this->adminHeaders());
+    $response = $this->actingAs($super, 'admin')->getJson('/api/v1/admin/extra-view-requests?status='.ExtraViewRequest::STATUS_APPROVED->value.'&user_id='.$user->id.'&date_from='.now()->subDays(3)->toDateString().'&per_page=1', $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')

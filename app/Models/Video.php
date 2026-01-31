@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\MediaSourceType;
+use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
+use App\Models\Concerns\HasTranslatableSearch;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CourseVideo;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,13 +24,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $center_id
  * @property array<string, string> $title_translations
  * @property array<string, string>|null $description_translations
- * @property int $source_type
+ * @property MediaSourceType $source_type
  * @property string $source_provider
  * @property int|null $library_id
  * @property string|null $source_id
  * @property string|null $source_url
  * @property int|null $duration_seconds
- * @property int $lifecycle_status
+ * @property VideoLifecycleStatus $lifecycle_status
  * @property array<string, mixed>|null $tags
  * @property int $created_by
  * @property int|null $upload_session_id
@@ -45,13 +48,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Video extends Model
 {
-    public const LIFECYCLE_PROCESSING = 1;
+    public const LIFECYCLE_PROCESSING = VideoLifecycleStatus::Processing;
 
-    public const LIFECYCLE_READY = 2;
+    public const LIFECYCLE_READY = VideoLifecycleStatus::Ready;
 
     /** @use HasFactory<\Database\Factories\VideoFactory> */
     use HasFactory;
 
+    use HasTranslatableSearch;
     use HasTranslations;
     use SoftDeletes;
 
@@ -83,8 +87,8 @@ class Video extends Model
         'description_translations' => 'array',
         'tags' => 'array',
         'duration_seconds' => 'integer',
-        'lifecycle_status' => 'integer',
-        'source_type' => 'integer',
+        'lifecycle_status' => VideoLifecycleStatus::class,
+        'source_type' => MediaSourceType::class,
         'encoding_status' => VideoUploadStatus::class,
         'is_demo' => 'boolean',
         'library_id' => 'integer',

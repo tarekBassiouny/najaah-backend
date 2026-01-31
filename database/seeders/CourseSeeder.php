@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Center;
 use App\Models\Course;
+use App\Models\CourseSetting;
 use Illuminate\Database\Seeder;
 
 class CourseSeeder extends Seeder
@@ -16,7 +17,7 @@ class CourseSeeder extends Seeder
                 ->create(['center_id' => $center->id])
                 ->each(function (Course $course): void {
                     // For each course, attach settings
-                    \App\Models\CourseSetting::factory()->create([
+                    CourseSetting::factory()->create([
                         'course_id' => $course->id,
                     ]);
                 });

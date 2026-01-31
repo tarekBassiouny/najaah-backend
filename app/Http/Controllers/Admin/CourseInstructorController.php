@@ -34,7 +34,7 @@ class CourseInstructorController extends Controller
         $instructor = Instructor::query()->findOrFail((int) $data['instructor_id']);
         $this->centerScopeService->assertAdminSameCenter($admin, $instructor);
 
-        $this->courseInstructorService->assign($course, $instructor, $data['role'] ?? null);
+        $this->courseInstructorService->assign($course, $instructor, $data['role'] ?? null, $admin);
         $updated = $course->load(['instructors', 'primaryInstructor']);
 
         return response()->json([
@@ -52,7 +52,7 @@ class CourseInstructorController extends Controller
         $this->centerScopeService->assertAdminSameCenter($admin, $course);
         $this->centerScopeService->assertAdminSameCenter($admin, $instructor);
 
-        $this->courseInstructorService->remove($course, $instructor);
+        $this->courseInstructorService->remove($course, $instructor, $admin);
         $updated = $course->load(['instructors', 'primaryInstructor']);
 
         return response()->json([

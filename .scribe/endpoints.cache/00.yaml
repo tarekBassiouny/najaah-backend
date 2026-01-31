@@ -585,7 +585,7 @@ endpoints:
       is_featured:
         custom: []
         name: is_featured
-        description: ''
+        description: 'Filter by featured flag.'
         required: false
         example: false
         type: boolean
@@ -1151,6 +1151,28 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       category_id:
         custom: []
         name: category_id
@@ -1163,6 +1185,8 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
+      per_page: 15
+      page: 1
       category_id: 3
     bodyParameters: []
     cleanBodyParameters: []
@@ -3018,8 +3042,80 @@ endpoints:
       X-Api-Key: '@{{api_key}}'
     urlParameters: []
     cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
+    queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter enrollments by center ID.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Filter enrollments by course ID.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user_id:
+        custom: []
+        name: user_id
+        description: 'Filter enrollments by user ID.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      status:
+        custom: []
+        name: status
+        description: 'Filter by enrollment status.'
+        required: false
+        example: ACTIVE
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      per_page: 15
+      page: 1
+      center_id: 2
+      course_id: 10
+      user_id: 5
+      status: ACTIVE
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -9141,6 +9237,28 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 20
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       center_id:
         custom: []
         name: center_id
@@ -9218,29 +9336,9 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      per_page:
-        custom: []
-        name: per_page
-        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
-        required: false
-        example: 20
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      page:
-        custom: []
-        name: page
-        description: 'Page number to retrieve. Must be at least 1.'
-        required: false
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
     cleanQueryParameters:
+      per_page: 20
+      page: 1
       center_id: 2
       entity_type: App\Models\Course
       entity_id: 12
@@ -9248,8 +9346,6 @@ endpoints:
       user_id: 3
       date_from: '2025-01-01'
       date_to: '2025-12-31'
-      per_page: 20
-      page: 1
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -9651,14 +9747,14 @@ endpoints:
         name: deviceChangeRequest_id
         description: 'The ID of the deviceChangeRequest.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      deviceChangeRequest_id: 16
+      deviceChangeRequest_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -9732,14 +9828,14 @@ endpoints:
         name: deviceChangeRequest_id
         description: 'The ID of the deviceChangeRequest.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      deviceChangeRequest_id: 16
+      deviceChangeRequest_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -9789,14 +9885,14 @@ endpoints:
         name: deviceChangeRequest_id
         description: 'The ID of the deviceChangeRequest.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      deviceChangeRequest_id: 16
+      deviceChangeRequest_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -9911,8 +10007,20 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
     cleanQueryParameters:
       per_page: 15
+      page: 1
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -10392,8 +10500,20 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
     cleanQueryParameters:
       per_page: 15
+      page: 1
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
