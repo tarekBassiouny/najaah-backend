@@ -69,4 +69,21 @@ class ListCategoriesRequest extends AdminListRequest
             parentId: FilterInput::intOrNull($data, 'parent_id')
         );
     }
+
+    protected function prepareForValidation(): void
+    {
+        $rawIsActive = $this->input('is_active');
+        if (! is_string($rawIsActive)) {
+            return;
+        }
+
+        $normalizedIsActive = filter_var($rawIsActive, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($normalizedIsActive === null) {
+            return;
+        }
+
+        $this->merge([
+            'is_active' => $normalizedIsActive,
+        ]);
+    }
 }

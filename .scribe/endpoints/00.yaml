@@ -10299,6 +10299,489 @@ endpoints:
     custom: []
     httpMethods:
       - GET
+    uri: api/v1/admin/agents/executions
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List agent executions.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter by center ID.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      agent_type:
+        custom: []
+        name: agent_type
+        description: 'Filter by agent type (content_publishing, enrollment, etc.).'
+        required: false
+        example: content_publishing
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      status:
+        custom: []
+        name: status
+        description: 'Filter by status (0=pending, 1=running, 2=completed, 3=failed).'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      initiated_by:
+        custom: []
+        name: initiated_by
+        description: 'Filter by initiator user ID.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      per_page: 15
+      page: 1
+      center_id: 2
+      agent_type: content_publishing
+      status: 2
+      initiated_by: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/admin/agents/executions/{agentExecution_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Show a single agent execution.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      agentExecution_id:
+        custom: []
+        name: agentExecution_id
+        description: 'The ID of the agentExecution.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      agentExecution_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/admin/agents/available
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get available agents for the current user.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/agents/execute
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Execute an agent.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      agent_type:
+        custom: []
+        name: agent_type
+        description: 'The type of agent to execute (content_publishing, enrollment, etc.).'
+        required: false
+        example: content_publishing
+        type: string
+        enumValues:
+          - content_publishing
+          - enrollment
+          - analytics
+          - notification
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context:
+        custom: []
+        name: context
+        description: 'Agent-specific context parameters.'
+        required: false
+        example:
+          course_id: 1
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.course_id:
+        custom: []
+        name: context.course_id
+        description: 'The <code>id</code> of an existing record in the courses table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.student_ids:
+        custom: []
+        name: context.student_ids
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      agent_type: content_publishing
+      center_id: 1
+      context:
+        course_id: 1
+        student_ids:
+          - 16
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/agents/content-publishing/execute
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Execute content publishing agent.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      agent_type:
+        custom: []
+        name: agent_type
+        description: 'The type of agent to execute (content_publishing, enrollment, etc.).'
+        required: false
+        example: content_publishing
+        type: string
+        enumValues:
+          - content_publishing
+          - enrollment
+          - analytics
+          - notification
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context:
+        custom: []
+        name: context
+        description: 'Agent-specific context parameters.'
+        required: false
+        example:
+          course_id: 1
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.course_id:
+        custom: []
+        name: context.course_id
+        description: 'The <code>id</code> of an existing record in the courses table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.student_ids:
+        custom: []
+        name: context.student_ids
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      agent_type: content_publishing
+      center_id: 1
+      context:
+        course_id: 1
+        student_ids:
+          - 16
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/agents/enrollment/bulk
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Execute bulk enrollment agent.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      agent_type:
+        custom: []
+        name: agent_type
+        description: 'The type of agent to execute (content_publishing, enrollment, etc.).'
+        required: false
+        example: content_publishing
+        type: string
+        enumValues:
+          - content_publishing
+          - enrollment
+          - analytics
+          - notification
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context:
+        custom: []
+        name: context
+        description: 'Agent-specific context parameters.'
+        required: false
+        example:
+          course_id: 1
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.course_id:
+        custom: []
+        name: context.course_id
+        description: 'The <code>id</code> of an existing record in the courses table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.student_ids:
+        custom: []
+        name: context.student_ids
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      agent_type: content_publishing
+      center_id: 1
+      context:
+        course_id: 1
+        student_ids:
+          - 16
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
     uri: api/v1/admin/roles
     metadata:
       custom: []

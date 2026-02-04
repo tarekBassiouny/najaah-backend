@@ -8,6 +8,12 @@ final class AuditActions
 {
     public const ADMIN_USER_CREATED = 'admin_user_created';
 
+    public const AGENT_EXECUTED = 'agent_executed';
+
+    public const AGENT_FAILED = 'agent_failed';
+
+    public const AGENT_STARTED = 'agent_started';
+
     public const ADMIN_USER_DELETED = 'admin_user_deleted';
 
     public const ADMIN_USER_ROLES_SYNCED = 'admin_user_roles_synced';
