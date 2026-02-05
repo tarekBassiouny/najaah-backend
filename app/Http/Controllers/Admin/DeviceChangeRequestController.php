@@ -86,7 +86,7 @@ class DeviceChangeRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Device change request approved',
-            'data' => new DeviceChangeRequestResource($approved),
+            'data' => new DeviceChangeRequestResource($approved->loadMissing(['user', 'center', 'decider'])),
         ]);
     }
 
@@ -110,7 +110,7 @@ class DeviceChangeRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Device change request rejected',
-            'data' => new DeviceChangeRequestResource($rejected),
+            'data' => new DeviceChangeRequestResource($rejected->loadMissing(['user', 'center', 'decider'])),
         ]);
     }
 
@@ -144,7 +144,7 @@ class DeviceChangeRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Device change request created for student',
-            'data' => new DeviceChangeRequestResource($created),
+            'data' => new DeviceChangeRequestResource($created->loadMissing(['user', 'center', 'decider'])),
         ], 201);
     }
 
@@ -168,7 +168,7 @@ class DeviceChangeRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Device change request pre-approved',
-            'data' => new DeviceChangeRequestResource($preApproved),
+            'data' => new DeviceChangeRequestResource($preApproved->loadMissing(['user', 'center', 'decider'])),
         ]);
     }
 }

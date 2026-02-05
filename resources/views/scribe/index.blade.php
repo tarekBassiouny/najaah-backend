@@ -502,7 +502,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: February 4, 2026</li>
+        <li>Last updated: February 5, 2026</li>
     </ul>
 </div>
 
@@ -7692,7 +7692,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
-    --form "logo=@/tmp/phputtogosvjekmaoz1AkM" </code></pre></div>
+    --form "logo=@/tmp/phpvgldicvdgi317ltb49Y" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7839,7 +7839,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phputtogosvjekmaoz1AkM</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpvgldicvdgi317ltb49Y</code></p>
         </div>
         </form>
 
@@ -17794,7 +17794,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/php3ro3tvqrdcbu4MiSd4T" </code></pre></div>
+    --form "avatar=@/tmp/phpa5k917th339247XLwYK" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -18001,7 +18001,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php3ro3tvqrdcbu4MiSd4T</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpa5k917th339247XLwYK</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -18236,7 +18236,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpv0q42r816rbh3mAJCQx" </code></pre></div>
+    --form "avatar=@/tmp/phphfjf4tg3tjgubZXbPy0" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -18459,7 +18459,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpv0q42r816rbh3mAJCQx</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phphfjf4tg3tjgubZXbPy0</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;

@@ -68,7 +68,7 @@ class EnrollmentController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Enrollment created successfully',
-            'data' => new EnrollmentResource($enrollment->load(['course'])),
+            'data' => new EnrollmentResource($enrollment->load(['course', 'user', 'center'])),
         ], 201);
     }
 
@@ -84,7 +84,7 @@ class EnrollmentController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Enrollment updated successfully',
-            'data' => new EnrollmentResource($updated->load(['course'])),
+            'data' => new EnrollmentResource($updated->load(['course', 'user', 'center'])),
         ]);
     }
 

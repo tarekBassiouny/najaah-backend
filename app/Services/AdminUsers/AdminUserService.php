@@ -24,7 +24,7 @@ class AdminUserService
     {
         return User::query()
             ->where('is_student', false)
-            ->with('roles')
+            ->with(['roles.permissions'])
             ->orderByDesc('created_at')
             ->paginate(
                 $filters->perPage,

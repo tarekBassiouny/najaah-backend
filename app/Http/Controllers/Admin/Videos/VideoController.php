@@ -56,7 +56,7 @@ class VideoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new VideoResource($video),
+            'data' => new VideoResource($video->loadMissing(['center', 'creator'])),
         ], 201);
     }
 
@@ -67,7 +67,7 @@ class VideoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new VideoResource($video->load(['uploadSession', 'creator'])),
+            'data' => new VideoResource($video->load(['center', 'uploadSession', 'creator'])),
         ]);
     }
 
@@ -82,7 +82,7 @@ class VideoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new VideoResource($updated),
+            'data' => new VideoResource($updated->loadMissing(['center', 'creator'])),
         ]);
     }
 

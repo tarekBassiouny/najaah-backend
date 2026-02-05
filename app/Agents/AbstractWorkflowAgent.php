@@ -59,24 +59,24 @@ abstract class AbstractWorkflowAgent implements WorkflowAgentInterface
 
                 return $result;
             });
-        } catch (\Throwable $e) {
+        } catch (\Throwable $throwable) {
             // Attempt rollback
             $completedSteps = $execution->steps_completed ?? [];
             $this->rollback($execution, $target, $completedSteps, $context);
 
             $result = [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => $throwable->getMessage(),
                 'steps_completed' => $completedSteps,
             ];
 
             $execution->markAsFailed($result);
 
             $this->logExecution($execution, $actor, $target, AuditActions::AGENT_FAILED, [
-                'error' => $e->getMessage(),
+                'error' => $throwable->getMessage(),
             ]);
 
-            throw $e;
+            throw $throwable;
         }
     }
 

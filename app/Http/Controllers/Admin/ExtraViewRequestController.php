@@ -79,7 +79,7 @@ class ExtraViewRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Request approved successfully',
-            'data' => new ExtraViewRequestResource($approved),
+            'data' => new ExtraViewRequestResource($approved->loadMissing(['user', 'video', 'course', 'center', 'decider'])),
         ]);
     }
 
@@ -107,7 +107,7 @@ class ExtraViewRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Request rejected successfully',
-            'data' => new ExtraViewRequestResource($rejected),
+            'data' => new ExtraViewRequestResource($rejected->loadMissing(['user', 'video', 'course', 'center', 'decider'])),
         ]);
     }
 }

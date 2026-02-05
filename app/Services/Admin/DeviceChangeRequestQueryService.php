@@ -23,7 +23,7 @@ class DeviceChangeRequestQueryService
      */
     public function build(User $admin, DeviceChangeRequestFilters $filters): Builder
     {
-        $query = DeviceChangeRequest::query();
+        $query = DeviceChangeRequest::query()->with(['user', 'center', 'decider']);
 
         if ($filters->status !== null) {
             $query->where('status', $filters->status);

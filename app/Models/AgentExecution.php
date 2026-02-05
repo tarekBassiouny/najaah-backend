@@ -35,7 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class AgentExecution extends Model
 {
-    /** @use HasFactory<\Database\Factories\AgentExecutionFactory> */
+    /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory<self>> */
     use HasFactory;
 
     use SoftDeletes;

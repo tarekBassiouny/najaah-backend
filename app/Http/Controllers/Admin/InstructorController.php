@@ -80,7 +80,7 @@ class InstructorController extends Controller
             $data['center_id'] = (int) $admin->center_id;
         }
 
-        $instructor = $this->instructorService->create($data);
+        $instructor = $this->instructorService->create($data, $admin);
 
         return response()->json([
             'success' => true,
@@ -134,7 +134,7 @@ class InstructorController extends Controller
             $data['center_id'] = $instructor->center_id;
         }
 
-        $updated = $this->instructorService->update($instructor, $data);
+        $updated = $this->instructorService->update($instructor, $data, $admin);
 
         return response()->json([
             'success' => true,
@@ -152,7 +152,7 @@ class InstructorController extends Controller
             $this->centerScopeService->assertAdminSameCenter($admin, $instructor);
         }
 
-        $this->instructorService->delete($instructor);
+        $this->instructorService->delete($instructor, $admin instanceof User ? $admin : null);
 
         return response()->json([
             'success' => true,

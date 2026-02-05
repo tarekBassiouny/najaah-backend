@@ -54,13 +54,22 @@ class StudentController extends Controller
 
     public function store(StoreStudentRequest $request): JsonResponse
     {
+        /** @var User|null $admin */
+        $admin = $request->user();
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $student = $this->studentService->create($data);
+        $student = $this->studentService->create($data, $admin instanceof User ? $admin : null);
 
         return response()->json([
             'success' => true,
-            'data' => new StudentResource($student),
+            'data' => new StudentResource($student->loadMissing([
+                'center',
+                'devices' => static function ($query): void {
+                    $query->active()
+                        ->orderByDesc('last_used_at')
+                        ->orderByDesc('id');
+                },
+            ])),
         ], 201);
     }
 
@@ -85,7 +94,14 @@ class StudentController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new StudentResource($student),
+            'data' => new StudentResource($student->loadMissing([
+                'center',
+                'devices' => static function ($query): void {
+                    $query->active()
+                        ->orderByDesc('last_used_at')
+                        ->orderByDesc('id');
+                },
+            ])),
         ]);
     }
 

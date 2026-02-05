@@ -88,12 +88,7 @@ final readonly class AgentExecutionService
         $execution = $this->createExecution($agentType, $actor, $centerId, $context);
 
         // Execute the agent
-        try {
-            return $agent->execute($execution, $actor, $context);
-        } catch (\Throwable $e) {
-            // Execution handles its own failure marking
-            throw $e;
-        }
+        return $agent->execute($execution, $actor, $context);
     }
 
     /**
@@ -106,6 +101,8 @@ final readonly class AgentExecutionService
 
     /**
      * Get paginated list of executions for admin.
+     *
+     * @return LengthAwarePaginator<AgentExecution>
      */
     public function paginateForAdmin(User $admin, AgentExecutionFilters $filters): LengthAwarePaginator
     {
@@ -184,7 +181,7 @@ final readonly class AgentExecutionService
     {
         if (! isset($this->agents[$agentType->value])) {
             throw ValidationException::withMessages([
-                'agent_type' => ["Agent type '{$agentType->value}' is not registered."],
+                'agent_type' => [sprintf("Agent type '%s' is not registered.", $agentType->value)],
             ]);
         }
 

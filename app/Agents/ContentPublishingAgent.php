@@ -136,7 +136,7 @@ final class ContentPublishingAgent extends AbstractWorkflowAgent
             'verify_center' => $this->verifyCenter($course, $execution),
             'publish_course' => $this->publishCourse($course),
             'create_audit_log' => $this->createAuditLog($execution, $course),
-            default => throw new \InvalidArgumentException("Unknown step: {$step}"),
+            default => throw new \InvalidArgumentException('Unknown step: '.$step),
         };
     }
 
@@ -190,9 +190,8 @@ final class ContentPublishingAgent extends AbstractWorkflowAgent
             ];
         }
 
-        $notReady = $videos->filter(function ($video) {
-            return $video->lifecycle_status !== VideoLifecycleStatus::Ready
-                && $video->lifecycle_status !== VideoLifecycleStatus::Published;
+        $notReady = $videos->filter(function ($video): bool {
+            return $video->lifecycle_status !== VideoLifecycleStatus::Ready;
         });
 
         if ($notReady->isNotEmpty()) {
@@ -224,7 +223,7 @@ final class ContentPublishingAgent extends AbstractWorkflowAgent
         }
 
         // Check all PDFs have valid file paths
-        $invalid = $pdfs->filter(function ($pdf) {
+        $invalid = $pdfs->filter(function ($pdf): bool {
             return empty($pdf->file_path);
         });
 

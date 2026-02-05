@@ -12,8 +12,10 @@ use App\Http\Requests\Admin\Categories\UpdateCategoryRequest;
 use App\Http\Resources\Admin\Categories\CategoryResource;
 use App\Models\Category;
 use App\Models\Center;
+use App\Services\Audit\AuditLogService;
 use App\Services\Categories\AdminCategoryQueryService;
 use App\Services\Centers\CenterScopeService;
+use App\Support\AuditActions;
 use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
@@ -22,7 +24,8 @@ class CategoryController extends Controller
 
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly AdminCategoryQueryService $queryService
+        private readonly AdminCategoryQueryService $queryService,
+        private readonly AuditLogService $auditLogService
     ) {}
 
     public function index(ListCategoriesRequest $request, Center $center): JsonResponse
@@ -60,6 +63,7 @@ class CategoryController extends Controller
         $data['center_id'] = $center->id;
 
         $category = Category::create($data);
+        $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_CREATED);
 
         return response()->json([
             'success' => true,
@@ -95,6 +99,7 @@ class CategoryController extends Controller
         }
 
         $category->update($data);
+        $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_UPDATED);
 
         return response()->json([
             'success' => true,
@@ -108,6 +113,7 @@ class CategoryController extends Controller
         $this->centerScopeService->assertAdminSameCenter($admin, $category);
         $this->assertCategoryBelongsToCenter($center, $category);
 
+        $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_DELETED);
         $category->delete();
 
         return response()->json([

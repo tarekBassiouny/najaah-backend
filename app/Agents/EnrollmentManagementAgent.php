@@ -12,7 +12,6 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
-use App\Services\Centers\CenterScopeService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Support\AuditActions;
 
@@ -31,7 +30,6 @@ use App\Support\AuditActions;
 final class EnrollmentManagementAgent implements AgentInterface
 {
     public function __construct(
-        private readonly CenterScopeService $centerScopeService,
         private readonly AuditLogService $auditLogService,
         private readonly EnrollmentServiceInterface $enrollmentService
     ) {}
@@ -157,13 +155,13 @@ final class EnrollmentManagementAgent implements AgentInterface
             $execution->markAsCompleted($results);
 
             return $results;
-        } catch (\Throwable $e) {
+        } catch (\Throwable $throwable) {
             $results['success'] = false;
-            $results['error'] = $e->getMessage();
+            $results['error'] = $throwable->getMessage();
 
             $execution->markAsFailed($results);
 
-            throw $e;
+            throw $throwable;
         }
     }
 
@@ -252,7 +250,7 @@ final class EnrollmentManagementAgent implements AgentInterface
 
         if ($limit !== null && ($currentCount + $newEnrollmentsCount) > $limit) {
             throw new \RuntimeException(
-                "Enrollment limit exceeded. Limit: {$limit}, Current: {$currentCount}, Requested: {$newEnrollmentsCount}"
+                sprintf('Enrollment limit exceeded. Limit: %s, Current: %s, Requested: %d', $limit, $currentCount, $newEnrollmentsCount)
             );
         }
 
@@ -289,7 +287,7 @@ final class EnrollmentManagementAgent implements AgentInterface
                 if (str_contains($message, 'already enrolled')) {
                     $skippedCount++;
                 } else {
-                    $errors[] = "Student {$student->id}: {$message}";
+                    $errors[] = sprintf('Student %d: %s', $student->id, $message);
                 }
             }
         }

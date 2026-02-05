@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Courses;
 
-use App\Http\Resources\Admin\PdfResource;
+use App\Http\Resources\Admin\Summary\PdfSummaryResource;
 use App\Models\Pivots\CoursePdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -24,10 +24,9 @@ class CoursePdfResource extends JsonResource
 
         return [
             'id' => $pivot->id,
-            'pdf_id' => $pivot->pdf_id,
+            'pdf' => new PdfSummaryResource($this->whenLoaded('pdf')),
             'order_index' => $pivot->order_index,
             'visible' => $pivot->visible,
-            'pdf' => new PdfResource($this->whenLoaded('pdf')),
         ];
     }
 }

@@ -18,6 +18,8 @@ interface EnrollmentServiceInterface
 
     public function remove(Enrollment $enrollment, ?User $actor = null): void;
 
+    public function sendEnrollmentNotification(Enrollment $enrollment): bool;
+
     /** @return LengthAwarePaginator<Enrollment> */
     public function paginateForStudent(User $student, int $perPage = 15): LengthAwarePaginator;
 

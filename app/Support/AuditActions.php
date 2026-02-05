@@ -32,6 +32,16 @@ final class AuditActions
 
     public const CENTER_SETTINGS_UPDATED = 'center_settings_updated';
 
+    public const CENTER_LOGO_UPDATED = 'center_logo_updated';
+
+    public const CENTER_ONBOARDING_RETRIED = 'center_onboarding_retried';
+
+    public const CATEGORY_CREATED = 'category_created';
+
+    public const CATEGORY_UPDATED = 'category_updated';
+
+    public const CATEGORY_DELETED = 'category_deleted';
+
     public const COURSE_CREATED = 'course_created';
 
     public const COURSE_DELETED = 'course_deleted';
@@ -107,6 +117,18 @@ final class AuditActions
     public const ROLE_PERMISSIONS_SYNCED = 'role_permissions_synced';
 
     public const ROLE_UPDATED = 'role_updated';
+
+    public const STUDENT_CREATED = 'student_created';
+
+    public const STUDENT_UPDATED = 'student_updated';
+
+    public const STUDENT_DELETED = 'student_deleted';
+
+    public const INSTRUCTOR_CREATED = 'instructor_created';
+
+    public const INSTRUCTOR_UPDATED = 'instructor_updated';
+
+    public const INSTRUCTOR_DELETED = 'instructor_deleted';
 
     public const SECTION_CREATED = 'section_created';
 

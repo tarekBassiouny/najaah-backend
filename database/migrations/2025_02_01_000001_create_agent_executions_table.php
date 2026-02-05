@@ -12,10 +12,7 @@ return new class extends Migration
     {
         Schema::create('agent_executions', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('center_id')
-                ->constrained('centers')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('center_id');
             $table->string('agent_type', 50); // content_publishing, enrollment, analytics, notification
             $table->string('target_type', 100)->nullable(); // Polymorphic: App\Models\Course, etc.
             $table->unsignedBigInteger('target_id')->nullable(); // Polymorphic ID
@@ -25,10 +22,7 @@ return new class extends Migration
             $table->json('steps_completed')->nullable(); // Array of completed step names
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
-            $table->foreignId('initiated_by')
-                ->constrained('users')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('initiated_by');
             $table->timestamps();
             $table->softDeletes();
 

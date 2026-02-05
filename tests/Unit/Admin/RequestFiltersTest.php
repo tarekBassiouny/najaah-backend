@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Requests\Admin\Centers\ListCentersRequest;
 use App\Http\Requests\Admin\Categories\ListCategoriesRequest;
+use App\Http\Requests\Admin\Centers\ListCentersRequest;
 use App\Http\Requests\Admin\Courses\ListCoursesRequest;
 use App\Http\Requests\Admin\Enrollments\ListEnrollmentsRequest;
 use Tests\TestCase;

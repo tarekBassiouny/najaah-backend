@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\ExtraViews;
 
+use App\Http\Resources\Admin\Summary\CenterSummaryResource;
+use App\Http\Resources\Admin\Summary\CourseSummaryResource;
+use App\Http\Resources\Admin\Summary\UserSummaryResource;
+use App\Http\Resources\Admin\Summary\VideoSummaryResource;
 use App\Models\ExtraViewRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 /**
  * @mixin ExtraViewRequest
@@ -23,15 +28,18 @@ class ExtraViewRequestResource extends JsonResource
 
         return [
             'id' => $req->id,
-            'user_id' => $req->user_id,
-            'video_id' => $req->video_id,
-            'course_id' => $req->course_id,
+            'user' => new UserSummaryResource($this->whenLoaded('user')),
+            'video' => new VideoSummaryResource($this->whenLoaded('video')),
+            'course' => new CourseSummaryResource($this->whenLoaded('course')),
+            'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'center_id' => $req->center_id,
-            'status' => $req->status,
+            'status' => $req->status->value,
+            'status_key' => Str::snake($req->status->name),
+            'status_label' => $req->status->name,
             'reason' => $req->reason,
             'granted_views' => $req->granted_views,
             'decision_reason' => $req->decision_reason,
-            'decided_by' => $req->decided_by,
+            'decider' => new UserSummaryResource($this->whenLoaded('decider')),
             'decided_at' => $req->decided_at,
             'created_at' => $req->created_at,
         ];
