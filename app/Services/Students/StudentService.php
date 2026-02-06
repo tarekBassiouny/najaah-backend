@@ -98,6 +98,65 @@ class StudentService
         return $user->refresh() ?? $user;
     }
 
+    /**
+     * @param  array<int, int|string>  $studentIds
+     * @return array{
+     *   updated: array<int, User>,
+     *   skipped: array<int, int|string>,
+     *   failed: array<int, array{student_id: int|string, reason: string}>
+     * }
+     */
+    public function bulkUpdateStatus(User $admin, int $status, array $studentIds): array
+    {
+        $uniqueIds = array_values(array_unique(array_map('intval', $studentIds)));
+        $students = User::query()
+            ->whereIn('id', $uniqueIds)
+            ->get()
+            ->keyBy('id');
+
+        $results = [
+            'updated' => [],
+            'skipped' => [],
+            'failed' => [],
+        ];
+
+        foreach ($uniqueIds as $studentId) {
+            $student = $students->get($studentId);
+
+            if (! $student instanceof User) {
+                $results['failed'][] = [
+                    'student_id' => $studentId,
+                    'reason' => 'Student not found.',
+                ];
+
+                continue;
+            }
+
+            try {
+                if ((int) $student->status === $status) {
+                    $results['skipped'][] = $studentId;
+
+                    continue;
+                }
+
+                $updated = $this->update($student, ['status' => $status], $admin);
+                $results['updated'][] = $updated;
+            } catch (\App\Exceptions\DomainException $exception) {
+                $results['failed'][] = [
+                    'student_id' => $studentId,
+                    'reason' => $exception->getMessage(),
+                ];
+            } catch (\Throwable $exception) {
+                $results['failed'][] = [
+                    'student_id' => $studentId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return $results;
+    }
+
     public function delete(User $user, ?User $actor = null): void
     {
         if (! $user->is_student) {

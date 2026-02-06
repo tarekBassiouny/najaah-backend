@@ -28,6 +28,9 @@ class CategoryController extends Controller
         private readonly AuditLogService $auditLogService
     ) {}
 
+    /**
+     * List categories.
+     */
     public function index(ListCategoriesRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -46,6 +49,9 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * Create a category.
+     */
     public function store(StoreCategoryRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -71,6 +77,9 @@ class CategoryController extends Controller
         ], 201);
     }
 
+    /**
+     * Show a category.
+     */
     public function show(Center $center, Category $category): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -83,6 +92,9 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * Update a category.
+     */
     public function update(UpdateCategoryRequest $request, Center $center, Category $category): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -107,6 +119,9 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * Delete a category.
+     */
     public function destroy(Center $center, Category $category): JsonResponse
     {
         $admin = $this->requireAdmin();

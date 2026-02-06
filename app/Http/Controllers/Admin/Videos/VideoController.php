@@ -26,6 +26,9 @@ class VideoController extends Controller
         private readonly AdminVideoQueryServiceInterface $queryService
     ) {}
 
+    /**
+     * List videos.
+     */
     public function index(ListVideosRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -46,6 +49,9 @@ class VideoController extends Controller
         ]);
     }
 
+    /**
+     * Create a video.
+     */
     public function store(StoreVideoRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -60,6 +66,9 @@ class VideoController extends Controller
         ], 201);
     }
 
+    /**
+     * Show a video.
+     */
     public function show(Center $center, Video $video): JsonResponse
     {
         $this->requireAdmin();
@@ -71,6 +80,9 @@ class VideoController extends Controller
         ]);
     }
 
+    /**
+     * Update a video.
+     */
     public function update(UpdateVideoRequest $request, Center $center, Video $video): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -86,6 +98,9 @@ class VideoController extends Controller
         ]);
     }
 
+    /**
+     * Delete a video.
+     */
     public function destroy(Center $center, Video $video): JsonResponse
     {
         $admin = $this->requireAdmin();

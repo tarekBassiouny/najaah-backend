@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Password;
 
 class AdminPasswordResetController extends Controller
 {
+    /**
+     * Reset an admin password.
+     */
     public function reset(AdminPasswordResetRequest $request): JsonResponse
     {
         /** @var array{token:string,email:string,password:string} $data */

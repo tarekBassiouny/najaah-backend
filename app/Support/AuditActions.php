@@ -14,6 +14,10 @@ final class AuditActions
 
     public const AGENT_STARTED = 'agent_started';
 
+    public const ADMIN_LOGIN = 'admin_login';
+
+    public const ADMIN_LOGOUT = 'admin_logout';
+
     public const ADMIN_USER_DELETED = 'admin_user_deleted';
 
     public const ADMIN_USER_ROLES_SYNCED = 'admin_user_roles_synced';
@@ -123,6 +127,10 @@ final class AuditActions
     public const STUDENT_UPDATED = 'student_updated';
 
     public const STUDENT_DELETED = 'student_deleted';
+
+    public const STUDENT_LOGIN = 'student_login';
+
+    public const STUDENT_LOGOUT = 'student_logout';
 
     public const INSTRUCTOR_CREATED = 'instructor_created';
 

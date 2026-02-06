@@ -22,6 +22,8 @@ class RoleController extends Controller
     ) {}
 
     /**
+     * List roles.
+     *
      * @queryParam per_page int Items per page. Example: 15
      */
     public function index(ListRolesRequest $request): JsonResponse
@@ -41,6 +43,9 @@ class RoleController extends Controller
         ]);
     }
 
+    /**
+     * Show a role.
+     */
     public function show(Role $role): JsonResponse
     {
         $role->load('permissions');
@@ -51,6 +56,9 @@ class RoleController extends Controller
         ]);
     }
 
+    /**
+     * Create a role.
+     */
     public function store(StoreRoleRequest $request): JsonResponse
     {
         $admin = $request->user();
@@ -64,6 +72,9 @@ class RoleController extends Controller
         ], 201);
     }
 
+    /**
+     * Update a role.
+     */
     public function update(UpdateRoleRequest $request, Role $role): JsonResponse
     {
         $admin = $request->user();
@@ -77,6 +88,9 @@ class RoleController extends Controller
         ]);
     }
 
+    /**
+     * Delete a role.
+     */
     public function destroy(Role $role): JsonResponse
     {
         $admin = request()->user();
@@ -88,6 +102,9 @@ class RoleController extends Controller
         ], 204);
     }
 
+    /**
+     * Sync role permissions.
+     */
     public function syncPermissions(SyncRolePermissionsRequest $request, Role $role): JsonResponse
     {
         $admin = $request->user();

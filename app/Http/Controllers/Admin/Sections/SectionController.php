@@ -28,6 +28,9 @@ class SectionController extends Controller
         private readonly CenterScopeService $centerScopeService
     ) {}
 
+    /**
+     * List sections.
+     */
     public function index(
         Center $center,
         Course $course
@@ -43,6 +46,9 @@ class SectionController extends Controller
         ]);
     }
 
+    /**
+     * Create a section.
+     */
     public function store(
         StoreSectionRequest $request,
         Center $center,
@@ -61,6 +67,9 @@ class SectionController extends Controller
         ]);
     }
 
+    /**
+     * Show a section.
+     */
     public function show(
         Center $center,
         Course $course,
@@ -78,6 +87,9 @@ class SectionController extends Controller
         ]);
     }
 
+    /**
+     * Update a section.
+     */
     public function update(
         UpdateSectionRequest $request,
         Center $center,
@@ -97,6 +109,9 @@ class SectionController extends Controller
         ]);
     }
 
+    /**
+     * Delete a section.
+     */
     public function destroy(
         Center $center,
         Course $course,
@@ -113,6 +128,9 @@ class SectionController extends Controller
         ], 204);
     }
 
+    /**
+     * Restore a section.
+     */
     public function restore(
         Center $center,
         Course $course,
@@ -130,6 +148,9 @@ class SectionController extends Controller
         ]);
     }
 
+    /**
+     * Reorder sections.
+     */
     public function reorder(
         Center $center,
         Course $course,
@@ -159,6 +180,9 @@ class SectionController extends Controller
         ]);
     }
 
+    /**
+     * Toggle section visibility.
+     */
     public function toggleVisibility(
         Center $center,
         Course $course,

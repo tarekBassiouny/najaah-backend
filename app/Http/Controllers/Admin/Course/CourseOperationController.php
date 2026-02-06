@@ -19,6 +19,9 @@ use Illuminate\Http\JsonResponse;
 
 class CourseOperationController extends Controller
 {
+    /**
+     * Assign a video to a course.
+     */
     public function assignVideo(
         AssignVideoRequest $request,
         Center $center,
@@ -38,6 +41,9 @@ class CourseOperationController extends Controller
         ], 201);
     }
 
+    /**
+     * Remove a video from a course.
+     */
     public function removeVideo(
         Center $center,
         Course $course,
@@ -55,6 +61,9 @@ class CourseOperationController extends Controller
         ]);
     }
 
+    /**
+     * Assign a PDF to a course.
+     */
     public function assignPdf(
         AssignPdfRequest $request,
         Center $center,
@@ -74,6 +83,9 @@ class CourseOperationController extends Controller
         ], 201);
     }
 
+    /**
+     * Remove a PDF from a course.
+     */
     public function removePdf(
         Center $center,
         Course $course,
@@ -91,6 +103,9 @@ class CourseOperationController extends Controller
         ]);
     }
 
+    /**
+     * Publish a course.
+     */
     public function publish(
         Course $course,
         CourseWorkflowServiceInterface $courseWorkflowService
@@ -105,6 +120,9 @@ class CourseOperationController extends Controller
         ]);
     }
 
+    /**
+     * Clone a course.
+     */
     public function cloneCourse(
         CloneCourseRequest $request,
         Course $course,

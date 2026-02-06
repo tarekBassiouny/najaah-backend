@@ -24,6 +24,9 @@ class InstructorController extends Controller
         private readonly CenterScopeService $centerScopeService
     ) {}
 
+    /**
+     * List instructors.
+     */
     public function index(ListInstructorsRequest $request): JsonResponse
     {
         /** @var User|null $admin */
@@ -55,6 +58,9 @@ class InstructorController extends Controller
         ]);
     }
 
+    /**
+     * Create an instructor.
+     */
     public function store(StoreInstructorRequest $request): JsonResponse
     {
         /** @var User|null $admin */
@@ -89,6 +95,9 @@ class InstructorController extends Controller
         ], 201);
     }
 
+    /**
+     * Show an instructor.
+     */
     public function show(Instructor $instructor): JsonResponse
     {
         /** @var User|null $admin */
@@ -107,6 +116,9 @@ class InstructorController extends Controller
         ]);
     }
 
+    /**
+     * Update an instructor.
+     */
     public function update(UpdateInstructorRequest $request, Instructor $instructor): JsonResponse
     {
         /** @var User|null $admin */
@@ -143,6 +155,9 @@ class InstructorController extends Controller
         ]);
     }
 
+    /**
+     * Delete an instructor.
+     */
     public function destroy(Instructor $instructor): JsonResponse
     {
         /** @var User|null $admin */

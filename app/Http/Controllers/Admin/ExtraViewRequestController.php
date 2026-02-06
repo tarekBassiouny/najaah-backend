@@ -23,6 +23,9 @@ class ExtraViewRequestController extends Controller
         private readonly ExtraViewRequestQueryService $queryService
     ) {}
 
+    /**
+     * List extra view requests.
+     */
     public function index(ListExtraViewRequestsRequest $request): JsonResponse
     {
         /** @var User|null $admin */
@@ -54,6 +57,9 @@ class ExtraViewRequestController extends Controller
         ]);
     }
 
+    /**
+     * Approve an extra view request.
+     */
     public function approve(ApproveExtraViewRequestRequest $request, ExtraViewRequest $extraViewRequest): JsonResponse
     {
         /** @var User|null $admin */
@@ -83,6 +89,9 @@ class ExtraViewRequestController extends Controller
         ]);
     }
 
+    /**
+     * Reject an extra view request.
+     */
     public function reject(RejectExtraViewRequestRequest $request, ExtraViewRequest $extraViewRequest): JsonResponse
     {
         /** @var User|null $admin */

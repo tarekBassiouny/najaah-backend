@@ -22,6 +22,9 @@ class CenterController extends Controller
         private readonly CenterServiceInterface $centerService
     ) {}
 
+    /**
+     * List centers.
+     */
     public function index(ListCentersRequest $request): JsonResponse
     {
         $filters = $request->filters();
@@ -40,6 +43,9 @@ class CenterController extends Controller
         ]);
     }
 
+    /**
+     * Create a center.
+     */
     public function store(StoreCenterRequest $request, CreateCenterAction $action): JsonResponse
     {
         $admin = $request->user();
@@ -59,6 +65,9 @@ class CenterController extends Controller
         ], 201);
     }
 
+    /**
+     * Show a center.
+     */
     public function show(int $center): JsonResponse
     {
         $center = Center::with('setting')->find($center);
@@ -80,6 +89,9 @@ class CenterController extends Controller
         ]);
     }
 
+    /**
+     * Update a center.
+     */
     public function update(UpdateCenterRequest $request, int $center): JsonResponse
     {
         $center = Center::find($center);
@@ -106,6 +118,9 @@ class CenterController extends Controller
         ]);
     }
 
+    /**
+     * Delete a center.
+     */
     public function destroy(int $center): JsonResponse
     {
         $center = Center::find($center);
@@ -130,6 +145,9 @@ class CenterController extends Controller
         ], 204);
     }
 
+    /**
+     * Restore a center.
+     */
     public function restore(int $center): JsonResponse
     {
         $admin = request()->user();

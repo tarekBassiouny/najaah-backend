@@ -25,6 +25,9 @@ class CenterOperationsController extends Controller
         private readonly CenterSettingsServiceInterface $centerSettingsService
     ) {}
 
+    /**
+     * Retry center setup.
+     */
     public function retry(
         RetryCenterOnboardingRequest $request,
         int $center,
@@ -56,6 +59,9 @@ class CenterOperationsController extends Controller
         ]);
     }
 
+    /**
+     * Upload a center logo.
+     */
     public function uploadLogo(
         UploadCenterLogoRequest $request,
         int $center,
@@ -86,6 +92,9 @@ class CenterOperationsController extends Controller
         ]);
     }
 
+    /**
+     * Show center settings.
+     */
     public function show(Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -98,6 +107,9 @@ class CenterOperationsController extends Controller
         ]);
     }
 
+    /**
+     * Update center settings.
+     */
     public function update(UpdateCenterSettingsRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();

@@ -10,6 +10,7 @@ const folder = name => ({ name, item: [] });
 const tree = {
   /* -------- ADMIN -------- */
   adminAuth: folder("🔐 Admin – Auth (JWT)"),
+  adminAgents: folder("🧑‍💼 Admin – Agents"),
   adminAnalytics: folder("🧑‍💼 Admin – Analytics"),
   adminCategories: folder("🧑‍💼 Admin – Categories"),
   adminCenters: folder("🧑‍💼 Admin – Centers"),
@@ -78,6 +79,7 @@ function route(item) {
     has(path, "/api/v1/admin/instructors") ||
     path.match(/^\/api\/v1\/admin\/courses\/[^/]+\/instructors/)
   ) return tree.adminInstructors;
+  if (has(path, "/api/v1/admin/agents")) return tree.adminAgents;
   if (has(path, "/api/v1/admin/roles")) return tree.adminRoles;
   if (has(path, "/api/v1/admin/permissions")) return tree.adminPermissions;
   if (has(path, "/api/v1/admin/users")) return tree.adminUsers;

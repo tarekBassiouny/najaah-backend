@@ -44,7 +44,8 @@ class StudentQueryService
             $query->where(static function (Builder $builder) use ($term): void {
                 $builder->where('name', 'like', '%'.$term.'%')
                     ->orWhere('username', 'like', '%'.$term.'%')
-                    ->orWhere('email', 'like', '%'.$term.'%');
+                    ->orWhere('email', 'like', '%'.$term.'%')
+                    ->orWhere('phone', 'like', '%'.$term.'%');
             });
         }
 

@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
 
-final readonly class AgentExecutionService
+final class AgentExecutionService
 {
     /** @var array<string, class-string<AgentInterface>> */
     private array $agents;

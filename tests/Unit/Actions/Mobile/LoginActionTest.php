@@ -6,6 +6,7 @@ use App\Actions\Mobile\LoginAction;
 use App\Models\OtpCode;
 use App\Models\User;
 use App\Models\UserDevice;
+use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
@@ -50,7 +51,18 @@ test('execute returns payload when otp valid', function (): void {
     $studentService = \Mockery::mock(StudentService::class);
     $studentService->shouldNotReceive('create');
 
-    $action = new LoginAction($otpService, $deviceService, $jwtService, $studentService);
+    $auditLogService = \Mockery::mock(AuditLogService::class);
+    $auditLogService->shouldReceive('log')
+        ->once()
+        ->with($user, $user, \Mockery::type('string'));
+
+    $action = new LoginAction(
+        $otpService,
+        $deviceService,
+        $jwtService,
+        $studentService,
+        $auditLogService
+    );
 
     $result = $action->execute([
         'otp' => '123456',
@@ -81,7 +93,16 @@ test('execute returns error when otp invalid', function (): void {
     $studentService = \Mockery::mock(StudentService::class);
     $studentService->shouldNotReceive('create');
 
-    $action = new LoginAction($otpService, $deviceService, $jwtService, $studentService);
+    $auditLogService = \Mockery::mock(AuditLogService::class);
+    $auditLogService->shouldNotReceive('log');
+
+    $action = new LoginAction(
+        $otpService,
+        $deviceService,
+        $jwtService,
+        $studentService,
+        $auditLogService
+    );
 
     $result = $action->execute([
         'otp' => '123456',
@@ -112,7 +133,16 @@ test('execute returns error when center mismatches', function (): void {
     $studentService = \Mockery::mock(StudentService::class);
     $studentService->shouldNotReceive('create');
 
-    $action = new LoginAction($otpService, $deviceService, $jwtService, $studentService);
+    $auditLogService = \Mockery::mock(AuditLogService::class);
+    $auditLogService->shouldNotReceive('log');
+
+    $action = new LoginAction(
+        $otpService,
+        $deviceService,
+        $jwtService,
+        $studentService,
+        $auditLogService
+    );
 
     $result = $action->execute([
         'otp' => '123456',
@@ -172,7 +202,18 @@ test('execute creates student when otp has no user', function (): void {
             'refresh_token' => 'refresh',
         ]);
 
-    $action = new LoginAction($otpService, $deviceService, $jwtService, $studentService);
+    $auditLogService = \Mockery::mock(AuditLogService::class);
+    $auditLogService->shouldReceive('log')
+        ->once()
+        ->with($newUser, $newUser, \Mockery::type('string'));
+
+    $action = new LoginAction(
+        $otpService,
+        $deviceService,
+        $jwtService,
+        $studentService,
+        $auditLogService
+    );
 
     $result = $action->execute([
         'otp' => '123456',

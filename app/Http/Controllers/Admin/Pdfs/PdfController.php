@@ -25,6 +25,9 @@ class PdfController extends Controller
         private readonly AdminPdfQueryServiceInterface $queryService
     ) {}
 
+    /**
+     * List PDFs.
+     */
     public function index(ListPdfsRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -45,6 +48,9 @@ class PdfController extends Controller
         ]);
     }
 
+    /**
+     * Create a PDF.
+     */
     public function store(StorePdfRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -59,6 +65,9 @@ class PdfController extends Controller
         ], 201);
     }
 
+    /**
+     * Show a PDF.
+     */
     public function show(Center $center, Pdf $pdf): JsonResponse
     {
         $this->requireAdmin();
@@ -70,6 +79,9 @@ class PdfController extends Controller
         ]);
     }
 
+    /**
+     * Update a PDF.
+     */
     public function update(UpdatePdfRequest $request, Center $center, Pdf $pdf): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -85,6 +97,9 @@ class PdfController extends Controller
         ]);
     }
 
+    /**
+     * Delete a PDF.
+     */
     public function destroy(Center $center, Pdf $pdf): JsonResponse
     {
         $admin = $this->requireAdmin();

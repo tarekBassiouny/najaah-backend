@@ -8,6 +8,7 @@ use App\Filters\Admin\AuditLogFilters;
 use App\Models\AuditLog;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Support\AuditActions;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -56,8 +57,12 @@ class AuditLogQueryService
             $query->where('entity_id', $filters->entityId);
         }
 
+        if ($filters->courseId !== null) {
+            $query->where('course_id', $filters->courseId);
+        }
+
         if ($filters->action !== null) {
-            $query->where('action', $filters->action);
+            $query = $this->applyActionFilter($query, $filters->action);
         }
 
         if ($filters->userId !== null) {
@@ -73,6 +78,38 @@ class AuditLogQueryService
         }
 
         return $query;
+    }
+
+    /**
+     * @param  Builder<AuditLog>  $query
+     * @return Builder<AuditLog>
+     */
+    private function applyActionFilter(Builder $query, string $action): Builder
+    {
+        $normalized = strtolower($action);
+
+        return match ($normalized) {
+            'create' => $this->applyActionSuffixFilter($query, ['_created', '_added', '_assigned']),
+            'update' => $this->applyActionSuffixFilter($query, ['_updated', '_edited', '_synced', '_reordered', '_toggled']),
+            'delete' => $this->applyActionSuffixFilter($query, ['_deleted', '_removed', '_detached', '_revoked']),
+            'login' => $query->whereIn('action', [AuditActions::ADMIN_LOGIN, AuditActions::STUDENT_LOGIN]),
+            'logout' => $query->whereIn('action', [AuditActions::ADMIN_LOGOUT, AuditActions::STUDENT_LOGOUT]),
+            default => $query->where('action', $action),
+        };
+    }
+
+    /**
+     * @param  Builder<AuditLog>  $query
+     * @param  array<int, string>  $suffixes
+     * @return Builder<AuditLog>
+     */
+    private function applyActionSuffixFilter(Builder $query, array $suffixes): Builder
+    {
+        return $query->where(static function (Builder $builder) use ($suffixes): void {
+            foreach ($suffixes as $suffix) {
+                $builder->orWhere('action', 'like', '%'.$suffix);
+            }
+        });
     }
 
     /**

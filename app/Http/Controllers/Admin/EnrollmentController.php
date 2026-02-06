@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Enrollments\BulkEnrollmentRequest;
 use App\Http\Requests\Admin\Enrollments\ListEnrollmentsRequest;
 use App\Http\Requests\Admin\Enrollments\StoreEnrollmentRequest;
 use App\Http\Requests\Admin\Enrollments\UpdateEnrollmentStatusRequest;
@@ -22,6 +23,9 @@ class EnrollmentController extends Controller
         private readonly EnrollmentServiceInterface $enrollmentService
     ) {}
 
+    /**
+     * List enrollments.
+     */
     public function index(ListEnrollmentsRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -40,6 +44,9 @@ class EnrollmentController extends Controller
         ]);
     }
 
+    /**
+     * Show an enrollment.
+     */
     public function show(Enrollment $enrollment): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -52,6 +59,9 @@ class EnrollmentController extends Controller
         ]);
     }
 
+    /**
+     * Create an enrollment.
+     */
     public function store(StoreEnrollmentRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -72,6 +82,49 @@ class EnrollmentController extends Controller
         ], 201);
     }
 
+    /**
+     * Bulk approve enrollments.
+     */
+    public function bulk(BulkEnrollmentRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        /** @var array{center_id:int,course_id:int,user_ids:array<int,int>} $data */
+        $data = $request->validated();
+
+        /** @var Course $course */
+        $course = Course::findOrFail((int) $data['course_id']);
+
+        $result = $this->enrollmentService->bulkEnroll(
+            $admin,
+            $course,
+            (int) $data['center_id'],
+            $data['user_ids']
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk enrollment processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($data['user_ids']),
+                    'approved' => count($result['approved']),
+                    'skipped' => count($result['skipped']),
+                    'failed' => count($result['failed']),
+                ],
+                'approved' => EnrollmentResource::collection(
+                    collect($result['approved'])->map(
+                        fn (Enrollment $enrollment) => $enrollment->load(['course', 'user', 'center'])
+                    )
+                ),
+                'skipped' => $result['skipped'],
+                'failed' => $result['failed'],
+            ],
+        ]);
+    }
+
+    /**
+     * Update an enrollment status.
+     */
     public function update(UpdateEnrollmentStatusRequest $request, Enrollment $enrollment): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -88,6 +141,9 @@ class EnrollmentController extends Controller
         ]);
     }
 
+    /**
+     * Delete an enrollment.
+     */
     public function destroy(Enrollment $enrollment): JsonResponse
     {
         $admin = $this->requireAdmin();

@@ -27,6 +27,9 @@ class SectionStructureController extends Controller
         private readonly SectionStructureServiceInterface $structureService
     ) {}
 
+    /**
+     * List section videos.
+     */
     public function videos(
         Center $center,
         Course $course,
@@ -44,6 +47,9 @@ class SectionStructureController extends Controller
         ]);
     }
 
+    /**
+     * Show a section video.
+     */
     public function showVideo(
         Center $center,
         Course $course,
@@ -72,6 +78,9 @@ class SectionStructureController extends Controller
         ]);
     }
 
+    /**
+     * Attach a video to a section.
+     */
     public function attachVideo(
         Center $center,
         Course $course,
@@ -91,6 +100,9 @@ class SectionStructureController extends Controller
         ], 201);
     }
 
+    /**
+     * Detach a video from a section.
+     */
     public function detachVideo(
         Center $center,
         Course $course,
@@ -114,6 +126,9 @@ class SectionStructureController extends Controller
         ]);
     }
 
+    /**
+     * List section PDFs.
+     */
     public function pdfs(
         Center $center,
         Course $course,
@@ -131,6 +146,9 @@ class SectionStructureController extends Controller
         ]);
     }
 
+    /**
+     * Show a section PDF.
+     */
     public function showPdf(
         Center $center,
         Course $course,
@@ -159,6 +177,9 @@ class SectionStructureController extends Controller
         ]);
     }
 
+    /**
+     * Attach a PDF to a section.
+     */
     public function attachPdf(
         Center $center,
         Course $course,
@@ -178,6 +199,9 @@ class SectionStructureController extends Controller
         ], 201);
     }
 
+    /**
+     * Detach a PDF from a section.
+     */
     public function detachPdf(
         Center $center,
         Course $course,

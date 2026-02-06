@@ -25,6 +25,9 @@ class PdfUploadSessionController extends Controller
         private readonly PdfServiceInterface $pdfService
     ) {}
 
+    /**
+     * Create a PDF upload session.
+     */
     public function store(StorePdfUploadSessionRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -57,6 +60,9 @@ class PdfUploadSessionController extends Controller
         ], 201);
     }
 
+    /**
+     * Finalize a PDF upload session.
+     */
     public function finalize(
         FinalizePdfUploadSessionRequest $request,
         Center $center,
