@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Videos;
 
+use App\Http\Resources\Admin\Summary\CenterSummaryResource;
+use App\Http\Resources\Admin\Summary\UserSummaryResource;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 /**
  * @mixin Video
@@ -23,17 +26,21 @@ class VideoResource extends JsonResource
 
         return [
             'id' => $video->id,
-            'center_id' => $video->center_id,
+            'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'title' => $video->translate('title'),
             'description' => $video->translate('description'),
             'tags' => $video->tags,
             'duration_seconds' => $video->duration_seconds,
             'source_type' => $video->source_type,
             'source_provider' => $video->source_provider,
-            'encoding_status' => $video->encoding_status,
-            'lifecycle_status' => $video->lifecycle_status,
+            'encoding_status' => $video->encoding_status->value,
+            'encoding_status_key' => Str::snake($video->encoding_status->name),
+            'encoding_status_label' => $video->encoding_status->name,
+            'lifecycle_status' => $video->lifecycle_status->value,
+            'lifecycle_status_key' => Str::snake($video->lifecycle_status->name),
+            'lifecycle_status_label' => $video->lifecycle_status->name,
             'upload_session_id' => $video->upload_session_id,
-            'created_by' => $video->created_by,
+            'creator' => new UserSummaryResource($this->whenLoaded('creator')),
             'created_at' => $video->created_at,
         ];
     }

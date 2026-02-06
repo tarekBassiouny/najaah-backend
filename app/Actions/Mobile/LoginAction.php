@@ -6,10 +6,12 @@ namespace App\Actions\Mobile;
 
 use App\Models\User;
 use App\Models\UserDevice;
+use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Students\StudentService;
+use App\Support\AuditActions;
 
 class LoginAction
 {
@@ -17,7 +19,8 @@ class LoginAction
         private readonly OtpServiceInterface $otpService,
         private readonly DeviceServiceInterface $deviceService,
         private readonly JwtServiceInterface $jwtService,
-        private readonly StudentService $studentService
+        private readonly StudentService $studentService,
+        private readonly AuditLogService $auditLogService
     ) {}
 
     /**
@@ -77,6 +80,8 @@ class LoginAction
         );
 
         $token = $this->jwtService->create($user, $device);
+
+        $this->auditLogService->log($user, $user, AuditActions::STUDENT_LOGIN);
 
         $user->load([
             'center',

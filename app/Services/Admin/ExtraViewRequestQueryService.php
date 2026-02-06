@@ -23,7 +23,7 @@ class ExtraViewRequestQueryService
      */
     public function build(User $admin, ExtraViewRequestFilters $filters): Builder
     {
-        $query = ExtraViewRequest::query();
+        $query = ExtraViewRequest::query()->with(['user', 'center', 'video', 'course', 'decider']);
 
         if ($filters->status !== null) {
             $query->where('status', $filters->status);

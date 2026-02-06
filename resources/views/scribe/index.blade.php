@@ -150,328 +150,346 @@
                                 <a href="#endpoints-GETapi-v1-resolve-centers--slug-">GET api/v1/resolve/centers/{slug}</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-login">
-                                <a href="#endpoints-POSTapi-v1-admin-auth-login">POST api/v1/admin/auth/login</a>
+                                <a href="#endpoints-POSTapi-v1-admin-auth-login">Authenticate an admin.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-password-reset">
-                                <a href="#endpoints-POSTapi-v1-admin-auth-password-reset">POST api/v1/admin/auth/password/reset</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-auth-me">
-                                <a href="#endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</a>
+                                <a href="#endpoints-POSTapi-v1-admin-auth-password-reset">Reset an admin password.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-refresh">
-                                <a href="#endpoints-POSTapi-v1-admin-auth-refresh">POST api/v1/admin/auth/refresh</a>
+                                <a href="#endpoints-POSTapi-v1-admin-auth-refresh">Refresh the admin access token.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-auth-me">
+                                <a href="#endpoints-GETapi-v1-admin-auth-me">Get the current admin profile.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-logout">
-                                <a href="#endpoints-POSTapi-v1-admin-auth-logout">POST api/v1/admin/auth/logout</a>
+                                <a href="#endpoints-POSTapi-v1-admin-auth-logout">Log out the current admin.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers">
-                                <a href="#endpoints-GETapi-v1-admin-centers">GET api/v1/admin/centers</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers">List centers.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers">
-                                <a href="#endpoints-POSTapi-v1-admin-centers">POST api/v1/admin/centers</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers">Create a center.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center-">GET api/v1/admin/centers/{center}</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center-">Show a center.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center-">
-                                <a href="#endpoints-PUTapi-v1-admin-centers--center-">PUT api/v1/admin/centers/{center}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center-">Update a center.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center-">DELETE api/v1/admin/centers/{center}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center-">Delete a center.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center--restore">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center--restore">POST api/v1/admin/centers/{center}/restore</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center--restore">Restore a center.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center--onboarding-retry">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center--onboarding-retry">POST api/v1/admin/centers/{center}/onboarding/retry</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center--onboarding-retry">Retry center setup.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center--branding-logo">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center--branding-logo">POST api/v1/admin/centers/{center}/branding/logo</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center--branding-logo">Upload a center logo.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--settings">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--settings">GET api/v1/admin/centers/{center_id}/settings</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--settings">Show center settings.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PATCHapi-v1-admin-centers--center_id--settings">
-                                <a href="#endpoints-PATCHapi-v1-admin-centers--center_id--settings">PATCH api/v1/admin/centers/{center_id}/settings</a>
+                                <a href="#endpoints-PATCHapi-v1-admin-centers--center_id--settings">Update center settings.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-enrollments">
-                                <a href="#endpoints-GETapi-v1-admin-enrollments">GET api/v1/admin/enrollments</a>
+                                <a href="#endpoints-GETapi-v1-admin-enrollments">List enrollments.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-enrollments--enrollment_id-">
-                                <a href="#endpoints-GETapi-v1-admin-enrollments--enrollment_id-">GET api/v1/admin/enrollments/{enrollment_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-enrollments--enrollment_id-">Show an enrollment.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-enrollments">
-                                <a href="#endpoints-POSTapi-v1-admin-enrollments">POST api/v1/admin/enrollments</a>
+                                <a href="#endpoints-POSTapi-v1-admin-enrollments">Create an enrollment.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-enrollments--enrollment_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-enrollments--enrollment_id-">PUT api/v1/admin/enrollments/{enrollment_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-enrollments--enrollment_id-">Update an enrollment status.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-enrollments--enrollment_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-enrollments--enrollment_id-">DELETE api/v1/admin/enrollments/{enrollment_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-enrollments--enrollment_id-">Delete an enrollment.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-courses">
-                                <a href="#endpoints-GETapi-v1-admin-courses">GET api/v1/admin/courses</a>
+                                <a href="#endpoints-GETapi-v1-admin-courses">List courses for admins.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--clone">
-                                <a href="#endpoints-POSTapi-v1-admin-courses--course_id--clone">POST api/v1/admin/courses/{course_id}/clone</a>
+                                <a href="#endpoints-POSTapi-v1-admin-courses--course_id--clone">Clone a course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--courses">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses">GET api/v1/admin/centers/{center_id}/courses</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses">List courses for a center.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses">POST api/v1/admin/centers/{center_id}/courses</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses">Create a course for a center.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id-">GET api/v1/admin/centers/{center_id}/courses/{course_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id-">Show a center course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id-">PUT api/v1/admin/centers/{center_id}/courses/{course_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id-">Update a center course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id-">Delete a center course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--publish">
-                                <a href="#endpoints-POSTapi-v1-admin-courses--course_id--publish">POST api/v1/admin/courses/{course_id}/publish</a>
+                                <a href="#endpoints-POSTapi-v1-admin-courses--course_id--publish">Publish a course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--videos">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--videos">POST api/v1/admin/centers/{center_id}/courses/{course_id}/videos</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--videos">Assign a video to a course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--videos--video-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--videos--video-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/videos/{video}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--videos--video-">Remove a video from a course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--pdfs">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--pdfs">POST api/v1/admin/centers/{center_id}/courses/{course_id}/pdfs</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--pdfs">Assign a PDF to a course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--pdfs--pdf-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--pdfs--pdf-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/pdfs/{pdf}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--pdfs--pdf-">Remove a PDF from a course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections">List sections.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections">Create a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections-reorder">
-                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections-reorder">PUT api/v1/admin/centers/{center_id}/courses/{course_id}/sections/reorder</a>
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections-reorder">Reorder sections.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">Show a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">PUT api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">Update a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">Delete a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section--restore">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section--restore">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section}/restore</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section--restore">Restore a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PATCHapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--visibility">
-                                <a href="#endpoints-PATCHapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--visibility">PATCH api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/visibility</a>
+                                <a href="#endpoints-PATCHapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--visibility">Toggle section visibility.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/structure</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure">Create a section with its structure.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">
-                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">PUT api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/structure</a>
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">Update a section with its structure.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/structure</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">Delete a section and its structure.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/videos</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">List section videos.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/videos/{video_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">Show a section video.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/videos</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">Attach a video to a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/videos/{video_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">Detach a video from a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/pdfs</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">List section PDFs.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">Show a section PDF.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/pdfs</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">Attach a PDF to a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">Detach a PDF from a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--publish">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--publish">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/publish</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--publish">Publish a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--unpublish">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--unpublish">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/unpublish</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--unpublish">Unpublish a section.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--videos">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--videos">GET api/v1/admin/centers/{center_id}/videos</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--videos">List videos.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--videos">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--videos">POST api/v1/admin/centers/{center_id}/videos</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--videos">Create a video.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--videos--video_id-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--videos--video_id-">GET api/v1/admin/centers/{center_id}/videos/{video_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--videos--video_id-">Show a video.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center_id--videos--video_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--videos--video_id-">PUT api/v1/admin/centers/{center_id}/videos/{video_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--videos--video_id-">Update a video.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--videos--video_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--videos--video_id-">DELETE api/v1/admin/centers/{center_id}/videos/{video_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--videos--video_id-">Delete a video.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--videos-upload-sessions">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--videos-upload-sessions">POST api/v1/admin/centers/{center_id}/videos/upload-sessions</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--videos-upload-sessions">Create a video upload session.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-instructors">
-                                <a href="#endpoints-GETapi-v1-admin-instructors">GET api/v1/admin/instructors</a>
+                                <a href="#endpoints-GETapi-v1-admin-instructors">List instructors.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-instructors">
-                                <a href="#endpoints-POSTapi-v1-admin-instructors">POST api/v1/admin/instructors</a>
+                                <a href="#endpoints-POSTapi-v1-admin-instructors">Create an instructor.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-instructors--id-">
-                                <a href="#endpoints-GETapi-v1-admin-instructors--id-">GET api/v1/admin/instructors/{id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-instructors--id-">Show an instructor.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-instructors--id-">
-                                <a href="#endpoints-PUTapi-v1-admin-instructors--id-">PUT api/v1/admin/instructors/{id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-instructors--id-">Update an instructor.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-instructors--id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-instructors--id-">DELETE api/v1/admin/instructors/{id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-instructors--id-">Delete an instructor.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-courses--course_id--instructors">
-                                <a href="#endpoints-POSTapi-v1-admin-courses--course_id--instructors">POST api/v1/admin/courses/{course_id}/instructors</a>
+                                <a href="#endpoints-POSTapi-v1-admin-courses--course_id--instructors">Assign an instructor to a course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-">DELETE api/v1/admin/courses/{course_id}/instructors/{instructor_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-">Remove an instructor from a course.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--categories">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--categories">GET api/v1/admin/centers/{center_id}/categories</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--categories">List categories.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--categories">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--categories">POST api/v1/admin/centers/{center_id}/categories</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--categories">Create a category.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--categories--category_id-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--categories--category_id-">GET api/v1/admin/centers/{center_id}/categories/{category_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--categories--category_id-">Show a category.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center_id--categories--category_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--categories--category_id-">PUT api/v1/admin/centers/{center_id}/categories/{category_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--categories--category_id-">Update a category.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--categories--category_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--categories--category_id-">DELETE api/v1/admin/centers/{center_id}/categories/{category_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--categories--category_id-">Delete a category.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--pdfs">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--pdfs">GET api/v1/admin/centers/{center_id}/pdfs</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--pdfs">List PDFs.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--pdfs">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--pdfs">POST api/v1/admin/centers/{center_id}/pdfs</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--pdfs">Create a PDF.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-centers--center_id--pdfs--pdf_id-">
-                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--pdfs--pdf_id-">GET api/v1/admin/centers/{center_id}/pdfs/{pdf_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-centers--center_id--pdfs--pdf_id-">Show a PDF.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-">PUT api/v1/admin/centers/{center_id}/pdfs/{pdf_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-">Update a PDF.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-centers--center_id--pdfs--pdf_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--pdfs--pdf_id-">DELETE api/v1/admin/centers/{center_id}/pdfs/{pdf_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-centers--center_id--pdfs--pdf_id-">Delete a PDF.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions">POST api/v1/admin/centers/{center_id}/pdfs/upload-sessions</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions">Create a PDF upload session.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize">
-                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize">POST api/v1/admin/centers/{center_id}/pdfs/upload-sessions/{pdfUploadSession_id}/finalize</a>
+                                <a href="#endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize">Finalize a PDF upload session.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-settings-preview">
-                                <a href="#endpoints-GETapi-v1-admin-settings-preview">GET api/v1/admin/settings/preview</a>
+                                <a href="#endpoints-GETapi-v1-admin-settings-preview">Preview admin settings resolution.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-audit-logs">
-                                <a href="#endpoints-GETapi-v1-admin-audit-logs">GET api/v1/admin/audit-logs</a>
+                                <a href="#endpoints-GETapi-v1-admin-audit-logs">List audit logs.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-analytics-overview">
-                                <a href="#endpoints-GETapi-v1-admin-analytics-overview">GET api/v1/admin/analytics/overview</a>
+                                <a href="#endpoints-GETapi-v1-admin-analytics-overview">Get analytics overview.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-analytics-courses-media">
-                                <a href="#endpoints-GETapi-v1-admin-analytics-courses-media">GET api/v1/admin/analytics/courses-media</a>
+                                <a href="#endpoints-GETapi-v1-admin-analytics-courses-media">Get analytics for course media.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-analytics-learners-enrollments">
-                                <a href="#endpoints-GETapi-v1-admin-analytics-learners-enrollments">GET api/v1/admin/analytics/learners-enrollments</a>
+                                <a href="#endpoints-GETapi-v1-admin-analytics-learners-enrollments">Get analytics for learner enrollments.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-analytics-devices-requests">
-                                <a href="#endpoints-GETapi-v1-admin-analytics-devices-requests">GET api/v1/admin/analytics/devices-requests</a>
+                                <a href="#endpoints-GETapi-v1-admin-analytics-devices-requests">Get analytics for device requests.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-extra-view-requests">
-                                <a href="#endpoints-GETapi-v1-admin-extra-view-requests">GET api/v1/admin/extra-view-requests</a>
+                                <a href="#endpoints-GETapi-v1-admin-extra-view-requests">List extra view requests.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve">
-                                <a href="#endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve">POST api/v1/admin/extra-view-requests/{extraViewRequest_id}/approve</a>
+                                <a href="#endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve">Approve an extra view request.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject">
-                                <a href="#endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject">POST api/v1/admin/extra-view-requests/{extraViewRequest_id}/reject</a>
+                                <a href="#endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject">Reject an extra view request.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-device-change-requests">
-                                <a href="#endpoints-GETapi-v1-admin-device-change-requests">GET api/v1/admin/device-change-requests</a>
+                                <a href="#endpoints-GETapi-v1-admin-device-change-requests">List device change requests.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve">
-                                <a href="#endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/approve</a>
+                                <a href="#endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve">Approve a device change request.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">
-                                <a href="#endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/reject</a>
+                                <a href="#endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">Reject a device change request.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--pre-approve">
-                                <a href="#endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--pre-approve">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/pre-approve</a>
+                                <a href="#endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--pre-approve">Pre-approve a device change request.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-students--student_id--device-change-requests">
-                                <a href="#endpoints-POSTapi-v1-admin-students--student_id--device-change-requests">POST api/v1/admin/students/{student_id}/device-change-requests</a>
+                                <a href="#endpoints-POSTapi-v1-admin-students--student_id--device-change-requests">Create a device change request for a student.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-agents-executions">
+                                <a href="#endpoints-GETapi-v1-admin-agents-executions">List agent executions.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-agents-executions--agentExecution_id-">
+                                <a href="#endpoints-GETapi-v1-admin-agents-executions--agentExecution_id-">Show a single agent execution.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-agents-available">
+                                <a href="#endpoints-GETapi-v1-admin-agents-available">Get available agents for the current user.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-agents-execute">
+                                <a href="#endpoints-POSTapi-v1-admin-agents-execute">Execute an agent.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-agents-content-publishing-execute">
+                                <a href="#endpoints-POSTapi-v1-admin-agents-content-publishing-execute">Execute content publishing agent.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-agents-enrollment-bulk">
+                                <a href="#endpoints-POSTapi-v1-admin-agents-enrollment-bulk">Execute bulk enrollment agent.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-roles">
-                                <a href="#endpoints-GETapi-v1-admin-roles">GET api/v1/admin/roles</a>
+                                <a href="#endpoints-GETapi-v1-admin-roles">List roles.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-roles--role_id-">
-                                <a href="#endpoints-GETapi-v1-admin-roles--role_id-">GET api/v1/admin/roles/{role_id}</a>
+                                <a href="#endpoints-GETapi-v1-admin-roles--role_id-">Show a role.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-roles">
-                                <a href="#endpoints-POSTapi-v1-admin-roles">POST api/v1/admin/roles</a>
+                                <a href="#endpoints-POSTapi-v1-admin-roles">Create a role.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-roles--role_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-roles--role_id-">PUT api/v1/admin/roles/{role_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-roles--role_id-">Update a role.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-roles--role_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-roles--role_id-">DELETE api/v1/admin/roles/{role_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-roles--role_id-">Delete a role.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-roles--role_id--permissions">
-                                <a href="#endpoints-PUTapi-v1-admin-roles--role_id--permissions">PUT api/v1/admin/roles/{role_id}/permissions</a>
+                                <a href="#endpoints-PUTapi-v1-admin-roles--role_id--permissions">Sync role permissions.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-permissions">
-                                <a href="#endpoints-GETapi-v1-admin-permissions">GET api/v1/admin/permissions</a>
+                                <a href="#endpoints-GETapi-v1-admin-permissions">List permissions.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-users">
-                                <a href="#endpoints-GETapi-v1-admin-users">GET api/v1/admin/users</a>
+                                <a href="#endpoints-GETapi-v1-admin-users">List admin users.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-users">
-                                <a href="#endpoints-POSTapi-v1-admin-users">POST api/v1/admin/users</a>
+                                <a href="#endpoints-POSTapi-v1-admin-users">Create an admin user.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-users--user_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-users--user_id-">PUT api/v1/admin/users/{user_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-users--user_id-">Update an admin user.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-users--user_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-users--user_id-">DELETE api/v1/admin/users/{user_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-users--user_id-">Delete an admin user.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-users--user_id--roles">
-                                <a href="#endpoints-PUTapi-v1-admin-users--user_id--roles">PUT api/v1/admin/users/{user_id}/roles</a>
+                                <a href="#endpoints-PUTapi-v1-admin-users--user_id--roles">Sync admin user roles.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-students">
-                                <a href="#endpoints-GETapi-v1-admin-students">GET api/v1/admin/students</a>
+                                <a href="#endpoints-GETapi-v1-admin-students">List students.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-PUTapi-v1-admin-students--user_id-">
-                                <a href="#endpoints-PUTapi-v1-admin-students--user_id-">PUT api/v1/admin/students/{user_id}</a>
+                                <a href="#endpoints-PUTapi-v1-admin-students--user_id-">Update a student.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-students">
-                                <a href="#endpoints-POSTapi-v1-admin-students">POST api/v1/admin/students</a>
+                                <a href="#endpoints-POSTapi-v1-admin-students">Create a student.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-v1-admin-students--user_id-">
-                                <a href="#endpoints-DELETEapi-v1-admin-students--user_id-">DELETE api/v1/admin/students/{user_id}</a>
+                                <a href="#endpoints-DELETEapi-v1-admin-students--user_id-">Delete a student.</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -484,7 +502,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: January 31, 2026</li>
+        <li>Last updated: February 6, 2026</li>
     </ul>
 </div>
 
@@ -5287,7 +5305,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-auth-login">POST api/v1/admin/auth/login</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-auth-login">Authenticate an admin.</h2>
 
 <p>
 </p>
@@ -5461,7 +5479,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-auth-password-reset">POST api/v1/admin/auth/password/reset</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-auth-password-reset">Reset an admin password.</h2>
 
 <p>
 </p>
@@ -5649,145 +5667,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-v1-admin-auth-me">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/auth/me" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "X-Locale: @{{locale}}" \
-    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/v1/admin/auth/me"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Locale": "@{{locale}}",
-    "X-Api-Key": "@{{api_key}}",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-v1-admin-auth-me">
-    </span>
-<span id="execution-results-GETapi-v1-admin-auth-me" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-v1-admin-auth-me"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-auth-me"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-v1-admin-auth-me" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-v1-admin-auth-me">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-v1-admin-auth-me" data-method="GET"
-      data-path="api/v1/admin/auth/me"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-auth-me', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-v1-admin-auth-me"
-                    onclick="tryItOut('GETapi-v1-admin-auth-me');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-v1-admin-auth-me"
-                    onclick="cancelTryOut('GETapi-v1-admin-auth-me');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-v1-admin-auth-me"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/v1/admin/auth/me</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-v1-admin-auth-me"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-v1-admin-auth-me"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="GETapi-v1-admin-auth-me"
-               value="@{{locale}}"
-               data-component="header">
-    <br>
-<p>Example: <code>@{{locale}}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-auth-me"
-               value="@{{api_key}}"
-               data-component="header">
-    <br>
-<p>Example: <code>@{{api_key}}</code></p>
-            </div>
-                        </form>
-
-                    <h2 id="endpoints-POSTapi-v1-admin-auth-refresh">POST api/v1/admin/auth/refresh</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-auth-refresh">Refresh the admin access token.</h2>
 
 <p>
 </p>
@@ -5925,7 +5805,145 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-auth-logout">POST api/v1/admin/auth/logout</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-auth-me">Get the current admin profile.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-auth-me">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/auth/me" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/auth/me"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-auth-me">
+    </span>
+<span id="execution-results-GETapi-v1-admin-auth-me" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-auth-me"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-auth-me"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-auth-me" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-auth-me">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-auth-me" data-method="GET"
+      data-path="api/v1/admin/auth/me"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-auth-me', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-auth-me"
+                    onclick="tryItOut('GETapi-v1-admin-auth-me');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-auth-me"
+                    onclick="cancelTryOut('GETapi-v1-admin-auth-me');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-auth-me"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/auth/me</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-auth-me"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-auth-me"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-auth-me"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-auth-me"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-auth-logout">Log out the current admin.</h2>
 
 <p>
 </p>
@@ -6063,7 +6081,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers">GET api/v1/admin/centers</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers">List centers.</h2>
 
 <p>
 </p>
@@ -6347,7 +6365,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers">POST api/v1/admin/centers</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers">Create a center.</h2>
 
 <p>
 </p>
@@ -6797,7 +6815,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center-">GET api/v1/admin/centers/{center}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center-">Show a center.</h2>
 
 <p>
 </p>
@@ -6948,7 +6966,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-centers--center-">PUT api/v1/admin/centers/{center}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center-">Update a center.</h2>
 
 <p>
 </p>
@@ -7203,7 +7221,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center-">DELETE api/v1/admin/centers/{center}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center-">Delete a center.</h2>
 
 <p>
 </p>
@@ -7354,7 +7372,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center--restore">POST api/v1/admin/centers/{center}/restore</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center--restore">Restore a center.</h2>
 
 <p>
 </p>
@@ -7505,7 +7523,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center--onboarding-retry">POST api/v1/admin/centers/{center}/onboarding/retry</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center--onboarding-retry">Retry center setup.</h2>
 
 <p>
 </p>
@@ -7656,7 +7674,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center--branding-logo">POST api/v1/admin/centers/{center}/branding/logo</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center--branding-logo">Upload a center logo.</h2>
 
 <p>
 </p>
@@ -7674,7 +7692,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
     --header "X-Api-Key: @{{api_key}}" \
-    --form "logo=@/tmp/phpa3ef3893i9t3f5iHb0s" </code></pre></div>
+    --form "logo=@/tmp/phpn7ujdbrt2udq42OZtOm" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7821,11 +7839,11 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpa3ef3893i9t3f5iHb0s</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpn7ujdbrt2udq42OZtOm</code></p>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--settings">GET api/v1/admin/centers/{center_id}/settings</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--settings">Show center settings.</h2>
 
 <p>
 </p>
@@ -7976,7 +7994,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PATCHapi-v1-admin-centers--center_id--settings">PATCH api/v1/admin/centers/{center_id}/settings</h2>
+                    <h2 id="endpoints-PATCHapi-v1-admin-centers--center_id--settings">Update center settings.</h2>
 
 <p>
 </p>
@@ -8271,7 +8289,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-enrollments">GET api/v1/admin/enrollments</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-enrollments">List enrollments.</h2>
 
 <p>
 </p>
@@ -8493,7 +8511,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-enrollments--enrollment_id-">GET api/v1/admin/enrollments/{enrollment_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-enrollments--enrollment_id-">Show an enrollment.</h2>
 
 <p>
 </p>
@@ -8644,7 +8662,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-enrollments">POST api/v1/admin/enrollments</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-enrollments">Create an enrollment.</h2>
 
 <p>
 </p>
@@ -8834,7 +8852,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-enrollments--enrollment_id-">PUT api/v1/admin/enrollments/{enrollment_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-enrollments--enrollment_id-">Update an enrollment status.</h2>
 
 <p>
 </p>
@@ -9009,7 +9027,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-enrollments--enrollment_id-">DELETE api/v1/admin/enrollments/{enrollment_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-enrollments--enrollment_id-">Delete an enrollment.</h2>
 
 <p>
 </p>
@@ -9160,7 +9178,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-courses">GET api/v1/admin/courses</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-courses">List courses for admins.</h2>
 
 <p>
 </p>
@@ -9382,7 +9400,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--clone">POST api/v1/admin/courses/{course_id}/clone</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--clone">Clone a course.</h2>
 
 <p>
 </p>
@@ -9629,7 +9647,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses">GET api/v1/admin/centers/{center_id}/courses</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses">List courses for a center.</h2>
 
 <p>
 </p>
@@ -9864,7 +9882,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses">POST api/v1/admin/centers/{center_id}/courses</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses">Create a course for a center.</h2>
 
 <p>
 </p>
@@ -10215,7 +10233,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id-">GET api/v1/admin/centers/{center_id}/courses/{course_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id-">Show a center course.</h2>
 
 <p>
 </p>
@@ -10378,7 +10396,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id-">PUT api/v1/admin/centers/{center_id}/courses/{course_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id-">Update a center course.</h2>
 
 <p>
 </p>
@@ -10727,7 +10745,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id-">Delete a center course.</h2>
 
 <p>
 </p>
@@ -10890,7 +10908,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--publish">POST api/v1/admin/courses/{course_id}/publish</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--publish">Publish a course.</h2>
 
 <p>
 </p>
@@ -11041,7 +11059,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--videos">POST api/v1/admin/centers/{center_id}/courses/{course_id}/videos</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--videos">Assign a video to a course.</h2>
 
 <p>
 </p>
@@ -11240,7 +11258,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--videos--video-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/videos/{video}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--videos--video-">Remove a video from a course.</h2>
 
 <p>
 </p>
@@ -11415,7 +11433,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--pdfs">POST api/v1/admin/centers/{center_id}/courses/{course_id}/pdfs</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--pdfs">Assign a PDF to a course.</h2>
 
 <p>
 </p>
@@ -11614,7 +11632,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--pdfs--pdf-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/pdfs/{pdf}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--pdfs--pdf-">Remove a PDF from a course.</h2>
 
 <p>
 </p>
@@ -11789,7 +11807,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections">List sections.</h2>
 
 <p>
 </p>
@@ -11952,7 +11970,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections">Create a section.</h2>
 
 <p>
 </p>
@@ -12225,7 +12243,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections-reorder">PUT api/v1/admin/centers/{center_id}/courses/{course_id}/sections/reorder</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections-reorder">Reorder sections.</h2>
 
 <p>
 </p>
@@ -12416,7 +12434,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">Show a section.</h2>
 
 <p>
 </p>
@@ -12591,7 +12609,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">PUT api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">Update a section.</h2>
 
 <p>
 </p>
@@ -12876,7 +12894,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id-">Delete a section.</h2>
 
 <p>
 </p>
@@ -13051,7 +13069,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section--restore">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section}/restore</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section--restore">Restore a section.</h2>
 
 <p>
 </p>
@@ -13226,7 +13244,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PATCHapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--visibility">PATCH api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/visibility</h2>
+                    <h2 id="endpoints-PATCHapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--visibility">Toggle section visibility.</h2>
 
 <p>
 </p>
@@ -13401,7 +13419,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/structure</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections-structure">Create a section with its structure.</h2>
 
 <p>
 </p>
@@ -13714,7 +13732,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">PUT api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/structure</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">Update a section with its structure.</h2>
 
 <p>
 </p>
@@ -14039,7 +14057,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/structure</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--structure">Delete a section and its structure.</h2>
 
 <p>
 </p>
@@ -14214,7 +14232,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/videos</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">List section videos.</h2>
 
 <p>
 </p>
@@ -14389,7 +14407,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/videos/{video_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">Show a section video.</h2>
 
 <p>
 </p>
@@ -14576,7 +14594,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/videos</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos">Attach a video to a section.</h2>
 
 <p>
 </p>
@@ -14773,7 +14791,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/videos/{video_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--videos--video_id-">Detach a video from a section.</h2>
 
 <p>
 </p>
@@ -14982,7 +15000,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/pdfs</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">List section PDFs.</h2>
 
 <p>
 </p>
@@ -15157,7 +15175,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">GET api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">Show a section PDF.</h2>
 
 <p>
 </p>
@@ -15344,7 +15362,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/pdfs</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs">Attach a PDF to a section.</h2>
 
 <p>
 </p>
@@ -15541,7 +15559,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">DELETE api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/pdfs/{pdf_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--pdfs--pdf_id-">Detach a PDF from a section.</h2>
 
 <p>
 </p>
@@ -15750,7 +15768,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--publish">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/publish</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--publish">Publish a section.</h2>
 
 <p>
 </p>
@@ -15925,7 +15943,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--unpublish">POST api/v1/admin/centers/{center_id}/courses/{course_id}/sections/{section_id}/unpublish</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--courses--course_id--sections--section_id--unpublish">Unpublish a section.</h2>
 
 <p>
 </p>
@@ -16100,7 +16118,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--videos">GET api/v1/admin/centers/{center_id}/videos</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--videos">List videos.</h2>
 
 <p>
 </p>
@@ -16309,7 +16327,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--videos">POST api/v1/admin/centers/{center_id}/videos</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--videos">Create a video.</h2>
 
 <p>
 </p>
@@ -16576,7 +16594,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--videos--video_id-">GET api/v1/admin/centers/{center_id}/videos/{video_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--videos--video_id-">Show a video.</h2>
 
 <p>
 </p>
@@ -16739,7 +16757,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--videos--video_id-">PUT api/v1/admin/centers/{center_id}/videos/{video_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--videos--video_id-">Update a video.</h2>
 
 <p>
 </p>
@@ -17186,7 +17204,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--videos--video_id-">DELETE api/v1/admin/centers/{center_id}/videos/{video_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--videos--video_id-">Delete a video.</h2>
 
 <p>
 </p>
@@ -17349,7 +17367,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--videos-upload-sessions">POST api/v1/admin/centers/{center_id}/videos/upload-sessions</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--videos-upload-sessions">Create a video upload session.</h2>
 
 <p>
 </p>
@@ -17536,7 +17554,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-instructors">GET api/v1/admin/instructors</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-instructors">List instructors.</h2>
 
 <p>
 </p>
@@ -17745,7 +17763,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-instructors">POST api/v1/admin/instructors</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-instructors">Create an instructor.</h2>
 
 <p>
 </p>
@@ -17776,7 +17794,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpv4n9qd448phg6fWKmw1" </code></pre></div>
+    --form "avatar=@/tmp/php5006862oi0857UTPMvo" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -17983,7 +18001,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpv4n9qd448phg6fWKmw1</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php5006862oi0857UTPMvo</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -18037,7 +18055,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-instructors--id-">GET api/v1/admin/instructors/{id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-instructors--id-">Show an instructor.</h2>
 
 <p>
 </p>
@@ -18188,7 +18206,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-instructors--id-">PUT api/v1/admin/instructors/{id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-instructors--id-">Update an instructor.</h2>
 
 <p>
 </p>
@@ -18218,7 +18236,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/php9rj4eg78rmgmcDw0Uu5" </code></pre></div>
+    --form "avatar=@/tmp/phpgmsv5qe8efkr73TTEHK" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -18441,7 +18459,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php9rj4eg78rmgmcDw0Uu5</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpgmsv5qe8efkr73TTEHK</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -18495,7 +18513,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-instructors--id-">DELETE api/v1/admin/instructors/{id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-instructors--id-">Delete an instructor.</h2>
 
 <p>
 </p>
@@ -18646,7 +18664,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--instructors">POST api/v1/admin/courses/{course_id}/instructors</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-courses--course_id--instructors">Assign an instructor to a course.</h2>
 
 <p>
 </p>
@@ -18833,7 +18851,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-">DELETE api/v1/admin/courses/{course_id}/instructors/{instructor_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-courses--course_id--instructors--instructor_id-">Remove an instructor from a course.</h2>
 
 <p>
 </p>
@@ -18996,7 +19014,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--categories">GET api/v1/admin/centers/{center_id}/categories</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--categories">List categories.</h2>
 
 <p>
 </p>
@@ -19228,7 +19246,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--categories">POST api/v1/admin/centers/{center_id}/categories</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--categories">Create a category.</h2>
 
 <p>
 </p>
@@ -19479,7 +19497,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--categories--category_id-">GET api/v1/admin/centers/{center_id}/categories/{category_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--categories--category_id-">Show a category.</h2>
 
 <p>
 </p>
@@ -19642,7 +19660,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--categories--category_id-">PUT api/v1/admin/centers/{center_id}/categories/{category_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--categories--category_id-">Update a category.</h2>
 
 <p>
 </p>
@@ -19905,7 +19923,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--categories--category_id-">DELETE api/v1/admin/centers/{center_id}/categories/{category_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--categories--category_id-">Delete a category.</h2>
 
 <p>
 </p>
@@ -20068,7 +20086,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--pdfs">GET api/v1/admin/centers/{center_id}/pdfs</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--pdfs">List PDFs.</h2>
 
 <p>
 </p>
@@ -20277,7 +20295,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--pdfs">POST api/v1/admin/centers/{center_id}/pdfs</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--pdfs">Create a PDF.</h2>
 
 <p>
 </p>
@@ -20594,7 +20612,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--pdfs--pdf_id-">GET api/v1/admin/centers/{center_id}/pdfs/{pdf_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-centers--center_id--pdfs--pdf_id-">Show a PDF.</h2>
 
 <p>
 </p>
@@ -20757,7 +20775,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-">PUT api/v1/admin/centers/{center_id}/pdfs/{pdf_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-centers--center_id--pdfs--pdf_id-">Update a PDF.</h2>
 
 <p>
 </p>
@@ -21112,7 +21130,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--pdfs--pdf_id-">DELETE api/v1/admin/centers/{center_id}/pdfs/{pdf_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-centers--center_id--pdfs--pdf_id-">Delete a PDF.</h2>
 
 <p>
 </p>
@@ -21275,7 +21293,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions">POST api/v1/admin/centers/{center_id}/pdfs/upload-sessions</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions">Create a PDF upload session.</h2>
 
 <p>
 </p>
@@ -21462,7 +21480,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize">POST api/v1/admin/centers/{center_id}/pdfs/upload-sessions/{pdfUploadSession_id}/finalize</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-centers--center_id--pdfs-upload-sessions--pdfUploadSession_id--finalize">Finalize a PDF upload session.</h2>
 
 <p>
 </p>
@@ -21749,7 +21767,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-settings-preview">GET api/v1/admin/settings/preview</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-settings-preview">Preview admin settings resolution.</h2>
 
 <p>
 </p>
@@ -21951,7 +21969,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-audit-logs">GET api/v1/admin/audit-logs</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-audit-logs">List audit logs.</h2>
 
 <p>
 </p>
@@ -21964,7 +21982,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/audit-logs?per_page=20&amp;page=1&amp;center_id=2&amp;entity_type=App%5CModels%5CCourse&amp;entity_id=12&amp;action=enrollment_created&amp;user_id=3&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
+    --get "http://xyz-lms.test/api/v1/admin/audit-logs?per_page=20&amp;page=1&amp;center_id=2&amp;course_id=12&amp;entity_type=App%5CModels%5CCourse&amp;entity_id=12&amp;action=create&amp;user_id=3&amp;date_from=2025-01-01&amp;date_to=2025-12-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
@@ -21980,9 +21998,10 @@ const params = {
     "per_page": "20",
     "page": "1",
     "center_id": "2",
+    "course_id": "12",
     "entity_type": "App\Models\Course",
     "entity_id": "12",
-    "action": "enrollment_created",
+    "action": "create",
     "user_id": "3",
     "date_from": "2025-01-01",
     "date_to": "2025-12-31",
@@ -22139,6 +22158,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Filter by center ID (super admin only). Example: <code>2</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="GETapi-v1-admin-audit-logs"
+               value="12"
+               data-component="query">
+    <br>
+<p>Filter by course ID. Example: <code>12</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>entity_type</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
@@ -22169,10 +22200,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="action"                data-endpoint="GETapi-v1-admin-audit-logs"
-               value="enrollment_created"
+               value="create"
                data-component="query">
     <br>
-<p>Filter by audit action. Must not be greater than 255 characters. Example: <code>enrollment_created</code></p>
+<p>Filter by audit action (exact action or: create, update, delete, login, logout). Must not be greater than 255 characters. Example: <code>create</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
@@ -22212,7 +22243,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-analytics-overview">GET api/v1/admin/analytics/overview</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-analytics-overview">Get analytics overview.</h2>
 
 <p>
 </p>
@@ -22408,7 +22439,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-analytics-courses-media">GET api/v1/admin/analytics/courses-media</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-analytics-courses-media">Get analytics for course media.</h2>
 
 <p>
 </p>
@@ -22604,7 +22635,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-analytics-learners-enrollments">GET api/v1/admin/analytics/learners-enrollments</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-analytics-learners-enrollments">Get analytics for learner enrollments.</h2>
 
 <p>
 </p>
@@ -22800,7 +22831,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-analytics-devices-requests">GET api/v1/admin/analytics/devices-requests</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-analytics-devices-requests">Get analytics for device requests.</h2>
 
 <p>
 </p>
@@ -22996,7 +23027,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-extra-view-requests">GET api/v1/admin/extra-view-requests</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-extra-view-requests">List extra view requests.</h2>
 
 <p>
 </p>
@@ -23233,7 +23264,7 @@ Must be one of:
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve">POST api/v1/admin/extra-view-requests/{extraViewRequest_id}/approve</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--approve">Approve an extra view request.</h2>
 
 <p>
 </p>
@@ -23420,7 +23451,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject">POST api/v1/admin/extra-view-requests/{extraViewRequest_id}/reject</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-extra-view-requests--extraViewRequest_id--reject">Reject an extra view request.</h2>
 
 <p>
 </p>
@@ -23593,7 +23624,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-device-change-requests">GET api/v1/admin/device-change-requests</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-device-change-requests">List device change requests.</h2>
 
 <p>
 </p>
@@ -23830,7 +23861,7 @@ Must be one of:
             </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/approve</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--approve">Approve a device change request.</h2>
 
 <p>
 </p>
@@ -24031,7 +24062,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/reject</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--reject">Reject a device change request.</h2>
 
 <p>
 </p>
@@ -24204,7 +24235,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--pre-approve">POST api/v1/admin/device-change-requests/{deviceChangeRequest_id}/pre-approve</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-device-change-requests--deviceChangeRequest_id--pre-approve">Pre-approve a device change request.</h2>
 
 <p>
 </p>
@@ -24377,7 +24408,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-students--student_id--device-change-requests">POST api/v1/admin/students/{student_id}/device-change-requests</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-students--student_id--device-change-requests">Create a device change request for a student.</h2>
 
 <p>
 </p>
@@ -24550,7 +24581,1196 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-roles">GET api/v1/admin/roles</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-agents-executions">List agent executions.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-agents-executions">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/agents/executions?per_page=15&amp;page=1&amp;center_id=2&amp;agent_type=content_publishing&amp;status=2&amp;initiated_by=1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/agents/executions"
+);
+
+const params = {
+    "per_page": "15",
+    "page": "1",
+    "center_id": "2",
+    "agent_type": "content_publishing",
+    "status": "2",
+    "initiated_by": "1",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-agents-executions">
+    </span>
+<span id="execution-results-GETapi-v1-admin-agents-executions" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-agents-executions"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-agents-executions"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-agents-executions" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-agents-executions">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-agents-executions" data-method="GET"
+      data-path="api/v1/admin/agents/executions"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-agents-executions', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-agents-executions"
+                    onclick="tryItOut('GETapi-v1-admin-agents-executions');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-agents-executions"
+                    onclick="cancelTryOut('GETapi-v1-admin-agents-executions');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-agents-executions"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/agents/executions</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="15"
+               data-component="query">
+    <br>
+<p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter by center ID. Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>agent_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="agent_type"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="content_publishing"
+               data-component="query">
+    <br>
+<p>Filter by agent type (content_publishing, enrollment, etc.). Example: <code>content_publishing</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="status"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="2"
+               data-component="query">
+    <br>
+<p>Filter by status (0=pending, 1=running, 2=completed, 3=failed). Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>initiated_by</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="initiated_by"                data-endpoint="GETapi-v1-admin-agents-executions"
+               value="1"
+               data-component="query">
+    <br>
+<p>Filter by initiator user ID. Example: <code>1</code></p>
+            </div>
+                </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-agents-executions--agentExecution_id-">Show a single agent execution.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-agents-executions--agentExecution_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/agents/executions/16" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/agents/executions/16"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-agents-executions--agentExecution_id-">
+    </span>
+<span id="execution-results-GETapi-v1-admin-agents-executions--agentExecution_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-agents-executions--agentExecution_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-agents-executions--agentExecution_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-agents-executions--agentExecution_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-agents-executions--agentExecution_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-agents-executions--agentExecution_id-" data-method="GET"
+      data-path="api/v1/admin/agents/executions/{agentExecution_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-agents-executions--agentExecution_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-agents-executions--agentExecution_id-"
+                    onclick="tryItOut('GETapi-v1-admin-agents-executions--agentExecution_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-agents-executions--agentExecution_id-"
+                    onclick="cancelTryOut('GETapi-v1-admin-agents-executions--agentExecution_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-agents-executions--agentExecution_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/agents/executions/{agentExecution_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-agents-executions--agentExecution_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-agents-executions--agentExecution_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-agents-executions--agentExecution_id-"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-agents-executions--agentExecution_id-"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>agentExecution_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="agentExecution_id"                data-endpoint="GETapi-v1-admin-agents-executions--agentExecution_id-"
+               value="16"
+               data-component="url">
+    <br>
+<p>The ID of the agentExecution. Example: <code>16</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-agents-available">Get available agents for the current user.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-admin-agents-available">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/v1/admin/agents/available" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/agents/available"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-admin-agents-available">
+    </span>
+<span id="execution-results-GETapi-v1-admin-agents-available" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-admin-agents-available"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-admin-agents-available"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-admin-agents-available" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-admin-agents-available">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-v1-admin-agents-available" data-method="GET"
+      data-path="api/v1/admin/agents/available"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-admin-agents-available', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-admin-agents-available"
+                    onclick="tryItOut('GETapi-v1-admin-agents-available');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-admin-agents-available"
+                    onclick="cancelTryOut('GETapi-v1-admin-agents-available');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-admin-agents-available"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/admin/agents/available</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-v1-admin-agents-available"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-v1-admin-agents-available"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-v1-admin-agents-available"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="GETapi-v1-admin-agents-available"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-agents-execute">Execute an agent.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-agents-execute">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/agents/execute" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}" \
+    --data "{
+    \"agent_type\": \"content_publishing\",
+    \"center_id\": 1,
+    \"context\": {
+        \"course_id\": 1,
+        \"student_ids\": [
+            16
+        ]
+    }
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/agents/execute"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+let body = {
+    "agent_type": "content_publishing",
+    "center_id": 1,
+    "context": {
+        "course_id": 1,
+        "student_ids": [
+            16
+        ]
+    }
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-agents-execute">
+</span>
+<span id="execution-results-POSTapi-v1-admin-agents-execute" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-agents-execute"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-agents-execute"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-agents-execute" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-agents-execute">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-agents-execute" data-method="POST"
+      data-path="api/v1/admin/agents/execute"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-agents-execute', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-agents-execute"
+                    onclick="tryItOut('POSTapi-v1-admin-agents-execute');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-agents-execute"
+                    onclick="cancelTryOut('POSTapi-v1-admin-agents-execute');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-agents-execute"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/agents/execute</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>agent_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="agent_type"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               value="content_publishing"
+               data-component="body">
+    <br>
+<p>The type of agent to execute (content_publishing, enrollment, etc.). Example: <code>content_publishing</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>content_publishing</code></li> <li><code>enrollment</code></li> <li><code>analytics</code></li> <li><code>notification</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               value="1"
+               data-component="body">
+    <br>
+<p>The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>context</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Agent-specific context parameters.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="context.course_id"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               value="1"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the courses table. Example: <code>1</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>student_ids</code></b>&nbsp;&nbsp;
+<small>integer[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="context.student_ids[0]"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="context.student_ids[1]"                data-endpoint="POSTapi-v1-admin-agents-execute"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the users table.</p>
+                    </div>
+                                    </details>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-agents-content-publishing-execute">Execute content publishing agent.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-agents-content-publishing-execute">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/agents/content-publishing/execute" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}" \
+    --data "{
+    \"agent_type\": \"content_publishing\",
+    \"center_id\": 1,
+    \"context\": {
+        \"course_id\": 1,
+        \"student_ids\": [
+            16
+        ]
+    }
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/agents/content-publishing/execute"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+let body = {
+    "agent_type": "content_publishing",
+    "center_id": 1,
+    "context": {
+        "course_id": 1,
+        "student_ids": [
+            16
+        ]
+    }
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-agents-content-publishing-execute">
+</span>
+<span id="execution-results-POSTapi-v1-admin-agents-content-publishing-execute" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-agents-content-publishing-execute"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-agents-content-publishing-execute"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-agents-content-publishing-execute" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-agents-content-publishing-execute">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-agents-content-publishing-execute" data-method="POST"
+      data-path="api/v1/admin/agents/content-publishing/execute"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-agents-content-publishing-execute', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-agents-content-publishing-execute"
+                    onclick="tryItOut('POSTapi-v1-admin-agents-content-publishing-execute');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-agents-content-publishing-execute"
+                    onclick="cancelTryOut('POSTapi-v1-admin-agents-content-publishing-execute');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-agents-content-publishing-execute"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/agents/content-publishing/execute</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>agent_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="agent_type"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               value="content_publishing"
+               data-component="body">
+    <br>
+<p>The type of agent to execute (content_publishing, enrollment, etc.). Example: <code>content_publishing</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>content_publishing</code></li> <li><code>enrollment</code></li> <li><code>analytics</code></li> <li><code>notification</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               value="1"
+               data-component="body">
+    <br>
+<p>The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>context</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Agent-specific context parameters.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="context.course_id"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               value="1"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the courses table. Example: <code>1</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>student_ids</code></b>&nbsp;&nbsp;
+<small>integer[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="context.student_ids[0]"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="context.student_ids[1]"                data-endpoint="POSTapi-v1-admin-agents-content-publishing-execute"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the users table.</p>
+                    </div>
+                                    </details>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-POSTapi-v1-admin-agents-enrollment-bulk">Execute bulk enrollment agent.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-agents-enrollment-bulk">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/agents/enrollment/bulk" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: @{{locale}}" \
+    --header "X-Api-Key: @{{api_key}}" \
+    --data "{
+    \"agent_type\": \"content_publishing\",
+    \"center_id\": 1,
+    \"context\": {
+        \"course_id\": 1,
+        \"student_ids\": [
+            16
+        ]
+    }
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/agents/enrollment/bulk"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "@{{locale}}",
+    "X-Api-Key": "@{{api_key}}",
+};
+
+let body = {
+    "agent_type": "content_publishing",
+    "center_id": 1,
+    "context": {
+        "course_id": 1,
+        "student_ids": [
+            16
+        ]
+    }
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-agents-enrollment-bulk">
+</span>
+<span id="execution-results-POSTapi-v1-admin-agents-enrollment-bulk" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-agents-enrollment-bulk"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-agents-enrollment-bulk"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-agents-enrollment-bulk" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-agents-enrollment-bulk">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-agents-enrollment-bulk" data-method="POST"
+      data-path="api/v1/admin/agents/enrollment/bulk"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-agents-enrollment-bulk', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-agents-enrollment-bulk"
+                    onclick="tryItOut('POSTapi-v1-admin-agents-enrollment-bulk');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-agents-enrollment-bulk"
+                    onclick="cancelTryOut('POSTapi-v1-admin-agents-enrollment-bulk');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-agents-enrollment-bulk"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/agents/enrollment/bulk</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               value="@{{locale}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{locale}}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Api-Key</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Api-Key"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               value="@{{api_key}}"
+               data-component="header">
+    <br>
+<p>Example: <code>@{{api_key}}</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>agent_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="agent_type"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               value="content_publishing"
+               data-component="body">
+    <br>
+<p>The type of agent to execute (content_publishing, enrollment, etc.). Example: <code>content_publishing</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>content_publishing</code></li> <li><code>enrollment</code></li> <li><code>analytics</code></li> <li><code>notification</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               value="1"
+               data-component="body">
+    <br>
+<p>The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>context</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Agent-specific context parameters.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="context.course_id"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               value="1"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the courses table. Example: <code>1</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>student_ids</code></b>&nbsp;&nbsp;
+<small>integer[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="context.student_ids[0]"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="context.student_ids[1]"                data-endpoint="POSTapi-v1-admin-agents-enrollment-bulk"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the users table.</p>
+                    </div>
+                                    </details>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-GETapi-v1-admin-roles">List roles.</h2>
 
 <p>
 </p>
@@ -24720,7 +25940,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                 </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-roles--role_id-">GET api/v1/admin/roles/{role_id}</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-roles--role_id-">Show a role.</h2>
 
 <p>
 </p>
@@ -24871,7 +26091,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-roles">POST api/v1/admin/roles</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-roles">Create a role.</h2>
 
 <p>
 </p>
@@ -25119,7 +26339,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-roles--role_id-">PUT api/v1/admin/roles/{role_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-roles--role_id-">Update a role.</h2>
 
 <p>
 </p>
@@ -25380,7 +26600,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-roles--role_id-">DELETE api/v1/admin/roles/{role_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-roles--role_id-">Delete a role.</h2>
 
 <p>
 </p>
@@ -25531,7 +26751,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-roles--role_id--permissions">PUT api/v1/admin/roles/{role_id}/permissions</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-roles--role_id--permissions">Sync role permissions.</h2>
 
 <p>
 </p>
@@ -25710,7 +26930,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-permissions">GET api/v1/admin/permissions</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-permissions">List permissions.</h2>
 
 <p>
 </p>
@@ -25848,7 +27068,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-users">GET api/v1/admin/users</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-users">List admin users.</h2>
 
 <p>
 </p>
@@ -25861,7 +27081,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/users?per_page=15&amp;page=1" \
+    --get "http://xyz-lms.test/api/v1/admin/users?per_page=15&amp;page=1&amp;center_id=12" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: @{{locale}}" \
@@ -25876,6 +27096,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 const params = {
     "per_page": "15",
     "page": "1",
+    "center_id": "12",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -26016,9 +27237,21 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
             </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>center_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="center_id"                data-endpoint="GETapi-v1-admin-users"
+               value="12"
+               data-component="query">
+    <br>
+<p>Filter admin users by center ID. The <code>id</code> of an existing record in the centers table. Example: <code>12</code></p>
+            </div>
                 </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-users">POST api/v1/admin/users</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-users">Create an admin user.</h2>
 
 <p>
 </p>
@@ -26250,7 +27483,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-users--user_id-">PUT api/v1/admin/users/{user_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-users--user_id-">Update an admin user.</h2>
 
 <p>
 </p>
@@ -26495,7 +27728,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-users--user_id-">DELETE api/v1/admin/users/{user_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-users--user_id-">Delete an admin user.</h2>
 
 <p>
 </p>
@@ -26646,7 +27879,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-users--user_id--roles">PUT api/v1/admin/users/{user_id}/roles</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-users--user_id--roles">Sync admin user roles.</h2>
 
 <p>
 </p>
@@ -26825,7 +28058,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-GETapi-v1-admin-students">GET api/v1/admin/students</h2>
+                    <h2 id="endpoints-GETapi-v1-admin-students">List students.</h2>
 
 <p>
 </p>
@@ -27036,7 +28269,7 @@ Must be one of:
             </div>
                 </form>
 
-                    <h2 id="endpoints-PUTapi-v1-admin-students--user_id-">PUT api/v1/admin/students/{user_id}</h2>
+                    <h2 id="endpoints-PUTapi-v1-admin-students--user_id-">Update a student.</h2>
 
 <p>
 </p>
@@ -27239,7 +28472,7 @@ Must be one of:
         </div>
         </form>
 
-                    <h2 id="endpoints-POSTapi-v1-admin-students">POST api/v1/admin/students</h2>
+                    <h2 id="endpoints-POSTapi-v1-admin-students">Create a student.</h2>
 
 <p>
 </p>
@@ -27455,7 +28688,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="endpoints-DELETEapi-v1-admin-students--user_id-">DELETE api/v1/admin/students/{user_id}</h2>
+                    <h2 id="endpoints-DELETEapi-v1-admin-students--user_id-">Delete a student.</h2>
 
 <p>
 </p>

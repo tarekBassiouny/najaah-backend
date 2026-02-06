@@ -17,6 +17,9 @@ class AuditLogController extends Controller
         private readonly AuditLogQueryService $queryService
     ) {}
 
+    /**
+     * List audit logs.
+     */
     public function index(ListAuditLogsRequest $request): JsonResponse
     {
         /** @var User|null $admin */

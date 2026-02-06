@@ -22,6 +22,9 @@ class CourseInstructorController extends Controller
         private readonly CourseInstructorServiceInterface $courseInstructorService
     ) {}
 
+    /**
+     * Assign an instructor to a course.
+     */
     public function store(
         AssignInstructorRequest $request,
         Course $course
@@ -44,6 +47,9 @@ class CourseInstructorController extends Controller
         ], 201);
     }
 
+    /**
+     * Remove an instructor from a course.
+     */
     public function destroy(
         Course $course,
         Instructor $instructor

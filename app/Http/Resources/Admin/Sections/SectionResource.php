@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Sections;
 
+use App\Http\Resources\Admin\Summary\CourseSummaryResource;
 use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,14 +24,14 @@ class SectionResource extends JsonResource
 
         return [
             'id' => $section->id,
-            'course_id' => $section->course_id,
+            'course' => new CourseSummaryResource($this->whenLoaded('course')),
             'title' => $section->translate('title'),
             'description' => $section->translate('description'),
             'sort_order' => $section->order_index,
-            'created_at' => $section->created_at,
-            'updated_at' => $section->updated_at,
             'videos' => SectionVideoResource::collection($this->whenLoaded('videos')),
             'pdfs' => SectionPdfResource::collection($this->whenLoaded('pdfs')),
+            'created_at' => $section->created_at,
+            'updated_at' => $section->updated_at,
         ];
     }
 }

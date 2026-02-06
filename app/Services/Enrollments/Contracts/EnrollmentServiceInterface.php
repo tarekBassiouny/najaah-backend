@@ -18,6 +18,18 @@ interface EnrollmentServiceInterface
 
     public function remove(Enrollment $enrollment, ?User $actor = null): void;
 
+    public function sendEnrollmentNotification(Enrollment $enrollment): bool;
+
+    /**
+     * @param  array<int, int|string>  $userIds
+     * @return array{
+     *   approved: array<int, Enrollment>,
+     *   skipped: array<int, int|string>,
+     *   failed: array<int, array{user_id: int|string, reason: string}>
+     * }
+     */
+    public function bulkEnroll(User $admin, Course $course, int $centerId, array $userIds): array;
+
     /** @return LengthAwarePaginator<Enrollment> */
     public function paginateForStudent(User $student, int $perPage = 15): LengthAwarePaginator;
 

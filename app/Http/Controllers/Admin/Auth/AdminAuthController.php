@@ -8,14 +8,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Auth\AdminLoginRequest;
 use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
+use App\Support\AuditActions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
-    public function __construct(private readonly AdminAuthServiceInterface $authService) {}
+    public function __construct(
+        private readonly AdminAuthServiceInterface $authService,
+        private readonly AuditLogService $auditLogService
+    ) {}
 
+    /**
+     * Authenticate an admin.
+     */
     public function login(AdminLoginRequest $request): JsonResponse
     {
         /** @var array{email:string,password:string} $data */
@@ -61,11 +69,15 @@ class AdminAuthController extends Controller
         ]);
     }
 
+    /**
+     * Log out the current admin.
+     */
     public function logout(): JsonResponse
     {
         try {
             /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
             $guard = Auth::guard('admin');
+            $user = $guard->user();
             $token = $guard->getToken();
             if (! $token) {
                 return response()->json([
@@ -78,6 +90,10 @@ class AdminAuthController extends Controller
             }
 
             $guard->invalidate(true);
+
+            if ($user instanceof User) {
+                $this->auditLogService->log($user, $user, AuditActions::ADMIN_LOGOUT);
+            }
 
             return response()->json([
                 'success' => true,
@@ -96,6 +112,9 @@ class AdminAuthController extends Controller
         }
     }
 
+    /**
+     * Get the current admin profile.
+     */
     public function me(): JsonResponse
     {
         /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
@@ -122,17 +141,42 @@ class AdminAuthController extends Controller
         ]);
     }
 
+    /**
+     * Refresh the admin access token.
+     */
     public function refresh(): JsonResponse
     {
-        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
-        $guard = Auth::guard('admin');
-        $newToken = $guard->refresh();
+        try {
+            /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+            $guard = Auth::guard('admin');
+            $token = $guard->getToken();
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'token' => $newToken,
-            ],
-        ]);
+            if (! $token) {
+                return response()->json([
+                    'success' => false,
+                    'error' => [
+                        'code' => 'TOKEN_MISSING',
+                        'message' => 'Token not provided.',
+                    ],
+                ], 400);
+            }
+
+            $newToken = $guard->refresh();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'token' => $newToken,
+                ],
+            ]);
+        } catch (\Throwable $throwable) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'REFRESH_FAILED',
+                    'message' => 'Failed to refresh token.',
+                ],
+            ], 401);
+        }
     }
 }

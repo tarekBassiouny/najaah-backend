@@ -25,6 +25,7 @@ class ListAuditLogsRequest extends AdminListRequest
     {
         return array_merge($this->listRules(), [
             'center_id' => ['sometimes', 'integer'],
+            'course_id' => ['sometimes', 'integer'],
             'entity_type' => ['sometimes', 'string', 'max:255'],
             'entity_id' => ['sometimes', 'integer'],
             'action' => ['sometimes', 'string', 'max:255'],
@@ -44,6 +45,10 @@ class ListAuditLogsRequest extends AdminListRequest
                 'description' => 'Filter by center ID (super admin only).',
                 'example' => '2',
             ],
+            'course_id' => [
+                'description' => 'Filter by course ID.',
+                'example' => '12',
+            ],
             'entity_type' => [
                 'description' => 'Filter by entity class/type.',
                 'example' => Course::class,
@@ -53,8 +58,8 @@ class ListAuditLogsRequest extends AdminListRequest
                 'example' => '12',
             ],
             'action' => [
-                'description' => 'Filter by audit action.',
-                'example' => 'enrollment_created',
+                'description' => 'Filter by audit action (exact action or: create, update, delete, login, logout).',
+                'example' => 'create',
             ],
             'user_id' => [
                 'description' => 'Filter by actor user id.',
@@ -96,6 +101,7 @@ class ListAuditLogsRequest extends AdminListRequest
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
             centerId: FilterInput::intOrNull($data, 'center_id'),
+            courseId: FilterInput::intOrNull($data, 'course_id'),
             entityType: FilterInput::stringOrNull($data, 'entity_type'),
             entityId: FilterInput::intOrNull($data, 'entity_id'),
             action: FilterInput::stringOrNull($data, 'action'),

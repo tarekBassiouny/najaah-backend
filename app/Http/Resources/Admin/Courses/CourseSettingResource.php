@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Courses;
 
+use App\Http\Resources\Admin\Summary\CourseSummaryResource;
 use App\Models\CourseSetting;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,7 +24,7 @@ class CourseSettingResource extends JsonResource
 
         return [
             'id' => $setting->id,
-            'course_id' => $setting->course_id,
+            'course' => new CourseSummaryResource($this->whenLoaded('course')),
             'settings' => $setting->settings,
             'created_at' => $setting->created_at,
             'updated_at' => $setting->updated_at,

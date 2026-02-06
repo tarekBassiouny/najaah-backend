@@ -23,6 +23,9 @@ class ExtraViewRequestController extends Controller
         private readonly ExtraViewRequestQueryService $queryService
     ) {}
 
+    /**
+     * List extra view requests.
+     */
     public function index(ListExtraViewRequestsRequest $request): JsonResponse
     {
         /** @var User|null $admin */
@@ -54,6 +57,9 @@ class ExtraViewRequestController extends Controller
         ]);
     }
 
+    /**
+     * Approve an extra view request.
+     */
     public function approve(ApproveExtraViewRequestRequest $request, ExtraViewRequest $extraViewRequest): JsonResponse
     {
         /** @var User|null $admin */
@@ -79,10 +85,13 @@ class ExtraViewRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Request approved successfully',
-            'data' => new ExtraViewRequestResource($approved),
+            'data' => new ExtraViewRequestResource($approved->loadMissing(['user', 'video', 'course', 'center', 'decider'])),
         ]);
     }
 
+    /**
+     * Reject an extra view request.
+     */
     public function reject(RejectExtraViewRequestRequest $request, ExtraViewRequest $extraViewRequest): JsonResponse
     {
         /** @var User|null $admin */
@@ -107,7 +116,7 @@ class ExtraViewRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Request rejected successfully',
-            'data' => new ExtraViewRequestResource($rejected),
+            'data' => new ExtraViewRequestResource($rejected->loadMissing(['user', 'video', 'course', 'center', 'decider'])),
         ]);
     }
 }

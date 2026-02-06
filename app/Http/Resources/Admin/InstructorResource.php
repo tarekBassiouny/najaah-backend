@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin;
 
-use App\Http\Resources\Admin\Centers\CenterResource;
-use App\Http\Resources\Admin\Courses\CourseSummaryResource;
+use App\Http\Resources\Admin\Summary\CenterSummaryResource;
+use App\Http\Resources\Admin\Summary\CourseSummaryResource;
+use App\Http\Resources\Admin\Summary\UserSummaryResource;
 use App\Models\Instructor;
-use App\Models\User;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -32,7 +32,7 @@ class InstructorResource extends JsonResource
 
         return [
             'id' => $instructor->id,
-            'center_id' => $instructor->center_id,
+            'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'name' => $instructor->translate('name'),
             'title' => $instructor->translate('title'),
             'bio' => $instructor->translate('bio'),
@@ -44,29 +44,11 @@ class InstructorResource extends JsonResource
             'phone' => $instructor->phone,
             'social_links' => $instructor->social_links,
             'metadata' => $instructor->metadata,
-            'created_by' => $instructor->created_by,
-            'created_at' => $instructor->created_at,
-            'updated_at' => $instructor->updated_at,
-            'center' => new CenterResource($this->whenLoaded('center')),
-            'creator' => $this->whenLoaded('creator', fn (): ?array => $this->formatCreator($instructor->creator)),
+            'creator' => new UserSummaryResource($this->whenLoaded('creator')),
             'courses' => CourseSummaryResource::collection($this->whenLoaded('courses')),
             'courses_count' => $this->when($instructor->courses_count !== null, $instructor->courses_count),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    private function formatCreator(?User $creator): ?array
-    {
-        if ($creator === null) {
-            return null;
-        }
-
-        return [
-            'id' => $creator->id,
-            'name' => $creator->name,
-            'email' => $creator->email,
+            'created_at' => $instructor->created_at,
+            'updated_at' => $instructor->updated_at,
         ];
     }
 }

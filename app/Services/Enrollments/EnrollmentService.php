@@ -32,45 +32,8 @@ class EnrollmentService implements EnrollmentServiceInterface
 
     public function enroll(User $student, Course $course, string $status, ?User $actor = null): Enrollment
     {
-        $this->studentAccessService->assertStudent(
-            $student,
-            null,
-            null,
-            403,
-            ['user_id' => ['Enrollment can only be created for students.']]
-        );
+        $this->assertEnrollmentEligibility($student, $course, $actor);
         $statusValue = $this->normalizeStatus($status);
-
-        if ($actor instanceof User) {
-            $this->centerScopeService->assertAdminSameCenter($actor, $course);
-        }
-
-        if (! is_numeric($course->center_id)) {
-            throw ValidationException::withMessages([
-                'course_id' => ['Course center is not configured.'],
-            ]);
-        }
-
-        $centerId = (int) $course->center_id;
-        $course->loadMissing('center');
-
-        if (is_numeric($student->center_id) && (int) $student->center_id !== $centerId) {
-            throw ValidationException::withMessages([
-                'course_id' => ['Course does not belong to the student center.'],
-            ]);
-        }
-
-        if (! is_numeric($student->center_id) && ($course->center?->type ?? CenterType::Branded) !== CenterType::Unbranded) {
-            throw ValidationException::withMessages([
-                'course_id' => ['Course is not available for system-level students.'],
-            ]);
-        }
-
-        if (is_numeric($student->center_id) && ! $student->belongsToCenter($centerId)) {
-            throw ValidationException::withMessages([
-                'course_id' => ['Student does not belong to this center.'],
-            ]);
-        }
 
         $result = DB::transaction(function () use ($student, $course, $statusValue, $actor): Enrollment {
             $existing = Enrollment::withTrashed()
@@ -110,6 +73,112 @@ class EnrollmentService implements EnrollmentServiceInterface
         $this->notificationService->sendEnrollmentNotification($result);
 
         return $result;
+    }
+
+    /**
+     * @param  array<int, int|string>  $userIds
+     * @return array{
+     *   approved: array<int, Enrollment>,
+     *   skipped: array<int, int|string>,
+     *   failed: array<int, array{user_id: int|string, reason: string}>
+     * }
+     */
+    public function bulkEnroll(User $admin, Course $course, int $centerId, array $userIds): array
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+
+        if (! is_numeric($course->center_id)) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Course center is not configured.'],
+            ]);
+        }
+
+        if ((int) $course->center_id !== $centerId) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Course does not belong to the specified center.'],
+            ]);
+        }
+
+        $uniqueIds = array_values(array_unique(array_map('intval', $userIds)));
+        $users = User::query()
+            ->whereIn('id', $uniqueIds)
+            ->get()
+            ->keyBy('id');
+
+        $results = [
+            'approved' => [],
+            'skipped' => [],
+            'failed' => [],
+        ];
+
+        foreach ($uniqueIds as $userId) {
+            $student = $users->get($userId);
+
+            if (! $student instanceof User) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => 'Student not found.',
+                ];
+
+                continue;
+            }
+
+            try {
+                $this->assertEnrollmentEligibility($student, $course, $admin);
+
+                $active = Enrollment::query()
+                    ->activeForUserAndCourse($student, $course)
+                    ->first();
+
+                if ($active !== null) {
+                    $results['skipped'][] = $userId;
+
+                    continue;
+                }
+
+                $pending = Enrollment::query()
+                    ->pendingForUserAndCourse($student, $course)
+                    ->first();
+
+                if ($pending === null) {
+                    $pending = Enrollment::create([
+                        'user_id' => $student->id,
+                        'course_id' => $course->id,
+                        'center_id' => $course->center_id,
+                        'status' => EnrollmentStatus::Pending,
+                        'enrolled_at' => Carbon::now(),
+                    ]);
+
+                    $this->auditLogService->logByType(
+                        $student,
+                        Enrollment::class,
+                        (int) $pending->id,
+                        AuditActions::ENROLLMENT_REQUEST_CREATED,
+                        [
+                            'course_id' => $course->id,
+                            'center_id' => $course->center_id,
+                        ]
+                    );
+                }
+
+                $approved = $this->updateStatus($pending, EnrollmentStatus::Active->name, $admin);
+                $this->sendEnrollmentNotification($approved);
+
+                $results['approved'][] = $approved;
+            } catch (ValidationException $exception) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => $this->formatValidationError($exception),
+                ];
+            } catch (\Throwable $exception) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return $results;
     }
 
     /**
@@ -240,6 +309,61 @@ class EnrollmentService implements EnrollmentServiceInterface
         }
 
         return $map[$value];
+    }
+
+    private function assertEnrollmentEligibility(User $student, Course $course, ?User $actor = null): void
+    {
+        $this->studentAccessService->assertStudent(
+            $student,
+            null,
+            null,
+            403,
+            ['user_id' => ['Enrollment can only be created for students.']]
+        );
+
+        if ($actor instanceof User) {
+            $this->centerScopeService->assertAdminSameCenter($actor, $course);
+        }
+
+        if (! is_numeric($course->center_id)) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Course center is not configured.'],
+            ]);
+        }
+
+        $centerId = (int) $course->center_id;
+        $course->loadMissing('center');
+
+        if (is_numeric($student->center_id) && (int) $student->center_id !== $centerId) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Course does not belong to the student center.'],
+            ]);
+        }
+
+        if (! is_numeric($student->center_id) && ($course->center?->type ?? CenterType::Branded) !== CenterType::Unbranded) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Course is not available for system-level students.'],
+            ]);
+        }
+
+        if (is_numeric($student->center_id) && ! $student->belongsToCenter($centerId)) {
+            throw ValidationException::withMessages([
+                'course_id' => ['Student does not belong to this center.'],
+            ]);
+        }
+    }
+
+    private function formatValidationError(ValidationException $exception): string
+    {
+        $errors = $exception->errors();
+        if (! empty($errors)) {
+            $messages = array_values($errors)[0] ?? [];
+            if (! empty($messages)) {
+                return (string) $messages[0];
+            }
+        }
+
+        return 'Validation failed.';
     }
 
     /**

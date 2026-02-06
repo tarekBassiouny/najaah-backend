@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Auth\AdminAuthService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -16,7 +17,10 @@ test('login returns user and token', function (): void {
         'password' => 'secret123',
     ]);
 
-    $service = new AdminAuthService;
+    $auditLogService = \Mockery::mock(AuditLogService::class);
+    $auditLogService->shouldReceive('log')->once();
+
+    $service = new AdminAuthService($auditLogService);
     $result = $service->login('admin@example.com', 'secret123');
 
     expect($result)->not()->toBeNull();
@@ -27,7 +31,10 @@ test('login returns user and token', function (): void {
 });
 
 test('login returns null on invalid credentials', function (): void {
-    $service = new AdminAuthService;
+    $auditLogService = \Mockery::mock(AuditLogService::class);
+    $auditLogService->shouldNotReceive('log');
+
+    $service = new AdminAuthService($auditLogService);
     $result = $service->login('invalid@example.com', 'wrong');
     expect($result)->toBeNull();
 });

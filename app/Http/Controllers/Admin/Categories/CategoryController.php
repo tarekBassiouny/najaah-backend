@@ -12,8 +12,10 @@ use App\Http\Requests\Admin\Categories\UpdateCategoryRequest;
 use App\Http\Resources\Admin\Categories\CategoryResource;
 use App\Models\Category;
 use App\Models\Center;
+use App\Services\Audit\AuditLogService;
 use App\Services\Categories\AdminCategoryQueryService;
 use App\Services\Centers\CenterScopeService;
+use App\Support\AuditActions;
 use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
@@ -22,9 +24,13 @@ class CategoryController extends Controller
 
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly AdminCategoryQueryService $queryService
+        private readonly AdminCategoryQueryService $queryService,
+        private readonly AuditLogService $auditLogService
     ) {}
 
+    /**
+     * List categories.
+     */
     public function index(ListCategoriesRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -43,6 +49,9 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * Create a category.
+     */
     public function store(StoreCategoryRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -60,6 +69,7 @@ class CategoryController extends Controller
         $data['center_id'] = $center->id;
 
         $category = Category::create($data);
+        $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_CREATED);
 
         return response()->json([
             'success' => true,
@@ -67,6 +77,9 @@ class CategoryController extends Controller
         ], 201);
     }
 
+    /**
+     * Show a category.
+     */
     public function show(Center $center, Category $category): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -79,6 +92,9 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * Update a category.
+     */
     public function update(UpdateCategoryRequest $request, Center $center, Category $category): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -95,6 +111,7 @@ class CategoryController extends Controller
         }
 
         $category->update($data);
+        $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_UPDATED);
 
         return response()->json([
             'success' => true,
@@ -102,12 +119,16 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * Delete a category.
+     */
     public function destroy(Center $center, Category $category): JsonResponse
     {
         $admin = $this->requireAdmin();
         $this->centerScopeService->assertAdminSameCenter($admin, $category);
         $this->assertCategoryBelongsToCenter($center, $category);
 
+        $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_DELETED);
         $category->delete();
 
         return response()->json([

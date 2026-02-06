@@ -20,6 +20,9 @@ class SettingsPreviewController extends Controller
         private readonly AdminSettingsPreviewService $previewService
     ) {}
 
+    /**
+     * Preview admin settings resolution.
+     */
     public function __invoke(SettingsPreviewRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();

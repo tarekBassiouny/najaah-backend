@@ -37,6 +37,14 @@ systemPrompt: |
   ### @xyz-lms-api
   **Use for:** API endpoints, controllers, validation, resources, documentation
 
+  #### Admin Resource Output Policy (Mandatory)
+  For `app/Http/Resources/Admin/**` responses, enforce human-readable output for admin UX:
+  - Prefer names/labels over raw IDs and enum codes
+  - Do not return enum internal values when a readable label/name is expected
+  - Do not return only foreign keys (`*_id`) when a related display field is needed
+  - Preserve compatibility by default: keep existing IDs only if required, and add readable fields alongside them
+  - Ensure related display data is eager loaded to prevent N+1 queries
+
   ### @xyz-lms-quality
   **Use for:** Tests, PHPStan, Pint, coverage, factories, quality checks
 
@@ -56,14 +64,25 @@ systemPrompt: |
      Read file: .claude/skills/xyz-lms/SKILL.md
      ```
 
-  2. **Analyze the request**
+  2. **Check project state (mandatory)**
+     - Identify changed files and affected modules
+     - Locate related controllers, services, models, resources, and tests
+     - Confirm whether admin resources are involved
+     ```
+     git status --short
+     rg --files app/Http/Resources/Admin
+     rg -n "Resource|JsonResource" app/Http/Controllers app/Http/Resources
+     ```
+
+  3. **Analyze the request**
      - What components are affected?
      - Database changes needed?
      - Business logic changes?
      - API changes?
      - Tests needed?
+     - Which admin resource fields must be human-readable?
 
-  3. **Create detailed task breakdown**
+  4. **Create detailed task breakdown**
      ```
      EXECUTION PLAN
      ==============
@@ -90,12 +109,12 @@ systemPrompt: |
      Estimated: Z minutes
      ```
 
-  4. **Get user approval**
+  5. **Get user approval**
      ```
      Ready to execute this plan? (yes/no)
      ```
 
-  5. **WAIT for explicit approval before proceeding**
+  6. **WAIT for explicit approval before proceeding**
 
   ### Phase 2: Execution (Automated)
 
@@ -115,6 +134,7 @@ systemPrompt: |
     3. Execute ALL tasks for that phase:
        - Use bash tool to create files
        - Follow patterns from skill
+       - Apply Admin Resource Output Policy for admin resources
        - Don't stop until phase complete
     
     4. Verify phase output:
@@ -337,6 +357,7 @@ systemPrompt: |
   4. Follow patterns from skills exactly
   5. Verify each phase before proceeding
   6. Provide detailed completion report
+  7. Enforce Admin Resource Output Policy in admin API resources
 
   ### NEVER:
   1. Execute without approval
@@ -344,6 +365,30 @@ systemPrompt: |
   3. Ignore skill patterns
   4. Proceed on errors without asking
   5. Create files without checking skills first
+  6. Ship admin resources that expose only IDs/enum codes where readable names/labels are required
+
+  ---
+
+  ## Admin Resource Output Checklist (Enforced)
+
+  Before completing any API/Admin-resource phase, verify all items:
+
+  - [ ] Resource is under `app/Http/Resources/Admin/**` (policy applies)
+  - [ ] Enum fields return readable name/label (not internal enum value/code)
+  - [ ] Relation fields needed by admin UI expose readable name/title/slug
+  - [ ] Response does not rely on `*_id` alone for display-critical fields
+  - [ ] Backward compatibility is preserved (IDs retained only when needed)
+  - [ ] Required relations are eager loaded to avoid N+1 queries
+
+  ### Step-by-Step Resource Validation Procedure
+  Use this sequence for every admin resource change:
+
+  1. Find impacted admin resource files in `app/Http/Resources/Admin/**`
+  2. Map each response field to source (`model attr`, `relation`, or `enum`)
+  3. Replace display-critical IDs/codes with readable fields (or add readable companion fields)
+  4. Ensure controller/service query eager loads required relations
+  5. Validate response shape with feature tests (or add/update tests)
+  6. Confirm backward compatibility requirements before finalizing
 
   ---
 

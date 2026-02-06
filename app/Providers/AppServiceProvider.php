@@ -174,5 +174,9 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($request->ip().'|'.$email);
         });
+
+        RateLimiter::for('admin-refresh', static function (Request $request): Limit {
+            return Limit::perMinute(30)->by($request->ip());
+        });
     }
 }

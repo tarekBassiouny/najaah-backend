@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Requests\Admin\Categories\ListCategoriesRequest;
 use App\Http\Requests\Admin\Centers\ListCentersRequest;
 use App\Http\Requests\Admin\Courses\ListCoursesRequest;
 use App\Http\Requests\Admin\Enrollments\ListEnrollmentsRequest;
@@ -63,4 +64,21 @@ it('builds enrollment filters with trimmed status', function (): void {
 
     expect($filters->status)->toBe('ACTIVE')
         ->and($filters->centerId)->toBe(4);
+});
+
+it('builds category filters with string booleans from query params', function (): void {
+    $request = ListCategoriesRequest::create('/admin/categories', 'GET', [
+        'page' => '1',
+        'per_page' => '10',
+        'is_active' => 'false',
+    ]);
+    $request->setContainer(app())->setRedirector(app('redirect'));
+    $request->validateResolved();
+
+    $filters = $request->filters();
+
+    expect($filters->page)->toBe(1)
+        ->and($filters->perPage)->toBe(10)
+        ->and($filters->isActive)->toBeFalse()
+        ->and($filters->parentId)->toBeNull();
 });

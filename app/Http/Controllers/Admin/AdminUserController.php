@@ -21,6 +21,8 @@ class AdminUserController extends Controller
     ) {}
 
     /**
+     * List admin users.
+     *
      * @queryParam per_page int Items per page. Example: 15
      */
     public function index(ListAdminUsersRequest $request): JsonResponse
@@ -40,6 +42,9 @@ class AdminUserController extends Controller
         ]);
     }
 
+    /**
+     * Create an admin user.
+     */
     public function store(StoreAdminUserRequest $request): JsonResponse
     {
         /** @var array<string, mixed> $data */
@@ -53,6 +58,9 @@ class AdminUserController extends Controller
         ], 201);
     }
 
+    /**
+     * Update an admin user.
+     */
     public function update(UpdateAdminUserRequest $request, User $user): JsonResponse
     {
         /** @var array<string, mixed> $data */
@@ -66,6 +74,9 @@ class AdminUserController extends Controller
         ]);
     }
 
+    /**
+     * Delete an admin user.
+     */
     public function destroy(User $user): JsonResponse
     {
         $actor = request()->user();
@@ -77,6 +88,9 @@ class AdminUserController extends Controller
         ], 204);
     }
 
+    /**
+     * Sync admin user roles.
+     */
     public function syncRoles(SyncAdminUserRolesRequest $request, User $user): JsonResponse
     {
         /** @var array{role_ids: array<int, int>} $data */

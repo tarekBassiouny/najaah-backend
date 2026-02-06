@@ -7,6 +7,7 @@ namespace App\Http\Resources\Admin\Courses;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 /**
  * Lightweight course representation for listings.
@@ -29,7 +30,9 @@ class CourseSummaryResource extends JsonResource
             'description' => $course->translate('description'),
             'language' => $course->language,
             'thumbnail' => $course->thumbnail_url ?? null,
-            'status' => $course->status,
+            'status' => $course->status->value,
+            'status_key' => Str::snake($course->status->name),
+            'status_label' => $course->status->name,
             'published_at' => $course->publish_at,
         ];
     }

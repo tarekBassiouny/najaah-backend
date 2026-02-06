@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Services\Auth;
 
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
+use App\Support\AuditActions;
 use Illuminate\Support\Facades\Auth;
 
 class AdminAuthService implements AdminAuthServiceInterface
 {
+    public function __construct(
+        private readonly AuditLogService $auditLogService
+    ) {}
+
     public function login(string $email, string $password): ?array
     {
         $credentials = [
@@ -32,6 +38,10 @@ class AdminAuthService implements AdminAuthServiceInterface
         $centerAccessValid = $user->hasRole('super_admin');
         if (! $centerAccessValid && is_numeric($user->center_id)) {
             $centerAccessValid = $user->isAdminOfCenter((int) $user->center_id);
+        }
+
+        if (! $user->force_password_reset && $centerAccessValid) {
+            $this->auditLogService->log($user, $user, AuditActions::ADMIN_LOGIN);
         }
 
         return [

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Instructors\Contracts;
 
 use App\Models\Instructor;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface InstructorServiceInterface
@@ -17,14 +18,14 @@ interface InstructorServiceInterface
     /**
      * @param  array<string, mixed>  $data
      */
-    public function create(array $data): Instructor;
+    public function create(array $data, ?User $actor = null): Instructor;
 
     /**
      * @param  array<string, mixed>  $data
      */
-    public function update(Instructor $instructor, array $data): Instructor;
+    public function update(Instructor $instructor, array $data, ?User $actor = null): Instructor;
 
-    public function delete(Instructor $instructor): void;
+    public function delete(Instructor $instructor, ?User $actor = null): void;
 
     public function find(int $id): ?Instructor;
 }

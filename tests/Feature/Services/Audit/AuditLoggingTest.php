@@ -160,6 +160,8 @@ test('extra view request creation is audited with actor', function (): void {
     expect($request)->not->toBeNull();
     expect($log)->not->toBeNull();
     expect($log->user_id)->toBe($student->id);
+    expect($log->center_id)->toBe($center->id);
+    expect($log->course_id)->toBe($course->id);
 });
 
 test('enrollment request creation is audited with actor', function (): void {
@@ -198,10 +200,16 @@ test('enrollment request creation is audited with actor', function (): void {
     expect($enrollment)->not->toBeNull();
     expect($log)->not->toBeNull();
     expect($log->user_id)->toBe($student->id);
+    expect($log->center_id)->toBe($center->id);
+    expect($log->course_id)->toBe($course->id);
 });
 
 test('device change request creation is audited with actor', function (): void {
-    $student = User::factory()->create(['is_student' => true]);
+    $center = Center::factory()->create();
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
 
     UserDevice::factory()->create([
         'user_id' => $student->id,
@@ -231,4 +239,6 @@ test('device change request creation is audited with actor', function (): void {
     expect($request)->not->toBeNull();
     expect($log)->not->toBeNull();
     expect($log->user_id)->toBe($student->id);
+    expect($log->center_id)->toBe($center->id);
+    expect($log->course_id)->toBeNull();
 });

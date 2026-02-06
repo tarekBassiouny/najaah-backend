@@ -22,16 +22,21 @@ class AdminUserService
      */
     public function list(AdminUserFilters $filters): LengthAwarePaginator
     {
-        return User::query()
+        $query = User::query()
             ->where('is_student', false)
-            ->with('roles')
-            ->orderByDesc('created_at')
-            ->paginate(
-                $filters->perPage,
-                ['*'],
-                'page',
-                $filters->page
-            );
+            ->with(['roles.permissions', 'center'])
+            ->orderByDesc('created_at');
+
+        if ($filters->centerId !== null) {
+            $query->where('center_id', $filters->centerId);
+        }
+
+        return $query->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
     }
 
     /**
@@ -58,7 +63,7 @@ class AdminUserService
             'center_id' => $user->center_id,
         ]);
 
-        return $user->refresh() ?? $user;
+        return ($user->refresh() ?? $user)->loadMissing(['roles.permissions', 'center']);
     }
 
     /**
@@ -88,7 +93,7 @@ class AdminUserService
             'updated_fields' => array_keys($payload),
         ]);
 
-        return $user->refresh() ?? $user;
+        return ($user->refresh() ?? $user)->loadMissing(['roles.permissions', 'center']);
     }
 
     public function delete(User $user, ?User $actor = null): void
@@ -111,7 +116,7 @@ class AdminUserService
             'role_ids' => $roleIds,
         ]);
 
-        return $user->refresh() ?? $user;
+        return ($user->refresh() ?? $user)->loadMissing(['roles.permissions', 'center']);
     }
 
     private function assertAdminUser(User $user): void

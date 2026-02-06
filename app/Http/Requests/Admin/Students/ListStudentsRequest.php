@@ -50,8 +50,8 @@ class ListStudentsRequest extends AdminListRequest
                 'example' => '1',
             ],
             'search' => [
-                'description' => 'Search students by name, username, or email.',
-                'example' => 'Sara',
+                'description' => 'Search students by name, username, email, or phone.',
+                'example' => '010',
             ],
         ];
     }

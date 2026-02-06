@@ -1808,7 +1808,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Authenticate an admin.'
       description: ''
       authenticated: false
       deprecated: false
@@ -1865,7 +1865,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Reset an admin password.'
       description: ''
       authenticated: false
       deprecated: false
@@ -1926,15 +1926,15 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - GET
-    uri: api/v1/admin/auth/me
+      - POST
+    uri: api/v1/admin/auth/refresh
     metadata:
       custom: []
       groupName: Endpoints
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Refresh the admin access token.'
       description: ''
       authenticated: false
       deprecated: false
@@ -1959,15 +1959,15 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: api/v1/admin/auth/refresh
+      - GET
+    uri: api/v1/admin/auth/me
     metadata:
       custom: []
       groupName: Endpoints
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Get the current admin profile.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2000,7 +2000,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Log out the current admin.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2033,7 +2033,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List centers.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2186,7 +2186,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a center.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2479,7 +2479,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a center.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2524,7 +2524,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a center.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2644,7 +2644,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a center.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2689,7 +2689,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Restore a center.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2734,7 +2734,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Retry center setup.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2779,7 +2779,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Upload a center logo.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2836,7 +2836,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show center settings.'
       description: ''
       authenticated: false
       deprecated: false
@@ -2881,7 +2881,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update center settings.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3031,7 +3031,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List enrollments.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3136,7 +3136,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show an enrollment.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3181,7 +3181,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create an enrollment.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3253,7 +3253,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update an enrollment status.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3313,7 +3313,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete an enrollment.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3358,7 +3358,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List courses for admins.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3463,7 +3463,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Clone a course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3559,7 +3559,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List courses for a center.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3676,7 +3676,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a course for a center.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3886,7 +3886,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a center course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -3943,7 +3943,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a center course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4153,7 +4153,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a center course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4210,7 +4210,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Publish a course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4255,7 +4255,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Assign a video to a course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4336,7 +4336,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Remove a video from a course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4405,7 +4405,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Assign a PDF to a course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4486,7 +4486,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Remove a PDF from a course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4555,7 +4555,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List sections.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4612,7 +4612,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4757,7 +4757,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Reorder sections.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4828,7 +4828,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -4897,7 +4897,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5054,7 +5054,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5123,7 +5123,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Restore a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5192,7 +5192,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Toggle section visibility.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5261,7 +5261,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a section with its structure.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5434,7 +5434,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a section with its structure.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5619,7 +5619,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a section and its structure.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5688,7 +5688,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List section videos.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5757,7 +5757,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a section video.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5838,7 +5838,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Attach a video to a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -5919,7 +5919,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Detach a video from a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6012,7 +6012,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List section PDFs.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6081,7 +6081,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a section PDF.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6162,7 +6162,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Attach a PDF to a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6243,7 +6243,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Detach a PDF from a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6336,7 +6336,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Publish a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6405,7 +6405,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Unpublish a section.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6474,7 +6474,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List videos.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6567,7 +6567,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a video.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6702,7 +6702,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a video.'
       description: ''
       authenticated: false
       deprecated: false
@@ -6759,7 +6759,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a video.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7060,7 +7060,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a video.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7117,7 +7117,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a video upload session.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7186,7 +7186,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List instructors.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7279,7 +7279,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create an instructor.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7454,7 +7454,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show an instructor.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7500,7 +7500,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update an instructor.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7681,7 +7681,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete an instructor.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7726,7 +7726,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Assign an instructor to a course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7795,7 +7795,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Remove an instructor from a course.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7852,7 +7852,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List categories.'
       description: ''
       authenticated: false
       deprecated: false
@@ -7957,7 +7957,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a category.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8070,7 +8070,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a category.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8127,7 +8127,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a category.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8252,7 +8252,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a category.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8309,7 +8309,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List PDFs.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8402,7 +8402,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a PDF.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8583,7 +8583,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a PDF.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8640,7 +8640,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a PDF.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8861,7 +8861,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a PDF.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8918,7 +8918,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a PDF upload session.'
       description: ''
       authenticated: false
       deprecated: false
@@ -8987,7 +8987,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Finalize a PDF upload session.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9144,7 +9144,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Preview admin settings resolution.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9225,7 +9225,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List audit logs.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9270,6 +9270,17 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Filter by course ID.'
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       entity_type:
         custom: []
         name: entity_type
@@ -9295,9 +9306,9 @@ endpoints:
       action:
         custom: []
         name: action
-        description: 'Filter by audit action. Must not be greater than 255 characters.'
+        description: 'Filter by audit action (exact action or: create, update, delete, login, logout). Must not be greater than 255 characters.'
         required: false
-        example: enrollment_created
+        example: create
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -9340,9 +9351,10 @@ endpoints:
       per_page: 20
       page: 1
       center_id: 2
+      course_id: 12
       entity_type: App\Models\Course
       entity_id: 12
-      action: enrollment_created
+      action: create
       user_id: 3
       date_from: '2025-01-01'
       date_to: '2025-12-31'
@@ -9366,7 +9378,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Get analytics overview.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9447,7 +9459,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Get analytics for course media.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9528,7 +9540,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Get analytics for learner enrollments.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9609,7 +9621,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Get analytics for device requests.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9690,7 +9702,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List extra view requests.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9810,7 +9822,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Approve an extra view request.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9879,7 +9891,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Reject an extra view request.'
       description: ''
       authenticated: false
       deprecated: false
@@ -9936,7 +9948,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List device change requests.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10056,7 +10068,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Approve a device change request.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10137,7 +10149,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Reject a device change request.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10194,7 +10206,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Pre-approve a device change request.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10251,7 +10263,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a device change request for a student.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10301,6 +10313,489 @@ endpoints:
     custom: []
     httpMethods:
       - GET
+    uri: api/v1/admin/agents/executions
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List agent executions.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Items per page (max 100). Must be at least 1. Must not be greater than 100.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter by center ID.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      agent_type:
+        custom: []
+        name: agent_type
+        description: 'Filter by agent type (content_publishing, enrollment, etc.).'
+        required: false
+        example: content_publishing
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      status:
+        custom: []
+        name: status
+        description: 'Filter by status (0=pending, 1=running, 2=completed, 3=failed).'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      initiated_by:
+        custom: []
+        name: initiated_by
+        description: 'Filter by initiator user ID.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      per_page: 15
+      page: 1
+      center_id: 2
+      agent_type: content_publishing
+      status: 2
+      initiated_by: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/admin/agents/executions/{agentExecution_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Show a single agent execution.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters:
+      agentExecution_id:
+        custom: []
+        name: agentExecution_id
+        description: 'The ID of the agentExecution.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      agentExecution_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/admin/agents/available
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get available agents for the current user.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/agents/execute
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Execute an agent.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      agent_type:
+        custom: []
+        name: agent_type
+        description: 'The type of agent to execute (content_publishing, enrollment, etc.).'
+        required: false
+        example: content_publishing
+        type: string
+        enumValues:
+          - content_publishing
+          - enrollment
+          - analytics
+          - notification
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context:
+        custom: []
+        name: context
+        description: 'Agent-specific context parameters.'
+        required: false
+        example:
+          course_id: 1
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.course_id:
+        custom: []
+        name: context.course_id
+        description: 'The <code>id</code> of an existing record in the courses table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.student_ids:
+        custom: []
+        name: context.student_ids
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      agent_type: content_publishing
+      center_id: 1
+      context:
+        course_id: 1
+        student_ids:
+          - 16
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/agents/content-publishing/execute
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Execute content publishing agent.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      agent_type:
+        custom: []
+        name: agent_type
+        description: 'The type of agent to execute (content_publishing, enrollment, etc.).'
+        required: false
+        example: content_publishing
+        type: string
+        enumValues:
+          - content_publishing
+          - enrollment
+          - analytics
+          - notification
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context:
+        custom: []
+        name: context
+        description: 'Agent-specific context parameters.'
+        required: false
+        example:
+          course_id: 1
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.course_id:
+        custom: []
+        name: context.course_id
+        description: 'The <code>id</code> of an existing record in the courses table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.student_ids:
+        custom: []
+        name: context.student_ids
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      agent_type: content_publishing
+      center_id: 1
+      context:
+        course_id: 1
+        student_ids:
+          - 16
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/agents/enrollment/bulk
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Execute bulk enrollment agent.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      agent_type:
+        custom: []
+        name: agent_type
+        description: 'The type of agent to execute (content_publishing, enrollment, etc.).'
+        required: false
+        example: content_publishing
+        type: string
+        enumValues:
+          - content_publishing
+          - enrollment
+          - analytics
+          - notification
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'The center ID to execute the agent for. The <code>id</code> of an existing record in the centers table.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context:
+        custom: []
+        name: context
+        description: 'Agent-specific context parameters.'
+        required: false
+        example:
+          course_id: 1
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.course_id:
+        custom: []
+        name: context.course_id
+        description: 'The <code>id</code> of an existing record in the courses table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      context.student_ids:
+        custom: []
+        name: context.student_ids
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      agent_type: content_publishing
+      center_id: 1
+      context:
+        course_id: 1
+        student_ids:
+          - 16
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
     uri: api/v1/admin/roles
     metadata:
       custom: []
@@ -10308,7 +10803,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List roles.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10365,7 +10860,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Show a role.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10410,7 +10905,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a role.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10531,7 +11026,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a role.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10664,7 +11159,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a role.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10709,7 +11204,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Sync role permissions.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10768,7 +11263,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List permissions.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10801,7 +11296,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List admin users.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10835,9 +11330,21 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter admin users by center ID. The <code>id</code> of an existing record in the centers table.'
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
     cleanQueryParameters:
       per_page: 15
       page: 1
+      center_id: 12
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -10858,7 +11365,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create an admin user.'
       description: ''
       authenticated: false
       deprecated: false
@@ -10966,7 +11473,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update an admin user.'
       description: ''
       authenticated: false
       deprecated: false
@@ -11086,7 +11593,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete an admin user.'
       description: ''
       authenticated: false
       deprecated: false
@@ -11131,7 +11638,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Sync admin user roles.'
       description: ''
       authenticated: false
       deprecated: false
@@ -11190,7 +11697,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'List students.'
       description: ''
       authenticated: false
       deprecated: false
@@ -11286,7 +11793,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Update a student.'
       description: ''
       authenticated: false
       deprecated: false
@@ -11370,7 +11877,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Create a student.'
       description: ''
       authenticated: false
       deprecated: false
@@ -11463,7 +11970,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: ''
+      title: 'Delete a student.'
       description: ''
       authenticated: false
       deprecated: false

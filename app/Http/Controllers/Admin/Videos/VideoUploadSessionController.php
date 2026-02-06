@@ -18,6 +18,9 @@ class VideoUploadSessionController extends Controller
 
     public function __construct(private readonly VideoUploadServiceInterface $uploadService) {}
 
+    /**
+     * Create a video upload session.
+     */
     public function store(StoreVideoUploadSessionRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();

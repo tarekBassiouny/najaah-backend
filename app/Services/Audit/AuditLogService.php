@@ -20,6 +20,8 @@ class AuditLogService
 
         AuditLog::create([
             'user_id' => $actor?->id,
+            'center_id' => $this->resolveId($payload['center_id'] ?? null),
+            'course_id' => $this->resolveId($payload['course_id'] ?? null),
             'action' => $action,
             'entity_type' => $entity::class,
             'entity_id' => (int) $entity->getKey(),
@@ -34,6 +36,8 @@ class AuditLogService
     {
         AuditLog::create([
             'user_id' => $actor?->id,
+            'center_id' => $this->resolveId($metadata['center_id'] ?? null),
+            'course_id' => $this->resolveId($metadata['course_id'] ?? null),
             'action' => $action,
             'entity_type' => $entityType,
             'entity_id' => $entityId,
@@ -57,5 +61,20 @@ class AuditLogService
         }
 
         return $metadata;
+    }
+
+    private function resolveId(mixed $value): ?int
+    {
+        if (is_int($value)) {
+            return $value > 0 ? $value : null;
+        }
+
+        if (is_numeric($value)) {
+            $resolved = (int) $value;
+
+            return $resolved > 0 ? $resolved : null;
+        }
+
+        return null;
     }
 }

@@ -27,6 +27,9 @@ class AnalyticsController extends Controller
         private readonly AnalyticsDevicesRequestsService $devicesRequestsService
     ) {}
 
+    /**
+     * Get analytics overview.
+     */
     public function overview(AnalyticsRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -38,6 +41,9 @@ class AnalyticsController extends Controller
         ]);
     }
 
+    /**
+     * Get analytics for course media.
+     */
     public function coursesMedia(AnalyticsRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -49,6 +55,9 @@ class AnalyticsController extends Controller
         ]);
     }
 
+    /**
+     * Get analytics for learner enrollments.
+     */
     public function learnersEnrollments(AnalyticsRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -60,6 +69,9 @@ class AnalyticsController extends Controller
         ]);
     }
 
+    /**
+     * Get analytics for device requests.
+     */
     public function devicesRequests(AnalyticsRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();

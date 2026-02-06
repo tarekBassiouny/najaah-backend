@@ -26,6 +26,9 @@ class VideoController extends Controller
         private readonly AdminVideoQueryServiceInterface $queryService
     ) {}
 
+    /**
+     * List videos.
+     */
     public function index(ListVideosRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -46,6 +49,9 @@ class VideoController extends Controller
         ]);
     }
 
+    /**
+     * Create a video.
+     */
     public function store(StoreVideoRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -56,10 +62,13 @@ class VideoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new VideoResource($video),
+            'data' => new VideoResource($video->loadMissing(['center', 'creator'])),
         ], 201);
     }
 
+    /**
+     * Show a video.
+     */
     public function show(Center $center, Video $video): JsonResponse
     {
         $this->requireAdmin();
@@ -67,10 +76,13 @@ class VideoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new VideoResource($video->load(['uploadSession', 'creator'])),
+            'data' => new VideoResource($video->load(['center', 'uploadSession', 'creator'])),
         ]);
     }
 
+    /**
+     * Update a video.
+     */
     public function update(UpdateVideoRequest $request, Center $center, Video $video): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -82,10 +94,13 @@ class VideoController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => new VideoResource($updated),
+            'data' => new VideoResource($updated->loadMissing(['center', 'creator'])),
         ]);
     }
 
+    /**
+     * Delete a video.
+     */
     public function destroy(Center $center, Video $video): JsonResponse
     {
         $admin = $this->requireAdmin();
