@@ -94,7 +94,13 @@ class StudentService
         ], static fn ($value): bool => $value !== null);
 
         $user->update($payload);
-        $this->auditLogService->log($actor, $user, AuditActions::STUDENT_UPDATED);
+        $metadata = $payload;
+        if (array_key_exists('status', $metadata)) {
+            $status = UserStatus::tryFrom((int) $metadata['status']);
+            $metadata['status_label'] = $status?->name;
+        }
+
+        $this->auditLogService->log($actor, $user, AuditActions::STUDENT_UPDATED, $metadata);
 
         return $user->refresh() ?? $user;
     }
