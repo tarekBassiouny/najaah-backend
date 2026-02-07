@@ -31,6 +31,8 @@ class StudentResource extends JsonResource
         $activeDevice = $user->relationLoaded('devices')
             ? $user->devices->first()
             : null;
+        $analytics = $user->getAttribute('analytics_summary');
+        $analyticsSummary = is_array($analytics) ? $analytics : [];
 
         return [
             'id' => $user->id,
@@ -47,6 +49,14 @@ class StudentResource extends JsonResource
             'device' => $activeDevice instanceof UserDevice
                 ? new DeviceResource($activeDevice)
                 : null,
+            'analytics' => [
+                'total_enrollments' => (int) data_get($analyticsSummary, 'total_enrollments', 0),
+                'active_enrollments' => (int) data_get($analyticsSummary, 'active_enrollments', 0),
+                'total_sessions' => (int) data_get($analyticsSummary, 'total_sessions', 0),
+                'full_play_sessions' => (int) data_get($analyticsSummary, 'full_play_sessions', 0),
+                'viewed_videos' => (int) data_get($analyticsSummary, 'viewed_videos', 0),
+                'last_activity_at' => data_get($analyticsSummary, 'last_activity_at'),
+            ],
         ];
     }
 }

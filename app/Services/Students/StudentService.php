@@ -75,12 +75,13 @@ class StudentService
      */
     public function update(User $user, array $data, ?User $actor = null): User
     {
-        $this->studentAccessService->assertStudent(
-            $user,
-            'User is not a student.',
-            ErrorCodes::NOT_STUDENT,
-            422
-        );
+        if (! $user->is_student) {
+            throw new \App\Exceptions\DomainException(
+                'User is not a student.',
+                ErrorCodes::NOT_STUDENT,
+                422
+            );
+        }
 
         if ($actor instanceof User) {
             $this->centerScopeService->assertAdminSameCenter($actor, $user);

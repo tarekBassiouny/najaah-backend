@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\Students\UpdateStudentRequest;
 use App\Http\Resources\Admin\Users\StudentResource;
 use App\Models\User;
 use App\Services\Admin\StudentQueryService;
+use App\Services\Analytics\AnalyticsStudentListSummaryService;
 use App\Services\Students\StudentService;
 use Illuminate\Http\JsonResponse;
 
@@ -19,6 +20,7 @@ class StudentController extends Controller
 {
     public function __construct(
         private readonly StudentQueryService $queryService,
+        private readonly AnalyticsStudentListSummaryService $analyticsSummaryService,
         private readonly StudentService $studentService
     ) {}
 
@@ -42,6 +44,7 @@ class StudentController extends Controller
 
         $filters = $request->filters();
         $paginator = $this->queryService->paginate($admin, $filters);
+        $this->analyticsSummaryService->hydrate($paginator->items());
 
         return response()->json([
             'success' => true,
