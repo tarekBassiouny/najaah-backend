@@ -146,6 +146,7 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
         $course->save();
 
         $this->auditLogService->logByType($actor, Course::class, (int) $course->id, AuditActions::COURSE_PUBLISHED, [
+            'center_id' => $course->center_id,
             'course_id' => $course->id,
             'published_at' => $course->publish_at,
         ]);
@@ -213,6 +214,8 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
             }
 
             $this->auditLogService->logByType($actor, Course::class, (int) $clone->id, AuditActions::COURSE_CLONED, [
+                'center_id' => $clone->center_id,
+                'course_id' => $clone->id,
                 'source_course_id' => $course->id,
                 'cloned_course_id' => $clone->id,
             ]);

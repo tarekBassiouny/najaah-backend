@@ -7,19 +7,30 @@ namespace App\Actions\Admin\Centers;
 use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
+use App\Support\AuditActions;
 use Illuminate\Validation\ValidationException;
 
 class RetryCenterOnboardingAction
 {
+    public function __construct(
+        private readonly AuditLogService $auditLogService
+    ) {}
+
     /**
      * @return array{center: Center, owner: User, email_sent: bool}
      */
-    public function execute(Center $center): array
+    public function execute(Center $center, ?User $actor = null): array
     {
         try {
             if ($center->onboarding_status === Center::ONBOARDING_ACTIVE) {
                 $owner = $this->resolveExistingOwner($center);
                 $emailSent = $this->dispatchInvitation($center, $owner);
+                $this->auditLogService->log($actor, $center, AuditActions::CENTER_ONBOARDING_RETRIED, [
+                    'owner_id' => $owner->id,
+                    'email_sent' => $emailSent,
+                    'onboarding_status' => $center->onboarding_status,
+                ]);
 
                 return [
                     'center' => $center->fresh(['setting']) ?? $center,
@@ -34,6 +45,11 @@ class RetryCenterOnboardingAction
 
             $this->markOnboardingStatus($center, Center::ONBOARDING_ACTIVE);
             $emailSent = $this->dispatchInvitation($center, $owner);
+            $this->auditLogService->log($actor, $center, AuditActions::CENTER_ONBOARDING_RETRIED, [
+                'owner_id' => $owner->id,
+                'email_sent' => $emailSent,
+                'onboarding_status' => $center->onboarding_status,
+            ]);
 
             return [
                 'center' => $center->fresh(['setting']) ?? $center,

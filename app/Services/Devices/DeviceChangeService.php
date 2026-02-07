@@ -71,6 +71,7 @@ class DeviceChangeService implements DeviceChangeServiceInterface
         ]);
 
         $this->audit($student, AuditActions::DEVICE_CHANGE_REQUEST_CREATED, [
+            'center_id' => $request->center_id,
             'old_device_id' => $active->device_id,
             'new_device_id' => $newDeviceId,
         ], $request->id);
@@ -144,6 +145,7 @@ class DeviceChangeService implements DeviceChangeServiceInterface
 
             $this->audit($admin, AuditActions::DEVICE_CHANGE_REQUEST_APPROVED, [
                 'request_id' => $request->id,
+                'center_id' => $request->center_id,
                 'old_device_id' => $request->current_device_id,
                 'new_device_id' => $resolvedDeviceId,
             ], $request->id);
@@ -168,6 +170,7 @@ class DeviceChangeService implements DeviceChangeServiceInterface
 
         $this->audit($admin, AuditActions::DEVICE_CHANGE_REQUEST_REJECTED, [
             'request_id' => $request->id,
+            'center_id' => $request->center_id,
             'old_device_id' => $request->current_device_id,
             'new_device_id' => $request->new_device_id,
             'decision_reason' => $reason,
@@ -222,6 +225,7 @@ class DeviceChangeService implements DeviceChangeServiceInterface
         ]);
 
         $this->audit($student, AuditActions::DEVICE_CHANGE_REQUEST_CREATED_VIA_OTP, [
+            'center_id' => $request->center_id,
             'old_device_id' => $active?->device_id,
             'new_device_id' => $newDeviceId,
         ], $request->id);
@@ -270,6 +274,7 @@ class DeviceChangeService implements DeviceChangeServiceInterface
 
         $this->audit($admin, AuditActions::DEVICE_CHANGE_REQUEST_CREATED_BY_ADMIN, [
             'student_id' => $student->id,
+            'center_id' => $request->center_id,
             'old_device_id' => $active?->device_id,
         ], $request->id);
 
@@ -304,6 +309,7 @@ class DeviceChangeService implements DeviceChangeServiceInterface
 
             $this->audit($admin, AuditActions::DEVICE_CHANGE_REQUEST_PRE_APPROVED, [
                 'request_id' => $request->id,
+                'center_id' => $request->center_id,
                 'old_device_id' => $request->current_device_id,
             ], $request->id);
 
@@ -348,6 +354,7 @@ class DeviceChangeService implements DeviceChangeServiceInterface
 
             $this->audit($user, AuditActions::DEVICE_CHANGE_REQUEST_COMPLETED_VIA_LOGIN, [
                 'request_id' => $request->id,
+                'center_id' => $request->center_id,
                 'old_device_id' => $request->current_device_id,
                 'new_device_id' => $deviceId,
             ], $request->id);

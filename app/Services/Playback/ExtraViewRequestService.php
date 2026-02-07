@@ -82,6 +82,8 @@ class ExtraViewRequestService
         $this->audit($admin, AuditActions::EXTRA_VIEW_REQUEST_APPROVED, [
             'request_id' => $request->id,
             'video_id' => $request->video_id,
+            'course_id' => $request->course_id,
+            'center_id' => $request->center_id,
             'granted_views' => $grantedViews,
             'decision_reason' => $decisionReason,
         ], $request->id);
@@ -106,6 +108,8 @@ class ExtraViewRequestService
         $this->audit($admin, AuditActions::EXTRA_VIEW_REQUEST_REJECTED, [
             'request_id' => $request->id,
             'video_id' => $request->video_id,
+            'course_id' => $request->course_id,
+            'center_id' => $request->center_id,
             'decision_reason' => $decisionReason,
         ], $request->id);
 

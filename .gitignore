@@ -13,6 +13,10 @@
 /.zed
 /auth.json
 /node_modules
+/.scribe
+/postman/scribe.postman.json
+/postman/xyz-lms.postman.json
+/resources/views/scribe/index.blade.php
 /public/build
 /public/hot
 /public/storage

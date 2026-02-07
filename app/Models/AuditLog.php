@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property int $id
  * @property int|null $user_id
+ * @property int|null $center_id
+ * @property int|null $course_id
  * @property string $action
  * @property string $entity_type
  * @property int $entity_id
@@ -29,6 +31,8 @@ class AuditLog extends Model
 
     protected $fillable = [
         'user_id',
+        'center_id',
+        'course_id',
         'action',
         'entity_type',
         'entity_id',
@@ -36,6 +40,8 @@ class AuditLog extends Model
     ];
 
     protected $casts = [
+        'center_id' => 'integer',
+        'course_id' => 'integer',
         'metadata' => 'array',
     ];
 

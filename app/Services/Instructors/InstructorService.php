@@ -6,9 +6,12 @@ namespace App\Services\Instructors;
 
 use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Instructor;
+use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use App\Services\Storage\StoragePathResolver;
+use App\Support\AuditActions;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
 use RuntimeException;
@@ -25,7 +28,8 @@ class InstructorService implements InstructorServiceInterface
 
     public function __construct(
         private readonly StorageServiceInterface $storageService,
-        private readonly StoragePathResolver $pathResolver
+        private readonly StoragePathResolver $pathResolver,
+        private readonly AuditLogService $auditLogService
     ) {}
 
     /**
@@ -41,19 +45,22 @@ class InstructorService implements InstructorServiceInterface
     /**
      * @param  array<string, mixed>  $data
      */
-    public function create(array $data): Instructor
+    public function create(array $data, ?User $actor = null): Instructor
     {
         $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS);
         $data = $this->prepareAvatar($data);
         $data = $this->prepareMetadata($data);
 
-        return Instructor::create($data);
+        $instructor = Instructor::create($data);
+        $this->auditLogService->log($actor, $instructor, AuditActions::INSTRUCTOR_CREATED);
+
+        return $instructor;
     }
 
     /**
      * @param  array<string, mixed>  $data
      */
-    public function update(Instructor $instructor, array $data): Instructor
+    public function update(Instructor $instructor, array $data, ?User $actor = null): Instructor
     {
         $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS, [
             'name_translations' => $instructor->name_translations ?? [],
@@ -64,12 +71,14 @@ class InstructorService implements InstructorServiceInterface
         $data = $this->prepareMetadata($data);
 
         $instructor->update($data);
+        $this->auditLogService->log($actor, $instructor, AuditActions::INSTRUCTOR_UPDATED);
 
         return $instructor->fresh(['center', 'creator']) ?? $instructor;
     }
 
-    public function delete(Instructor $instructor): void
+    public function delete(Instructor $instructor, ?User $actor = null): void
     {
+        $this->auditLogService->log($actor, $instructor, AuditActions::INSTRUCTOR_DELETED);
         $instructor->delete();
     }
 

@@ -22,6 +22,9 @@ class SectionWorkflowController extends Controller
         private readonly SectionWorkflowServiceInterface $workflowService
     ) {}
 
+    /**
+     * Create a section with its structure.
+     */
     public function createWithStructure(
         CreateSectionWithStructureRequest $request,
         Center $center,
@@ -44,6 +47,9 @@ class SectionWorkflowController extends Controller
         ], 201);
     }
 
+    /**
+     * Update a section with its structure.
+     */
     public function updateWithStructure(
         UpdateSectionWithStructureRequest $request,
         Center $center,
@@ -73,6 +79,9 @@ class SectionWorkflowController extends Controller
         ]);
     }
 
+    /**
+     * Delete a section and its structure.
+     */
     public function deleteWithStructure(
         Center $center,
         Course $course,
@@ -89,6 +98,9 @@ class SectionWorkflowController extends Controller
         ], 204);
     }
 
+    /**
+     * Publish a section.
+     */
     public function publish(
         Center $center,
         Course $course,
@@ -105,6 +117,9 @@ class SectionWorkflowController extends Controller
         ]);
     }
 
+    /**
+     * Unpublish a section.
+     */
     public function unpublish(
         Center $center,
         Course $course,

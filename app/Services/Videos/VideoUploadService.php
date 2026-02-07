@@ -104,6 +104,7 @@ class VideoUploadService implements VideoUploadServiceInterface
 
         $this->auditLogService->log($admin, $session, AuditActions::VIDEO_UPLOAD_SESSION_CREATED, [
             'center_id' => $center->id,
+            'course_id' => $courseId,
             'video_id' => $video?->id,
             'retry_from_session_id' => $previousSessionId,
         ]);

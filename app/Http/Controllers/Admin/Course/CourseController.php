@@ -25,6 +25,9 @@ class CourseController extends Controller
         private readonly CenterScopeService $centerScopeService
     ) {}
 
+    /**
+     * List courses for admins.
+     */
     public function adminList(
         ListCoursesRequest $request,
         CourseQueryService $queryService
@@ -46,6 +49,9 @@ class CourseController extends Controller
         ]);
     }
 
+    /**
+     * List courses for a center.
+     */
     public function centerIndex(
         ListCoursesRequest $request,
         Center $center,
@@ -68,6 +74,9 @@ class CourseController extends Controller
         ]);
     }
 
+    /**
+     * Create a course for a center.
+     */
     public function centerStore(
         CreateCourseRequest $request,
         Center $center,
@@ -89,6 +98,9 @@ class CourseController extends Controller
         ], 201);
     }
 
+    /**
+     * Show a center course.
+     */
     public function centerShow(
         Center $center,
         Course $course,
@@ -107,6 +119,9 @@ class CourseController extends Controller
         ]);
     }
 
+    /**
+     * Update a center course.
+     */
     public function centerUpdate(
         UpdateCourseRequest $request,
         Center $center,
@@ -130,6 +145,9 @@ class CourseController extends Controller
         ]);
     }
 
+    /**
+     * Delete a center course.
+     */
     public function centerDestroy(
         Center $center,
         Course $course,

@@ -8,8 +8,10 @@ use App\Enums\UserDeviceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mobile\UpdateProfileRequest;
 use App\Http\Resources\Mobile\StudentUserResource;
+use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Students\StudentService;
+use App\Support\AuditActions;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +19,8 @@ class MeController extends Controller
 {
     public function __construct(
         private readonly StudentService $studentService,
-        private readonly JwtServiceInterface $jwtService
+        private readonly JwtServiceInterface $jwtService,
+        private readonly AuditLogService $auditLogService
     ) {}
 
     public function profile(): JsonResponse
@@ -65,6 +68,8 @@ class MeController extends Controller
         if ($user === null) {
             $this->deny();
         }
+
+        $this->auditLogService->log($user, $user, AuditActions::STUDENT_LOGOUT);
 
         $this->jwtService->revokeCurrent();
 

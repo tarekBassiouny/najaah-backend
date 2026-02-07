@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Students;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -21,6 +22,8 @@ class StoreStudentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $resolvedCenterId = $this->resolveCenterId();
+
         return [
             'name' => ['required', 'string', 'max:100'],
             'email' => [
@@ -28,10 +31,12 @@ class StoreStudentRequest extends FormRequest
                 'email',
                 'max:190',
                 Rule::unique('users', 'email')
-                    ->where(function ($query): void {
-                        $centerId = $this->input('center_id');
-                        if (is_numeric($centerId)) {
-                            $query->where('center_id', (int) $centerId);
+                    ->where(function ($query) use ($resolvedCenterId): void {
+                        $query->where('is_student', true)
+                            ->whereNull('deleted_at');
+
+                        if ($resolvedCenterId !== null) {
+                            $query->where('center_id', $resolvedCenterId);
                         } else {
                             $query->whereNull('center_id');
                         }
@@ -42,10 +47,12 @@ class StoreStudentRequest extends FormRequest
                 'string',
                 'max:30',
                 Rule::unique('users', 'phone')
-                    ->where(function ($query): void {
-                        $centerId = $this->input('center_id');
-                        if (is_numeric($centerId)) {
-                            $query->where('center_id', (int) $centerId);
+                    ->where(function ($query) use ($resolvedCenterId): void {
+                        $query->where('is_student', true)
+                            ->whereNull('deleted_at');
+
+                        if ($resolvedCenterId !== null) {
+                            $query->where('center_id', $resolvedCenterId);
                         } else {
                             $query->whereNull('center_id');
                         }
@@ -54,6 +61,23 @@ class StoreStudentRequest extends FormRequest
             'country_code' => ['required', 'string', 'max:8'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
+    }
+
+    private function resolveCenterId(): ?int
+    {
+        $centerId = $this->input('center_id');
+
+        if (is_numeric($centerId)) {
+            return (int) $centerId;
+        }
+
+        $user = $this->user();
+
+        if ($user instanceof User && ! $user->hasRole('super_admin') && is_numeric($user->center_id)) {
+            return (int) $user->center_id;
+        }
+
+        return null;
     }
 
     /**

@@ -25,11 +25,16 @@ class CenterOperationsController extends Controller
         private readonly CenterSettingsServiceInterface $centerSettingsService
     ) {}
 
+    /**
+     * Retry center setup.
+     */
     public function retry(
         RetryCenterOnboardingRequest $request,
         int $center,
         RetryCenterOnboardingAction $action
     ): JsonResponse {
+        /** @var User|null $admin */
+        $admin = $request->user();
         $center = Center::find($center);
 
         if ($center === null) {
@@ -42,7 +47,7 @@ class CenterOperationsController extends Controller
             ], 404);
         }
 
-        $result = $action->execute($center);
+        $result = $action->execute($center, $admin instanceof User ? $admin : null);
 
         return response()->json([
             'success' => true,
@@ -54,11 +59,16 @@ class CenterOperationsController extends Controller
         ]);
     }
 
+    /**
+     * Upload a center logo.
+     */
     public function uploadLogo(
         UploadCenterLogoRequest $request,
         int $center,
         UploadCenterLogoAction $action
     ): JsonResponse {
+        /** @var User|null $admin */
+        $admin = $request->user();
         $centerModel = Center::find($center);
 
         if ($centerModel === null) {
@@ -73,7 +83,7 @@ class CenterOperationsController extends Controller
 
         /** @var \Illuminate\Http\UploadedFile $logo */
         $logo = $request->file('logo');
-        $updated = $action->execute($centerModel, $logo);
+        $updated = $action->execute($centerModel, $logo, $admin instanceof User ? $admin : null);
 
         return response()->json([
             'success' => true,
@@ -82,6 +92,9 @@ class CenterOperationsController extends Controller
         ]);
     }
 
+    /**
+     * Show center settings.
+     */
     public function show(Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
@@ -94,6 +107,9 @@ class CenterOperationsController extends Controller
         ]);
     }
 
+    /**
+     * Update center settings.
+     */
     public function update(UpdateCenterSettingsRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();

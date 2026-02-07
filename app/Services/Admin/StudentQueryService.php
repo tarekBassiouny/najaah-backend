@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Admin;
 
+use App\Enums\UserDeviceStatus;
 use App\Filters\Admin\StudentFilters;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
@@ -22,6 +23,15 @@ class StudentQueryService
     public function build(User $admin, StudentFilters $filters): Builder
     {
         $query = User::query()
+            ->with('center')
+            ->with([
+                'devices' => static function ($relation): void {
+                    $relation
+                        ->where('status', UserDeviceStatus::Active->value)
+                        ->orderByDesc('last_used_at')
+                        ->orderByDesc('id');
+                },
+            ])
             ->where('is_student', true)
             ->orderByDesc('created_at');
 
@@ -34,7 +44,8 @@ class StudentQueryService
             $query->where(static function (Builder $builder) use ($term): void {
                 $builder->where('name', 'like', '%'.$term.'%')
                     ->orWhere('username', 'like', '%'.$term.'%')
-                    ->orWhere('email', 'like', '%'.$term.'%');
+                    ->orWhere('email', 'like', '%'.$term.'%')
+                    ->orWhere('phone', 'like', '%'.$term.'%');
             });
         }
 

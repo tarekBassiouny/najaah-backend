@@ -26,7 +26,7 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
     public function paginate(User $admin, VideoFilters $filters): LengthAwarePaginator
     {
         $query = Video::query()
-            ->with(['uploadSession', 'creator'])
+            ->with(['center', 'uploadSession', 'creator'])
             ->orderByDesc('created_at');
 
         $query = $this->applyScope($query, $admin);
@@ -50,7 +50,7 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
         }
 
         $query = Video::query()
-            ->with(['uploadSession', 'creator'])
+            ->with(['center', 'uploadSession', 'creator'])
             ->where('center_id', $center->id)
             ->orderByDesc('created_at');
 

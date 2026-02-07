@@ -10,6 +10,7 @@ class AuditLogFilters
         public readonly int $page,
         public readonly int $perPage,
         public readonly ?int $centerId,
+        public readonly ?int $courseId,
         public readonly ?string $entityType,
         public readonly ?int $entityId,
         public readonly ?string $action,

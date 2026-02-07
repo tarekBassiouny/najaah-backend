@@ -127,7 +127,13 @@ test('admin can refresh token', function () {
 test('refresh fails without token', function () {
     $response = $this->postJson('/api/v1/admin/auth/refresh');
 
-    $response->assertStatus(401);
+    $response->assertStatus(400)
+        ->assertJson([
+            'success' => false,
+            'error' => [
+                'code' => 'TOKEN_MISSING',
+            ],
+        ]);
 });
 
 /**

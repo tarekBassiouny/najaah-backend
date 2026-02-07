@@ -10,8 +10,11 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Permission;
+use App\Models\PlaybackSession;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserDevice;
+use App\Models\Video;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -233,6 +236,89 @@ it('returns approved and rejected enrollment counts in devices analytics', funct
         ->assertJsonPath('data.requests.enrollment.pending', 1)
         ->assertJsonPath('data.requests.enrollment.approved', 1)
         ->assertJsonPath('data.requests.enrollment.rejected', 2);
+});
+
+it('returns cumulative views and session analytics for a student', function (): void {
+    $this->asAdmin();
+
+    $center = Center::factory()->create();
+    $course = Course::factory()->for($center, 'center')->create([
+        'center_id' => $center->id,
+        'category_id' => Category::factory()->for($center, 'center'),
+        'created_by' => User::factory()->for($center, 'center'),
+        'status' => CourseStatus::Published->value,
+    ]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'duration_seconds' => 1000,
+    ]);
+    $course->videos()->attach($video->id);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $student->id,
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => EnrollmentStatus::Active->value,
+        'enrolled_at' => now()->subDay(),
+    ]);
+
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'started_at' => now()->subHours(3),
+        'ended_at' => now()->subHours(2),
+        'watch_duration' => 300,
+        'progress_percent' => 30,
+        'is_full_play' => false,
+    ]);
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'started_at' => now()->subHours(2),
+        'ended_at' => now()->subHour(),
+        'watch_duration' => 300,
+        'progress_percent' => 40,
+        'is_full_play' => false,
+    ]);
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'started_at' => now()->subHour(),
+        'ended_at' => now(),
+        'watch_duration' => 300,
+        'progress_percent' => 50,
+        'is_full_play' => false,
+    ]);
+
+    $from = now()->subDays(7)->toDateString();
+    $to = now()->toDateString();
+
+    $response = $this->getJson(
+        "/api/v1/admin/analytics/students?student_id={$student->id}&from={$from}&to={$to}",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('data.overview.total_views', 1)
+        ->assertJsonPath('data.overview.total_sessions', 3)
+        ->assertJsonPath('data.overview.active_enrollments', 1)
+        ->assertJsonPath('data.courses.views.0.views', 1)
+        ->assertJsonPath('data.videos.0.is_viewed', true);
 });
 
 it('returns analytics responses with expected shapes', function (): void {

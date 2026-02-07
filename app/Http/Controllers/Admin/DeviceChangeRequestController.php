@@ -26,6 +26,9 @@ class DeviceChangeRequestController extends Controller
         private readonly DeviceChangeRequestQueryService $queryService
     ) {}
 
+    /**
+     * List device change requests.
+     */
     public function index(ListDeviceChangeRequestsRequest $request): JsonResponse
     {
         /** @var User|null $admin */
@@ -57,6 +60,9 @@ class DeviceChangeRequestController extends Controller
         ]);
     }
 
+    /**
+     * Approve a device change request.
+     */
     public function approve(ApproveDeviceChangeRequest $request, DeviceChangeRequest $deviceChangeRequest): JsonResponse
     {
         /** @var User|null $admin */
@@ -86,10 +92,13 @@ class DeviceChangeRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Device change request approved',
-            'data' => new DeviceChangeRequestResource($approved),
+            'data' => new DeviceChangeRequestResource($approved->loadMissing(['user', 'center', 'decider'])),
         ]);
     }
 
+    /**
+     * Reject a device change request.
+     */
     public function reject(RejectDeviceChangeRequest $request, DeviceChangeRequest $deviceChangeRequest): JsonResponse
     {
         /** @var User|null $admin */
@@ -110,10 +119,13 @@ class DeviceChangeRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Device change request rejected',
-            'data' => new DeviceChangeRequestResource($rejected),
+            'data' => new DeviceChangeRequestResource($rejected->loadMissing(['user', 'center', 'decider'])),
         ]);
     }
 
+    /**
+     * Create a device change request for a student.
+     */
     public function createForStudent(CreateDeviceChangeForStudentRequest $request, User $student): JsonResponse
     {
         /** @var User|null $admin */
@@ -144,10 +156,13 @@ class DeviceChangeRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Device change request created for student',
-            'data' => new DeviceChangeRequestResource($created),
+            'data' => new DeviceChangeRequestResource($created->loadMissing(['user', 'center', 'decider'])),
         ], 201);
     }
 
+    /**
+     * Pre-approve a device change request.
+     */
     public function preApprove(PreApproveDeviceChangeRequest $request, DeviceChangeRequest $deviceChangeRequest): JsonResponse
     {
         /** @var User|null $admin */
@@ -168,7 +183,7 @@ class DeviceChangeRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Device change request pre-approved',
-            'data' => new DeviceChangeRequestResource($preApproved),
+            'data' => new DeviceChangeRequestResource($preApproved->loadMissing(['user', 'center', 'decider'])),
         ]);
     }
 }

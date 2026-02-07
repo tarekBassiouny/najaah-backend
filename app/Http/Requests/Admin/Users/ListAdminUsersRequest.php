@@ -20,7 +20,9 @@ class ListAdminUsersRequest extends AdminListRequest
      */
     public function rules(): array
     {
-        return $this->listRules();
+        return array_merge($this->listRules(), [
+            'center_id' => ['sometimes', 'integer', 'exists:centers,id'],
+        ]);
     }
 
     public function filters(): AdminUserFilters
@@ -30,7 +32,8 @@ class ListAdminUsersRequest extends AdminListRequest
 
         return new AdminUserFilters(
             page: FilterInput::page($data),
-            perPage: FilterInput::perPage($data)
+            perPage: FilterInput::perPage($data),
+            centerId: FilterInput::intOrNull($data, 'center_id')
         );
     }
 
@@ -40,6 +43,10 @@ class ListAdminUsersRequest extends AdminListRequest
     public function queryParameters(): array
     {
         return [
+            'center_id' => [
+                'description' => 'Filter admin users by center ID.',
+                'example' => '12',
+            ],
             'per_page' => [
                 'description' => 'Items per page (max 100).',
                 'example' => '15',

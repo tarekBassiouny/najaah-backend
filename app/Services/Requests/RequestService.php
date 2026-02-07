@@ -166,6 +166,7 @@ class RequestService
             ]);
 
             $this->auditLogService->logByType($student, DeviceChangeRequest::class, (int) $request->id, AuditActions::DEVICE_CHANGE_REQUEST_CREATED, [
+                'center_id' => $student->center_id,
                 'old_device_id' => $active->device_id,
             ]);
         });

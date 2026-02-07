@@ -15,6 +15,9 @@ class PermissionController extends Controller
         private readonly PermissionServiceInterface $permissionService
     ) {}
 
+    /**
+     * List permissions.
+     */
     public function index(): JsonResponse
     {
         $permissions = $this->permissionService->list();

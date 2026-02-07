@@ -3,9 +3,13 @@
 declare(strict_types=1);
 
 use App\Models\Center;
+use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserDevice;
+use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 
@@ -212,6 +216,59 @@ it('filters students by status and search', function (): void {
         ->assertJsonPath('data.0.name', 'Alpha Student');
 });
 
+it('includes analytics summary in student list responses', function (): void {
+    $this->asAdmin();
+
+    $center = Center::factory()->create();
+    $course = Course::factory()->for($center, 'center')->create([
+        'center_id' => $center->id,
+        'category_id' => \App\Models\Category::factory()->for($center, 'center'),
+        'created_by' => User::factory()->for($center, 'center'),
+    ]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'duration_seconds' => 1000,
+    ]);
+    $course->videos()->attach($video->id);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'phone' => '19990000050',
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $student->id,
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => \App\Enums\EnrollmentStatus::Active->value,
+        'enrolled_at' => now()->subDay(),
+    ]);
+
+    \App\Models\PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'started_at' => now()->subHours(2),
+        'ended_at' => now()->subHour(),
+        'watch_duration' => 900,
+        'progress_percent' => 70,
+        'is_full_play' => false,
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/students', $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.0.analytics.active_enrollments', 1)
+        ->assertJsonPath('data.0.analytics.viewed_videos', 1)
+        ->assertJsonPath('data.0.analytics.total_sessions', 1);
+});
+
 it('updates students within the admin center only', function (): void {
     $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
         'description' => 'Permission: student.manage',
@@ -271,4 +328,26 @@ it('updates students within the admin center only', function (): void {
     ]);
 
     $blocked->assertStatus(403)->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
+it('allows updating inactive students', function (): void {
+    $this->asAdmin();
+
+    $center = Center::factory()->create();
+    $student = User::factory()->create([
+        'name' => 'Inactive Student',
+        'is_student' => true,
+        'center_id' => $center->id,
+        'status' => \App\Enums\UserStatus::Inactive->value,
+        'phone' => '19990000021',
+    ]);
+
+    $updated = $this->putJson("/api/v1/admin/students/{$student->id}", [
+        'name' => 'Reactivated Student',
+        'status' => \App\Enums\UserStatus::Active->value,
+    ], $this->adminHeaders());
+
+    $updated->assertOk()
+        ->assertJsonPath('data.name', 'Reactivated Student')
+        ->assertJsonPath('data.status', \App\Enums\UserStatus::Active->value);
 });

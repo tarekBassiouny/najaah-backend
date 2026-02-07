@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Videos;
 
-use App\Models\Video;
+use App\Http\Resources\Admin\Summary\CenterSummaryResource;
+use App\Http\Resources\Admin\Summary\UserSummaryResource;
+use App\Http\Resources\Admin\Summary\VideoSummaryResource;
 use App\Models\VideoUploadSession;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 /**
  * @mixin VideoUploadSession
@@ -24,25 +27,17 @@ class VideoUploadSessionResource extends JsonResource
 
         return [
             'id' => $session->id,
-            'center_id' => $session->center_id,
-            'uploaded_by' => $session->uploaded_by,
+            'center' => new CenterSummaryResource($this->whenLoaded('center')),
+            'uploader' => new UserSummaryResource($this->whenLoaded('uploader')),
             'bunny_upload_id' => $session->bunny_upload_id,
-            'upload_status' => $session->upload_status,
+            'upload_status' => $session->upload_status->value,
+            'upload_status_key' => Str::snake($session->upload_status->name),
+            'upload_status_label' => $session->upload_status->name,
             'progress_percent' => $session->progress_percent,
             'error_message' => $session->error_message,
+            'videos' => VideoSummaryResource::collection($this->whenLoaded('videos')),
             'created_at' => $session->created_at,
             'updated_at' => $session->updated_at,
-            'videos' => $session->videos->map(static function (Video $video): array {
-                return [
-                    'id' => $video->id,
-                    'title' => $video->title,
-                    'encoding_status' => $video->encoding_status,
-                    'lifecycle_status' => $video->lifecycle_status,
-                    'source_id' => $video->source_id,
-                    'source_url' => $video->source_url,
-                    'original_filename' => $video->original_filename,
-                ];
-            }),
         ];
     }
 }

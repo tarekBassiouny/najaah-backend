@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Courses;
 
-use App\Http\Resources\Admin\Videos\VideoResource;
+use App\Http\Resources\Admin\Summary\VideoSummaryResource;
 use App\Models\Pivots\CourseVideo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -24,11 +24,10 @@ class CourseVideoResource extends JsonResource
 
         return [
             'id' => $pivot->id,
-            'video_id' => $pivot->video_id,
+            'video' => new VideoSummaryResource($this->whenLoaded('video')),
             'order_index' => $pivot->order_index,
             'visible' => $pivot->visible,
             'view_limit_override' => $pivot->view_limit_override,
-            'video' => new VideoResource($this->whenLoaded('video')),
         ];
     }
 }
