@@ -201,4 +201,34 @@ class Survey extends Model
                     ->orWhereDate('end_at', '>=', $today);
             });
     }
+
+    /**
+     * Scope to filter surveys for a center (includes center-specific + system surveys).
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForCenterWithSystem(Builder $query, int $centerId): Builder
+    {
+        return $query->where(function (Builder $q) use ($centerId): void {
+            $q->where('center_id', $centerId)
+                ->orWhereNull('center_id');
+        });
+    }
+
+    /**
+     * Check if survey is scoped to a specific center.
+     */
+    public function isCenterScoped(): bool
+    {
+        return $this->center_id !== null;
+    }
+
+    /**
+     * Check if survey is system-wide (not scoped to a center).
+     */
+    public function isSystemScoped(): bool
+    {
+        return $this->center_id === null;
+    }
 }

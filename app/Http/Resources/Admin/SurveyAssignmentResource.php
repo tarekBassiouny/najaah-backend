@@ -50,7 +50,7 @@ class SurveyAssignmentResource extends JsonResource
             SurveyAssignableType::Course => $model->title_translations['en'] ?? $model->title_translations['ar'] ?? null,
             SurveyAssignableType::Section => $model->title_translations['en'] ?? $model->title_translations['ar'] ?? null,
             SurveyAssignableType::Video => $model->title_translations['en'] ?? $model->title_translations['ar'] ?? null,
-            SurveyAssignableType::User => $model->name ?? $model->email ?? null,
+            SurveyAssignableType::User, SurveyAssignableType::All => $model->name ?? $model->email ?? null,
         };
 
         return ['name' => $name];

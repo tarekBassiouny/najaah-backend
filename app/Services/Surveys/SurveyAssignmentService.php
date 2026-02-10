@@ -26,8 +26,17 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
         private readonly AuditLogService $auditLogService
     ) {}
 
-    public function validateAssignment(Survey $survey, SurveyAssignableType $type, int $id): bool
+    public function validateAssignment(Survey $survey, SurveyAssignableType $type, ?int $id): bool
     {
+        // "All" type is always valid - it assigns to all students based on survey scope
+        if ($type === SurveyAssignableType::All) {
+            return true;
+        }
+
+        if ($id === null) {
+            return false;
+        }
+
         $model = $this->findAssignable($type, $id);
 
         if ($model === null) {
@@ -52,6 +61,7 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
             return $this->isValidStudentForCenterScope($model, $survey);
         }
 
+        /** @var SurveyAssignableType::Course|SurveyAssignableType::Section|SurveyAssignableType::Video $type */
         $entityCenterId = match ($type) {
             SurveyAssignableType::Course => $model instanceof Course ? $model->center_id : null,
             SurveyAssignableType::Section => $model instanceof Section ? $model->course->center_id ?? null : null,
@@ -62,8 +72,8 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
     }
 
     /**
-     * @param  array<array{type: string, id: int}>  $assignments
-     * @return array<int, array{type: string, id: int, conflicting_count: int, conflicting_survey_ids: array<int>}>
+     * @param  array<array{type: string, id?: int}>  $assignments
+     * @return array<int, array{type: string, id: int|null, conflicting_count: int, conflicting_survey_ids: array<int>}>
      */
     public function getPendingActiveWarnings(Survey $survey, array $assignments): array
     {
@@ -72,7 +82,17 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
 
         foreach ($assignments as $assignment) {
             $type = SurveyAssignableType::from($assignment['type']);
-            $id = (int) $assignment['id'];
+            $id = isset($assignment['id']) ? $assignment['id'] : null;
+
+            // Skip "All" type for conflict warnings (handled separately)
+            if ($type === SurveyAssignableType::All) {
+                continue;
+            }
+
+            if ($id === null) {
+                continue;
+            }
+
             $key = $type->value.':'.$id;
 
             if (isset($seen[$key])) {
@@ -120,16 +140,31 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
     }
 
     /**
-     * @param  array<array{type: string, id: int}>  $assignments
+     * @param  array<array{type: string, id?: int}>  $assignments
      */
     public function assignMultiple(Survey $survey, array $assignments, User $actor): void
     {
         DB::transaction(function () use ($survey, $assignments, $actor): void {
             $validAssignments = [];
+            $hasAllAssignment = false;
 
             foreach ($assignments as $assignment) {
                 $type = SurveyAssignableType::from($assignment['type']);
-                $id = (int) $assignment['id'];
+
+                // Handle "All" assignment type separately
+                if ($type === SurveyAssignableType::All) {
+                    $hasAllAssignment = true;
+
+                    continue;
+                }
+
+                $id = isset($assignment['id']) ? $assignment['id'] : null;
+
+                if ($id === null) {
+                    throw new \InvalidArgumentException(
+                        sprintf('Assignment ID is required for type: %s', $type->value)
+                    );
+                }
 
                 if (! $this->validateAssignment($survey, $type, $id)) {
                     throw new \InvalidArgumentException(
@@ -155,12 +190,76 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
 
             if (! empty($validAssignments)) {
                 SurveyAssignment::insert($validAssignments);
-
-                $this->auditLogService->log($actor, $survey, AuditActions::SURVEY_ASSIGNED, [
-                    'assignments' => $assignments,
-                ]);
             }
+
+            // Process "All" assignment after individual assignments
+            if ($hasAllAssignment) {
+                $this->assignAll($survey);
+            }
+
+            $this->auditLogService->log($actor, $survey, AuditActions::SURVEY_ASSIGNED, [
+                'assignments' => $assignments,
+            ]);
         });
+    }
+
+    /**
+     * Assign survey to all eligible students based on survey scope.
+     * - CENTER scoped: All students in the survey's center
+     * - SYSTEM scoped: All students in unbranded centers + students without center
+     */
+    public function assignAll(Survey $survey): int
+    {
+        $query = User::query()->where('is_student', true);
+
+        if ($survey->isCenterScoped()) {
+            // CENTER scoped: only students in this center
+            $query->where('center_id', $survey->center_id);
+        } else {
+            // SYSTEM scoped: students without center OR in unbranded centers
+            $query->where(function ($q): void {
+                $q->whereNull('center_id')
+                    ->orWhereHas('center', function ($centerQuery): void {
+                        $centerQuery->where('type', CenterType::Unbranded);
+                    });
+            });
+        }
+
+        $studentIds = $query->pluck('id');
+
+        if ($studentIds->isEmpty()) {
+            return 0;
+        }
+
+        $now = now();
+        $assignments = [];
+
+        foreach ($studentIds as $studentId) {
+            // Check if assignment already exists
+            $existing = SurveyAssignment::where('survey_id', $survey->id)
+                ->where('assignable_type', SurveyAssignableType::All)
+                ->where('assignable_id', $studentId)
+                ->exists();
+
+            if (! $existing) {
+                $assignments[] = [
+                    'survey_id' => $survey->id,
+                    'assignable_type' => SurveyAssignableType::All,
+                    'assignable_id' => $studentId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+        }
+
+        if (! empty($assignments)) {
+            // Chunk insert to avoid memory issues with large datasets
+            foreach (array_chunk($assignments, 500) as $chunk) {
+                SurveyAssignment::insert($chunk);
+            }
+        }
+
+        return count($assignments);
     }
 
     public function removeAssignment(Survey $survey, SurveyAssignableType $type, int $id, User $actor): void
@@ -192,6 +291,7 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
             SurveyAssignableType::Section => Section::find($id),
             SurveyAssignableType::Video => Video::find($id),
             SurveyAssignableType::User => User::find($id),
+            SurveyAssignableType::All => null,
         };
     }
 

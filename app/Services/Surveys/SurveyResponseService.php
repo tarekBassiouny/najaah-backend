@@ -215,6 +215,7 @@ class SurveyResponseService implements SurveyResponseServiceInterface
                 ->whereHas('course.videos', fn ($q) => $q->where('videos.id', $id))
                 ->exists(),
             SurveyAssignableType::User => $student->id === $id,
+            SurveyAssignableType::All => $student->id === $id,
         };
     }
 

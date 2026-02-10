@@ -13,6 +13,7 @@ use App\Models\SurveyQuestionOption;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Surveys\Contracts\SurveyAssignmentServiceInterface;
 use App\Services\Surveys\Contracts\SurveyServiceInterface;
 use App\Support\AuditActions;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -22,7 +23,8 @@ class SurveyService implements SurveyServiceInterface
 {
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly SurveyAssignmentServiceInterface $assignmentService
     ) {}
 
     /** @return LengthAwarePaginator<Survey> */
@@ -39,7 +41,8 @@ class SurveyService implements SurveyServiceInterface
             }
 
             if ($filters->centerId !== null) {
-                $query->where('center_id', $filters->centerId);
+                // Show surveys for the specific center + system-wide surveys
+                $query->forCenterWithSystem($filters->centerId);
             }
         } else {
             $centerId = $actor->center_id;
@@ -88,7 +91,8 @@ class SurveyService implements SurveyServiceInterface
             $data['is_active'] = $data['is_active'] ?? false;
 
             $questions = $data['questions'] ?? [];
-            unset($data['questions']);
+            $assignments = $data['assignments'] ?? [];
+            unset($data['questions'], $data['assignments']);
 
             $survey = Survey::create($data);
 
@@ -96,12 +100,18 @@ class SurveyService implements SurveyServiceInterface
                 $this->createQuestion($survey, $questionData, $index);
             }
 
+            // Handle assignments if provided
+            if (! empty($assignments)) {
+                $this->assignmentService->assignMultiple($survey, $assignments, $actor);
+            }
+
             $this->auditLogService->log($actor, $survey, AuditActions::SURVEY_CREATED, [
                 'scope_type' => $scopeType->name,
                 'center_id' => $survey->center_id,
+                'assignments_count' => count($assignments),
             ]);
 
-            return $survey->fresh(['questions.options', 'center', 'creator']) ?? $survey;
+            return $survey->fresh(['questions.options', 'center', 'creator', 'assignments']) ?? $survey;
         });
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Surveys;
 
+use App\Enums\SurveyAssignableType;
 use App\Enums\SurveyQuestionType;
 use App\Enums\SurveyScopeType;
 use App\Enums\SurveyType;
@@ -67,6 +68,10 @@ class StoreSurveyRequest extends FormRequest
             'questions.*.options.*.option_translations.en' => ['required_with:questions.*.options', 'string'],
             'questions.*.options.*.option_translations.ar' => ['required_with:questions.*.options', 'string'],
             'questions.*.options.*.order_index' => ['sometimes', 'integer', 'min:0'],
+
+            'assignments' => ['sometimes', 'array'],
+            'assignments.*.type' => ['required', 'string', Rule::in(array_column(SurveyAssignableType::cases(), 'value'))],
+            'assignments.*.id' => ['nullable', 'integer', 'required_unless:assignments.*.type,all'],
         ];
     }
 

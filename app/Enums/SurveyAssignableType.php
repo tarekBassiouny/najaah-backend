@@ -17,11 +17,12 @@ enum SurveyAssignableType: string
     case Section = 'section';
     case Video = 'video';
     case User = 'user';
+    case All = 'all';
 
     /**
-     * @return class-string
+     * @return class-string|null
      */
-    public function modelClass(): string
+    public function modelClass(): ?string
     {
         return match ($this) {
             self::Center => Center::class,
@@ -29,6 +30,7 @@ enum SurveyAssignableType: string
             self::Section => Section::class,
             self::Video => Video::class,
             self::User => User::class,
+            self::All => null,
         };
     }
 
@@ -40,6 +42,7 @@ enum SurveyAssignableType: string
             self::Section => 'Section',
             self::Video => 'Video',
             self::User => 'Student',
+            self::All => 'All Students',
         };
     }
 }
