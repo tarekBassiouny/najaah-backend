@@ -1,7 +1,7 @@
-# AI_INSTRUCTIONS.md – XYZ LMS (Master System Rules)
+# AI_INSTRUCTIONS.md – Najaah LMS (Master System Rules)
 ### Version 1.0 – Strict Instruction Set for AI Models
 
-These instructions define how the XYZ Learning Management System works and how AI-generated code, schema, or logic must be written.  
+These instructions define how the Najaah Learning Management System works and how AI-generated code, schema, or logic must be written.  
 All responses MUST follow these rules unless explicitly overridden.
 
 ---
@@ -12,7 +12,7 @@ All responses MUST follow these rules unless explicitly overridden.
 - The platform hosts multiple centers (colleges, universities, training centers).  
 - Two center types exist:
   - **Branded centers** → own subdomain, unique students per center.
-  - **Unbranded centers** → under XYZ org, shared student identity.
+  - **Unbranded centers** → under Najaah org, shared student identity.
 - All centers share the same database using `center_id`.
 
 ---
@@ -28,7 +28,7 @@ All responses MUST follow these rules unless explicitly overridden.
 
 ## 2.2 Identity Rules
 - Branded centers → students are **isolated**, separate accounts.
-- Unbranded centers → students belong to the central XYZ org and can access all unbranded centers.
+- Unbranded centers → students belong to the central Najaah org and can access all unbranded centers.
 
 ---
 
@@ -99,7 +99,7 @@ All responses MUST follow these rules unless explicitly overridden.
 
 ## 6.2 Videos
 - MUST be stored in Bunny Stream.
-- XYZ LMS stores **metadata only**.
+- Najaah LMS stores **metadata only**.
 - A video may belong to multiple courses.
 - Tags identify types (intro, part 1, Q&A, etc.).
 - Lifecycle statuses (integer enum):

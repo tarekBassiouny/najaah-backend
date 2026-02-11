@@ -1,7 +1,7 @@
-# XYZ LMS - Feature Agent
+# Najaah LMS - Feature Agent
 
 ## Purpose
-Specialized agent for implementing business logic, domain rules, workflows, and feature specifications for XYZ LMS.
+Specialized agent for implementing business logic, domain rules, workflows, and feature specifications for Najaah LMS.
 
 ## When to Use This Agent
 - Implementing new features
@@ -12,7 +12,7 @@ Specialized agent for implementing business logic, domain rules, workflows, and 
 - Implementing state machines
 
 ## Prerequisites
-Always read the master skill first: `/mnt/skills/user/xyz-lms/SKILL.md`
+Always read the master skill first: `/mnt/skills/user/najaah/SKILL.md`
 
 ---
 
@@ -921,6 +921,6 @@ public function assertCanPerformAction(User $user, Resource $resource): void
 ---
 
 ## Related Skills
-- Master Skill: `/mnt/skills/user/xyz-lms/SKILL.md`
-- Architecture Agent: `/mnt/skills/user/xyz-lms-architecture/SKILL.md`
-- Code Quality Agent: `/mnt/skills/user/xyz-lms-quality/SKILL.md`
+- Master Skill: `/mnt/skills/user/najaah/SKILL.md`
+- Architecture Agent: `/mnt/skills/user/najaah-architecture/SKILL.md`
+- Code Quality Agent: `/mnt/skills/user/najaah-quality/SKILL.md`

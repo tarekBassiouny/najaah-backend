@@ -1,7 +1,7 @@
-# XYZ LMS - API Agent
+# Najaah LMS - API Agent
 
 ## Purpose
-Specialized agent for API design, endpoint implementation, resource formatting, and API documentation for XYZ LMS.
+Specialized agent for API design, endpoint implementation, resource formatting, and API documentation for Najaah LMS.
 
 ## When to Use This Agent
 - Designing new API endpoints
@@ -13,7 +13,7 @@ Specialized agent for API design, endpoint implementation, resource formatting, 
 - Handling API errors
 
 ## Prerequisites
-Always read the master skill first: `/mnt/skills/user/xyz-lms/SKILL.md`
+Always read the master skill first: `/mnt/skills/user/najaah/SKILL.md`
 
 ---
 
@@ -570,8 +570,8 @@ public function requestPlayback(
 return [
     'type' => 'laravel',
     'theme' => 'default',
-    'title' => 'XYZ LMS API Documentation',
-    'description' => 'API documentation for XYZ Learning Management System',
+    'title' => 'Najaah LMS API Documentation',
+    'description' => 'API documentation for Najaah Learning Management System',
     'base_url' => env('APP_URL', 'http://localhost'),
     'routes' => [
         [
@@ -754,6 +754,6 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('v1/admin')->group(function
 ---
 
 ## Related Skills
-- Master Skill: `/mnt/skills/user/xyz-lms/SKILL.md`
-- Feature Agent: `/mnt/skills/user/xyz-lms-features/SKILL.md`
-- Code Quality Agent: `/mnt/skills/user/xyz-lms-quality/SKILL.md`
+- Master Skill: `/mnt/skills/user/najaah/SKILL.md`
+- Feature Agent: `/mnt/skills/user/najaah-features/SKILL.md`
+- Code Quality Agent: `/mnt/skills/user/najaah-quality/SKILL.md`

@@ -1,7 +1,7 @@
 import fs from "fs";
 
 const INPUT = "postman/scribe.postman.json";
-const OUTPUT = "postman/xyz-lms.postman.json";
+const OUTPUT = "postman/najaah.postman.json";
 
 const source = JSON.parse(fs.readFileSync(INPUT, "utf8"));
 
@@ -175,7 +175,7 @@ for (const req of flatten(source.item)) {
 }
 
 const finalCollection = {
-  info: { ...source.info, name: "XYZ LMS API (v1)" },
+  info: { ...source.info, name: "Najaah LMS API (v1)" },
   item: Object.values(tree).filter(f => f.item.length > 0)
 };
 

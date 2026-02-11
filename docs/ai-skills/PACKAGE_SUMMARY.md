@@ -1,12 +1,12 @@
-# XYZ LMS Skills & Agents System - Complete Package
+# Najaah LMS Skills & Agents System - Complete Package
 
 ## 🎉 What Has Been Created
 
-A complete multi-agent AI system tailored specifically for your XYZ LMS Laravel project. This system will revolutionize how you work with Claude and Claude Code.
+A complete multi-agent AI system tailored specifically for your Najaah LMS Laravel project. This system will revolutionize how you work with Claude and Claude Code.
 
 ## 📦 Package Contents
 
-### 1. Master Skill (`xyz-lms/SKILL.md`)
+### 1. Master Skill (`najaah/SKILL.md`)
 **Size:** ~25KB of comprehensive project knowledge
 
 **What it contains:**
@@ -24,7 +24,7 @@ A complete multi-agent AI system tailored specifically for your XYZ LMS Laravel 
 
 ---
 
-### 2. Architecture Agent (`xyz-lms-architecture/SKILL.md`)
+### 2. Architecture Agent (`najaah-architecture/SKILL.md`)
 **Specialty:** Database schema, migrations, multi-tenancy
 
 **What it contains:**
@@ -47,7 +47,7 @@ A complete multi-agent AI system tailored specifically for your XYZ LMS Laravel 
 
 ---
 
-### 3. Feature Agent (`xyz-lms-features/SKILL.md`)
+### 3. Feature Agent (`najaah-features/SKILL.md`)
 **Specialty:** Business logic, domain rules, workflows
 
 **What it contains:**
@@ -68,7 +68,7 @@ A complete multi-agent AI system tailored specifically for your XYZ LMS Laravel 
 
 ---
 
-### 4. Code Quality Agent (`xyz-lms-quality/SKILL.md`)
+### 4. Code Quality Agent (`najaah-quality/SKILL.md`)
 **Specialty:** Testing, code standards, quality assurance
 
 **What it contains:**
@@ -90,7 +90,7 @@ A complete multi-agent AI system tailored specifically for your XYZ LMS Laravel 
 
 ---
 
-### 5. API Agent (`xyz-lms-api/SKILL.md`)
+### 5. API Agent (`najaah-api/SKILL.md`)
 **Specialty:** API design, endpoints, validation
 
 **What it contains:**
@@ -113,7 +113,7 @@ A complete multi-agent AI system tailored specifically for your XYZ LMS Laravel 
 
 ---
 
-### 6. Orchestrator Agent (`xyz-lms-orchestrator/SKILL.md`)
+### 6. Orchestrator Agent (`najaah-orchestrator/SKILL.md`)
 **Role:** Master coordinator and workflow manager
 
 **What it contains:**
@@ -162,9 +162,9 @@ A complete multi-agent AI system tailored specifically for your XYZ LMS Laravel 
 ### Step 1: Copy to Your Project
 
 ```bash
-# In your XYZ LMS project root
+# In your Najaah LMS project root
 mkdir -p mnt/skills/user
-cp -r xyz-lms-skills/* mnt/skills/user/
+cp -r najaah-skills/* mnt/skills/user/
 ```
 
 ### Step 2: With Claude (Conversational)
@@ -174,7 +174,7 @@ cp -r xyz-lms-skills/* mnt/skills/user/
 You: "I need to add a video bookmarks feature"
 
 Claude will:
-1. Read /mnt/skills/user/xyz-lms-orchestrator/SKILL.md
+1. Read /mnt/skills/user/najaah-orchestrator/SKILL.md
 2. Break down the task
 3. Delegate to specialists
 4. Coordinate implementation
@@ -185,13 +185,13 @@ Claude will:
 
 ```bash
 # Start new feature
-claude-code "Read /mnt/skills/user/xyz-lms-orchestrator/SKILL.md and help me implement video bookmarks"
+claude-code "Read /mnt/skills/user/najaah-orchestrator/SKILL.md and help me implement video bookmarks"
 
 # Work on specific layer
-claude-code "Read /mnt/skills/user/xyz-lms-architecture/SKILL.md and create migration for bookmarks table"
+claude-code "Read /mnt/skills/user/najaah-architecture/SKILL.md and create migration for bookmarks table"
 
 # Write tests
-claude-code "Read /mnt/skills/user/xyz-lms-quality/SKILL.md and write tests for BookmarkService"
+claude-code "Read /mnt/skills/user/najaah-quality/SKILL.md and write tests for BookmarkService"
 ```
 
 ---
@@ -312,7 +312,7 @@ When you discover new patterns:
 
 ### Adding New Agents
 If you need a specialist for (e.g., mobile development):
-1. Create `/mnt/skills/user/xyz-lms-mobile/SKILL.md`
+1. Create `/mnt/skills/user/najaah-mobile/SKILL.md`
 2. Define its responsibilities
 3. Update Orchestrator to delegate to it
 4. Update README
@@ -377,7 +377,7 @@ Found a great pattern? Update the skill!
 
 ## 🎉 Conclusion
 
-You now have a **production-grade multi-agent AI system** specifically designed for your XYZ LMS project. This system:
+You now have a **production-grade multi-agent AI system** specifically designed for your Najaah LMS project. This system:
 
 ✅ Understands your architecture
 ✅ Knows your business rules

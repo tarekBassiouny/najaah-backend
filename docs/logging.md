@@ -1,6 +1,6 @@
 # Logging Policy
 
-This document defines what XYZ LMS logs to the database (audit) and to application logs, and what must never be logged. Audit logs already exist and must not change.
+This document defines what Najaah LMS logs to the database (audit) and to application logs, and what must never be logged. Audit logs already exist and must not change.
 
 ## Audit / Business Events (Database)
 Audit logs capture user and business actions for accountability and compliance. These are written to the existing audit log tables only.

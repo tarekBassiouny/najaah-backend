@@ -12,8 +12,8 @@ class SystemSettingSeeder extends Seeder
         SystemSetting::factory()->create([
             'key' => 'site_name',
             'value' => [
-                'en' => 'XYZ LMS',
-                'ar' => 'نظام إدارة التعلم XYZ',
+                'en' => 'Najaah LMS',
+                'ar' => 'نظام إدارة التعلم Najaah',
             ],
             'is_public' => true,
         ]);

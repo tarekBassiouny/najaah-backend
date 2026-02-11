@@ -1,11 +1,11 @@
-# Claude Context - XYZ LMS Backend
+# Claude Context - Najaah LMS Backend
 
 > Quick reference for AI assistants working on this codebase.
 > Last updated: January 2026
 
 ## Project Overview
 
-**XYZ LMS** is a multi-tenant Learning Management System built with Laravel 11 and PHP 8.4.
+**Najaah LMS** is a multi-tenant Learning Management System built with Laravel 11 and PHP 8.4.
 
 ### Key Characteristics
 - **Multi-tenant**: Centers (tenants) with branded/unbranded modes

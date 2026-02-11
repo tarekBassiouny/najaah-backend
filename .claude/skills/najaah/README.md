@@ -1,8 +1,8 @@
-# XYZ LMS - AI Skills & Agents System
+# Najaah LMS - AI Skills & Agents System
 
 ## Overview
 
-This directory contains a comprehensive multi-agent system designed to assist with XYZ LMS development. The system consists of a master skill (knowledge base) and specialized agents that handle different aspects of development.
+This directory contains a comprehensive multi-agent system designed to assist with Najaah LMS development. The system consists of a master skill (knowledge base) and specialized agents that handle different aspects of development.
 
 ## System Architecture
 
@@ -36,17 +36,17 @@ This directory contains a comprehensive multi-agent system designed to assist wi
 
 ```
 /mnt/skills/user/
-├── xyz-lms/                    # Master skill (comprehensive knowledge)
+├── najaah/                    # Master skill (comprehensive knowledge)
 │   └── SKILL.md
-├── xyz-lms-architecture/       # Database, schema, caching
+├── najaah-architecture/       # Database, schema, caching
 │   └── SKILL.md
-├── xyz-lms-features/           # Business logic, domain rules
+├── najaah-features/           # Business logic, domain rules
 │   └── SKILL.md
-├── xyz-lms-quality/            # Testing, code quality
+├── najaah-quality/            # Testing, code quality
 │   └── SKILL.md
-├── xyz-lms-api/                # API design, endpoints
+├── najaah-api/                # API design, endpoints
 │   └── SKILL.md
-└── xyz-lms-orchestrator/       # Master coordinator
+└── najaah-orchestrator/       # Master coordinator
     └── SKILL.md
 ```
 
@@ -56,7 +56,7 @@ This directory contains a comprehensive multi-agent system designed to assist wi
 
 **Starting any development task:**
 ```
-1. Read the Orchestrator skill: /mnt/skills/user/xyz-lms-orchestrator/SKILL.md
+1. Read the Orchestrator skill: /mnt/skills/user/najaah-orchestrator/SKILL.md
 2. Orchestrator will delegate to appropriate specialists
 3. Each specialist reads their skill before working
 ```
@@ -81,18 +81,18 @@ Let me break this down...
 **In your terminal:**
 ```bash
 # Start a new feature
-claude-code "Read /mnt/skills/user/xyz-lms-orchestrator/SKILL.md and help me implement video bookmarks feature"
+claude-code "Read /mnt/skills/user/najaah-orchestrator/SKILL.md and help me implement video bookmarks feature"
 
 # Work on specific layer
-claude-code "Read /mnt/skills/user/xyz-lms-architecture/SKILL.md and create migration for bookmarks table"
+claude-code "Read /mnt/skills/user/najaah-architecture/SKILL.md and create migration for bookmarks table"
 
 # Run quality checks
-claude-code "Read /mnt/skills/user/xyz-lms-quality/SKILL.md and write tests for the BookmarkService"
+claude-code "Read /mnt/skills/user/najaah-quality/SKILL.md and write tests for the BookmarkService"
 ```
 
 ## Skills Reference
 
-### 1. Master Skill (`xyz-lms`)
+### 1. Master Skill (`najaah`)
 **Purpose:** Complete project knowledge base
 
 **Contains:**
@@ -112,7 +112,7 @@ claude-code "Read /mnt/skills/user/xyz-lms-quality/SKILL.md and write tests for 
 - When unsure about conventions
 - When looking for examples
 
-### 2. Architecture Agent (`xyz-lms-architecture`)
+### 2. Architecture Agent (`najaah-architecture`)
 **Purpose:** Database design and system architecture
 
 **Contains:**
@@ -131,7 +131,7 @@ claude-code "Read /mnt/skills/user/xyz-lms-quality/SKILL.md and write tests for 
 - Optimizing queries
 - Planning cache strategy
 
-### 3. Feature Agent (`xyz-lms-features`)
+### 3. Feature Agent (`najaah-features`)
 **Purpose:** Business logic and domain rules
 
 **Contains:**
@@ -150,7 +150,7 @@ claude-code "Read /mnt/skills/user/xyz-lms-quality/SKILL.md and write tests for 
 - Building workflows
 - Enforcing domain rules
 
-### 4. Code Quality Agent (`xyz-lms-quality`)
+### 4. Code Quality Agent (`najaah-quality`)
 **Purpose:** Testing and code quality
 
 **Contains:**
@@ -169,7 +169,7 @@ claude-code "Read /mnt/skills/user/xyz-lms-quality/SKILL.md and write tests for 
 - Running quality checks
 - Setting up CI/CD
 
-### 5. API Agent (`xyz-lms-api`)
+### 5. API Agent (`najaah-api`)
 **Purpose:** API design and implementation
 
 **Contains:**
@@ -188,7 +188,7 @@ claude-code "Read /mnt/skills/user/xyz-lms-quality/SKILL.md and write tests for 
 - Formatting responses
 - Documenting APIs
 
-### 6. Orchestrator Agent (`xyz-lms-orchestrator`)
+### 6. Orchestrator Agent (`najaah-orchestrator`)
 **Purpose:** Master coordinator
 
 **Contains:**
@@ -332,7 +332,7 @@ When you discover new patterns or conventions:
 
 To add a new specialist:
 
-1. Create `/mnt/skills/user/xyz-lms-[name]/SKILL.md`
+1. Create `/mnt/skills/user/najaah-[name]/SKILL.md`
 2. Define its responsibilities
 3. Update Orchestrator to delegate to it
 4. Update this README
@@ -343,7 +343,7 @@ All skills should be in your git repository:
 
 ```bash
 # In your project root
-git add mnt/skills/user/xyz-lms*
+git add mnt/skills/user/najaah*
 git commit -m "Update agent skills"
 git push
 ```
@@ -354,7 +354,7 @@ git push
 
 **Solution:** Make sure the agent reads its skill file first:
 ```
-claude-code "First read /mnt/skills/user/xyz-lms-architecture/SKILL.md, then create migration for..."
+claude-code "First read /mnt/skills/user/najaah-architecture/SKILL.md, then create migration for..."
 ```
 
 ### "Conflicting guidance from different agents"

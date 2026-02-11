@@ -1,4 +1,4 @@
-# XYZ Laravel LMS — Full Codex Refactor Instructions
+# Najaah Laravel LMS — Full Codex Refactor Instructions
 
 This repository must be refactored by GitHub Copilot/Codex to achieve:
 

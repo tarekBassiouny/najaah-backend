@@ -1,4 +1,4 @@
-# XYZ LMS — Domain Rules
+# Najaah LMS — Domain Rules
 
 Codex must enforce the following rules across the entire repo.
 

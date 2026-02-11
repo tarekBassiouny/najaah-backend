@@ -1,4 +1,4 @@
-# XYZ LMS - PR Review & Creation Workflow
+# Najaah LMS - PR Review & Creation Workflow
 
 ## Purpose
 Standardized workflow for reviewing code changes and creating pull requests with comprehensive quality assessments.
@@ -305,5 +305,5 @@ Before creating PR:
 ---
 
 ## Related Skills
-- Quality Agent: `.claude/skills/xyz-lms-quality/SKILL.md`
+- Quality Agent: `.claude/skills/najaah-quality/SKILL.md`
 - Orchestrator: `.claude/agents/orchestrator.md`

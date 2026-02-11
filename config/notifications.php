@@ -20,8 +20,8 @@ return [
         |--------------------------------------------------------------------------
         */
         'app_links' => [
-            'ios' => env('APP_LINK_IOS', 'https://apps.apple.com/app/xyz-lms'),
-            'android' => env('APP_LINK_ANDROID', 'https://play.google.com/store/apps/details?id=com.xyz.lms'),
+            'ios' => env('APP_LINK_IOS', 'https://apps.apple.com/app/najaah'),
+            'android' => env('APP_LINK_ANDROID', 'https://play.google.com/store/apps/details?id=com.najaah.lms'),
         ],
 
         /*

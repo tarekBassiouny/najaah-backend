@@ -1,4 +1,4 @@
-# XYZ LMS - Issues Tracker
+# Najaah LMS - Issues Tracker
 
 This document tracks identified issues for refactoring and improvement.
 

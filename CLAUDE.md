@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-XYZ LMS is a multi-tenant Learning Management System backend built with Laravel 11 and PHP 8.4. It supports multiple centers (branded with unique subdomains, or unbranded under XYZ org) sharing a single database with `center_id` isolation.
+Najaah LMS is a multi-tenant Learning Management System backend built with Laravel 11 and PHP 8.4. It supports multiple centers (branded with unique subdomains, or unbranded under Najaah org) sharing a single database with `center_id` isolation.
 
 ## Build & Development Commands
 

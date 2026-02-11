@@ -1,7 +1,7 @@
-# XYZ LMS - Orchestrator Agent
+# Najaah LMS - Orchestrator Agent
 
 ## Purpose
-Master coordinator for the XYZ LMS development workflow. This agent delegates tasks to specialized sub-agents, ensures consistency across the codebase, and manages the complete feature development lifecycle.
+Master coordinator for the Najaah LMS development workflow. This agent delegates tasks to specialized sub-agents, ensures consistency across the codebase, and manages the complete feature development lifecycle.
 
 ## When to Use This Agent
 - Starting ANY new task or feature
@@ -18,7 +18,7 @@ Master coordinator for the XYZ LMS development workflow. This agent delegates ta
 
 ## Available Sub-Agents
 
-### 1. Architecture Agent (`/mnt/skills/user/xyz-lms-architecture/SKILL.md`)
+### 1. Architecture Agent (`/mnt/skills/user/najaah-architecture/SKILL.md`)
 **Responsibilities:**
 - Database schema design
 - Migration creation
@@ -34,7 +34,7 @@ Master coordinator for the XYZ LMS development workflow. This agent delegates ta
 - Optimizing database queries
 - Planning cache invalidation
 
-### 2. Feature Agent (`/mnt/skills/user/xyz-lms-features/SKILL.md`)
+### 2. Feature Agent (`/mnt/skills/user/najaah-features/SKILL.md`)
 **Responsibilities:**
 - Business logic implementation
 - Service layer code
@@ -50,7 +50,7 @@ Master coordinator for the XYZ LMS development workflow. This agent delegates ta
 - Building request/approval workflows
 - Enforcing domain rules
 
-### 3. Code Quality Agent (`/mnt/skills/user/xyz-lms-quality/SKILL.md`)
+### 3. Code Quality Agent (`/mnt/skills/user/najaah-quality/SKILL.md`)
 **Responsibilities:**
 - Writing tests (unit, feature, integration)
 - PHPStan compliance
@@ -66,7 +66,7 @@ Master coordinator for the XYZ LMS development workflow. This agent delegates ta
 - Running quality checks
 - Verifying coverage
 
-### 4. API Agent (`/mnt/skills/user/xyz-lms-api/SKILL.md`)
+### 4. API Agent (`/mnt/skills/user/najaah-api/SKILL.md`)
 **Responsibilities:**
 - API endpoint design
 - Controller implementation
@@ -90,7 +90,7 @@ Master coordinator for the XYZ LMS development workflow. This agent delegates ta
 
 **Step 1: Gather Context**
 ```
-1. Read master skill: /mnt/skills/user/xyz-lms/SKILL.md
+1. Read master skill: /mnt/skills/user/najaah/SKILL.md
 2. Review relevant feature documentation in /docs/features/
 3. Check existing similar implementations
 4. Identify all affected components
@@ -729,8 +729,8 @@ For critical production issues:
 ---
 
 ## Related Skills
-- Master Skill: `/mnt/skills/user/xyz-lms/SKILL.md`
-- Architecture Agent: `/mnt/skills/user/xyz-lms-architecture/SKILL.md`
-- Feature Agent: `/mnt/skills/user/xyz-lms-features/SKILL.md`
-- Code Quality Agent: `/mnt/skills/user/xyz-lms-quality/SKILL.md`
-- API Agent: `/mnt/skills/user/xyz-lms-api/SKILL.md`
+- Master Skill: `/mnt/skills/user/najaah/SKILL.md`
+- Architecture Agent: `/mnt/skills/user/najaah-architecture/SKILL.md`
+- Feature Agent: `/mnt/skills/user/najaah-features/SKILL.md`
+- Code Quality Agent: `/mnt/skills/user/najaah-quality/SKILL.md`
+- API Agent: `/mnt/skills/user/najaah-api/SKILL.md`

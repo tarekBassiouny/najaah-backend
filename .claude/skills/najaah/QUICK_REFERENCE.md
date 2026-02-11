@@ -1,42 +1,42 @@
-# XYZ LMS Skills - Quick Reference
+# Najaah LMS Skills - Quick Reference
 
 ## 🚀 Quick Start
 
 ### For Any New Task
 ```bash
 # Start here - Orchestrator will coordinate everything
-claude-code "Read /mnt/skills/user/xyz-lms-orchestrator/SKILL.md and help me with [task]"
+claude-code "Read /mnt/skills/user/najaah-orchestrator/SKILL.md and help me with [task]"
 ```
 
 ### For Specific Work
 
 ```bash
 # Database work
-claude-code "Read /mnt/skills/user/xyz-lms-architecture/SKILL.md and create migration for..."
+claude-code "Read /mnt/skills/user/najaah-architecture/SKILL.md and create migration for..."
 
 # Business logic
-claude-code "Read /mnt/skills/user/xyz-lms-features/SKILL.md and implement service for..."
+claude-code "Read /mnt/skills/user/najaah-features/SKILL.md and implement service for..."
 
 # API endpoints
-claude-code "Read /mnt/skills/user/xyz-lms-api/SKILL.md and create endpoint for..."
+claude-code "Read /mnt/skills/user/najaah-api/SKILL.md and create endpoint for..."
 
 # Testing
-claude-code "Read /mnt/skills/user/xyz-lms-quality/SKILL.md and write tests for..."
+claude-code "Read /mnt/skills/user/najaah-quality/SKILL.md and write tests for..."
 
 # General context
-claude-code "Read /mnt/skills/user/xyz-lms/SKILL.md for project context"
+claude-code "Read /mnt/skills/user/najaah/SKILL.md for project context"
 ```
 
 ## 📁 Skill Locations
 
 | Skill | Path | Use For |
 |-------|------|---------|
-| Master | `/mnt/skills/user/xyz-lms/SKILL.md` | Project context, any task |
-| Orchestrator | `/mnt/skills/user/xyz-lms-orchestrator/SKILL.md` | Coordinating features |
-| Architecture | `/mnt/skills/user/xyz-lms-architecture/SKILL.md` | Database, schema, caching |
-| Feature | `/mnt/skills/user/xyz-lms-features/SKILL.md` | Services, business logic |
-| API | `/mnt/skills/user/xyz-lms-api/SKILL.md` | Endpoints, validation |
-| Quality | `/mnt/skills/user/xyz-lms-quality/SKILL.md` | Tests, code quality |
+| Master | `/mnt/skills/user/najaah/SKILL.md` | Project context, any task |
+| Orchestrator | `/mnt/skills/user/najaah-orchestrator/SKILL.md` | Coordinating features |
+| Architecture | `/mnt/skills/user/najaah-architecture/SKILL.md` | Database, schema, caching |
+| Feature | `/mnt/skills/user/najaah-features/SKILL.md` | Services, business logic |
+| API | `/mnt/skills/user/najaah-api/SKILL.md` | Endpoints, validation |
+| Quality | `/mnt/skills/user/najaah-quality/SKILL.md` | Tests, code quality |
 
 ## 🎯 Common Tasks
 
@@ -196,7 +196,7 @@ Good development with skills:
 
 ## 🔗 Quick Links
 
-- Full README: `/mnt/skills/user/xyz-lms/README.md`
+- Full README: `/mnt/skills/user/najaah/README.md`
 - Project Docs: `/docs/`
 - AI Instructions: `/docs/AI_INSTRUCTIONS.md`
 - Database Schema: `/docs/architecture/DATABASE_SCHEMA.md`

@@ -80,7 +80,7 @@ class StudentNotificationService implements StudentNotificationServiceInterface
     private function formatWelcomeMessage(User $student): string
     {
         $template = (string) config('notifications.student.templates.welcome');
-        $centerName = $student->center?->name ?? 'XYZ LMS';
+        $centerName = $student->center?->name ?? 'Najaah LMS';
 
         return strtr($template, [
             '{center_name}' => $centerName,
@@ -94,7 +94,7 @@ class StudentNotificationService implements StudentNotificationServiceInterface
     {
         $template = (string) config('notifications.student.templates.enrollment');
         $courseName = $enrollment->course->translate('title');
-        $centerName = $enrollment->user->center?->name ?? 'XYZ LMS';
+        $centerName = $enrollment->user->center?->name ?? 'Najaah LMS';
 
         return strtr($template, [
             '{course_name}' => $courseName,

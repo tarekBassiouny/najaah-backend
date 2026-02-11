@@ -1,7 +1,7 @@
-# XYZ LMS - Master Project Skill
+# Najaah LMS - Master Project Skill
 
 ## Purpose
-Comprehensive knowledge base for the XYZ Learning Management System. This skill provides Claude and Claude Code with complete context about the project architecture, business rules, and development standards.
+Comprehensive knowledge base for the Najaah Learning Management System. This skill provides Claude and Claude Code with complete context about the project architecture, business rules, and development standards.
 
 ## When to Use This Skill
 - Starting any new feature development
@@ -14,7 +14,7 @@ Comprehensive knowledge base for the XYZ Learning Management System. This skill 
 
 ## Project Overview
 
-**XYZ LMS** is a multi-tenant Learning Management System connecting Centers (education providers) with Students through video-based courses.
+**Najaah LMS** is a multi-tenant Learning Management System connecting Centers (education providers) with Students through video-based courses.
 
 ### Core Characteristics
 - **Multi-tenant SaaS**: Centers operate as isolated tenants with branded/unbranded modes
@@ -42,7 +42,7 @@ API Docs: Scribe
 
 **Two Center Types:**
 1. **Branded Centers**: Own subdomain, isolated student accounts
-2. **Unbranded Centers**: Under XYZ.com, shared student identity
+2. **Unbranded Centers**: Under Najaah.com, shared student identity
 
 **Data Isolation:**
 - All tables include `center_id` for tenant scoping

@@ -1,6 +1,6 @@
 ---
 name: LMS Task
-about: Production task for XYZ LMS
+about: Production task for Najaah LMS
 title: "[LMS] "
 labels: ["lms"]
 assignees: []

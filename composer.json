@@ -1,7 +1,7 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "xyz/xyz-lms",
-    "description": "XYZ LMS Backend (Laravel 11)",
+    "name": "najaah/najaah-backend",
+    "description": "Najaah LMS Backend (Laravel 11)",
     "type": "project",
     "license": "MIT",
 
@@ -89,7 +89,7 @@
         ],
 
         "postman:download": [
-            "curl http://xyz-lms.test/docs.postman -o postman/scribe.postman.json"
+            "curl http://najaah.me/docs.postman -o postman/scribe.postman.json"
         ],
 
         "postman:restructure": [

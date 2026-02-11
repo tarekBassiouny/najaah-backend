@@ -1,7 +1,7 @@
-# XYZ LMS - Architecture Agent
+# Najaah LMS - Architecture Agent
 
 ## Purpose
-Specialized agent for database design, schema management, multi-tenancy architecture, and system design decisions for XYZ LMS.
+Specialized agent for database design, schema management, multi-tenancy architecture, and system design decisions for Najaah LMS.
 
 ## When to Use This Agent
 - Designing new database tables and migrations
@@ -13,7 +13,7 @@ Specialized agent for database design, schema management, multi-tenancy architec
 - Designing caching strategies
 
 ## Prerequisites
-Always read the master skill first: `/mnt/skills/user/xyz-lms/SKILL.md`
+Always read the master skill first: `/mnt/skills/user/najaah/SKILL.md`
 
 ---
 
@@ -63,12 +63,12 @@ const STATUS_PENDING = 2;
 **Two Center Types:**
 ```sql
 -- Branded Centers
-- Own subdomain (physics-academy.xyz.com)
+- Own subdomain (physics-academy.najaah.me)
 - Isolated students (separate accounts per center)
 - center.is_branded = true
 
 -- Unbranded Centers  
-- Under main domain (xyz.com/centers/math-tutoring)
+- Under main domain (najaah.me/centers/math-tutoring)
 - Shared students (one account across all unbranded)
 - center.is_branded = false
 ```
@@ -616,6 +616,6 @@ We chose [Option] because [reasoning].
 ---
 
 ## Related Skills
-- Master Skill: `/mnt/skills/user/xyz-lms/SKILL.md`
-- Feature Agent: `/mnt/skills/user/xyz-lms-features/SKILL.md`
-- Code Quality Agent: `/mnt/skills/user/xyz-lms-quality/SKILL.md`
+- Master Skill: `/mnt/skills/user/najaah/SKILL.md`
+- Feature Agent: `/mnt/skills/user/najaah-features/SKILL.md`
+- Code Quality Agent: `/mnt/skills/user/najaah-quality/SKILL.md`

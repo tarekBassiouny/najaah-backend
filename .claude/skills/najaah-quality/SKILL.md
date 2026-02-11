@@ -1,7 +1,7 @@
-# XYZ LMS - Code Quality Agent
+# Najaah LMS - Code Quality Agent
 
 ## Purpose
-Specialized agent for ensuring code quality, testing standards, linting, type safety, and maintainability for XYZ LMS.
+Specialized agent for ensuring code quality, testing standards, linting, type safety, and maintainability for Najaah LMS.
 
 ## When to Use This Agent
 - Writing tests (unit, feature, integration)
@@ -13,7 +13,7 @@ Specialized agent for ensuring code quality, testing standards, linting, type sa
 - Setting up CI/CD quality gates
 
 ## Prerequisites
-Always read the master skill first: `/mnt/skills/user/xyz-lms/SKILL.md`
+Always read the master skill first: `/mnt/skills/user/najaah/SKILL.md`
 
 ---
 
@@ -820,6 +820,6 @@ expect($result)
 ---
 
 ## Related Skills
-- Master Skill: `/mnt/skills/user/xyz-lms/SKILL.md`
-- Architecture Agent: `/mnt/skills/user/xyz-lms-architecture/SKILL.md`
-- Feature Agent: `/mnt/skills/user/xyz-lms-features/SKILL.md`
+- Master Skill: `/mnt/skills/user/najaah/SKILL.md`
+- Architecture Agent: `/mnt/skills/user/najaah-architecture/SKILL.md`
+- Feature Agent: `/mnt/skills/user/najaah-features/SKILL.md`

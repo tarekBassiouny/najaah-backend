@@ -1,4 +1,4 @@
-# XYZ LMS – Master Database Schema
+# Najaah LMS – Master Database Schema
 Version: 1.1  
 Status: Production-Ready
 
