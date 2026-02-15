@@ -9,7 +9,6 @@ use App\Enums\SurveyAssignableType;
 use App\Enums\SurveyScopeType;
 use App\Models\Center;
 use App\Models\Course;
-use App\Models\Section;
 use App\Models\Survey;
 use App\Models\SurveyAssignment;
 use App\Models\User;
@@ -47,32 +46,24 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
             return match ($type) {
                 SurveyAssignableType::Center => $this->isValidCenterForSystemScope($model),
                 SurveyAssignableType::User => $this->isValidStudentForSystemScope($model),
+                SurveyAssignableType::Course => $this->isValidCourseForSystemScope($model),
                 default => false,
             };
         }
 
-        if ($type === SurveyAssignableType::Center) {
-            return $model instanceof Center
+        // Center-scoped surveys support only user/course/video/all.
+        return match ($type) {
+            SurveyAssignableType::User => $this->isValidStudentForCenterScope($model, $survey),
+            SurveyAssignableType::Course => $model instanceof Course
                 && is_numeric($survey->center_id)
-                && (int) $model->id === (int) $survey->center_id;
-        }
-
-        if ($type === SurveyAssignableType::User) {
-            return $this->isValidStudentForCenterScope($model, $survey);
-        }
-
-        /** @var SurveyAssignableType::Course|SurveyAssignableType::Section|SurveyAssignableType::Video $type */
-        $entityCenterId = match ($type) {
-            SurveyAssignableType::Course => $model instanceof Course ? $model->center_id : null,
-            SurveyAssignableType::Section => $model instanceof Section ? $model->course->center_id ?? null : null,
-            SurveyAssignableType::Video => $model instanceof Video ? $this->getVideoCenterId($model) : null,
+                && (int) $model->center_id === (int) $survey->center_id,
+            SurveyAssignableType::Video => $this->isValidVideoForCenterScope($model, $survey),
+            default => false,
         };
-
-        return $entityCenterId === $survey->center_id;
     }
 
     /**
-     * @param  array<array{type: string, id?: int}>  $assignments
+     * @param  array<array{type: string, id?: int|string}>  $assignments
      * @return array<int, array{type: string, id: int|null, conflicting_count: int, conflicting_survey_ids: array<int>}>
      */
     public function getPendingActiveWarnings(Survey $survey, array $assignments): array
@@ -82,7 +73,7 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
 
         foreach ($assignments as $assignment) {
             $type = SurveyAssignableType::from($assignment['type']);
-            $id = isset($assignment['id']) ? $assignment['id'] : null;
+            $id = $this->extractAssignmentId($assignment);
 
             // Skip "All" type for conflict warnings (handled separately)
             if ($type === SurveyAssignableType::All) {
@@ -140,7 +131,7 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
     }
 
     /**
-     * @param  array<array{type: string, id?: int}>  $assignments
+     * @param  array<array{type: string, id?: int|string}>  $assignments
      */
     public function assignMultiple(Survey $survey, array $assignments, User $actor): void
     {
@@ -158,7 +149,7 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
                     continue;
                 }
 
-                $id = isset($assignment['id']) ? $assignment['id'] : null;
+                $id = $this->extractAssignmentId($assignment);
 
                 if ($id === null) {
                     throw new \InvalidArgumentException(
@@ -220,7 +211,7 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
             $query->where(function ($q): void {
                 $q->whereNull('center_id')
                     ->orWhereHas('center', function ($centerQuery): void {
-                        $centerQuery->where('type', CenterType::Unbranded);
+                        $centerQuery->where('type', CenterType::Unbranded->value);
                     });
             });
         }
@@ -283,33 +274,66 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
         return $survey->assignments()->get();
     }
 
-    private function findAssignable(SurveyAssignableType $type, int $id): Center|Course|Section|Video|User|null
+    private function findAssignable(SurveyAssignableType $type, int $id): Center|Course|Video|User|null
     {
         return match ($type) {
             SurveyAssignableType::Center => Center::find($id),
             SurveyAssignableType::Course => Course::find($id),
-            SurveyAssignableType::Section => Section::find($id),
             SurveyAssignableType::Video => Video::find($id),
             SurveyAssignableType::User => User::find($id),
             SurveyAssignableType::All => null,
         };
     }
 
-    private function getVideoCenterId(Video $video): ?int
+    /**
+     * @param  array{type: string, id?: int|string|null}  $assignment
+     */
+    private function extractAssignmentId(array $assignment): ?int
     {
-        $course = $video->courses()->first();
+        $id = $assignment['id'] ?? null;
 
-        return $course?->center_id;
+        if ($id === null || $id === '') {
+            return null;
+        }
+
+        if (is_int($id)) {
+            return $id;
+        }
+
+        if (is_string($id) && filter_var($id, FILTER_VALIDATE_INT) !== false) {
+            return (int) $id;
+        }
+
+        throw new \InvalidArgumentException('Assignment ID must be an integer.');
     }
 
-    private function isValidCenterForSystemScope(Center|Course|Section|Video|User $model): bool
+    private function isValidCenterForSystemScope(Center|Course|Video|User $model): bool
     {
         return $model instanceof Center && $model->type === CenterType::Unbranded;
     }
 
     private function isValidStudentForSystemScope(object $model): bool
     {
-        if (! $model instanceof User || ! $model->is_student || ! is_numeric($model->center_id)) {
+        if (! $model instanceof User || ! $model->is_student) {
+            return false;
+        }
+
+        if ($model->center_id === null) {
+            return true;
+        }
+
+        if (! is_numeric($model->center_id)) {
+            return false;
+        }
+
+        $center = $model->center;
+
+        return $center instanceof Center && $center->type === CenterType::Unbranded;
+    }
+
+    private function isValidCourseForSystemScope(object $model): bool
+    {
+        if (! $model instanceof Course) {
             return false;
         }
 
@@ -321,6 +345,15 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
     private function isValidStudentForCenterScope(object $model, Survey $survey): bool
     {
         if (! $model instanceof User || ! $model->is_student || ! is_numeric($model->center_id)) {
+            return false;
+        }
+
+        return (int) $model->center_id === (int) $survey->center_id;
+    }
+
+    private function isValidVideoForCenterScope(object $model, Survey $survey): bool
+    {
+        if (! $model instanceof Video || ! is_numeric($survey->center_id)) {
             return false;
         }
 

@@ -6,7 +6,6 @@ namespace App\Enums;
 
 use App\Models\Center;
 use App\Models\Course;
-use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
 
@@ -14,7 +13,6 @@ enum SurveyAssignableType: string
 {
     case Center = 'center';
     case Course = 'course';
-    case Section = 'section';
     case Video = 'video';
     case User = 'user';
     case All = 'all';
@@ -27,10 +25,9 @@ enum SurveyAssignableType: string
         return match ($this) {
             self::Center => Center::class,
             self::Course => Course::class,
-            self::Section => Section::class,
             self::Video => Video::class,
             self::User => User::class,
-            self::All => null,
+            self::All => User::class,
         };
     }
 
@@ -39,7 +36,6 @@ enum SurveyAssignableType: string
         return match ($this) {
             self::Center => 'Center',
             self::Course => 'Course',
-            self::Section => 'Section',
             self::Video => 'Video',
             self::User => 'Student',
             self::All => 'All Students',

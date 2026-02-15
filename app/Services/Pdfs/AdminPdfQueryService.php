@@ -22,7 +22,7 @@ class AdminPdfQueryService implements AdminPdfQueryServiceInterface
      */
     public function paginateForCenter(User $admin, Center $center, PdfFilters $filters): LengthAwarePaginator
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $center->id);
         }
 

@@ -48,7 +48,6 @@ class SurveyAssignmentResource extends JsonResource
         $name = match ($assignment->assignable_type) {
             SurveyAssignableType::Center => $model->name ?? null,
             SurveyAssignableType::Course => $model->title_translations['en'] ?? $model->title_translations['ar'] ?? null,
-            SurveyAssignableType::Section => $model->title_translations['en'] ?? $model->title_translations['ar'] ?? null,
             SurveyAssignableType::Video => $model->title_translations['en'] ?? $model->title_translations['ar'] ?? null,
             SurveyAssignableType::User, SurveyAssignableType::All => $model->name ?? $model->email ?? null,
         };

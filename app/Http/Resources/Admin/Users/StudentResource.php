@@ -55,7 +55,7 @@ class StudentResource extends JsonResource
                 'total_sessions' => (int) data_get($analyticsSummary, 'total_sessions', 0),
                 'full_play_sessions' => (int) data_get($analyticsSummary, 'full_play_sessions', 0),
                 'viewed_videos' => (int) data_get($analyticsSummary, 'viewed_videos', 0),
-                'last_activity_at' => data_get($analyticsSummary, 'last_activity_at'),
+                'last_activity_at' => $user->last_login_at?->toIso8601String(),
             ],
         ];
     }

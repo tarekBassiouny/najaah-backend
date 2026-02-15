@@ -20,7 +20,6 @@ class BulkEnrollmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'center_id' => ['required', 'integer', 'exists:centers,id'],
             'course_id' => ['required', 'integer', 'exists:courses,id'],
             'user_ids' => ['required', 'array', 'min:1'],
             'user_ids.*' => ['integer', Rule::exists('users', 'id')],
@@ -33,10 +32,6 @@ class BulkEnrollmentRequest extends FormRequest
     public function queryParameters(): array
     {
         return [
-            'center_id' => [
-                'description' => 'Center ID to scope enrollment approvals.',
-                'example' => '2',
-            ],
             'course_id' => [
                 'description' => 'Course ID to enroll students into.',
                 'example' => '12',
@@ -54,10 +49,6 @@ class BulkEnrollmentRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'center_id' => [
-                'description' => 'Center ID to scope enrollment approvals.',
-                'example' => 2,
-            ],
             'course_id' => [
                 'description' => 'Course ID to enroll students into.',
                 'example' => 12,

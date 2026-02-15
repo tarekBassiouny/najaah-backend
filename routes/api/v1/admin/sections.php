@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\Sections\SectionStructureController;
 use App\Http\Controllers\Admin\Sections\SectionWorkflowController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('require.permission:section.manage')
+Route::middleware(['require.permission:section.manage', 'scope.center_route'])
     ->prefix('centers/{center}/courses/{course}/sections')
     ->group(function (): void {
         Route::get('/', [SectionController::class, 'index'])->whereNumber('center');

@@ -60,12 +60,13 @@ class VideoUploadSessionQueryService
      */
     private function applyScope(Builder $query, User $admin): Builder
     {
-        if ($admin->hasRole('super_admin')) {
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             return $query;
         }
 
-        $this->centerScopeService->assertAdminCenterId($admin, $admin->center_id);
-        $query->where('center_id', $admin->center_id);
+        $centerId = $this->centerScopeService->resolveAdminCenterId($admin);
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+        $query->where('center_id', $centerId);
 
         return $query;
     }

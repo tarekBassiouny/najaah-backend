@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\Categories\CategoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:course.manage'])->group(function (): void {
+Route::middleware(['require.permission:course.manage', 'scope.center_route'])->group(function (): void {
     Route::get('/centers/{center}/categories', [CategoryController::class, 'index'])->whereNumber('center');
     Route::post('/centers/{center}/categories', [CategoryController::class, 'store'])->whereNumber('center');
     Route::get('/centers/{center}/categories/{category}', [CategoryController::class, 'show'])->whereNumber('center')->whereNumber('category');

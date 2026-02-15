@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Center;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -74,6 +75,56 @@ test('student cannot login as admin', function () {
                 'code' => 'INVALID_CREDENTIALS',
             ],
         ]);
+});
+
+test('center-scoped admin login fails when api key center does not match', function () {
+    $centerA = Center::factory()->create([
+        'api_key' => 'center-a-login-key',
+    ]);
+    Center::factory()->create([
+        'api_key' => 'center-b-login-key',
+    ]);
+
+    User::factory()->create([
+        'email' => 'center.admin@example.com',
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $centerA->id,
+    ]);
+
+    $response = $this->postJson('/api/v1/admin/auth/login', [
+        'email' => 'center.admin@example.com',
+        'password' => 'secret123',
+    ], [
+        'X-Api-Key' => 'center-b-login-key',
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
+test('center-scoped admin login succeeds when api key center matches', function () {
+    $center = Center::factory()->create([
+        'api_key' => 'center-login-key',
+    ]);
+
+    User::factory()->create([
+        'email' => 'matching.center.admin@example.com',
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $center->id,
+    ]);
+
+    $response = $this->postJson('/api/v1/admin/auth/login', [
+        'email' => 'matching.center.admin@example.com',
+        'password' => 'secret123',
+    ], [
+        'X-Api-Key' => 'center-login-key',
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.user.center_id', $center->id);
 });
 
 /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Users;
 
+use App\Models\Center;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -29,6 +30,29 @@ class StoreAdminUserRequest extends FormRequest
             'status' => ['nullable', 'integer', 'in:0,1,2'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $routeCenter = $this->route('center');
+            $routeCenterId = null;
+
+            if ($routeCenter instanceof Center) {
+                $routeCenterId = (int) $routeCenter->id;
+            } elseif (is_numeric($routeCenter)) {
+                $routeCenterId = (int) $routeCenter;
+            }
+
+            if ($routeCenterId === null || ! $this->has('center_id')) {
+                return;
+            }
+
+            $centerId = $this->input('center_id');
+            if (! is_numeric($centerId) || (int) $centerId !== $routeCenterId) {
+                $validator->errors()->add('center_id', 'Center ID must match the route center.');
+            }
+        });
     }
 
     protected function failedValidation(Validator $validator): void
@@ -70,7 +94,7 @@ class StoreAdminUserRequest extends FormRequest
                 'example' => 1,
             ],
             'center_id' => [
-                'description' => 'Optional center assignment for admin.',
+                'description' => 'Optional on system route. On center route, if provided, it must match route center.',
                 'example' => 12,
             ],
         ];

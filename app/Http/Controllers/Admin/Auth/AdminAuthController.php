@@ -28,7 +28,12 @@ class AdminAuthController extends Controller
     {
         /** @var array{email:string,password:string} $data */
         $data = $request->validated();
-        $result = $this->authService->login($data['email'], $data['password']);
+        $resolvedCenterId = $request->attributes->get('resolved_center_id');
+        $result = $this->authService->login(
+            $data['email'],
+            $data['password'],
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
 
         if ($result === null) {
             return response()->json([
@@ -56,6 +61,16 @@ class AdminAuthController extends Controller
                 'error' => [
                     'code' => 'CENTER_ACCESS_REQUIRED',
                     'message' => 'Admin center access is required before login.',
+                ],
+            ], 403);
+        }
+
+        if (! $result['api_scope_valid']) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'CENTER_MISMATCH',
+                    'message' => 'Center mismatch.',
                 ],
             ], 403);
         }

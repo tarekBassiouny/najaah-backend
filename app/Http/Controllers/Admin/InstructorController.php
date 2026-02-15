@@ -9,25 +9,25 @@ use App\Http\Requests\Admin\Instructors\ListInstructorsRequest;
 use App\Http\Requests\Admin\Instructors\StoreInstructorRequest;
 use App\Http\Requests\Admin\Instructors\UpdateInstructorRequest;
 use App\Http\Resources\Admin\InstructorResource;
+use App\Models\Center;
 use App\Models\Instructor;
 use App\Models\User;
 use App\Services\Admin\InstructorQueryService;
-use App\Services\Centers\CenterScopeService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class InstructorController extends Controller
 {
     public function __construct(
         private readonly InstructorServiceInterface $instructorService,
-        private readonly InstructorQueryService $queryService,
-        private readonly CenterScopeService $centerScopeService
+        private readonly InstructorQueryService $queryService
     ) {}
 
     /**
      * List instructors.
      */
-    public function index(ListInstructorsRequest $request): JsonResponse
+    public function index(ListInstructorsRequest $request, Center $center): JsonResponse
     {
         /** @var User|null $admin */
         $admin = $request->user();
@@ -43,7 +43,7 @@ class InstructorController extends Controller
         }
 
         $filters = $request->filters();
-        $paginator = $this->queryService->paginate($admin, $filters);
+        $paginator = $this->queryService->paginateForCenter($admin, (int) $center->id, $filters);
 
         return response()->json([
             'success' => true,
@@ -61,7 +61,7 @@ class InstructorController extends Controller
     /**
      * Create an instructor.
      */
-    public function store(StoreInstructorRequest $request): JsonResponse
+    public function store(StoreInstructorRequest $request, Center $center): JsonResponse
     {
         /** @var User|null $admin */
         $admin = $request->user();
@@ -80,11 +80,7 @@ class InstructorController extends Controller
         $data = $request->validated();
         $data['created_by'] = (int) $admin->id;
         $data['avatar'] = $request->file('avatar');
-
-        if (! $admin->hasRole('super_admin')) {
-            $this->centerScopeService->assertAdminCenterId($admin, is_numeric($admin->center_id) ? (int) $admin->center_id : null);
-            $data['center_id'] = (int) $admin->center_id;
-        }
+        $data['center_id'] = (int) $center->id;
 
         $instructor = $this->instructorService->create($data, $admin);
 
@@ -98,14 +94,9 @@ class InstructorController extends Controller
     /**
      * Show an instructor.
      */
-    public function show(Instructor $instructor): JsonResponse
+    public function show(Center $center, Instructor $instructor): JsonResponse
     {
-        /** @var User|null $admin */
-        $admin = request()->user();
-
-        if ($admin instanceof User && ! $admin->hasRole('super_admin')) {
-            $this->centerScopeService->assertAdminSameCenter($admin, $instructor);
-        }
+        $this->assertInstructorBelongsToCenter($center, $instructor);
 
         $instructor->loadMissing(['center', 'creator', 'courses']);
 
@@ -119,7 +110,7 @@ class InstructorController extends Controller
     /**
      * Update an instructor.
      */
-    public function update(UpdateInstructorRequest $request, Instructor $instructor): JsonResponse
+    public function update(UpdateInstructorRequest $request, Center $center, Instructor $instructor): JsonResponse
     {
         /** @var User|null $admin */
         $admin = $request->user();
@@ -134,17 +125,12 @@ class InstructorController extends Controller
             ], 401);
         }
 
-        if (! $admin->hasRole('super_admin')) {
-            $this->centerScopeService->assertAdminSameCenter($admin, $instructor);
-        }
+        $this->assertInstructorBelongsToCenter($center, $instructor);
 
         /** @var array<string, mixed> $data */
         $data = $request->validated();
         $data['avatar'] = $request->file('avatar');
-
-        if (! $admin->hasRole('super_admin')) {
-            $data['center_id'] = $instructor->center_id;
-        }
+        $data['center_id'] = (int) $center->id;
 
         $updated = $this->instructorService->update($instructor, $data, $admin);
 
@@ -158,14 +144,11 @@ class InstructorController extends Controller
     /**
      * Delete an instructor.
      */
-    public function destroy(Instructor $instructor): JsonResponse
+    public function destroy(Center $center, Instructor $instructor): JsonResponse
     {
         /** @var User|null $admin */
         $admin = request()->user();
-
-        if ($admin instanceof User && ! $admin->hasRole('super_admin')) {
-            $this->centerScopeService->assertAdminSameCenter($admin, $instructor);
-        }
+        $this->assertInstructorBelongsToCenter($center, $instructor);
 
         $this->instructorService->delete($instructor, $admin instanceof User ? $admin : null);
 
@@ -174,5 +157,18 @@ class InstructorController extends Controller
             'message' => 'Instructor deleted successfully',
             'data' => null,
         ]);
+    }
+
+    private function assertInstructorBelongsToCenter(Center $center, Instructor $instructor): void
+    {
+        if ((int) $instructor->center_id !== (int) $center->id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Instructor not found.',
+                ],
+            ], 404));
+        }
     }
 }

@@ -79,6 +79,7 @@ it('admin cannot approve device change request from another center', function ()
     // Center A setup
     $centerA = Center::factory()->create(['name_translations' => ['en' => 'Center A']]);
     $adminA = createAdminForCenter($centerA);
+    $adminA->centers()->sync([$centerA->id => ['type' => 'admin']]);
     $tokenA = getAdminToken($adminA);
 
     // Center B setup with request
@@ -99,9 +100,9 @@ it('admin cannot approve device change request from another center', function ()
         'status' => DeviceChangeRequest::STATUS_PENDING,
     ]);
 
-    // Admin A tries to approve Center B's request
+    // Admin A tries to access Center B's route - should be blocked by scope middleware
     $response = test()->postJson(
-        "/api/v1/admin/device-change-requests/{$requestB->id}/approve",
+        "/api/v1/admin/centers/{$centerB->id}/device-change-requests/{$requestB->id}/approve",
         [],
         adminHeadersFor($tokenA)
     );
@@ -114,6 +115,7 @@ it('admin cannot reject device change request from another center', function ():
     // Center A setup
     $centerA = Center::factory()->create(['name_translations' => ['en' => 'Center A']]);
     $adminA = createAdminForCenter($centerA);
+    $adminA->centers()->sync([$centerA->id => ['type' => 'admin']]);
     $tokenA = getAdminToken($adminA);
 
     // Center B setup with request
@@ -134,9 +136,9 @@ it('admin cannot reject device change request from another center', function ():
         'status' => DeviceChangeRequest::STATUS_PENDING,
     ]);
 
-    // Admin A tries to reject Center B's request
+    // Admin A tries to access Center B's route - should be blocked by scope middleware
     $response = test()->postJson(
-        "/api/v1/admin/device-change-requests/{$requestB->id}/reject",
+        "/api/v1/admin/centers/{$centerB->id}/device-change-requests/{$requestB->id}/reject",
         ['decision_reason' => 'Unauthorized attempt'],
         adminHeadersFor($tokenA)
     );
@@ -149,6 +151,7 @@ it('admin cannot pre-approve device change request from another center', functio
     // Center A setup
     $centerA = Center::factory()->create(['name_translations' => ['en' => 'Center A']]);
     $adminA = createAdminForCenter($centerA);
+    $adminA->centers()->sync([$centerA->id => ['type' => 'admin']]);
     $tokenA = getAdminToken($adminA);
 
     // Center B setup with request
@@ -169,9 +172,9 @@ it('admin cannot pre-approve device change request from another center', functio
         'status' => DeviceChangeRequest::STATUS_PENDING,
     ]);
 
-    // Admin A tries to pre-approve Center B's request
+    // Admin A tries to access Center B's route - should be blocked by scope middleware
     $response = test()->postJson(
-        "/api/v1/admin/device-change-requests/{$requestB->id}/pre-approve",
+        "/api/v1/admin/centers/{$centerB->id}/device-change-requests/{$requestB->id}/pre-approve",
         [],
         adminHeadersFor($tokenA)
     );
@@ -184,6 +187,7 @@ it('admin cannot create device change request for student in another center', fu
     // Center A setup
     $centerA = Center::factory()->create(['name_translations' => ['en' => 'Center A']]);
     $adminA = createAdminForCenter($centerA);
+    $adminA->centers()->sync([$centerA->id => ['type' => 'admin']]);
     $tokenA = getAdminToken($adminA);
 
     // Center B student
@@ -193,9 +197,9 @@ it('admin cannot create device change request for student in another center', fu
         'center_id' => $centerB->id,
     ]);
 
-    // Admin A tries to create request for Center B's student
+    // Admin A tries to access Center B's route - should be blocked by scope middleware
     $response = test()->postJson(
-        "/api/v1/admin/students/{$studentB->id}/device-change-requests",
+        "/api/v1/admin/centers/{$centerB->id}/students/{$studentB->id}/device-change-requests",
         ['reason' => 'Cross-center attempt'],
         adminHeadersFor($tokenA)
     );
@@ -212,6 +216,7 @@ it('admin only sees device change requests from their center', function (): void
     // Center A setup
     $centerA = Center::factory()->create(['name_translations' => ['en' => 'Center A']]);
     $adminA = createAdminForCenter($centerA);
+    $adminA->centers()->sync([$centerA->id => ['type' => 'admin']]);
     $tokenA = getAdminToken($adminA);
     $studentA = User::factory()->create([
         'is_student' => true,
@@ -247,9 +252,9 @@ it('admin only sees device change requests from their center', function (): void
         'status' => DeviceChangeRequest::STATUS_PENDING,
     ]);
 
-    // Admin A should only see Center A's requests
+    // Admin A should only see Center A's requests via center route
     $response = test()->getJson(
-        '/api/v1/admin/device-change-requests',
+        "/api/v1/admin/centers/{$centerA->id}/device-change-requests",
         adminHeadersFor($tokenA)
     );
 
@@ -265,6 +270,7 @@ it('admin only sees device change requests from their center', function (): void
 it('admin cannot approve already approved request', function (): void {
     $center = Center::factory()->create();
     $admin = createAdminForCenter($center);
+    $admin->centers()->sync([$center->id => ['type' => 'admin']]);
     $token = getAdminToken($admin);
     $student = User::factory()->create([
         'is_student' => true,
@@ -283,7 +289,7 @@ it('admin cannot approve already approved request', function (): void {
     ]);
 
     $response = test()->postJson(
-        "/api/v1/admin/device-change-requests/{$request->id}/approve",
+        "/api/v1/admin/centers/{$center->id}/device-change-requests/{$request->id}/approve",
         [],
         adminHeadersFor($token)
     );
@@ -295,6 +301,7 @@ it('admin cannot approve already approved request', function (): void {
 it('admin cannot reject already rejected request', function (): void {
     $center = Center::factory()->create();
     $admin = createAdminForCenter($center);
+    $admin->centers()->sync([$center->id => ['type' => 'admin']]);
     $token = getAdminToken($admin);
     $student = User::factory()->create([
         'is_student' => true,
@@ -313,7 +320,7 @@ it('admin cannot reject already rejected request', function (): void {
     ]);
 
     $response = test()->postJson(
-        "/api/v1/admin/device-change-requests/{$request->id}/reject",
+        "/api/v1/admin/centers/{$center->id}/device-change-requests/{$request->id}/reject",
         ['decision_reason' => 'Double rejection attempt'],
         adminHeadersFor($token)
     );
@@ -336,6 +343,7 @@ it('admin without device_change.manage permission cannot access endpoints', func
         'is_student' => false,
         'center_id' => $center->id,
     ]);
+    $admin->centers()->sync([$center->id => ['type' => 'admin']]);
 
     $role = Role::firstOrCreate(['slug' => 'limited_admin'], [
         'name' => 'limited admin',
@@ -347,9 +355,9 @@ it('admin without device_change.manage permission cannot access endpoints', func
 
     $token = getAdminToken($admin);
 
-    // Try to list device change requests
+    // Try to list device change requests via center route
     $response = test()->getJson(
-        '/api/v1/admin/device-change-requests',
+        "/api/v1/admin/centers/{$center->id}/device-change-requests",
         adminHeadersFor($token)
     );
 
@@ -363,10 +371,11 @@ it('admin without device_change.manage permission cannot access endpoints', func
 it('rejects device change request creation for non-existent student', function (): void {
     $center = Center::factory()->create();
     $admin = createAdminForCenter($center);
+    $admin->centers()->sync([$center->id => ['type' => 'admin']]);
     $token = getAdminToken($admin);
 
     $response = test()->postJson(
-        '/api/v1/admin/students/999999/device-change-requests',
+        "/api/v1/admin/centers/{$center->id}/students/999999/device-change-requests",
         ['reason' => 'Test'],
         adminHeadersFor($token)
     );

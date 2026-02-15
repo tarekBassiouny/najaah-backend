@@ -93,6 +93,28 @@ test('send rejects invalid api key', function (): void {
         ->assertJsonPath('error.code', 'INVALID_API_KEY');
 });
 
+test('send validates base phone and country code formats', function (): void {
+    $response = $this->postJson('/api/v1/auth/send-otp', [
+        'phone' => '01225291841',
+        'country_code' => '20',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['phone', 'country_code']);
+
+    $responseWithCountryCodeInPhone = $this->postJson('/api/v1/auth/send-otp', [
+        'phone' => '201225291841',
+        'country_code' => '+20',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $responseWithCountryCodeInPhone->assertStatus(422)
+        ->assertJsonValidationErrors(['phone']);
+});
+
 test('verify otp issues tokens', function (): void {
     /** @var User $user */
     $user = User::factory()->create(['phone' => '1234567890', 'country_code' => '+20']);
@@ -119,6 +141,9 @@ test('verify otp issues tokens', function (): void {
         'data',
         'token' => ['access_token', 'refresh_token', 'expires_in'],
     ]);
+
+    $user->refresh();
+    expect($user->last_login_at)->not->toBeNull();
 });
 
 test('verify rejects center mismatch', function (): void {

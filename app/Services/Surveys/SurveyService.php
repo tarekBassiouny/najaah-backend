@@ -35,7 +35,7 @@ class SurveyService implements SurveyServiceInterface
             ->withCount('responses')
             ->orderByDesc('created_at');
 
-        if ($actor->hasRole('super_admin')) {
+        if ($this->centerScopeService->isSystemSuperAdmin($actor)) {
             if ($filters->scopeType !== null) {
                 $query->where('scope_type', $filters->scopeType);
             }
@@ -76,13 +76,13 @@ class SurveyService implements SurveyServiceInterface
             $scopeType = SurveyScopeType::from((int) $data['scope_type']);
 
             if ($scopeType === SurveyScopeType::System) {
-                if (! $actor->hasRole('super_admin')) {
+                if (! $this->centerScopeService->isSystemSuperAdmin($actor)) {
                     throw new \InvalidArgumentException('Only super admins can create system surveys');
                 }
 
                 $data['center_id'] = null;
             } else {
-                $centerId = $data['center_id'] ?? $actor->center_id;
+                $centerId = $data['center_id'] ?? $this->centerScopeService->resolveAdminCenterId($actor);
                 $this->centerScopeService->assertAdminCenterId($actor, $centerId);
                 $data['center_id'] = $centerId;
             }
@@ -126,7 +126,6 @@ class SurveyService implements SurveyServiceInterface
             $questions = $data['questions'] ?? null;
             unset($data['questions']);
 
-            $originalData = $survey->toArray();
             $survey->update($data);
 
             if ($questions !== null) {
@@ -279,7 +278,7 @@ class SurveyService implements SurveyServiceInterface
     private function assertCanManageSurvey(Survey $survey, User $actor): void
     {
         if ($survey->scope_type === SurveyScopeType::System) {
-            if (! $actor->hasRole('super_admin')) {
+            if (! $this->centerScopeService->isSystemSuperAdmin($actor)) {
                 throw new \InvalidArgumentException('Only super admins can manage system surveys');
             }
         } else {

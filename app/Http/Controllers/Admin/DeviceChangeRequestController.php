@@ -12,11 +12,13 @@ use App\Http\Requests\Admin\Devices\PreApproveDeviceChangeRequest;
 use App\Http\Requests\Admin\Devices\RejectDeviceChangeRequest;
 use App\Http\Resources\Admin\Devices\DeviceChangeRequestListResource;
 use App\Http\Resources\Admin\Devices\DeviceChangeRequestResource;
+use App\Models\Center;
 use App\Models\DeviceChangeRequest;
 use App\Models\User;
 use App\Services\Admin\DeviceChangeRequestQueryService;
 use App\Services\Devices\DeviceChangeService;
 use App\Support\ErrorCodes;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class DeviceChangeRequestController extends Controller
@@ -29,7 +31,7 @@ class DeviceChangeRequestController extends Controller
     /**
      * List device change requests.
      */
-    public function index(ListDeviceChangeRequestsRequest $request): JsonResponse
+    public function index(ListDeviceChangeRequestsRequest $request, Center $center): JsonResponse
     {
         /** @var User|null $admin */
         $admin = $request->user();
@@ -45,7 +47,7 @@ class DeviceChangeRequestController extends Controller
         }
 
         $filters = $request->filters();
-        $paginator = $this->queryService->paginate($admin, $filters);
+        $paginator = $this->queryService->paginateForCenter($admin, (int) $center->id, $filters);
 
         return response()->json([
             'success' => true,
@@ -63,8 +65,11 @@ class DeviceChangeRequestController extends Controller
     /**
      * Approve a device change request.
      */
-    public function approve(ApproveDeviceChangeRequest $request, DeviceChangeRequest $deviceChangeRequest): JsonResponse
-    {
+    public function approve(
+        ApproveDeviceChangeRequest $request,
+        Center $center,
+        DeviceChangeRequest $deviceChangeRequest
+    ): JsonResponse {
         /** @var User|null $admin */
         $admin = $request->user();
 
@@ -77,6 +82,8 @@ class DeviceChangeRequestController extends Controller
                 ],
             ], 401);
         }
+
+        $this->assertRequestBelongsToCenter($center, $deviceChangeRequest);
 
         /** @var array<string, mixed> $data */
         $data = $request->validated();
@@ -99,8 +106,11 @@ class DeviceChangeRequestController extends Controller
     /**
      * Reject a device change request.
      */
-    public function reject(RejectDeviceChangeRequest $request, DeviceChangeRequest $deviceChangeRequest): JsonResponse
-    {
+    public function reject(
+        RejectDeviceChangeRequest $request,
+        Center $center,
+        DeviceChangeRequest $deviceChangeRequest
+    ): JsonResponse {
         /** @var User|null $admin */
         $admin = $request->user();
 
@@ -114,6 +124,7 @@ class DeviceChangeRequestController extends Controller
             ], 401);
         }
 
+        $this->assertRequestBelongsToCenter($center, $deviceChangeRequest);
         $rejected = $this->service->reject($admin, $deviceChangeRequest, $request->input('decision_reason'));
 
         return response()->json([
@@ -126,8 +137,11 @@ class DeviceChangeRequestController extends Controller
     /**
      * Create a device change request for a student.
      */
-    public function createForStudent(CreateDeviceChangeForStudentRequest $request, User $student): JsonResponse
-    {
+    public function createForStudent(
+        CreateDeviceChangeForStudentRequest $request,
+        Center $center,
+        User $student
+    ): JsonResponse {
         /** @var User|null $admin */
         $admin = $request->user();
 
@@ -151,6 +165,16 @@ class DeviceChangeRequestController extends Controller
             ], 422);
         }
 
+        if ((int) $student->center_id !== (int) $center->id) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Student not found.',
+                ],
+            ], 404);
+        }
+
         $created = $this->service->createByAdmin($admin, $student, $request->input('reason'));
 
         return response()->json([
@@ -163,8 +187,11 @@ class DeviceChangeRequestController extends Controller
     /**
      * Pre-approve a device change request.
      */
-    public function preApprove(PreApproveDeviceChangeRequest $request, DeviceChangeRequest $deviceChangeRequest): JsonResponse
-    {
+    public function preApprove(
+        PreApproveDeviceChangeRequest $request,
+        Center $center,
+        DeviceChangeRequest $deviceChangeRequest
+    ): JsonResponse {
         /** @var User|null $admin */
         $admin = $request->user();
 
@@ -178,6 +205,7 @@ class DeviceChangeRequestController extends Controller
             ], 401);
         }
 
+        $this->assertRequestBelongsToCenter($center, $deviceChangeRequest);
         $preApproved = $this->service->preApprove($admin, $deviceChangeRequest, $request->input('decision_reason'));
 
         return response()->json([
@@ -185,5 +213,18 @@ class DeviceChangeRequestController extends Controller
             'message' => 'Device change request pre-approved',
             'data' => new DeviceChangeRequestResource($preApproved->loadMissing(['user', 'center', 'decider'])),
         ]);
+    }
+
+    private function assertRequestBelongsToCenter(Center $center, DeviceChangeRequest $request): void
+    {
+        if ((int) $request->center_id !== (int) $center->id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Device change request not found.',
+                ],
+            ], 404));
+        }
     }
 }

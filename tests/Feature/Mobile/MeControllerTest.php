@@ -2,9 +2,17 @@
 
 declare(strict_types=1);
 
+use App\Enums\EnrollmentStatus;
+use App\Models\Category;
+use App\Models\Center;
+use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\JwtToken;
+use App\Models\PlaybackSession;
+use App\Models\Section;
 use App\Models\User;
 use App\Models\UserDevice;
+use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -54,6 +62,149 @@ test('returns current student on /auth/me', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.id', $user->id)
         ->assertJsonPath('data.center.id', $user->center_id);
+});
+
+test('returns detailed current student profile on /auth/me/profile', function (): void {
+    $center = Center::factory()->create();
+    $category = Category::factory()->for($center, 'center')->create();
+    $creator = User::factory()->for($center, 'center')->create(['is_student' => false]);
+
+    $course = Course::factory()->for($center, 'center')->create([
+        'category_id' => $category->id,
+        'created_by' => $creator->id,
+    ]);
+
+    $section = Section::factory()->for($course, 'course')->create([
+        'order_index' => 1,
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+    ]);
+
+    $section->videos()->attach($video->id, [
+        'course_id' => $course->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $user = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'center_id' => $center->id,
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => EnrollmentStatus::Active->value,
+        'enrolled_at' => now()->subDay(),
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $access = JWTAuth::fromUser($user);
+
+    JwtToken::create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'access_token' => $access,
+        'refresh_token' => 'refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDays(30),
+    ]);
+
+    PlaybackSession::factory()->create([
+        'user_id' => $user->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'started_at' => now()->subHour(),
+        'ended_at' => now()->subMinutes(20),
+        'progress_percent' => 85,
+        'is_full_play' => true,
+    ]);
+
+    $response = $this->getJson('/api/v1/auth/me/profile', authHeaders($access));
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.id', $user->id)
+        ->assertJsonPath('data.center.id', $center->id)
+        ->assertJsonPath('data.enrollments.0.course.id', $course->id)
+        ->assertJsonPath('data.enrollments.0.course.videos.0.id', $video->id)
+        ->assertJsonPath('data.enrollments.0.course.videos.0.watch_count', 1);
+});
+
+test('rejects /auth/me/profile when center api key scope mismatches student center', function (): void {
+    $centerA = Center::factory()->create([
+        'api_key' => 'center-a-mobile-key',
+    ]);
+    Center::factory()->create([
+        'api_key' => 'center-b-mobile-key',
+    ]);
+
+    $user = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'center_id' => $centerA->id,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $access = JWTAuth::fromUser($user);
+
+    JwtToken::create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'access_token' => $access,
+        'refresh_token' => 'refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDays(30),
+    ]);
+
+    $response = $this->getJson('/api/v1/auth/me/profile', [
+        'Authorization' => 'Bearer '.$access,
+        'X-Api-Key' => 'center-b-mobile-key',
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
+test('allows system-scope students without center assignment on /auth/me/profile', function (): void {
+    $user = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'center_id' => null,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $access = JWTAuth::fromUser($user);
+
+    JwtToken::create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'access_token' => $access,
+        'refresh_token' => 'refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDays(30),
+    ]);
+
+    $response = $this->getJson('/api/v1/auth/me/profile', authHeaders($access));
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.id', $user->id)
+        ->assertJsonPath('data.center', null);
 });
 
 test('rejects unauthorized /auth/me', function (): void {

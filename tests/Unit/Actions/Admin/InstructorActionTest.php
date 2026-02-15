@@ -20,7 +20,6 @@ test('admin can create instructor', function (): void {
     $center = Center::factory()->create();
 
     $payload = [
-        'center_id' => $center->id,
         'name_translations' => ['en' => 'Jane Doe', 'ar' => 'جين'],
         'bio_translations' => ['en' => 'Bio'],
         'title_translations' => ['en' => 'Professor'],
@@ -30,7 +29,7 @@ test('admin can create instructor', function (): void {
         'social_links' => ['facebook' => 'https://fb.com/jane'],
     ];
 
-    $response = $this->postJson('/api/v1/admin/instructors', $payload, $this->adminHeaders());
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/instructors", $payload, $this->adminHeaders());
 
     $response->assertCreated()
         ->assertJsonFragment([
@@ -47,13 +46,15 @@ test('admin can create instructor', function (): void {
 
 test('admin can update instructor', function (): void {
     $admin = $this->asAdmin();
+    $center = Center::factory()->create();
     $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
         'created_by' => $admin->id,
         'email' => 'old@example.com',
     ]);
 
     $this->actingAs($admin, 'admin');
-    $response = $this->putJson('/api/v1/admin/instructors/'.$instructor->id, [
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}/instructors/{$instructor->id}", [
         'name_translations' => ['en' => 'Updated Name'],
         'email' => 'new@example.com',
     ], $this->adminHeaders());
@@ -73,12 +74,14 @@ test('admin can update instructor', function (): void {
 
 test('admin can delete instructor', function (): void {
     $admin = $this->asAdmin();
+    $center = Center::factory()->create();
     $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
         'created_by' => $admin->id,
     ]);
 
     $this->actingAs($admin, 'admin');
-    $response = $this->deleteJson('/api/v1/admin/instructors/'.$instructor->id, [], $this->adminHeaders());
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/instructors/{$instructor->id}", [], $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonFragment([
@@ -92,8 +95,9 @@ test('admin can delete instructor', function (): void {
 test('validation errors', function (): void {
     $admin = $this->asAdmin();
     $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
 
-    $response = $this->postJson('/api/v1/admin/instructors', [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/instructors", [
         'email' => 'not-an-email',
     ], $this->adminHeaders());
 
@@ -107,18 +111,21 @@ test('validation errors', function (): void {
 test('soft deleted instructors not listed', function (): void {
     $admin = $this->asAdmin();
     $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
     Instructor::factory()->create([
+        'center_id' => $center->id,
         'created_by' => $admin->id,
         'email' => 'keep@example.com',
     ]);
     $deleted = Instructor::factory()->create([
+        'center_id' => $center->id,
         'created_by' => $admin->id,
         'email' => 'remove@example.com',
     ]);
 
-    $this->deleteJson('/api/v1/admin/instructors/'.$deleted->id, [], $this->adminHeaders())->assertOk();
+    $this->deleteJson("/api/v1/admin/centers/{$center->id}/instructors/{$deleted->id}", [], $this->adminHeaders())->assertOk();
 
-    $response = $this->getJson('/api/v1/admin/instructors', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/instructors", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('meta.total', 1);
@@ -129,11 +136,13 @@ test('soft deleted instructors not listed', function (): void {
 test('list with pagination', function (): void {
     $admin = $this->asAdmin();
     $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
     Instructor::factory()->count(3)->create([
+        'center_id' => $center->id,
         'created_by' => $admin->id,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/instructors?per_page=2', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/instructors?per_page=2", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('meta.per_page', 2)
@@ -148,12 +157,14 @@ test('list with pagination', function (): void {
 test('show instructor details', function (): void {
     $admin = $this->asAdmin();
     $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
     $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
         'created_by' => $admin->id,
         'email' => 'show@example.com',
     ]);
 
-    $response = $this->getJson('/api/v1/admin/instructors/'.$instructor->id, $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/instructors/{$instructor->id}", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonFragment([

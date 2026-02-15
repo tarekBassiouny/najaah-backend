@@ -34,8 +34,8 @@ class CourseService implements CourseServiceInterface
             ->with(['center', 'category', 'primaryInstructor', 'instructors'])
             ->orderByDesc('id');
 
-        if ($actor instanceof User && ! $actor->hasRole('super_admin')) {
-            $centerId = $actor->center_id;
+        if ($actor instanceof User && ! $this->centerScopeService->isSystemSuperAdmin($actor)) {
+            $centerId = $this->centerScopeService->resolveAdminCenterId($actor);
             $this->centerScopeService->assertAdminCenterId($actor, $centerId);
             $query->where('center_id', $centerId);
         }

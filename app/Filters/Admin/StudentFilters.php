@@ -11,6 +11,7 @@ class StudentFilters
         public readonly int $perPage,
         public readonly ?int $centerId,
         public readonly ?int $status,
-        public readonly ?string $search
+        public readonly ?string $search,
+        public readonly ?int $centerType = null
     ) {}
 }

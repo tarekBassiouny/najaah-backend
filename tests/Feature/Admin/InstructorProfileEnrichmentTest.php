@@ -26,8 +26,7 @@ it('allows creating instructor with avatar and metadata', function (): void {
     $avatar = UploadedFile::fake()->image('avatar.jpg');
     $center = Center::factory()->create();
 
-    $response = $this->post('/api/v1/admin/instructors', [
-        'center_id' => $center->id,
+    $response = $this->post("/api/v1/admin/centers/{$center->id}/instructors", [
         'name_translations' => ['en' => 'John Doe'],
         'bio_translations' => ['en' => 'Bio'],
         'metadata' => [
@@ -54,8 +53,9 @@ it('allows creating instructor with avatar and metadata', function (): void {
 it('rejects unknown metadata keys', function (): void {
     $admin = $this->asAdmin();
     $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
 
-    $response = $this->post('/api/v1/admin/instructors', [
+    $response = $this->post("/api/v1/admin/centers/{$center->id}/instructors", [
         'name_translations' => ['en' => 'Jane Doe'],
         'metadata' => [
             'unknown_key' => 'value',
@@ -68,13 +68,15 @@ it('rejects unknown metadata keys', function (): void {
 it('updates instructor bio and metadata', function (): void {
     $admin = $this->asAdmin();
     $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
 
     /** @var Instructor $instructor */
     $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
         'name_translations' => ['en' => 'Old Name'],
     ]);
 
-    $response = $this->put("/api/v1/admin/instructors/{$instructor->id}", [
+    $response = $this->put("/api/v1/admin/centers/{$center->id}/instructors/{$instructor->id}", [
         'name_translations' => ['en' => 'New Name'],
         'bio_translations' => ['en' => 'New Bio'],
         'metadata' => ['specialization' => 'Math'],

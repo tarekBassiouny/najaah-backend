@@ -12,16 +12,16 @@ use Illuminate\Support\Collection;
 
 interface SurveyAssignmentServiceInterface
 {
-    public function validateAssignment(Survey $survey, SurveyAssignableType $type, int $id): bool;
+    public function validateAssignment(Survey $survey, SurveyAssignableType $type, ?int $id): bool;
 
     /**
-     * @param  array<array{type: string, id: int}>  $assignments
-     * @return array<int, array{type: string, id: int, conflicting_count: int, conflicting_survey_ids: array<int>}>
+     * @param  array<array{type: string, id?: int|string}>  $assignments
+     * @return array<int, array{type: string, id: int|null, conflicting_count: int, conflicting_survey_ids: array<int>}>
      */
     public function getPendingActiveWarnings(Survey $survey, array $assignments): array;
 
     /**
-     * @param  array<array{type: string, id: int}>  $assignments
+     * @param  array<array{type: string, id?: int|string}>  $assignments
      */
     public function assignMultiple(Survey $survey, array $assignments, User $actor): void;
 

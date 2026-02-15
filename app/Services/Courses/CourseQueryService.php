@@ -42,13 +42,13 @@ class CourseQueryService
             );
         }
 
-        if ($admin->hasRole('super_admin')) {
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
                 $query->where('center_id', $filters->centerId);
             }
         } else {
-            $centerId = $admin->center_id;
-            $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);
+            $centerId = $this->centerScopeService->resolveAdminCenterId($admin);
+            $this->centerScopeService->assertAdminCenterId($admin, $centerId);
             $query->where('center_id', (int) $centerId);
         }
 

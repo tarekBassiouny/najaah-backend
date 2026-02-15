@@ -5,19 +5,25 @@ declare(strict_types=1);
 namespace App\Services\Roles;
 
 use App\Actions\Concerns\NormalizesTranslations;
+use App\Exceptions\DomainException;
 use App\Filters\Admin\RoleFilters;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Roles\Contracts\RoleServiceInterface;
 use App\Support\AuditActions;
+use App\Support\ErrorCodes;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class RoleService implements RoleServiceInterface
 {
     use NormalizesTranslations;
 
-    public function __construct(private readonly AuditLogService $auditLogService) {}
+    public function __construct(
+        private readonly AuditLogService $auditLogService,
+        private readonly CenterScopeService $centerScopeService
+    ) {}
 
     private const TRANSLATION_FIELDS = [
         'name_translations',
@@ -50,6 +56,7 @@ class RoleService implements RoleServiceInterface
      */
     public function create(array $data, ?User $actor = null): Role
     {
+        $this->assertSystemAdminScope($actor);
         $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS);
         $data = $this->prepareRoleData($data);
 
@@ -65,6 +72,7 @@ class RoleService implements RoleServiceInterface
      */
     public function update(Role $role, array $data, ?User $actor = null): Role
     {
+        $this->assertSystemAdminScope($actor);
         $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS, [
             'name_translations' => $role->name_translations ?? [],
             'description_translations' => $role->description_translations ?? [],
@@ -82,6 +90,7 @@ class RoleService implements RoleServiceInterface
 
     public function delete(Role $role, ?User $actor = null): void
     {
+        $this->assertSystemAdminScope($actor);
         $role->delete();
 
         $this->auditLogService->log($actor, $role, AuditActions::ROLE_DELETED);
@@ -92,6 +101,7 @@ class RoleService implements RoleServiceInterface
      */
     public function syncPermissions(Role $role, array $permissionIds, ?User $actor = null): Role
     {
+        $this->assertSystemAdminScope($actor);
         $role->permissions()->sync($permissionIds);
 
         $this->auditLogService->log($actor, $role, AuditActions::ROLE_PERMISSIONS_SYNCED, [
@@ -114,5 +124,12 @@ class RoleService implements RoleServiceInterface
         $data['slug'] = $data['slug'] ?? $role?->slug ?? '';
 
         return $data;
+    }
+
+    private function assertSystemAdminScope(?User $actor): void
+    {
+        if (! $actor instanceof User || ! $this->centerScopeService->isSystemSuperAdmin($actor)) {
+            throw new DomainException('System scope access is required.', ErrorCodes::FORBIDDEN, 403);
+        }
     }
 }

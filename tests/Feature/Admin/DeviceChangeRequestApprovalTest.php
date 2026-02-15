@@ -23,12 +23,13 @@ function registerAdminDevice(User $user, string $uuid = 'device-1')
 
 it('admin approves and swaps active device', function (): void {
     $student = $this->makeApiUser();
+    $centerId = $student->center_id;
     $this->asApiUser($student, null, 'old-device');
     registerAdminDevice($student, 'old-device');
 
     $request = DeviceChangeRequest::create([
         'user_id' => $student->id,
-        'center_id' => $student->center_id,
+        'center_id' => $centerId,
         'current_device_id' => 'old-device',
         'new_device_id' => 'new-device',
         'new_model' => 'Model X',
@@ -39,7 +40,7 @@ it('admin approves and swaps active device', function (): void {
 
     $this->asAdmin();
 
-    $approve = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/approve", [], $this->adminHeaders());
+    $approve = $this->postJson("/api/v1/admin/centers/{$centerId}/device-change-requests/{$requestId}/approve", [], $this->adminHeaders());
 
     $approve->assertOk()->assertJsonPath('data.status', DeviceChangeRequest::STATUS_APPROVED->value);
 
@@ -52,12 +53,13 @@ it('admin approves and swaps active device', function (): void {
 
 it('admin can reject pending request without device changes', function (): void {
     $student = $this->makeApiUser();
+    $centerId = $student->center_id;
     $this->asApiUser($student, null, 'old-device');
     registerAdminDevice($student, 'old-device');
 
     $request = DeviceChangeRequest::create([
         'user_id' => $student->id,
-        'center_id' => $student->center_id,
+        'center_id' => $centerId,
         'current_device_id' => 'old-device',
         'new_device_id' => 'new-device',
         'new_model' => 'Model X',
@@ -68,7 +70,7 @@ it('admin can reject pending request without device changes', function (): void 
 
     $this->asAdmin();
 
-    $reject = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/reject", [
+    $reject = $this->postJson("/api/v1/admin/centers/{$centerId}/device-change-requests/{$requestId}/reject", [
         'decision_reason' => 'No proof',
     ], $this->adminHeaders());
 
@@ -82,12 +84,13 @@ it('admin can reject pending request without device changes', function (): void 
 
 it('admin can approve request with provided device details', function (): void {
     $student = $this->makeApiUser();
+    $centerId = $student->center_id;
     $this->asApiUser($student, null, 'old-device');
     registerAdminDevice($student, 'old-device');
 
     $request = DeviceChangeRequest::create([
         'user_id' => $student->id,
-        'center_id' => $student->center_id,
+        'center_id' => $centerId,
         'current_device_id' => 'old-device',
         'new_device_id' => '',
         'new_model' => '',
@@ -98,7 +101,7 @@ it('admin can approve request with provided device details', function (): void {
 
     $this->asAdmin();
 
-    $approve = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/approve", [
+    $approve = $this->postJson("/api/v1/admin/centers/{$centerId}/device-change-requests/{$requestId}/approve", [
         'new_device_id' => 'new-device',
         'new_model' => 'Model Y',
         'new_os_version' => '3.0',
@@ -115,12 +118,13 @@ it('admin can approve request with provided device details', function (): void {
 
 it('admin can pre-approve pending request', function (): void {
     $student = $this->makeApiUser();
+    $centerId = $student->center_id;
     $this->asApiUser($student, null, 'old-device');
     registerAdminDevice($student, 'old-device');
 
     $request = DeviceChangeRequest::create([
         'user_id' => $student->id,
-        'center_id' => $student->center_id,
+        'center_id' => $centerId,
         'current_device_id' => 'old-device',
         'new_device_id' => '',
         'new_model' => '',
@@ -131,7 +135,7 @@ it('admin can pre-approve pending request', function (): void {
 
     $this->asAdmin();
 
-    $preApprove = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/pre-approve", [
+    $preApprove = $this->postJson("/api/v1/admin/centers/{$centerId}/device-change-requests/{$requestId}/pre-approve", [
         'decision_reason' => 'Student verified via phone call',
     ], $this->adminHeaders());
 
@@ -146,12 +150,13 @@ it('admin can pre-approve pending request', function (): void {
 
 it('admin can only pre-approve pending requests', function (): void {
     $student = $this->makeApiUser();
+    $centerId = $student->center_id;
     $this->asApiUser($student, null, 'old-device');
     registerAdminDevice($student, 'old-device');
 
     $request = DeviceChangeRequest::create([
         'user_id' => $student->id,
-        'center_id' => $student->center_id,
+        'center_id' => $centerId,
         'current_device_id' => 'old-device',
         'new_device_id' => 'new-device',
         'new_model' => 'Model X',
@@ -162,7 +167,7 @@ it('admin can only pre-approve pending requests', function (): void {
 
     $this->asAdmin();
 
-    $preApprove = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/pre-approve", [], $this->adminHeaders());
+    $preApprove = $this->postJson("/api/v1/admin/centers/{$centerId}/device-change-requests/{$requestId}/pre-approve", [], $this->adminHeaders());
 
     $preApprove->assertStatus(409)
         ->assertJsonPath('error.code', 'INVALID_STATE');
@@ -170,12 +175,13 @@ it('admin can only pre-approve pending requests', function (): void {
 
 it('admin can create device change request for student', function (): void {
     $student = $this->makeApiUser();
+    $centerId = $student->center_id;
     $this->asApiUser($student, null, 'current-device');
     registerAdminDevice($student, 'current-device');
 
     $this->asAdmin();
 
-    $create = $this->postJson("/api/v1/admin/students/{$student->id}/device-change-requests", [
+    $create = $this->postJson("/api/v1/admin/centers/{$centerId}/students/{$student->id}/device-change-requests", [
         'reason' => 'Student lost their phone',
     ], $this->adminHeaders());
 
@@ -187,12 +193,14 @@ it('admin can create device change request for student', function (): void {
 });
 
 it('admin cannot create device change for non-student', function (): void {
+    $admin = $this->asAdmin();
+    $centerId = $admin->center_id ?? \App\Models\Center::factory()->create()->id;
     $admin2 = User::factory()->create([
         'is_student' => false,
-        'center_id' => $this->asAdmin()->center_id,
+        'center_id' => $centerId,
     ]);
 
-    $create = $this->postJson("/api/v1/admin/students/{$admin2->id}/device-change-requests", [
+    $create = $this->postJson("/api/v1/admin/centers/{$centerId}/students/{$admin2->id}/device-change-requests", [
         'reason' => 'Test reason',
     ], $this->adminHeaders());
 
@@ -202,13 +210,14 @@ it('admin cannot create device change for non-student', function (): void {
 
 it('admin cannot create duplicate pending request for student', function (): void {
     $student = $this->makeApiUser();
+    $centerId = $student->center_id;
     $this->asApiUser($student, null, 'current-device');
     registerAdminDevice($student, 'current-device');
 
     // Create existing pending request
     DeviceChangeRequest::create([
         'user_id' => $student->id,
-        'center_id' => $student->center_id,
+        'center_id' => $centerId,
         'current_device_id' => 'current-device',
         'new_device_id' => '',
         'new_model' => '',
@@ -218,7 +227,7 @@ it('admin cannot create duplicate pending request for student', function (): voi
 
     $this->asAdmin();
 
-    $create = $this->postJson("/api/v1/admin/students/{$student->id}/device-change-requests", [
+    $create = $this->postJson("/api/v1/admin/centers/{$centerId}/students/{$student->id}/device-change-requests", [
         'reason' => 'Another request',
     ], $this->adminHeaders());
 
@@ -228,11 +237,12 @@ it('admin cannot create duplicate pending request for student', function (): voi
 
 it('admin can create request for student without active device', function (): void {
     $student = $this->makeApiUser();
+    $centerId = $student->center_id;
     // No device registered
 
     $this->asAdmin();
 
-    $create = $this->postJson("/api/v1/admin/students/{$student->id}/device-change-requests", [
+    $create = $this->postJson("/api/v1/admin/centers/{$centerId}/students/{$student->id}/device-change-requests", [
         'reason' => 'New student setup',
     ], $this->adminHeaders());
 

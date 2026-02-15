@@ -45,7 +45,7 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
      */
     public function paginateForCenter(User $admin, Center $center, VideoFilters $filters): LengthAwarePaginator
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $center->id);
         }
 
@@ -70,12 +70,13 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
      */
     private function applyScope(Builder $query, User $admin): Builder
     {
-        if ($admin->hasRole('super_admin')) {
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             return $query;
         }
 
-        $this->centerScopeService->assertAdminCenterId($admin, $admin->center_id);
-        $query->where('center_id', $admin->center_id);
+        $centerId = $this->centerScopeService->resolveAdminCenterId($admin);
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+        $query->where('center_id', $centerId);
 
         return $query;
     }
@@ -101,7 +102,7 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
             );
         }
 
-        if ($admin->hasRole('super_admin')) {
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
                 $centerId = $filters->centerId;
                 $query->where('center_id', $centerId);

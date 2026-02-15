@@ -5,12 +5,16 @@ declare(strict_types=1);
 use App\Enums\CenterType;
 use App\Enums\SurveyAssignableType;
 use App\Models\Center;
+use App\Models\Course;
+use App\Models\PlaybackSession;
 use App\Models\Survey;
 use App\Models\SurveyAssignment;
 use App\Models\SurveyQuestion;
 use App\Models\SurveyQuestionOption;
 use App\Models\SurveyResponse;
 use App\Models\User;
+use App\Models\UserDevice;
+use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Helpers\ApiTestHelper;
 
@@ -170,6 +174,76 @@ it('does not list survey assigned directly to a different student', function ():
     $response->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonCount(0, 'data');
+});
+
+it('lists system survey for student without center when directly assigned', function (): void {
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+    $this->asApiUser($student);
+
+    $survey = Survey::factory()->system()->active()->create();
+    SurveyAssignment::create([
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
+    ]);
+
+    $response = $this->apiGet('/api/v1/surveys/assigned');
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $survey->id);
+});
+
+it('lists video-assigned center survey only after full play', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $this->asApiUser($student);
+
+    $survey = Survey::factory()->center($center)->active()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['center_id' => $center->id]);
+
+    SurveyAssignment::create([
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::Video,
+        'assignable_id' => $video->id,
+    ]);
+
+    $device = UserDevice::factory()->create(['user_id' => $student->id]);
+
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'is_full_play' => false,
+    ]);
+
+    $this->apiGet('/api/v1/surveys/assigned')
+        ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(0, 'data');
+
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'is_full_play' => true,
+    ]);
+
+    $this->apiGet('/api/v1/surveys/assigned')
+        ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $survey->id);
 });
 
 it('does not list surveys already submitted even when multiple submissions are enabled', function (): void {

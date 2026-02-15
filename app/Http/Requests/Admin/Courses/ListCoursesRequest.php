@@ -21,7 +21,6 @@ class ListCoursesRequest extends AdminListRequest
     public function rules(): array
     {
         return array_merge($this->listRules(), [
-            'center_id' => ['sometimes', 'integer'],
             'category_id' => ['sometimes', 'integer'],
             'primary_instructor_id' => ['sometimes', 'integer'],
             'search' => ['sometimes', 'string'],
@@ -41,10 +40,6 @@ class ListCoursesRequest extends AdminListRequest
             'page' => [
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
-            ],
-            'center_id' => [
-                'description' => 'Filter courses by center ID (super admin only).',
-                'example' => '2',
             ],
             'category_id' => [
                 'description' => 'Filter courses by category ID.',
@@ -77,7 +72,7 @@ class ListCoursesRequest extends AdminListRequest
         return new CourseFilters(
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
-            centerId: FilterInput::intOrNull($data, 'center_id'),
+            centerId: null,
             categoryId: FilterInput::intOrNull($data, 'category_id'),
             primaryInstructorId: FilterInput::intOrNull($data, 'primary_instructor_id'),
             search: FilterInput::stringOrNull($data, 'search')

@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\AnalyticsController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('require.permission:audit.view')->group(function (): void {
+Route::middleware(['require.permission:audit.view', 'scope.system_admin'])->group(function (): void {
     Route::get('/analytics/overview', [AnalyticsController::class, 'overview']);
     Route::get('/analytics/courses-media', [AnalyticsController::class, 'coursesMedia']);
     Route::get('/analytics/learners-enrollments', [AnalyticsController::class, 'learnersEnrollments']);

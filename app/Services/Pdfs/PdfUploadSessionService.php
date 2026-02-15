@@ -28,7 +28,7 @@ class PdfUploadSessionService implements PdfUploadSessionServiceInterface
 
     public function initialize(Center $center, User $admin, string $originalFilename, ?int $fileSizeKb = null): PdfUploadSession
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $center->id);
         }
 
@@ -68,7 +68,7 @@ class PdfUploadSessionService implements PdfUploadSessionServiceInterface
 
     public function finalize(PdfUploadSession $session, User $admin, ?string $errorMessage = null): PdfUploadSession
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $session->center_id);
         }
 

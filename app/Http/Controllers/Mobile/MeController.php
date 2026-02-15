@@ -7,12 +7,16 @@ namespace App\Http\Controllers\Mobile;
 use App\Enums\UserDeviceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mobile\UpdateProfileRequest;
+use App\Http\Resources\Admin\StudentProfileResource;
 use App\Http\Resources\Mobile\StudentUserResource;
+use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\JwtServiceInterface;
+use App\Services\Students\StudentProfileQueryService;
 use App\Services\Students\StudentService;
 use App\Support\AuditActions;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MeController extends Controller
@@ -20,7 +24,8 @@ class MeController extends Controller
     public function __construct(
         private readonly StudentService $studentService,
         private readonly JwtServiceInterface $jwtService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly StudentProfileQueryService $studentProfileQueryService
     ) {}
 
     public function profile(): JsonResponse
@@ -40,6 +45,27 @@ class MeController extends Controller
         return response()->json([
             'success' => true,
             'data' => new StudentUserResource($user),
+        ]);
+    }
+
+    public function profileDetails(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if (! $user instanceof User) {
+            return $this->deny();
+        }
+
+        $resolvedCenterId = $request->attributes->get('resolved_center_id');
+        $this->studentProfileQueryService->assertMatchesResolvedCenterScope(
+            $user,
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
+
+        $this->studentProfileQueryService->load($user);
+
+        return response()->json([
+            'success' => true,
+            'data' => new StudentProfileResource($user),
         ]);
     }
 

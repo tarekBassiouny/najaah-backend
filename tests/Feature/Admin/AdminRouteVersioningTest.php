@@ -9,7 +9,7 @@ it('exposes admin login via versioned and legacy prefixes', function (): void {
 });
 
 it('requires authentication on protected admin routes for both prefixes', function (): void {
-    $this->getJson('/api/v1/admin/courses', [
+    $this->getJson('/api/v1/admin/audit-logs', [
         'X-Api-Key' => config('services.system_api_key'),
     ])->assertStatus(401);
 });

@@ -15,15 +15,18 @@ uses(RefreshDatabase::class)->group('instructors', 'admin');
 
 it('filters instructors by name search', function (): void {
     $this->asAdmin();
+    $center = Center::factory()->create();
 
     Instructor::factory()->create([
+        'center_id' => $center->id,
         'name_translations' => ['en' => 'Alpha Instructor'],
     ]);
     Instructor::factory()->create([
+        'center_id' => $center->id,
         'name_translations' => ['en' => 'Beta Instructor'],
     ]);
 
-    $response = $this->getJson('/api/v1/admin/instructors?search=Alpha', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/instructors?search=Alpha", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -32,21 +35,24 @@ it('filters instructors by name search', function (): void {
 
 it('filters instructors by course', function (): void {
     $this->asAdmin();
+    $center = Center::factory()->create();
 
-    $courseA = Course::factory()->create();
-    $courseB = Course::factory()->create();
+    $courseA = Course::factory()->create(['center_id' => $center->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id]);
 
     $instructorA = Instructor::factory()->create([
+        'center_id' => $center->id,
         'name_translations' => ['en' => 'Course A Instructor'],
     ]);
     $instructorB = Instructor::factory()->create([
+        'center_id' => $center->id,
         'name_translations' => ['en' => 'Course B Instructor'],
     ]);
 
     $courseA->instructors()->attach($instructorA->id, ['role' => 'primary']);
     $courseB->instructors()->attach($instructorB->id, ['role' => 'primary']);
 
-    $response = $this->getJson('/api/v1/admin/instructors?course_id='.$courseA->id, $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/instructors?course_id={$courseA->id}", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -68,7 +74,8 @@ it('allows super admin to filter instructors by center', function (): void {
         'name_translations' => ['en' => 'Center B Instructor'],
     ]);
 
-    $response = $this->getJson('/api/v1/admin/instructors?center_id='.$centerA->id, $this->adminHeaders());
+    // Super admin accesses instructors via center route
+    $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/instructors", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -108,7 +115,8 @@ it('scopes instructors to admin center', function (): void {
         'is_student' => false,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/instructors?center_id='.$centerB->id, [
+    // Center admin accesses their own center's instructors
+    $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/instructors", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),

@@ -28,7 +28,7 @@ class VideoService implements VideoServiceInterface
      */
     public function create(Center $center, User $admin, array $data): Video
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $center->id);
         }
 
@@ -60,7 +60,7 @@ class VideoService implements VideoServiceInterface
      */
     public function update(Video $video, User $admin, array $data): Video
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $video->center_id);
         }
 
@@ -87,7 +87,7 @@ class VideoService implements VideoServiceInterface
 
     public function delete(Video $video, User $admin): void
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $video->center_id);
         }
 

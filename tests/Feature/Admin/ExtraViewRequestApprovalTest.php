@@ -64,7 +64,8 @@ it('admin approves and allowance affects view limit', function (): void {
     $requestId = $extraRequest->id;
 
     $admin = $this->asAdmin();
-    $approve = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/extra-view-requests/{$requestId}/approve", [
+    $centerId = $course->center_id;
+    $approve = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$centerId}/extra-view-requests/{$requestId}/approve", [
         'granted_views' => 1,
     ], $this->adminHeaders());
 
@@ -99,7 +100,8 @@ it('admin can reject pending requests', function (): void {
     $requestId = $extraRequest->id;
 
     $admin = $this->asAdmin();
-    $reject = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/extra-view-requests/{$requestId}/reject", [
+    $centerId = $course->center_id;
+    $reject = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$centerId}/extra-view-requests/{$requestId}/reject", [
         'decision_reason' => 'Not eligible',
     ], $this->adminHeaders());
 
