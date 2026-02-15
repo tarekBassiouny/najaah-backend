@@ -21,7 +21,6 @@ class ListEnrollmentsRequest extends AdminListRequest
     public function rules(): array
     {
         return array_merge($this->listRules(), [
-            'center_id' => ['sometimes', 'integer'],
             'course_id' => ['sometimes', 'integer'],
             'user_id' => ['sometimes', 'integer'],
             'status' => ['sometimes', 'string'],
@@ -36,7 +35,7 @@ class ListEnrollmentsRequest extends AdminListRequest
         return new EnrollmentFilters(
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
-            centerId: FilterInput::intOrNull($data, 'center_id'),
+            centerId: null,
             courseId: FilterInput::intOrNull($data, 'course_id'),
             userId: FilterInput::intOrNull($data, 'user_id'),
             status: FilterInput::stringOrNull($data, 'status')
@@ -56,10 +55,6 @@ class ListEnrollmentsRequest extends AdminListRequest
             'page' => [
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
-            ],
-            'center_id' => [
-                'description' => 'Filter enrollments by center ID.',
-                'example' => '2',
             ],
             'course_id' => [
                 'description' => 'Filter enrollments by course ID.',

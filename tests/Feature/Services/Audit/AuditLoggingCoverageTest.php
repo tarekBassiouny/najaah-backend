@@ -68,7 +68,7 @@ it('audits student lifecycle actions', function (): void {
     $createResponse = $this->postJson('/api/v1/admin/students', [
         'name' => 'Audit Student',
         'email' => 'audit.student@example.com',
-        'phone' => '19991110001',
+        'phone' => '1225291843',
         'country_code' => '+20',
         'center_id' => $center->id,
     ], $this->adminHeaders());
@@ -110,8 +110,9 @@ it('audits student lifecycle actions', function (): void {
 
 it('audits instructor lifecycle actions', function (): void {
     $admin = $this->asAdmin();
+    $center = \App\Models\Center::factory()->create();
 
-    $createResponse = $this->postJson('/api/v1/admin/instructors', [
+    $createResponse = $this->postJson("/api/v1/admin/centers/{$center->id}/instructors", [
         'name_translations' => ['en' => 'Audit Instructor'],
         'bio_translations' => ['en' => 'Initial bio'],
     ], $this->adminHeaders());
@@ -126,7 +127,7 @@ it('audits instructor lifecycle actions', function (): void {
         'entity_id' => $instructorId,
     ]);
 
-    $updateResponse = $this->putJson("/api/v1/admin/instructors/{$instructorId}", [
+    $updateResponse = $this->putJson("/api/v1/admin/centers/{$center->id}/instructors/{$instructorId}", [
         'bio_translations' => ['en' => 'Updated bio'],
     ], $this->adminHeaders());
 
@@ -139,7 +140,7 @@ it('audits instructor lifecycle actions', function (): void {
         'entity_id' => $instructorId,
     ]);
 
-    $deleteResponse = $this->deleteJson("/api/v1/admin/instructors/{$instructorId}", [], $this->adminHeaders());
+    $deleteResponse = $this->deleteJson("/api/v1/admin/centers/{$center->id}/instructors/{$instructorId}", [], $this->adminHeaders());
     $deleteResponse->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonPath('message', 'Instructor deleted successfully');

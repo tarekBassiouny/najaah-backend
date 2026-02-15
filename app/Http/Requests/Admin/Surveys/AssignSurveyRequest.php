@@ -25,7 +25,7 @@ class AssignSurveyRequest extends FormRequest
         return [
             'assignments' => ['required', 'array', 'min:1'],
             'assignments.*.type' => ['required', 'string', Rule::in(array_column(SurveyAssignableType::cases(), 'value'))],
-            'assignments.*.id' => ['required', 'integer', 'min:1'],
+            'assignments.*.id' => ['nullable', 'integer', 'min:1', 'required_unless:assignments.*.type,all'],
         ];
     }
 
@@ -38,8 +38,8 @@ class AssignSurveyRequest extends FormRequest
             'assignments' => [
                 'description' => 'Array of assignment targets',
                 'example' => [
+                    ['type' => 'all'],
                     ['type' => 'course', 'id' => 1],
-                    ['type' => 'section', 'id' => 5],
                     ['type' => 'user', 'id' => 42],
                 ],
             ],

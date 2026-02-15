@@ -80,6 +80,8 @@ class LoginAction
         );
 
         $token = $this->jwtService->create($user, $device);
+        $user->last_login_at = now();
+        $user->save();
 
         $this->auditLogService->log($user, $user, AuditActions::STUDENT_LOGIN);
 

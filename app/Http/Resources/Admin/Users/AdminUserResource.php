@@ -24,6 +24,10 @@ class AdminUserResource extends JsonResource
         $status = $user->status instanceof UserStatus
             ? $user->status
             : ($user->status !== null ? UserStatus::tryFrom((int) $user->status) : null);
+        $scopeCenterId = is_numeric($user->center_id) ? (int) $user->center_id : null;
+        $scopeType = $scopeCenterId !== null ? 'center' : 'system';
+        $isSystemSuperAdmin = $user->hasRole('super_admin') && $scopeCenterId === null;
+        $isCenterSuperAdmin = $user->hasRole('super_admin') && $scopeCenterId !== null;
         $rolesWithPermissions = null;
 
         if ($user->relationLoaded('roles')) {
@@ -57,6 +61,10 @@ class AdminUserResource extends JsonResource
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'roles' => $user->roles->pluck('slug')->values(),
             'roles_with_permissions' => $rolesWithPermissions,
+            'scope_type' => $scopeType,
+            'scope_center_id' => $scopeCenterId,
+            'is_system_super_admin' => $isSystemSuperAdmin,
+            'is_center_super_admin' => $isCenterSuperAdmin,
         ];
     }
 }

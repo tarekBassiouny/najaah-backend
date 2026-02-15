@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Admin;
 
+use App\Enums\CenterType;
 use App\Enums\UserDeviceStatus;
 use App\Filters\Admin\StudentFilters;
 use App\Models\User;
@@ -49,15 +50,57 @@ class StudentQueryService
             });
         }
 
-        if ($admin->hasRole('super_admin')) {
+        $this->applyCenterTypeFilter($query, $filters);
+
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
                 $query->where('center_id', $filters->centerId);
             }
         } else {
-            $centerId = $admin->center_id;
-            $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);
+            $centerId = $this->centerScopeService->resolveAdminCenterId($admin);
+            $this->centerScopeService->assertAdminCenterId($admin, $centerId);
             $query->where('center_id', (int) $centerId);
         }
+
+        return $query;
+    }
+
+    /**
+     * @return Builder<User>
+     */
+    public function buildForCenter(User $admin, int $centerId, StudentFilters $filters): Builder
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+
+        $query = User::query()
+            ->with('center')
+            ->with([
+                'devices' => static function ($relation): void {
+                    $relation
+                        ->where('status', UserDeviceStatus::Active->value)
+                        ->orderByDesc('last_used_at')
+                        ->orderByDesc('id');
+                },
+            ])
+            ->where('is_student', true)
+            ->where('center_id', $centerId)
+            ->orderByDesc('created_at');
+
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
+        if ($filters->search !== null) {
+            $term = $filters->search;
+            $query->where(static function (Builder $builder) use ($term): void {
+                $builder->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('username', 'like', '%'.$term.'%')
+                    ->orWhere('email', 'like', '%'.$term.'%')
+                    ->orWhere('phone', 'like', '%'.$term.'%');
+            });
+        }
+
+        $this->applyCenterTypeFilter($query, $filters);
 
         return $query;
     }
@@ -73,5 +116,36 @@ class StudentQueryService
             'page',
             $filters->page
         );
+    }
+
+    /**
+     * @return LengthAwarePaginator<User>
+     */
+    public function paginateForCenter(User $admin, int $centerId, StudentFilters $filters): LengthAwarePaginator
+    {
+        return $this->buildForCenter($admin, $centerId, $filters)->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     */
+    private function applyCenterTypeFilter(Builder $query, StudentFilters $filters): void
+    {
+        if ($filters->centerType === null) {
+            return;
+        }
+
+        if ($filters->centerType === CenterType::Unbranded->value) {
+            $query->whereNull('center_id');
+
+            return;
+        }
+
+        $query->whereNotNull('center_id');
     }
 }

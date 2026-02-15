@@ -129,20 +129,8 @@ it('scopes overview analytics to all centers for system admins', function (): vo
         ->assertJsonPath('data.overview.total_enrollments', 2);
 });
 
-it('scopes overview analytics to the admin center for center admins', function (): void {
+it('blocks center admins from system-only analytics routes', function (): void {
     $centerA = Center::factory()->create();
-    $centerB = Center::factory()->create();
-
-    Course::factory()->for($centerA, 'center')->create([
-        'center_id' => $centerA->id,
-        'category_id' => Category::factory()->for($centerA, 'center'),
-        'created_by' => User::factory()->for($centerA, 'center'),
-    ]);
-    Course::factory()->for($centerB, 'center')->create([
-        'center_id' => $centerB->id,
-        'category_id' => Category::factory()->for($centerB, 'center'),
-        'created_by' => User::factory()->for($centerB, 'center'),
-    ]);
 
     $admin = createAnalyticsCenterAdmin($centerA);
     $token = getAnalyticsAdminToken($admin);
@@ -150,14 +138,14 @@ it('scopes overview analytics to the admin center for center admins', function (
     $from = now()->subDays(7)->toDateString();
     $to = now()->toDateString();
 
+    // Center admins cannot access system-only analytics routes
     $response = $this->getJson("/api/v1/admin/analytics/overview?from={$from}&to={$to}", analyticsAdminHeadersFor($token));
 
-    $response->assertOk()
-        ->assertJsonPath('data.overview.total_centers', 1)
-        ->assertJsonPath('data.overview.total_courses', 1);
+    $response->assertForbidden()
+        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
 });
 
-it('rejects center admins requesting analytics for other centers', function (): void {
+it('rejects center admins requesting analytics regardless of center filter', function (): void {
     $centerA = Center::factory()->create();
     $centerB = Center::factory()->create();
 
@@ -167,13 +155,14 @@ it('rejects center admins requesting analytics for other centers', function (): 
     $from = now()->subDays(7)->toDateString();
     $to = now()->toDateString();
 
+    // Center admins are blocked from analytics routes entirely (system admin only)
     $response = $this->getJson(
         "/api/v1/admin/analytics/overview?center_id={$centerB->id}&from={$from}&to={$to}",
         analyticsAdminHeadersFor($token)
     );
 
-    $response->assertStatus(403)
-        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+    $response->assertForbidden()
+        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
 });
 
 it('returns approved and rejected enrollment counts in devices analytics', function (): void {

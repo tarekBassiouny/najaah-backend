@@ -6,6 +6,7 @@ namespace App\Http\Requests\Admin\AuditLogs;
 
 use App\Filters\Admin\AuditLogFilters;
 use App\Http\Requests\Admin\AdminListRequest;
+use App\Models\Center;
 use App\Models\Course;
 use App\Support\Filters\FilterInput;
 use Illuminate\Contracts\Validation\Validator;
@@ -42,7 +43,7 @@ class ListAuditLogsRequest extends AdminListRequest
     {
         return [
             'center_id' => [
-                'description' => 'Filter by center ID (super admin only).',
+                'description' => 'Optional center filter on system route. On center route, if provided, it must match route center.',
                 'example' => '2',
             ],
             'course_id' => [
@@ -109,6 +110,29 @@ class ListAuditLogsRequest extends AdminListRequest
             dateFrom: FilterInput::stringOrNull($data, 'date_from'),
             dateTo: FilterInput::stringOrNull($data, 'date_to')
         );
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $routeCenter = $this->route('center');
+            $routeCenterId = null;
+
+            if ($routeCenter instanceof Center) {
+                $routeCenterId = (int) $routeCenter->id;
+            } elseif (is_numeric($routeCenter)) {
+                $routeCenterId = (int) $routeCenter;
+            }
+
+            if ($routeCenterId === null || ! $this->has('center_id')) {
+                return;
+            }
+
+            $queryCenterId = FilterInput::intOrNull($this->all(), 'center_id');
+            if ($queryCenterId !== null && $queryCenterId !== $routeCenterId) {
+                $validator->errors()->add('center_id', 'Center ID must match the route center.');
+            }
+        });
     }
 
     protected function failedValidation(Validator $validator): void

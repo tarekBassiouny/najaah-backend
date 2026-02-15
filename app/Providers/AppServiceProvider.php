@@ -12,7 +12,9 @@ use App\Services\Auth\OtpService;
 use App\Services\Auth\Senders\WhatsAppOtpSender;
 use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Centers\CenterService;
+use App\Services\Centers\Contracts\CenterScopeServiceInterface;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
 use App\Services\Courses\CourseInstructorService;
@@ -96,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
             SectionWorkflowServiceInterface::class => SectionWorkflowService::class,
             EnrollmentServiceInterface::class => EnrollmentService::class,
             CenterServiceInterface::class => CenterService::class,
+            CenterScopeServiceInterface::class => CenterScopeService::class,
             CenterSettingsServiceInterface::class => CenterSettingsService::class,
             SettingsResolverServiceInterface::class => SettingsResolverService::class,
             ViewLimitServiceInterface::class => ViewLimitService::class,

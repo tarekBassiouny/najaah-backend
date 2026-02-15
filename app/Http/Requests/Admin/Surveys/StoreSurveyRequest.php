@@ -8,6 +8,7 @@ use App\Enums\SurveyAssignableType;
 use App\Enums\SurveyQuestionType;
 use App\Enums\SurveyScopeType;
 use App\Enums\SurveyType;
+use App\Models\Center;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -21,17 +22,7 @@ class StoreSurveyRequest extends FormRequest
         /** @var User|null $user */
         $user = $this->user();
 
-        if (! $user instanceof User) {
-            return false;
-        }
-
-        $scopeType = (int) $this->input('scope_type');
-
-        if ($scopeType === SurveyScopeType::System->value) {
-            return $user->hasRole('super_admin');
-        }
-
-        return true;
+        return $user instanceof User;
     }
 
     /**
@@ -40,8 +31,8 @@ class StoreSurveyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'scope_type' => ['required', 'integer', Rule::in(array_column(SurveyScopeType::cases(), 'value'))],
-            'center_id' => ['nullable', 'integer', 'exists:centers,id'],
+            'scope_type' => ['sometimes', 'integer', Rule::in(array_column(SurveyScopeType::cases(), 'value'))],
+            'center_id' => ['sometimes', 'nullable', 'integer', 'exists:centers,id'],
             'title_translations' => ['required', 'array'],
             'title_translations.en' => ['required', 'string', 'max:255'],
             'title_translations.ar' => ['required', 'string', 'max:255'],
@@ -78,14 +69,26 @@ class StoreSurveyRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            $scopeType = (int) $this->input('scope_type');
+            $routeCenterId = $this->routeCenterId();
+            $scopeType = $this->has('scope_type') ? (int) $this->input('scope_type') : null;
+            $centerIdProvided = $this->has('center_id');
             $centerId = $this->input('center_id');
 
-            if ($scopeType === SurveyScopeType::Center->value && empty($centerId)) {
-                /** @var User|null $user */
-                $user = $this->user();
-                if ($user instanceof User && ! $user->hasRole('super_admin') && empty($user->center_id)) {
-                    $validator->errors()->add('center_id', 'Center ID is required for center-scoped surveys.');
+            if ($routeCenterId !== null) {
+                if ($scopeType !== null && $scopeType !== SurveyScopeType::Center->value) {
+                    $validator->errors()->add('scope_type', 'Center routes only accept center-scoped surveys.');
+                }
+
+                if ($centerIdProvided && (! is_numeric($centerId) || (int) $centerId !== $routeCenterId)) {
+                    $validator->errors()->add('center_id', 'Center ID must match the route center.');
+                }
+            } else {
+                if ($scopeType !== null && $scopeType !== SurveyScopeType::System->value) {
+                    $validator->errors()->add('scope_type', 'System routes only accept system-scoped surveys.');
+                }
+
+                if ($centerIdProvided && $centerId !== null) {
+                    $validator->errors()->add('center_id', 'System-scoped surveys must use center_id = null.');
                 }
             }
 
@@ -105,6 +108,21 @@ class StoreSurveyRequest extends FormRequest
         });
     }
 
+    private function routeCenterId(): ?int
+    {
+        $routeCenter = $this->route('center');
+
+        if ($routeCenter instanceof Center) {
+            return (int) $routeCenter->id;
+        }
+
+        if (is_numeric($routeCenter)) {
+            return (int) $routeCenter;
+        }
+
+        return null;
+    }
+
     /**
      * @return array<string, array<string, mixed>>
      */
@@ -112,11 +130,11 @@ class StoreSurveyRequest extends FormRequest
     {
         return [
             'scope_type' => [
-                'description' => 'Survey scope: 1=System, 2=Center',
+                'description' => 'Optional. Must match route scope if provided: system routes accept 1, center routes accept 2.',
                 'example' => 2,
             ],
             'center_id' => [
-                'description' => 'Center ID (required for CENTER scope)',
+                'description' => 'Optional. For center routes it must match route center. For system routes it must be null.',
                 'example' => 1,
             ],
             'title_translations' => [
@@ -166,7 +184,7 @@ class StoreSurveyRequest extends FormRequest
             'success' => false,
             'error' => [
                 'code' => 'FORBIDDEN',
-                'message' => 'You are not authorized to create this type of survey.',
+                'message' => 'You are not authorized to create surveys.',
             ],
         ], 403));
     }

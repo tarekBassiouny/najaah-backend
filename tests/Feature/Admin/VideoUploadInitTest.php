@@ -17,7 +17,7 @@ it('creates bunny video and returns upload url', function (): void {
     $center = Center::factory()->create();
 
     $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    // System super admin (center_id = null) can access any center via center routes
     $video = Video::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,
@@ -75,7 +75,7 @@ it('ties existing video to new upload session', function (): void {
     $center = Center::factory()->create();
 
     $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    // System super admin (center_id = null) can access any center via center routes
     /** @var Video $video */
     $video = Video::factory()->create([
         'center_id' => $center->id,
@@ -154,7 +154,7 @@ it('rejects upload when center library is missing', function (): void {
 
     $center = Center::factory()->create();
     $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    // System super admin (center_id = null) can access any center via center routes
     $video = Video::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,
@@ -175,7 +175,7 @@ it('creates a new upload session on retry', function (): void {
     $center = Center::factory()->create();
 
     $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    // System super admin (center_id = null) can access any center via center routes
     $video = Video::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,

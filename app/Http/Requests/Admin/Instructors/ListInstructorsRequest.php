@@ -21,7 +21,6 @@ class ListInstructorsRequest extends AdminListRequest
     public function rules(): array
     {
         return array_merge($this->listRules(), [
-            'center_id' => ['sometimes', 'integer'],
             'course_id' => ['sometimes', 'integer'],
             'search' => ['sometimes', 'string'],
         ]);
@@ -40,10 +39,6 @@ class ListInstructorsRequest extends AdminListRequest
             'page' => [
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
-            ],
-            'center_id' => [
-                'description' => 'Filter instructors by center ID.',
-                'example' => '10',
             ],
             'course_id' => [
                 'description' => 'Filter instructors by course ID.',
@@ -72,7 +67,7 @@ class ListInstructorsRequest extends AdminListRequest
         return new InstructorFilters(
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
-            centerId: FilterInput::intOrNull($data, 'center_id'),
+            centerId: null,
             courseId: FilterInput::intOrNull($data, 'course_id'),
             search: FilterInput::stringOrNull($data, 'search')
         );

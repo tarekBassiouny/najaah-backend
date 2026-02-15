@@ -29,7 +29,7 @@ class AuditLogQueryService
             ->orderByDesc('created_at');
 
         $query = $this->applyScope($query, $admin);
-        if ($admin->hasRole('super_admin') && $filters->centerId !== null) {
+        if ($this->centerScopeService->isSystemSuperAdmin($admin) && $filters->centerId !== null) {
             $query = $this->applyCenterFilter($query, $filters->centerId);
         }
 
@@ -118,12 +118,12 @@ class AuditLogQueryService
      */
     private function applyScope(Builder $query, User $admin): Builder
     {
-        if ($admin->hasRole('super_admin')) {
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             return $query;
         }
 
-        $centerId = $admin->center_id;
-        $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);
+        $centerId = $this->centerScopeService->resolveAdminCenterId($admin);
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
 
         return $this->applyCenterFilter($query, (int) $centerId);
     }

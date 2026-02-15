@@ -33,7 +33,7 @@ uses(RefreshDatabase::class, AdminTestHelper::class)->group('audit', 'services')
 
 test('role creation is audited with actor', function (): void {
     $admin = $this->asAdmin();
-    $service = new RoleService(new AuditLogService);
+    $service = new RoleService(new AuditLogService, new CenterScopeService);
 
     $role = $service->create([
         'name_translations' => ['en' => 'Reviewer'],
@@ -52,7 +52,7 @@ test('role creation is audited with actor', function (): void {
 
 test('admin user creation is audited with actor', function (): void {
     $admin = $this->asAdmin();
-    $service = new AdminUserService(new AuditLogService);
+    $service = new AdminUserService(new AuditLogService, new CenterScopeService);
 
     $created = $service->create([
         'name' => 'Admin User',

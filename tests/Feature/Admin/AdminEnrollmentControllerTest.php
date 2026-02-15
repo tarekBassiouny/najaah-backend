@@ -20,7 +20,7 @@ it('lists enrollments for admin', function (): void {
         'course_id' => $course->id,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/enrollments', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/enrollments", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -45,7 +45,7 @@ it('filters enrollments by status', function (): void {
         'status' => Enrollment::STATUS_CANCELLED,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/enrollments?status=ACTIVE', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/enrollments?status=ACTIVE", $this->adminHeaders());
 
     $response->assertOk();
     expect($response->json('data'))->toHaveCount(1);
@@ -60,7 +60,7 @@ it('filters enrollments by course_id', function (): void {
     Enrollment::factory()->create(['center_id' => $center->id, 'course_id' => $course1->id]);
     Enrollment::factory()->create(['center_id' => $center->id, 'course_id' => $course2->id]);
 
-    $response = $this->getJson("/api/v1/admin/enrollments?course_id={$course1->id}", $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/enrollments?course_id={$course1->id}", $this->adminHeaders());
 
     $response->assertOk();
     expect($response->json('data'))->toHaveCount(1);
@@ -75,7 +75,7 @@ it('filters enrollments by user_id', function (): void {
     Enrollment::factory()->create(['center_id' => $center->id, 'user_id' => $student1->id]);
     Enrollment::factory()->create(['center_id' => $center->id, 'user_id' => $student2->id]);
 
-    $response = $this->getJson("/api/v1/admin/enrollments?user_id={$student1->id}", $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/enrollments?user_id={$student1->id}", $this->adminHeaders());
 
     $response->assertOk();
     expect($response->json('data'))->toHaveCount(1);
@@ -93,7 +93,7 @@ it('shows single enrollment', function (): void {
         'course_id' => $course->id,
     ]);
 
-    $response = $this->getJson("/api/v1/admin/enrollments/{$enrollment->id}", $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/enrollments/{$enrollment->id}", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -108,8 +108,9 @@ it('shows single enrollment', function (): void {
 
 it('returns 404 for non-existent enrollment', function (): void {
     $this->asAdmin();
+    $center = Center::factory()->create();
 
-    $response = $this->getJson('/api/v1/admin/enrollments/999999', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/enrollments/999999", $this->adminHeaders());
 
     $response->assertNotFound();
 });
@@ -120,7 +121,7 @@ it('allows admin to create enrollment', function (): void {
     $student = User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
     $course = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->postJson('/api/v1/admin/enrollments', [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/enrollments", [
         'user_id' => $student->id,
         'course_id' => $course->id,
         'status' => 'ACTIVE',
@@ -146,7 +147,7 @@ it('rejects duplicate enrollments', function (): void {
         'status' => Enrollment::STATUS_ACTIVE,
     ]);
 
-    $response = $this->postJson('/api/v1/admin/enrollments', [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/enrollments", [
         'user_id' => $student->id,
         'course_id' => $course->id,
         'status' => 'ACTIVE',
@@ -163,7 +164,7 @@ it('allows admin to update enrollment status', function (): void {
         'status' => Enrollment::STATUS_ACTIVE,
     ]);
 
-    $response = $this->putJson("/api/v1/admin/enrollments/{$enrollment->id}", [
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}/enrollments/{$enrollment->id}", [
         'status' => 'CANCELLED',
     ], $this->adminHeaders());
 
@@ -181,7 +182,7 @@ it('allows admin to delete enrollment', function (): void {
         'center_id' => $center->id,
     ]);
 
-    $response = $this->deleteJson("/api/v1/admin/enrollments/{$enrollment->id}", [], $this->adminHeaders());
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/enrollments/{$enrollment->id}", [], $this->adminHeaders());
 
     $response->assertNoContent();
     $this->assertSoftDeleted('enrollments', ['id' => $enrollment->id]);
@@ -193,7 +194,7 @@ it('allows enrollment management across centers', function (): void {
     $student = User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
     $course = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->postJson('/api/v1/admin/enrollments', [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/enrollments", [
         'user_id' => $student->id,
         'course_id' => $course->id,
         'status' => 'ACTIVE',

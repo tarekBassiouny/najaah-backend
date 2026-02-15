@@ -6,13 +6,29 @@ namespace App\Services\Centers;
 
 use App\Exceptions\CenterMismatchException;
 use App\Models\User;
+use App\Services\Centers\Contracts\CenterScopeServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 
-class CenterScopeService
+class CenterScopeService implements CenterScopeServiceInterface
 {
+    public function isSystemSuperAdmin(User $user): bool
+    {
+        return $user->hasRole('super_admin') && ! is_numeric($user->center_id);
+    }
+
+    public function isCenterScopedSuperAdmin(User $user): bool
+    {
+        return $user->hasRole('super_admin') && is_numeric($user->center_id);
+    }
+
+    public function resolveAdminCenterId(User $user): ?int
+    {
+        return is_numeric($user->center_id) ? (int) $user->center_id : null;
+    }
+
     public function assertSameCenter(User $user, Model $model): void
     {
-        if ($this->isSuperAdmin($user)) {
+        if ($this->isSystemSuperAdmin($user)) {
             return;
         }
 
@@ -26,7 +42,7 @@ class CenterScopeService
 
     public function assertAdminSameCenter(User $user, Model $model): void
     {
-        if ($this->isSuperAdmin($user)) {
+        if ($this->isSystemSuperAdmin($user)) {
             return;
         }
 
@@ -40,7 +56,11 @@ class CenterScopeService
 
     public function assertCenterId(User $user, ?int $centerId): void
     {
-        if ($this->isSuperAdmin($user)) {
+        if ($this->isSystemSuperAdmin($user)) {
+            return;
+        }
+
+        if ($centerId === null && $user->is_student && ! is_numeric($user->center_id)) {
             return;
         }
 
@@ -49,7 +69,7 @@ class CenterScopeService
 
     public function assertAdminCenterId(User $user, ?int $centerId): void
     {
-        if ($this->isSuperAdmin($user)) {
+        if ($this->isSystemSuperAdmin($user)) {
             return;
         }
 
@@ -57,7 +77,8 @@ class CenterScopeService
             $this->deny();
         }
 
-        if (! $user->isAdminOfCenter($centerId)) {
+        $actorCenterId = $this->resolveAdminCenterId($user);
+        if ($actorCenterId === null || $actorCenterId !== $centerId) {
             $this->deny();
         }
     }
@@ -69,15 +90,37 @@ class CenterScopeService
      */
     public function getAccessibleCenterIds(User $user): ?array
     {
-        if ($this->isSuperAdmin($user)) {
+        if ($this->isSystemSuperAdmin($user)) {
             return null;
         }
 
-        return $user->centers()
-            ->wherePivotIn('type', ['admin', 'owner'])
-            ->pluck('centers.id')
-            ->map(fn ($id): int => (int) $id)
-            ->all();
+        $actorCenterId = $this->resolveAdminCenterId($user);
+
+        return $actorCenterId !== null ? [$actorCenterId] : [];
+    }
+
+    public function matchesResolvedApiCenterScope(User $user, ?int $resolvedCenterId): bool
+    {
+        if ($resolvedCenterId === null) {
+            return true;
+        }
+
+        $actorCenterId = $this->resolveAdminCenterId($user);
+
+        if ($actorCenterId !== null) {
+            return $actorCenterId === $resolvedCenterId;
+        }
+
+        return $this->isSystemSuperAdmin($user);
+    }
+
+    public function assertResolvedApiCenterScope(User $user, ?int $resolvedCenterId): void
+    {
+        if ($this->matchesResolvedApiCenterScope($user, $resolvedCenterId)) {
+            return;
+        }
+
+        $this->deny();
     }
 
     private function assertMember(User $user, ?int $centerId): void
@@ -85,11 +128,6 @@ class CenterScopeService
         if ($centerId === null || ! $user->belongsToCenter($centerId)) {
             $this->deny();
         }
-    }
-
-    private function isSuperAdmin(User $user): bool
-    {
-        return $user->hasRole('super_admin');
     }
 
     private function deny(): void

@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\Pdfs\PdfController;
 use App\Http\Controllers\Admin\Pdfs\PdfUploadSessionController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('require.permission:pdf.manage')->group(function (): void {
+Route::middleware(['require.permission:pdf.manage', 'scope.center_route'])->group(function (): void {
     Route::get('/centers/{center}/pdfs', [PdfController::class, 'index'])->whereNumber('center');
     Route::post('/centers/{center}/pdfs', [PdfController::class, 'store'])->whereNumber('center');
     Route::get('/centers/{center}/pdfs/{pdf}', [PdfController::class, 'show'])->whereNumber('center');

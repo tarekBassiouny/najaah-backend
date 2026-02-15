@@ -6,7 +6,9 @@ namespace App\Http\Requests\Admin\Users;
 
 use App\Filters\Admin\AdminUserFilters;
 use App\Http\Requests\Admin\AdminListRequest;
+use App\Models\Center;
 use App\Support\Filters\FilterInput;
+use Illuminate\Contracts\Validation\Validator;
 
 class ListAdminUsersRequest extends AdminListRequest
 {
@@ -37,6 +39,29 @@ class ListAdminUsersRequest extends AdminListRequest
         );
     }
 
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $routeCenter = $this->route('center');
+            $routeCenterId = null;
+
+            if ($routeCenter instanceof Center) {
+                $routeCenterId = (int) $routeCenter->id;
+            } elseif (is_numeric($routeCenter)) {
+                $routeCenterId = (int) $routeCenter;
+            }
+
+            if ($routeCenterId === null || ! $this->has('center_id')) {
+                return;
+            }
+
+            $centerId = FilterInput::intOrNull($this->all(), 'center_id');
+            if ($centerId !== null && $centerId !== $routeCenterId) {
+                $validator->errors()->add('center_id', 'Center ID must match the route center.');
+            }
+        });
+    }
+
     /**
      * @return array<string, array<string, string>>
      */
@@ -44,7 +69,7 @@ class ListAdminUsersRequest extends AdminListRequest
     {
         return [
             'center_id' => [
-                'description' => 'Filter admin users by center ID.',
+                'description' => 'Optional center filter on system route. On center route, if provided, it must match route center.',
                 'example' => '12',
             ],
             'per_page' => [

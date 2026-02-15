@@ -28,7 +28,7 @@ class PdfService implements PdfServiceInterface
      */
     public function create(Center $center, User $admin, array $data): Pdf
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $center->id);
         }
 
@@ -85,7 +85,7 @@ class PdfService implements PdfServiceInterface
      */
     public function update(Pdf $pdf, User $admin, array $data): Pdf
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $pdf->center_id);
         }
 
@@ -112,7 +112,7 @@ class PdfService implements PdfServiceInterface
 
     public function delete(Pdf $pdf, User $admin): void
     {
-        if (! $admin->hasRole('super_admin')) {
+        if (! $this->centerScopeService->isSystemSuperAdmin($admin)) {
             $this->centerScopeService->assertAdminCenterId($admin, $pdf->center_id);
         }
 

@@ -63,6 +63,10 @@ class SurveyAssignment extends Model
     {
         $modelClass = $this->assignable_type->modelClass();
 
+        if ($modelClass === null) {
+            return null;
+        }
+
         return $modelClass::find($this->assignable_id);
     }
 

@@ -23,6 +23,7 @@ class ListSurveysRequest extends AdminListRequest
     public function rules(): array
     {
         return array_merge($this->listRules(), [
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],
             'scope_type' => ['sometimes', 'integer', Rule::in(array_column(SurveyScopeType::cases(), 'value'))],
             'center_id' => ['sometimes', 'integer', 'exists:centers,id'],
             'is_active' => ['sometimes', 'boolean'],
@@ -37,8 +38,8 @@ class ListSurveysRequest extends AdminListRequest
     {
         return [
             'per_page' => [
-                'description' => 'Items per page (max 100).',
-                'example' => '15',
+                'description' => 'Items per page (max 50, recommended 20 for listing/infinite scroll).',
+                'example' => '20',
             ],
             'page' => [
                 'description' => 'Page number to retrieve.',

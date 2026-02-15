@@ -19,7 +19,7 @@ class SendOtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required', 'string', 'regex:/^[1-9][0-9]*$/'],
+            'phone' => ['required', 'string', 'regex:/^[1-9][0-9]{9}$/'],
             'country_code' => ['required', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
         ];
     }
@@ -31,8 +31,8 @@ class SendOtpRequest extends FormRequest
     {
         return [
             'phone' => [
-                'description' => 'Subscriber number without leading zero.',
-                'example' => '123456789',
+                'description' => 'Base subscriber number only (10 digits, no leading zero, no country code).',
+                'example' => '1225291841',
             ],
             'country_code' => [
                 'description' => 'Dialing code with + or 00 prefix.',

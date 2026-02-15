@@ -22,7 +22,6 @@ class ListExtraViewRequestsRequest extends AdminListRequest
     {
         return array_merge($this->listRules(), [
             'status' => ['sometimes', 'string', 'in:PENDING,APPROVED,REJECTED'],
-            'center_id' => ['sometimes', 'integer'],
             'user_id' => ['sometimes', 'integer'],
             'date_from' => ['sometimes', 'date'],
             'date_to' => ['sometimes', 'date'],
@@ -46,10 +45,6 @@ class ListExtraViewRequestsRequest extends AdminListRequest
             'status' => [
                 'description' => 'Filter by request status.',
                 'example' => 'PENDING',
-            ],
-            'center_id' => [
-                'description' => 'Filter by center ID (super admin only).',
-                'example' => '2',
             ],
             'user_id' => [
                 'description' => 'Filter by user ID.',
@@ -83,7 +78,7 @@ class ListExtraViewRequestsRequest extends AdminListRequest
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
             status: FilterInput::stringOrNull($data, 'status'),
-            centerId: FilterInput::intOrNull($data, 'center_id'),
+            centerId: null,
             userId: FilterInput::intOrNull($data, 'user_id'),
             dateFrom: FilterInput::stringOrNull($data, 'date_from'),
             dateTo: FilterInput::stringOrNull($data, 'date_to')

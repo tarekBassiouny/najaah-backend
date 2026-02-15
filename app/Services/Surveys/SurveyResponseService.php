@@ -8,6 +8,7 @@ use App\Enums\CenterType;
 use App\Enums\SurveyAssignableType;
 use App\Enums\SurveyQuestionType;
 use App\Enums\SurveyScopeType;
+use App\Models\Center;
 use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
@@ -33,15 +34,15 @@ class SurveyResponseService implements SurveyResponseServiceInterface
         $centerId = $student->center_id;
         $center = $student->center;
 
-        if ($center === null) {
-            return collect();
-        }
-
         $query = Survey::query()
             ->with(['questions.options', 'assignments'])
             ->available();
 
-        if ($center->type === CenterType::Unbranded) {
+        if (! is_numeric($centerId)) {
+            $query->where('scope_type', SurveyScopeType::System);
+        } elseif (! $center instanceof Center) {
+            return collect();
+        } elseif ($center->type === CenterType::Unbranded) {
             $query->where(function ($q) use ($centerId): void {
                 $q->where('scope_type', SurveyScopeType::System)
                     ->orWhere(function ($sq) use ($centerId): void {
@@ -147,15 +148,11 @@ class SurveyResponseService implements SurveyResponseServiceInterface
     {
         $center = $student->center;
 
-        if ($center === null) {
-            return false;
-        }
-
-        if ($survey->scope_type === SurveyScopeType::System && $center->type !== CenterType::Unbranded) {
-            return false;
-        }
-
-        if ($survey->scope_type === SurveyScopeType::Center && $survey->center_id !== $student->center_id) {
+        if ($survey->scope_type === SurveyScopeType::System) {
+            if (is_numeric($student->center_id) && (! $center instanceof Center || $center->type !== CenterType::Unbranded)) {
+                return false;
+            }
+        } elseif (! is_numeric($student->center_id) || $survey->center_id !== (int) $student->center_id) {
             return false;
         }
 
@@ -208,15 +205,23 @@ class SurveyResponseService implements SurveyResponseServiceInterface
             SurveyAssignableType::Course => $student->enrollments()
                 ->where('course_id', $id)
                 ->exists(),
-            SurveyAssignableType::Section => $student->enrollments()
-                ->whereHas('course.sections', fn ($q) => $q->where('sections.id', $id))
-                ->exists(),
-            SurveyAssignableType::Video => $student->enrollments()
-                ->whereHas('course.videos', fn ($q) => $q->where('videos.id', $id))
-                ->exists(),
+            SurveyAssignableType::Video => $this->hasStudentFullyPlayedVideo($student, $id),
             SurveyAssignableType::User => $student->id === $id,
             SurveyAssignableType::All => $student->id === $id,
         };
+    }
+
+    private function hasStudentFullyPlayedVideo(User $student, int $videoId): bool
+    {
+        if (! is_numeric($student->center_id)) {
+            return false;
+        }
+
+        return $student->playbackSessions()
+            ->where('video_id', $videoId)
+            ->where('is_full_play', true)
+            ->whereHas('course', fn ($q) => $q->where('center_id', (int) $student->center_id))
+            ->exists();
     }
 
     private function compareSurveyPriority(Survey $left, Survey $right): int

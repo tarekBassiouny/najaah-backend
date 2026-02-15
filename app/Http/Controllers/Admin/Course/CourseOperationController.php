@@ -107,10 +107,12 @@ class CourseOperationController extends Controller
      * Publish a course.
      */
     public function publish(
+        Center $center,
         Course $course,
         CourseWorkflowServiceInterface $courseWorkflowService
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
         $published = $courseWorkflowService->publishCourse($course, $admin);
 
         return response()->json([
@@ -125,10 +127,12 @@ class CourseOperationController extends Controller
      */
     public function cloneCourse(
         CloneCourseRequest $request,
+        Center $center,
         Course $course,
         CourseWorkflowServiceInterface $courseWorkflowService
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
         /** @var array<string, mixed> $data */
         $data = $request->validated();
         $options = $data['options'] ?? [];

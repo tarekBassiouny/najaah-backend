@@ -38,7 +38,7 @@ it('blocks publishing when any video is not ready', function (): void {
     ]);
     attachVideoToCourseForPublishing($course, $video);
 
-    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/courses/{$course->id}/publish", [], $this->adminHeaders());
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/publish", [], $this->adminHeaders());
 
     $response->assertStatus(422);
 });
@@ -65,7 +65,7 @@ it('allows publishing when videos are ready and latest session ready', function 
     ]);
     attachVideoToCourseForPublishing($course, $video);
 
-    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/courses/{$course->id}/publish", [], $this->adminHeaders());
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/publish", [], $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('data.status', 3);
@@ -93,7 +93,7 @@ it('blocks publishing when latest upload session is not ready', function (): voi
     ]);
     attachVideoToCourseForPublishing($course, $video);
 
-    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/courses/{$course->id}/publish", [], $this->adminHeaders());
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/publish", [], $this->adminHeaders());
 
     $response->assertStatus(422);
 });

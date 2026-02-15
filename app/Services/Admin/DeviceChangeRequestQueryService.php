@@ -41,14 +41,44 @@ class DeviceChangeRequestQueryService
             $query->where('created_at', '<=', Carbon::parse($filters->dateTo)->endOfDay());
         }
 
-        if ($admin->hasRole('super_admin')) {
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
                 $query->where('center_id', $filters->centerId);
             }
         } else {
-            $centerId = $admin->center_id;
-            $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);
+            $centerId = $this->centerScopeService->resolveAdminCenterId($admin);
+            $this->centerScopeService->assertAdminCenterId($admin, $centerId);
             $query->where('center_id', (int) $centerId);
+        }
+
+        return $query->orderByDesc('created_at');
+    }
+
+    /**
+     * @return Builder<DeviceChangeRequest>
+     */
+    public function buildForCenter(User $admin, int $centerId, DeviceChangeRequestFilters $filters): Builder
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+
+        $query = DeviceChangeRequest::query()
+            ->with(['user', 'center', 'decider'])
+            ->where('center_id', $centerId);
+
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
+        if ($filters->userId !== null) {
+            $query->where('user_id', $filters->userId);
+        }
+
+        if ($filters->dateFrom !== null) {
+            $query->where('created_at', '>=', Carbon::parse($filters->dateFrom)->startOfDay());
+        }
+
+        if ($filters->dateTo !== null) {
+            $query->where('created_at', '<=', Carbon::parse($filters->dateTo)->endOfDay());
         }
 
         return $query->orderByDesc('created_at');
@@ -60,6 +90,19 @@ class DeviceChangeRequestQueryService
     public function paginate(User $admin, DeviceChangeRequestFilters $filters): LengthAwarePaginator
     {
         return $this->build($admin, $filters)->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
+    }
+
+    /**
+     * @return LengthAwarePaginator<DeviceChangeRequest>
+     */
+    public function paginateForCenter(User $admin, int $centerId, DeviceChangeRequestFilters $filters): LengthAwarePaginator
+    {
+        return $this->buildForCenter($admin, $centerId, $filters)->paginate(
             $filters->perPage,
             ['*'],
             'page',

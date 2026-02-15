@@ -33,22 +33,26 @@ beforeEach(function (): void {
 });
 
 it('lists courses', function (): void {
-    Course::factory()->count(2)->create();
+    $center = Center::factory()->create();
+    Course::factory()->count(2)->create(['center_id' => $center->id]);
 
-    $response = $this->getJson('/api/v1/admin/courses', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses", $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
 });
 
 it('filters courses by title search', function (): void {
+    $center = Center::factory()->create();
     Course::factory()->create([
+        'center_id' => $center->id,
         'title_translations' => ['en' => 'Alpha Biology'],
     ]);
     Course::factory()->create([
+        'center_id' => $center->id,
         'title_translations' => ['en' => 'Beta Physics'],
     ]);
 
-    $response = $this->getJson('/api/v1/admin/courses?search=Alpha', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses?search=Alpha", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -56,7 +60,9 @@ it('filters courses by title search', function (): void {
 });
 
 it('keeps search stable when translations exist', function (): void {
+    $center = Center::factory()->create();
     $course = Course::factory()->create([
+        'center_id' => $center->id,
         'title_translations' => ['en' => 'Alpha Biology'],
     ]);
 
@@ -68,7 +74,7 @@ it('keeps search stable when translations exist', function (): void {
         'value' => 'Arabic Biology',
     ]);
 
-    $response = $this->getJson('/api/v1/admin/courses?search=Alpha', $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses?search=Alpha", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -76,26 +82,29 @@ it('keeps search stable when translations exist', function (): void {
 });
 
 it('filters courses by category and primary instructor', function (): void {
-    $category = Category::factory()->create();
-    $instructor = Instructor::factory()->create();
+    $center = Center::factory()->create();
+    $category = Category::factory()->create(['center_id' => $center->id]);
+    $instructor = Instructor::factory()->create(['center_id' => $center->id]);
 
     Course::factory()->create([
+        'center_id' => $center->id,
         'category_id' => $category->id,
         'primary_instructor_id' => $instructor->id,
         'title_translations' => ['en' => 'Filtered Course'],
     ]);
     Course::factory()->create([
+        'center_id' => $center->id,
         'title_translations' => ['en' => 'Other Course'],
     ]);
 
-    $response = $this->getJson('/api/v1/admin/courses?category_id='.$category->id.'&primary_instructor_id='.$instructor->id, $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses?category_id=".$category->id.'&primary_instructor_id='.$instructor->id, $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.title', 'Filtered Course');
 });
 
-it('allows super admin to filter courses by center', function (): void {
+it('allows super admin to list courses for specific center', function (): void {
     $centerA = Center::factory()->create();
     $centerB = Center::factory()->create();
 
@@ -108,7 +117,8 @@ it('allows super admin to filter courses by center', function (): void {
         'title_translations' => ['en' => 'Center B Course'],
     ]);
 
-    $response = $this->getJson('/api/v1/admin/courses?center_id='.$centerA->id, $this->adminHeaders());
+    // System admin can access any center's courses via center route
+    $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/courses", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -148,7 +158,8 @@ it('scopes courses to admin center when not super admin', function (): void {
         'is_student' => false,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/courses?center_id='.$centerB->id, [
+    // Center admin can access their own center's courses
+    $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/courses", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),
@@ -157,6 +168,15 @@ it('scopes courses to admin center when not super admin', function (): void {
     $response->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.title', 'Center A Course');
+
+    // Center admin cannot access other center's courses
+    $blocked = $this->getJson("/api/v1/admin/centers/{$centerB->id}/courses", [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+        'X-Api-Key' => config('services.system_api_key'),
+    ]);
+
+    $blocked->assertForbidden();
 });
 
 it('adds section', function (): void {
@@ -288,16 +308,17 @@ it('removes pdf', function (): void {
 });
 
 it('publishes course', function (): void {
-    $course = Course::factory()->create(['status' => 0, 'is_published' => false]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0, 'is_published' => false]);
     Section::factory()->create(['course_id' => $course->id]);
     $session = VideoUploadSession::factory()->create([
-        'center_id' => $course->center_id,
+        'center_id' => $center->id,
         'uploaded_by' => $course->created_by,
         'upload_status' => VideoUploadStatus::Ready,
         'expires_at' => now()->addDay(),
     ]);
     $video = Video::factory()->create([
-        'center_id' => $course->center_id,
+        'center_id' => $center->id,
         'lifecycle_status' => 2,
         'encoding_status' => 3,
         'upload_session_id' => $session->id,
@@ -309,15 +330,16 @@ it('publishes course', function (): void {
         'visible' => true,
     ]);
 
-    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/publish", [], $this->adminHeaders());
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/publish", [], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
 });
 
 it('clones course', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/clone", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/clone", [
         'options' => [],
     ], $this->adminHeaders());
 

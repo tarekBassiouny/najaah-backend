@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\Admin\EnrollmentFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Enrollments\BulkEnrollmentRequest;
 use App\Http\Requests\Admin\Enrollments\ListEnrollmentsRequest;
 use App\Http\Requests\Admin\Enrollments\StoreEnrollmentRequest;
 use App\Http\Requests\Admin\Enrollments\UpdateEnrollmentStatusRequest;
 use App\Http\Resources\Admin\EnrollmentResource;
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
@@ -26,10 +28,19 @@ class EnrollmentController extends Controller
     /**
      * List enrollments.
      */
-    public function index(ListEnrollmentsRequest $request): JsonResponse
+    public function index(ListEnrollmentsRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
-        $filters = $request->filters();
+
+        $requestFilters = $request->filters();
+        $filters = new EnrollmentFilters(
+            page: $requestFilters->page,
+            perPage: $requestFilters->perPage,
+            centerId: (int) $center->id,
+            courseId: $requestFilters->courseId,
+            userId: $requestFilters->userId,
+            status: $requestFilters->status
+        );
         $enrollments = $this->enrollmentService->paginateForAdmin($admin, $filters);
 
         return response()->json([
@@ -47,10 +58,10 @@ class EnrollmentController extends Controller
     /**
      * Show an enrollment.
      */
-    public function show(Enrollment $enrollment): JsonResponse
+    public function show(Center $center, Enrollment $enrollment): JsonResponse
     {
         $admin = $this->requireAdmin();
-
+        $this->assertEnrollmentBelongsToCenter($center, $enrollment);
         $this->enrollmentService->assertAdminCanAccess($admin, $enrollment);
 
         return response()->json([
@@ -62,7 +73,7 @@ class EnrollmentController extends Controller
     /**
      * Create an enrollment.
      */
-    public function store(StoreEnrollmentRequest $request): JsonResponse
+    public function store(StoreEnrollmentRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
         /** @var array{user_id:int,course_id:int,status:string} $data */
@@ -72,6 +83,7 @@ class EnrollmentController extends Controller
         $student = User::findOrFail((int) $data['user_id']);
         /** @var Course $course */
         $course = Course::findOrFail((int) $data['course_id']);
+        $this->assertCourseBelongsToCenter($center, $course);
 
         $enrollment = $this->enrollmentService->enroll($student, $course, $data['status'], $admin);
 
@@ -85,19 +97,20 @@ class EnrollmentController extends Controller
     /**
      * Bulk approve enrollments.
      */
-    public function bulk(BulkEnrollmentRequest $request): JsonResponse
+    public function bulk(BulkEnrollmentRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin();
-        /** @var array{center_id:int,course_id:int,user_ids:array<int,int>} $data */
+        /** @var array{course_id:int,user_ids:array<int,int>} $data */
         $data = $request->validated();
 
         /** @var Course $course */
         $course = Course::findOrFail((int) $data['course_id']);
+        $this->assertCourseBelongsToCenter($center, $course);
 
         $result = $this->enrollmentService->bulkEnroll(
             $admin,
             $course,
-            (int) $data['center_id'],
+            (int) $center->id,
             $data['user_ids']
         );
 
@@ -125,9 +138,10 @@ class EnrollmentController extends Controller
     /**
      * Update an enrollment status.
      */
-    public function update(UpdateEnrollmentStatusRequest $request, Enrollment $enrollment): JsonResponse
+    public function update(UpdateEnrollmentStatusRequest $request, Center $center, Enrollment $enrollment): JsonResponse
     {
         $admin = $this->requireAdmin();
+        $this->assertEnrollmentBelongsToCenter($center, $enrollment);
 
         /** @var array{status:string} $data */
         $data = $request->validated();
@@ -144,9 +158,10 @@ class EnrollmentController extends Controller
     /**
      * Delete an enrollment.
      */
-    public function destroy(Enrollment $enrollment): JsonResponse
+    public function destroy(Center $center, Enrollment $enrollment): JsonResponse
     {
         $admin = $this->requireAdmin();
+        $this->assertEnrollmentBelongsToCenter($center, $enrollment);
 
         $this->enrollmentService->remove($enrollment, $admin);
 
@@ -172,5 +187,31 @@ class EnrollmentController extends Controller
         }
 
         return $admin;
+    }
+
+    private function assertEnrollmentBelongsToCenter(Center $center, Enrollment $enrollment): void
+    {
+        if ((int) $enrollment->center_id !== (int) $center->id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Enrollment not found.',
+                ],
+            ], 404));
+        }
+    }
+
+    private function assertCourseBelongsToCenter(Center $center, Course $course): void
+    {
+        if ((int) $course->center_id !== (int) $center->id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Course not found.',
+                ],
+            ], 404));
+        }
     }
 }

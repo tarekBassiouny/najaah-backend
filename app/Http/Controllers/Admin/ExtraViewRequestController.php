@@ -10,10 +10,12 @@ use App\Http\Requests\Admin\ExtraViews\ListExtraViewRequestsRequest;
 use App\Http\Requests\Admin\ExtraViews\RejectExtraViewRequestRequest;
 use App\Http\Resources\Admin\ExtraViews\ExtraViewRequestListResource;
 use App\Http\Resources\Admin\ExtraViews\ExtraViewRequestResource;
+use App\Models\Center;
 use App\Models\ExtraViewRequest;
 use App\Models\User;
 use App\Services\Admin\ExtraViewRequestQueryService;
 use App\Services\Playback\ExtraViewRequestService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class ExtraViewRequestController extends Controller
@@ -26,7 +28,7 @@ class ExtraViewRequestController extends Controller
     /**
      * List extra view requests.
      */
-    public function index(ListExtraViewRequestsRequest $request): JsonResponse
+    public function index(ListExtraViewRequestsRequest $request, Center $center): JsonResponse
     {
         /** @var User|null $admin */
         $admin = $request->user();
@@ -42,7 +44,7 @@ class ExtraViewRequestController extends Controller
         }
 
         $filters = $request->filters();
-        $paginator = $this->queryService->paginate($admin, $filters);
+        $paginator = $this->queryService->paginateForCenter($admin, (int) $center->id, $filters);
 
         return response()->json([
             'success' => true,
@@ -60,8 +62,11 @@ class ExtraViewRequestController extends Controller
     /**
      * Approve an extra view request.
      */
-    public function approve(ApproveExtraViewRequestRequest $request, ExtraViewRequest $extraViewRequest): JsonResponse
-    {
+    public function approve(
+        ApproveExtraViewRequestRequest $request,
+        Center $center,
+        ExtraViewRequest $extraViewRequest
+    ): JsonResponse {
         /** @var User|null $admin */
         $admin = $request->user();
 
@@ -74,6 +79,8 @@ class ExtraViewRequestController extends Controller
                 ],
             ], 401);
         }
+
+        $this->assertRequestBelongsToCenter($center, $extraViewRequest);
 
         $approved = $this->service->approve(
             $admin,
@@ -92,8 +99,11 @@ class ExtraViewRequestController extends Controller
     /**
      * Reject an extra view request.
      */
-    public function reject(RejectExtraViewRequestRequest $request, ExtraViewRequest $extraViewRequest): JsonResponse
-    {
+    public function reject(
+        RejectExtraViewRequestRequest $request,
+        Center $center,
+        ExtraViewRequest $extraViewRequest
+    ): JsonResponse {
         /** @var User|null $admin */
         $admin = $request->user();
 
@@ -107,6 +117,8 @@ class ExtraViewRequestController extends Controller
             ], 401);
         }
 
+        $this->assertRequestBelongsToCenter($center, $extraViewRequest);
+
         $rejected = $this->service->reject(
             $admin,
             $extraViewRequest,
@@ -118,5 +130,18 @@ class ExtraViewRequestController extends Controller
             'message' => 'Request rejected successfully',
             'data' => new ExtraViewRequestResource($rejected->loadMissing(['user', 'video', 'course', 'center', 'decider'])),
         ]);
+    }
+
+    private function assertRequestBelongsToCenter(Center $center, ExtraViewRequest $request): void
+    {
+        if ((int) $request->center_id !== (int) $center->id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Extra view request not found.',
+                ],
+            ], 404));
+        }
     }
 }

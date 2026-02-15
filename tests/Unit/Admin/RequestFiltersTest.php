@@ -53,9 +53,9 @@ it('builds course filters with empty search as null', function (): void {
 });
 
 it('builds enrollment filters with trimmed status', function (): void {
-    $request = ListEnrollmentsRequest::create('/admin/enrollments', 'GET', [
+    // center_id is now provided via route parameter, not query parameter
+    $request = ListEnrollmentsRequest::create('/admin/centers/4/enrollments', 'GET', [
         'status' => ' ACTIVE ',
-        'center_id' => '4',
     ]);
     $request->setContainer(app())->setRedirector(app('redirect'));
     $request->validateResolved();
@@ -63,7 +63,7 @@ it('builds enrollment filters with trimmed status', function (): void {
     $filters = $request->filters();
 
     expect($filters->status)->toBe('ACTIVE')
-        ->and($filters->centerId)->toBe(4);
+        ->and($filters->centerId)->toBeNull();
 });
 
 it('builds category filters with string booleans from query params', function (): void {
