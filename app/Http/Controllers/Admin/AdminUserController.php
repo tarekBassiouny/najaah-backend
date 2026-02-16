@@ -54,6 +54,7 @@ class AdminUserController extends Controller
             page: $requestFilters->page,
             perPage: $requestFilters->perPage,
             centerId: (int) $center->id,
+            status: $requestFilters->status,
             search: $requestFilters->search,
             roleId: $requestFilters->roleId
         );

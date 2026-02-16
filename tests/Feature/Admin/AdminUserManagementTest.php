@@ -378,6 +378,44 @@ it('searches admin users by phone', function (): void {
         ->not->toContain((int) $otherAdmin->id);
 });
 
+it('filters admin users by status', function (): void {
+    $this->asAdmin();
+
+    $activeAdmin = User::factory()->create([
+        'is_student' => false,
+        'status' => 1,
+        'email' => 'status.filter.active@example.com',
+        'phone' => '19998880001',
+    ]);
+    $inactiveAdmin = User::factory()->create([
+        'is_student' => false,
+        'status' => 0,
+        'email' => 'status.filter.inactive@example.com',
+        'phone' => '19998880002',
+    ]);
+    $bannedAdmin = User::factory()->create([
+        'is_student' => false,
+        'status' => 2,
+        'email' => 'status.filter.banned@example.com',
+        'phone' => '19998880003',
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/users?page=1&per_page=10&status=1', $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true);
+
+    $ids = collect((array) $response->json('data'))
+        ->pluck('id')
+        ->map(static fn ($id): int => (int) $id)
+        ->all();
+
+    expect($ids)
+        ->toContain((int) $activeAdmin->id)
+        ->not->toContain((int) $inactiveAdmin->id)
+        ->not->toContain((int) $bannedAdmin->id);
+});
+
 it('supports center-scoped admin CRUD via center routes', function (): void {
     $this->asAdmin();
     $center = Center::factory()->create();
@@ -653,5 +691,34 @@ it('bulk assigns admin users to centers and reports updated skipped and failed',
         'user_id' => (int) $updatableAdmin->id,
         'center_id' => (int) $centerB->id,
         'type' => 'admin',
+    ]);
+});
+
+it('supports bulk assign centers legacy route alias', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create();
+    $admin = User::factory()->create([
+        'is_student' => false,
+        'center_id' => null,
+        'email' => 'bulk.assign.legacy.alias@example.com',
+        'phone' => '19990000140',
+    ]);
+
+    $response = $this->putJson('/api/v1/admin/users/bulk-assign-centers', [
+        'assignments' => [
+            ['user_id' => (int) $admin->id, 'center_id' => (int) $center->id],
+        ],
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.counts.total', 1)
+        ->assertJsonPath('data.counts.updated', 1)
+        ->assertJsonPath('data.counts.skipped', 0)
+        ->assertJsonPath('data.counts.failed', 0);
+
+    $this->assertDatabaseHas('users', [
+        'id' => (int) $admin->id,
+        'center_id' => (int) $center->id,
     ]);
 });

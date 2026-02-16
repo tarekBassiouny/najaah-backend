@@ -24,6 +24,7 @@ class ListAdminUsersRequest extends AdminListRequest
     {
         return array_merge($this->listRules(), [
             'center_id' => ['sometimes', 'integer', 'exists:centers,id'],
+            'status' => ['sometimes', 'integer', 'in:0,1,2'],
             'search' => ['sometimes', 'string'],
             'role_id' => ['sometimes', 'integer', 'exists:roles,id'],
         ]);
@@ -38,6 +39,7 @@ class ListAdminUsersRequest extends AdminListRequest
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
             centerId: FilterInput::intOrNull($data, 'center_id'),
+            status: FilterInput::intOrNull($data, 'status'),
             search: FilterInput::stringOrNull($data, 'search'),
             roleId: FilterInput::intOrNull($data, 'role_id')
         );
@@ -79,6 +81,10 @@ class ListAdminUsersRequest extends AdminListRequest
             'search' => [
                 'description' => 'Optional search by admin email or phone.',
                 'example' => 'admin@example.com',
+            ],
+            'status' => [
+                'description' => 'Optional status filter (0 inactive, 1 active, 2 banned).',
+                'example' => '1',
             ],
             'role_id' => [
                 'description' => 'Optional role ID filter.',

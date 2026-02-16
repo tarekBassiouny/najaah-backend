@@ -51,6 +51,10 @@ class AdminUserService implements AdminUserServiceInterface
             });
         }
 
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
         if ($filters->roleId !== null) {
             $query->whereHas('roles', function (Builder $builder) use ($filters): void {
                 $builder->where('roles.id', $filters->roleId);
