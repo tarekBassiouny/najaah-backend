@@ -64,6 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/admin-users.php';
                         require __DIR__.'/../routes/api/v1/admin/students.php';
                         require __DIR__.'/../routes/api/v1/admin/surveys.php';
+                        require __DIR__.'/../routes/api/v1/admin/notifications.php';
                     });
                 });
         }

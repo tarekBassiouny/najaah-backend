@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\AdminNotifications\AdminNotificationService;
+use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
 use App\Services\AdminUsers\AdminUserService;
 use App\Services\AdminUsers\Contracts\AdminUserServiceInterface;
 use App\Services\Auth\AdminAuthService;
@@ -91,6 +93,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $bindings = [
+            AdminNotificationServiceInterface::class => AdminNotificationService::class,
             AdminUserServiceInterface::class => AdminUserService::class,
             OtpServiceInterface::class => OtpService::class,
             OtpSenderInterface::class => WhatsAppOtpSender::class,
