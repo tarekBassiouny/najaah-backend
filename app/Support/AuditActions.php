@@ -18,6 +18,8 @@ final class AuditActions
 
     public const ADMIN_LOGOUT = 'admin_logout';
 
+    public const ADMIN_PASSWORD_CHANGED = 'admin_password_changed';
+
     public const ADMIN_USER_DELETED = 'admin_user_deleted';
 
     public const ADMIN_USER_ROLES_SYNCED = 'admin_user_roles_synced';
@@ -181,4 +183,10 @@ final class AuditActions
     public const SURVEY_ASSIGNMENT_REMOVED = 'survey_assignment_removed';
 
     public const SURVEY_SUBMITTED = 'survey_submitted';
+
+    public const SYSTEM_SETTING_CREATED = 'system_setting_created';
+
+    public const SYSTEM_SETTING_UPDATED = 'system_setting_updated';
+
+    public const SYSTEM_SETTING_DELETED = 'system_setting_deleted';
 }

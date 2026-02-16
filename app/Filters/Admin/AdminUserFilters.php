@@ -9,6 +9,8 @@ class AdminUserFilters
     public function __construct(
         public readonly int $page,
         public readonly int $perPage,
-        public readonly ?int $centerId = null
+        public readonly ?int $centerId = null,
+        public readonly ?string $search = null,
+        public readonly ?int $roleId = null
     ) {}
 }

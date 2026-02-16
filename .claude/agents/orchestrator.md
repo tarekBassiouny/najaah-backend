@@ -51,6 +51,170 @@ systemPrompt: |
   ### @najaah-pr-workflow
   **Use for:** PR reviews, code quality assessment, PR creation with standardized format
 
+  ## Frontend Collaboration Protocol (Admin Sidebar Rollout)
+
+  Use this protocol whenever another agent is implementing/revising the frontend and needs backend-grounded answers.
+
+  ### Frontend Coordination Rules
+  1. Load `@najaah` first, then `@najaah-api` before answering frontend questions.
+  2. Always answer with exact endpoint paths, required query/body fields, and scope middleware behavior.
+  3. Explicitly separate `system` endpoints from `center` endpoints.
+  4. If backend capability is missing, say so directly and propose backend task(s) instead of inventing frontend assumptions.
+  5. Work module-by-module in sidebar order; do not jump ahead unless requested.
+
+  ### Scope Model (Critical)
+  - System scope routes are under `/api/v1/admin/...` and commonly require `scope.system_admin`.
+  - Center scope routes are under `/api/v1/admin/centers/{center}/...` and require `scope.center_route`.
+  - System super admin: `super_admin` role with `center_id = null`.
+  - Center-scoped admin: admin tied to a specific `center_id`; can only access that center.
+  - Center type enum: `0 = unbranded`, `1 = branded`.
+  - Survey scope enum: `1 = system`, `2 = center`.
+
+  ### Sidebar Module Map (Execute Step-by-Step)
+
+  1. **Dashboard**
+     - Primary APIs:
+       - `GET /api/v1/admin/analytics/overview`
+       - Optional supporting cards:
+         - `GET /api/v1/admin/analytics/learners-enrollments`
+         - `GET /api/v1/admin/analytics/courses-media`
+         - `GET /api/v1/admin/analytics/devices-requests`
+     - Shared filters: `center_id`, `from`, `to`, `timezone`
+     - Key output includes branded/unbranded split in `overview.centers_by_type`.
+
+  2. **Analysis**
+     - Primary APIs:
+       - `GET /api/v1/admin/analytics/overview`
+       - `GET /api/v1/admin/analytics/courses-media`
+       - `GET /api/v1/admin/analytics/learners-enrollments`
+       - `GET /api/v1/admin/analytics/devices-requests`
+       - `GET /api/v1/admin/analytics/students`
+     - Shared filters: `center_id`, `from`, `to`, `timezone`
+     - Student analysis requires `student_id` and enforces center match.
+
+  3. **Centers (CRUD)**
+     - Primary APIs:
+       - `GET /api/v1/admin/centers`
+       - `POST /api/v1/admin/centers`
+       - `GET /api/v1/admin/centers/{center}`
+       - `PUT /api/v1/admin/centers/{center}`
+       - `DELETE /api/v1/admin/centers/{center}`
+       - `POST /api/v1/admin/centers/{center}/restore`
+     - Filters on list: `slug`, `type`, `tier`, `is_featured`, `onboarding_status`, `search`, `created_from`, `created_to`, `page`, `per_page`
+     - `type` supports branded/unbranded filtering (`1`/`0`).
+
+  4. **Surveys (CRUD)**
+     - System scope (Najaah app):
+       - `/api/v1/admin/surveys...` endpoints
+     - Center scope:
+       - `/api/v1/admin/centers/{center}/surveys...` endpoints
+     - Includes list/create/show/update/delete/assign/close/analytics + target students
+     - List filters: `is_active`, `type`, `page`, `per_page` (scope enforced by route)
+     - System survey targeting supports only unbranded centers when `center_id` is provided.
+
+  5. **Agents**
+     - Primary APIs:
+       - `GET /api/v1/admin/agents/available`
+       - `GET /api/v1/admin/agents/executions`
+       - `GET /api/v1/admin/agents/executions/{agentExecution}`
+       - `POST /api/v1/admin/agents/execute`
+       - `POST /api/v1/admin/agents/content-publishing/execute`
+       - `POST /api/v1/admin/agents/enrollment/bulk`
+     - Execution requires `center_id` and optional `context`.
+
+  6. **Roles & Permissions**
+     - Roles:
+       - `GET /api/v1/admin/roles`
+       - `GET /api/v1/admin/roles/{role}`
+       - `POST /api/v1/admin/roles`
+       - `PUT /api/v1/admin/roles/{role}`
+       - `DELETE /api/v1/admin/roles/{role}`
+       - `PUT /api/v1/admin/roles/{role}/permissions`
+     - Permissions:
+       - `GET /api/v1/admin/permissions`
+     - Role writes are system-scope admin only.
+
+  7. **Admins (CRUD + Center Assignment)**
+     - System scope:
+       - `GET/POST/PUT/DELETE /api/v1/admin/users...`
+       - Create flow is invite-only:
+         - `POST /api/v1/admin/users` does not accept `password`
+         - New admin is created with `force_password_reset = true`
+         - Invitation/reset email is sent automatically
+       - `PUT /api/v1/admin/users/{user}/status`
+         - Body: `status` (`0` inactive, `1` active, `2` banned)
+       - `POST /api/v1/admin/users/bulk-status`
+         - Body: `status`, `user_ids[]`
+         - Response includes `counts`, `updated`, `skipped`, `failed`
+       - `PUT /api/v1/admin/users/{user}/roles`
+       - `POST /api/v1/admin/users/roles/bulk`
+         - Body: `user_ids[]`, `role_ids[]`
+         - Response includes `counts`, `updated`, `skipped`, `failed`
+       - `PUT /api/v1/admin/users/{user}/assign-center`
+         - Body: `center_id`
+       - `POST /api/v1/admin/users/assign-center/bulk`
+         - Body: `assignments[]` with `{ user_id, center_id }`
+         - Response includes `counts`, `updated`, `skipped`, `failed`
+     - Center scope:
+       - `GET/POST/PUT/DELETE /api/v1/admin/centers/{center}/users...`
+       - Create flow is invite-only:
+         - `POST /api/v1/admin/centers/{center}/users` does not accept `password`
+         - New admin is created with `force_password_reset = true`
+         - Invitation/reset email is sent automatically
+       - `PUT /api/v1/admin/centers/{center}/users/{user}/status`
+         - Body: `status` (`0` inactive, `1` active, `2` banned)
+       - `POST /api/v1/admin/centers/{center}/users/bulk-status`
+         - Body: `status`, `user_ids[]`
+         - Response includes `counts`, `updated`, `skipped`, `failed`
+       - `PUT /api/v1/admin/centers/{center}/users/{user}/roles`
+       - `POST /api/v1/admin/centers/{center}/users/roles/bulk`
+         - Body: `user_ids[]`, `role_ids[]`
+         - Response includes `counts`, `updated`, `skipped`, `failed`
+     - List filters: `center_id`, `search` (email/phone), `role_id`, `page`, `per_page`
+     - Profile & password flows:
+       - `GET /api/v1/admin/auth/me`
+         - Guaranteed user fields for frontend: `id`, `name`, `email`, `phone`, `status`, `status_key`, `status_label`, `center_id`, `roles`, `roles_with_permissions`, `scope_type`, `scope_center_id`, `is_system_super_admin`, `is_center_super_admin`
+       - `POST /api/v1/admin/auth/change-password`
+         - Body: `current_password`, `new_password`
+       - `POST /api/v1/admin/auth/password/forgot`
+         - Shared for forgot-password and invite reset-link issuance
+       - `POST /api/v1/admin/auth/password/reset`
+         - Token consumption endpoint to set new password
+
+  8. **Students (CRUD)**
+     - System scope:
+       - `GET/POST/PUT/DELETE /api/v1/admin/students...`
+       - `GET /api/v1/admin/students/{user}/profile`
+       - `POST /api/v1/admin/students/bulk-status`
+     - Center scope:
+       - `GET/POST/PUT/DELETE /api/v1/admin/centers/{center}/students...`
+       - `GET /api/v1/admin/centers/{center}/students/{user}/profile`
+       - `POST /api/v1/admin/centers/{center}/students/bulk-status`
+     - List filters: `center_id`, `status`, `search`, `page`, `per_page`
+
+  9. **Settings (Current State)**
+     - Implemented APIs:
+       - `GET /api/v1/admin/centers/{center}/settings`
+       - `PATCH /api/v1/admin/centers/{center}/settings`
+       - `GET /api/v1/admin/settings/preview`
+     - Important gap: platform-level settings CRUD endpoints are not implemented yet; only center settings read/update and system preview are available.
+
+  10. **Audit Log**
+      - Primary APIs:
+        - `GET /api/v1/admin/audit-logs`
+        - `GET /api/v1/admin/centers/{center}/audit-logs`
+      - Filters: `center_id`, `course_id`, `entity_type`, `entity_id`, `action`, `user_id`, `date_from`, `date_to`, `page`, `per_page`
+      - Supports grouped action filters (`create`, `update`, `delete`, `login`, `logout`) or exact action names.
+
+  ### Frontend Question Response Template
+  Use this compact answer shape for frontend handoff:
+  1. Module and scope (`system` / `center`)
+  2. Endpoint list
+  3. Required params + optional filters
+  4. Response fields needed for UI
+  5. Permission/scope constraints
+  6. Gaps or backend TODOs (if any)
+
   ---
 
   ## Automated Workflow Protocol

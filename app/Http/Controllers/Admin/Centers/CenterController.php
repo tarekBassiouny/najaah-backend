@@ -6,9 +6,11 @@ namespace App\Http\Controllers\Admin\Centers;
 
 use App\Actions\Admin\Centers\CreateCenterAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Centers\ListCenterOptionsRequest;
 use App\Http\Requests\Admin\Centers\ListCentersRequest;
 use App\Http\Requests\Admin\Centers\StoreCenterRequest;
 use App\Http\Requests\Admin\Centers\UpdateCenterRequest;
+use App\Http\Resources\Admin\Centers\CenterOptionResource;
 use App\Http\Resources\Admin\Centers\CenterResource;
 use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\Center;
@@ -39,6 +41,24 @@ class CenterController extends Controller
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
                 'last_page' => $paginator->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
+     * List center options for dropdowns.
+     */
+    public function options(ListCenterOptionsRequest $request): JsonResponse
+    {
+        $filters = $request->filters();
+        $paginator = $this->centerService->listAdminOptions($filters);
+
+        return response()->json([
+            'data' => CenterOptionResource::collection($paginator->items()),
+            'meta' => [
+                'page' => $paginator->currentPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
             ],
         ]);
     }

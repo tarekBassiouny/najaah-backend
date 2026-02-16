@@ -40,6 +40,25 @@ class CenterService implements CenterServiceInterface
         );
     }
 
+    /**
+     * @return LengthAwarePaginator<Center>
+     */
+    public function listAdminOptions(AdminCenterFilters $filters): LengthAwarePaginator
+    {
+        $query = Center::query()
+            ->select(['id', 'slug', 'name_translations'])
+            ->orderByDesc('created_at');
+
+        $this->applyAdminFilters($query, $filters);
+
+        return $query->paginate(
+            $filters->perPage,
+            ['id', 'slug', 'name_translations'],
+            'page',
+            $filters->page
+        );
+    }
+
     /** @param array<string, mixed> $data */
     public function create(array $data, ?User $actor = null): Center
     {
@@ -176,6 +195,16 @@ class CenterService implements CenterServiceInterface
             // ->orderByDesc('is_featured')
             ->orderByDesc('created_at');
 
+        $this->applyAdminFilters($query, $filters);
+
+        return $query;
+    }
+
+    /**
+     * @param  Builder<Center>  $query
+     */
+    private function applyAdminFilters(Builder $query, AdminCenterFilters $filters): void
+    {
         if ($filters->slug !== null) {
             $query->where('slug', $filters->slug);
         }
@@ -197,11 +226,15 @@ class CenterService implements CenterServiceInterface
         }
 
         if ($filters->search !== null && $filters->search !== '') {
-            $query->whereTranslationLike(
-                ['name'],
-                $filters->search,
-                ['en', 'ar']
-            );
+            $term = $filters->search;
+
+            $query->where(static function (Builder $builder) use ($term): void {
+                $builder->whereTranslationLike(
+                    ['name'],
+                    $term,
+                    ['en', 'ar']
+                )->orWhere('slug', 'like', '%'.$term.'%');
+            });
         }
 
         if ($filters->createdFrom !== null) {
@@ -211,8 +244,6 @@ class CenterService implements CenterServiceInterface
         if ($filters->createdTo !== null) {
             $query->where('created_at', '<=', Carbon::parse($filters->createdTo)->endOfDay());
         }
-
-        return $query;
     }
 
     /**

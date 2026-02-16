@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Services\Auth;
 
 use App\Models\User;
+use App\Notifications\AdminPasswordResetNotification;
 use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Centers\CenterScopeService;
 use App\Support\AuditActions;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class AdminAuthService implements AdminAuthServiceInterface
 {
@@ -80,5 +83,40 @@ class AdminAuthService implements AdminAuthServiceInterface
         $user->centers()->syncWithoutDetaching([
             (int) $user->center_id => ['type' => 'admin'],
         ]);
+    }
+
+    public function sendPasswordResetLink(string $email, bool $isInvite = false): bool
+    {
+        /** @var User|null $user */
+        $user = User::where('email', $email)->first();
+
+        if (! $user instanceof User || $user->is_student || $user->email === null) {
+            return false;
+        }
+
+        $token = Password::broker()->createToken($user);
+        $user->notify(new AdminPasswordResetNotification($token, $isInvite));
+
+        if ($isInvite && $user->invitation_sent_at === null) {
+            $user->invitation_sent_at = now();
+            $user->save();
+        }
+
+        return true;
+    }
+
+    public function changePassword(User $user, string $currentPassword, string $newPassword): bool
+    {
+        if (! Hash::check($currentPassword, (string) $user->password)) {
+            return false;
+        }
+
+        $user->password = $newPassword;
+        $user->force_password_reset = false;
+        $user->save();
+
+        $this->auditLogService->log($user, $user, AuditActions::ADMIN_PASSWORD_CHANGED);
+
+        return true;
     }
 }

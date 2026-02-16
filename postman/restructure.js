@@ -3,7 +3,42 @@ import fs from "fs";
 const INPUT = "postman/scribe.postman.json";
 const OUTPUT = "postman/najaah.postman.json";
 
-const source = JSON.parse(fs.readFileSync(INPUT, "utf8"));
+function tryParseJson(path) {
+  if (!fs.existsSync(path)) return null;
+
+  const raw = fs.readFileSync(path, "utf8");
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function loadSourceCollection() {
+  const primary = tryParseJson(INPUT);
+  if (primary) return primary;
+
+  const fallbacks = [
+    "storage/app/private/scribe/collection.json",
+    "storage/app/scribe/collection.json",
+    "public/docs/collection.json",
+  ];
+
+  for (const fallback of fallbacks) {
+    const parsed = tryParseJson(fallback);
+    if (parsed) {
+      fs.writeFileSync(INPUT, JSON.stringify(parsed, null, 2));
+      console.warn(`⚠️ ${INPUT} was invalid JSON. Recovered from ${fallback}.`);
+      return parsed;
+    }
+  }
+
+  throw new Error(
+    `Unable to parse ${INPUT} as JSON and no valid fallback collection was found.`
+  );
+}
+
+const source = loadSourceCollection();
 
 const folder = name => ({ name, item: [] });
 

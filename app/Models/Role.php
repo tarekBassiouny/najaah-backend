@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array<string, string> $name_translations
  * @property string $slug
  * @property array<string,string>|null $description_translations
+ * @property bool $is_admin_role
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
  */
@@ -33,11 +34,13 @@ class Role extends Model
         'name_translations',
         'slug',
         'description_translations',
+        'is_admin_role',
     ];
 
     protected $casts = [
         'name_translations' => 'array',
         'description_translations' => 'array',
+        'is_admin_role' => 'boolean',
     ];
 
     /** @var array<int, string> */

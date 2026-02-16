@@ -8,17 +8,22 @@ use App\Enums\UserStatus;
 use App\Exceptions\DomainException;
 use App\Filters\Admin\AdminUserFilters;
 use App\Models\User;
+use App\Services\AdminUsers\Contracts\AdminUserServiceInterface;
 use App\Services\Audit\AuditLogService;
+use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Centers\CenterScopeService;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
-class AdminUserService
+class AdminUserService implements AdminUserServiceInterface
 {
     public function __construct(
         private readonly AuditLogService $auditLogService,
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly AdminAuthServiceInterface $adminAuthService
     ) {}
 
     /**
@@ -37,6 +42,19 @@ class AdminUserService
             $query->where('center_id', (int) $centerId);
         } elseif ($filters->centerId !== null) {
             $query->where('center_id', $filters->centerId);
+        }
+
+        if ($filters->search !== null) {
+            $query->where(function (Builder $builder) use ($filters): void {
+                $builder->where('email', 'like', '%'.$filters->search.'%')
+                    ->orWhere('phone', 'like', '%'.$filters->search.'%');
+            });
+        }
+
+        if ($filters->roleId !== null) {
+            $query->whereHas('roles', function (Builder $builder) use ($filters): void {
+                $builder->where('roles.id', $filters->roleId);
+            });
         }
 
         return $query->paginate(
@@ -59,10 +77,11 @@ class AdminUserService
             'name' => (string) $data['name'],
             'email' => $data['email'] ?? null,
             'phone' => (string) $data['phone'],
-            'password' => (string) $data['password'],
+            'password' => Str::random(32),
             'center_id' => $centerId,
             'is_student' => false,
             'status' => $data['status'] ?? UserStatus::Active,
+            'force_password_reset' => true,
         ]);
 
         if ($centerId !== null) {
@@ -71,7 +90,12 @@ class AdminUserService
 
         $this->auditLogService->log($actor, $user, AuditActions::ADMIN_USER_CREATED, [
             'center_id' => $user->center_id,
+            'invite_only' => true,
         ]);
+
+        if ($user->email !== null) {
+            $this->adminAuthService->sendPasswordResetLink($user->email, true);
+        }
 
         return ($user->refresh() ?? $user)->loadMissing(['roles.permissions', 'center']);
     }
@@ -109,10 +133,6 @@ class AdminUserService
             $payload['phone'] = $data['phone'];
         }
 
-        if (array_key_exists('password', $data)) {
-            $payload['password'] = $data['password'];
-        }
-
         if (array_key_exists('status', $data)) {
             $payload['status'] = $data['status'];
         }
@@ -132,6 +152,170 @@ class AdminUserService
         ]);
 
         return ($user->refresh() ?? $user)->loadMissing(['roles.permissions', 'center']);
+    }
+
+    public function updateStatus(User $user, int $status, ?User $actor = null, ?int $forcedCenterId = null): User
+    {
+        return $this->update($user, ['status' => $status], $actor, $forcedCenterId);
+    }
+
+    /**
+     * @param  array<int, int>  $userIds
+     * @return array{
+     *   updated: array<int, User>,
+     *   skipped: array<int, array{user_id: int, reason: string}>,
+     *   failed: array<int, array{user_id: int, reason: string}>
+     * }
+     */
+    public function bulkUpdateStatus(array $userIds, int $status, ?User $actor = null, ?int $forcedCenterId = null): array
+    {
+        $this->assertCanManageAdminUsers($actor, $forcedCenterId);
+        $uniqueUserIds = array_values(array_unique(array_map('intval', $userIds)));
+        $users = User::query()
+            ->whereIn('id', $uniqueUserIds)
+            ->get()
+            ->keyBy('id');
+
+        $results = [
+            'updated' => [],
+            'skipped' => [],
+            'failed' => [],
+        ];
+
+        foreach ($uniqueUserIds as $userId) {
+            $user = $users->get($userId);
+
+            if (! $user instanceof User) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => 'Admin user not found.',
+                ];
+
+                continue;
+            }
+
+            if ($user->is_student) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => 'User is not an admin.',
+                ];
+
+                continue;
+            }
+
+            if ((int) $user->status === $status) {
+                $results['skipped'][] = [
+                    'user_id' => $userId,
+                    'reason' => 'Admin already has the requested status.',
+                ];
+
+                continue;
+            }
+
+            try {
+                $results['updated'][] = $this->updateStatus($user, $status, $actor, $forcedCenterId);
+            } catch (DomainException $exception) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => $exception->getMessage(),
+                ];
+            } catch (\Throwable $exception) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return $results;
+    }
+
+    public function assignCenter(User $user, int $centerId, ?User $actor = null): User
+    {
+        return $this->update($user, ['center_id' => $centerId], $actor);
+    }
+
+    /**
+     * @param  array<int, array{user_id:int, center_id:int}>  $assignments
+     * @return array{
+     *   updated: array<int, User>,
+     *   skipped: array<int, array{user_id: int, center_id: int, reason: string}>,
+     *   failed: array<int, array{user_id: int, center_id: int, reason: string}>
+     * }
+     */
+    public function bulkAssignCenters(array $assignments, ?User $actor = null): array
+    {
+        $this->assertCanManageAdminUsers($actor, null);
+
+        $userIds = array_values(array_unique(array_map(
+            static fn (array $assignment): int => $assignment['user_id'],
+            $assignments
+        )));
+
+        $users = User::query()
+            ->whereIn('id', $userIds)
+            ->get()
+            ->keyBy('id');
+
+        $results = [
+            'updated' => [],
+            'skipped' => [],
+            'failed' => [],
+        ];
+
+        foreach ($assignments as $assignment) {
+            $userId = (int) $assignment['user_id'];
+            $centerId = (int) $assignment['center_id'];
+            $user = $users->get($userId);
+
+            if (! $user instanceof User) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'center_id' => $centerId,
+                    'reason' => 'Admin user not found.',
+                ];
+
+                continue;
+            }
+
+            if ($user->is_student) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'center_id' => $centerId,
+                    'reason' => 'User is not an admin.',
+                ];
+
+                continue;
+            }
+
+            if (is_numeric($user->center_id) && (int) $user->center_id === $centerId) {
+                $results['skipped'][] = [
+                    'user_id' => $userId,
+                    'center_id' => $centerId,
+                    'reason' => 'Admin is already assigned to this center.',
+                ];
+
+                continue;
+            }
+
+            try {
+                $results['updated'][] = $this->assignCenter($user, $centerId, $actor);
+            } catch (DomainException $exception) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'center_id' => $centerId,
+                    'reason' => $exception->getMessage(),
+                ];
+            } catch (\Throwable $exception) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'center_id' => $centerId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return $results;
     }
 
     public function delete(User $user, ?User $actor = null, ?int $forcedCenterId = null): void
@@ -169,6 +353,92 @@ class AdminUserService
         ]);
 
         return ($user->refresh() ?? $user)->loadMissing(['roles.permissions', 'center']);
+    }
+
+    /**
+     * @param  array<int, int>  $userIds
+     * @param  array<int, int>  $roleIds
+     * @return array{
+     *   updated: array<int, User>,
+     *   skipped: array<int, array{user_id: int, reason: string}>,
+     *   failed: array<int, array{user_id: int, reason: string}>
+     * }
+     */
+    public function bulkSyncRoles(array $userIds, array $roleIds, ?User $actor = null, ?int $forcedCenterId = null): array
+    {
+        $uniqueUserIds = array_values(array_unique(array_map('intval', $userIds)));
+        $normalizedRoleIds = array_values(array_unique(array_map('intval', $roleIds)));
+        sort($normalizedRoleIds);
+
+        $users = User::query()
+            ->whereIn('id', $uniqueUserIds)
+            ->with('roles')
+            ->get()
+            ->keyBy('id');
+
+        $results = [
+            'updated' => [],
+            'skipped' => [],
+            'failed' => [],
+        ];
+
+        foreach ($uniqueUserIds as $userId) {
+            $user = $users->get($userId);
+
+            if (! $user instanceof User) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => 'Admin user not found.',
+                ];
+
+                continue;
+            }
+
+            try {
+                if ($forcedCenterId !== null) {
+                    $this->assertAdminBelongsToCenter($user, $forcedCenterId);
+                }
+
+                $this->assertCanAssignRoles($actor, $user);
+                $this->assertAdminUser($user);
+
+                $currentRoleIds = $user->roles
+                    ->pluck('id')
+                    ->map(static fn ($id): int => (int) $id)
+                    ->sort()
+                    ->values()
+                    ->all();
+
+                if ($currentRoleIds === $normalizedRoleIds) {
+                    $results['skipped'][] = [
+                        'user_id' => $userId,
+                        'reason' => 'Admin already has the requested roles.',
+                    ];
+
+                    continue;
+                }
+
+                $user->roles()->sync($normalizedRoleIds);
+                $this->auditLogService->log($actor, $user, AuditActions::ADMIN_USER_ROLES_SYNCED, [
+                    'role_ids' => $normalizedRoleIds,
+                    'bulk' => true,
+                ]);
+
+                $results['updated'][] = ($user->refresh() ?? $user)->loadMissing(['roles.permissions', 'center']);
+            } catch (DomainException $exception) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => $exception->getMessage(),
+                ];
+            } catch (\Throwable $exception) {
+                $results['failed'][] = [
+                    'user_id' => $userId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return $results;
     }
 
     private function assertAdminUser(User $user): void

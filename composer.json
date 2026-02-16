@@ -89,7 +89,7 @@
         ],
 
         "postman:download": [
-            "curl http://najaah.me/docs.postman -o postman/scribe.postman.json"
+            "bash scripts/postman-download.sh"
         ],
 
         "postman:restructure": [

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 use App\Models\Center;
 use App\Models\User;
+use App\Notifications\AdminPasswordResetNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class)->group('admin', 'auth');
 
@@ -139,7 +141,22 @@ test('admin can fetch their profile', function () {
         ->assertJsonStructure([
             'success',
             'data' => [
-                'user' => ['id', 'email'],
+                'user' => [
+                    'id',
+                    'name',
+                    'email',
+                    'phone',
+                    'status',
+                    'status_key',
+                    'status_label',
+                    'center_id',
+                    'roles',
+                    'roles_with_permissions',
+                    'scope_type',
+                    'scope_center_id',
+                    'is_system_super_admin',
+                    'is_center_super_admin',
+                ],
             ],
         ])
         ->assertJson([
@@ -154,6 +171,41 @@ test('unauthenticated request to me fails', function () {
     $response = $this->getJson('/api/v1/admin/auth/me');
 
     $response->assertStatus(401);
+});
+
+test('forgot password sends reset link for admin account', function () {
+    Notification::fake();
+    $admin = User::factory()->create([
+        'email' => 'forgot.admin@example.com',
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $response = $this->postJson('/api/v1/admin/auth/password/forgot', [
+        'email' => 'forgot.admin@example.com',
+    ], [
+        'X-Api-Key' => config('services.system_api_key'),
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true);
+
+    Notification::assertSentTo($admin, AdminPasswordResetNotification::class);
+});
+
+test('forgot password returns success for unknown email without disclosure', function () {
+    Notification::fake();
+
+    $response = $this->postJson('/api/v1/admin/auth/password/forgot', [
+        'email' => 'missing.admin@example.com',
+    ], [
+        'X-Api-Key' => config('services.system_api_key'),
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true);
+
+    Notification::assertNothingSent();
 });
 
 /**
@@ -208,4 +260,45 @@ test('logout fails without token', function () {
     $response = $this->postJson('/api/v1/admin/auth/logout');
 
     $response->assertStatus(401);
+});
+
+test('admin can change password with current password', function () {
+    $admin = $this->asAdmin();
+
+    $response = $this->postJson('/api/v1/admin/auth/change-password', [
+        'current_password' => 'secret123',
+        'new_password' => 'newsecret123',
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true);
+
+    $oldLogin = $this->postJson('/api/v1/admin/auth/login', [
+        'email' => $admin->email,
+        'password' => 'secret123',
+    ], [
+        'X-Api-Key' => config('services.system_api_key'),
+    ]);
+    $oldLogin->assertStatus(401);
+
+    $newLogin = $this->postJson('/api/v1/admin/auth/login', [
+        'email' => $admin->email,
+        'password' => 'newsecret123',
+    ], [
+        'X-Api-Key' => config('services.system_api_key'),
+    ]);
+    $newLogin->assertOk()
+        ->assertJsonPath('success', true);
+});
+
+test('change password fails when current password is invalid', function () {
+    $this->asAdmin();
+
+    $response = $this->postJson('/api/v1/admin/auth/change-password', [
+        'current_password' => 'wrong-password',
+        'new_password' => 'newsecret123',
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'INVALID_CREDENTIALS');
 });

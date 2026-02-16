@@ -30,7 +30,7 @@ class UpdateAdminUserRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:100'],
             'email' => ['sometimes', 'email', 'max:190', Rule::unique('users', 'email')->ignore($target?->id)],
             'phone' => ['sometimes', 'string', 'max:30', Rule::unique('users', 'phone')->ignore($target?->id)],
-            'password' => ['sometimes', 'string', 'min:8'],
+            'password' => ['prohibited'],
             'status' => ['nullable', 'integer', 'in:0,1,2'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
@@ -90,8 +90,8 @@ class UpdateAdminUserRequest extends FormRequest
                 'example' => '19990000004',
             ],
             'password' => [
-                'description' => 'Admin password.',
-                'example' => 'secret123',
+                'description' => 'Not accepted. Use password reset/invite flow endpoints.',
+                'example' => null,
             ],
             'status' => [
                 'description' => 'Admin status (0 inactive, 1 active, 2 banned).',

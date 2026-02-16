@@ -18,6 +18,7 @@ use App\Services\Access\EnrollmentAccessService;
 use App\Services\Access\StudentAccessService;
 use App\Services\AdminUsers\AdminUserService;
 use App\Services\Audit\AuditLogService;
+use App\Services\Auth\AdminAuthService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Centers\CenterService;
 use App\Services\Courses\CourseService;
@@ -52,13 +53,16 @@ test('role creation is audited with actor', function (): void {
 
 test('admin user creation is audited with actor', function (): void {
     $admin = $this->asAdmin();
-    $service = new AdminUserService(new AuditLogService, new CenterScopeService);
+    $service = new AdminUserService(
+        new AuditLogService,
+        new CenterScopeService,
+        new AdminAuthService(new AuditLogService, new CenterScopeService)
+    );
 
     $created = $service->create([
         'name' => 'Admin User',
         'email' => 'admin@example.com',
         'phone' => '01000000000',
-        'password' => 'secret123',
         'status' => 1,
     ], $admin);
 

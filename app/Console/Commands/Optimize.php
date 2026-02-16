@@ -22,7 +22,8 @@ class Optimize extends Command
         $this->runArtisan('optimize:clear');
         $this->runArtisan('migrate', ['--force' => true]);
         $this->shell(['composer', 'dump-autoload']);
-        $this->runArtisan('scribe:generate', ['--force' => true]);
+        // Run Scribe in a fresh process to avoid intermittent in-process FS race warnings.
+        $this->shell(['php', 'artisan', 'scribe:generate', '--force']);
 
         return self::SUCCESS;
     }

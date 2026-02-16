@@ -10,16 +10,16 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
-            'super_admin' => 'Full system administrator',
-            'content_admin' => 'Content administrator',
-            'center_admin' => 'Center administrator',
-            'support_admin' => 'Support administrator',
-            'center_owner' => 'Center owner',
-            'content_manager' => 'Content manager',
-            'student' => 'Student',
+            'super_admin' => ['description' => 'Full system administrator', 'is_admin_role' => true],
+            'content_admin' => ['description' => 'Content administrator', 'is_admin_role' => true],
+            'center_admin' => ['description' => 'Center administrator', 'is_admin_role' => true],
+            'support_admin' => ['description' => 'Support administrator', 'is_admin_role' => true],
+            'center_owner' => ['description' => 'Center owner', 'is_admin_role' => true],
+            'content_manager' => ['description' => 'Content manager', 'is_admin_role' => true],
+            'student' => ['description' => 'Student', 'is_admin_role' => false],
         ];
 
-        foreach ($roles as $slug => $descEn) {
+        foreach ($roles as $slug => $config) {
             $name = str_replace('_', ' ', $slug);
             Role::updateOrCreate(['slug' => $slug], [
                 'name' => $name,
@@ -29,9 +29,10 @@ class RoleSeeder extends Seeder
                 ],
                 'slug' => $slug,
                 'description_translations' => [
-                    'en' => $descEn,
+                    'en' => $config['description'],
                     'ar' => 'وصف '.$slug,
                 ],
+                'is_admin_role' => $config['is_admin_role'],
             ]);
         }
     }

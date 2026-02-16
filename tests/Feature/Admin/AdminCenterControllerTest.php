@@ -107,17 +107,47 @@ it('lists centers with pagination', function (): void {
     $response->assertOk()->assertJsonPath('meta.per_page', 2);
 });
 
-it('searches centers by name', function (): void {
+it('lists center options with minimal payload', function (): void {
     Center::factory()->create([
+        'slug' => 'alpha-main',
+        'type' => Center::TYPE_BRANDED,
+        'name_translations' => ['en' => 'Alpha Center'],
+    ]);
+    Center::factory()->create([
+        'slug' => 'beta-main',
+        'type' => Center::TYPE_UNBRANDED,
+        'name_translations' => ['en' => 'Beta Center'],
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/centers/options?page=1&per_page=20&search=alpha&type=branded');
+
+    $response->assertOk()
+        ->assertJsonPath('meta.page', 1)
+        ->assertJsonPath('meta.per_page', 20)
+        ->assertJsonPath('meta.total', 1)
+        ->assertJsonPath('data.0.slug', 'alpha-main')
+        ->assertJsonPath('data.0.name', 'Alpha Center')
+        ->assertJsonMissingPath('data.0.setting')
+        ->assertJsonMissingPath('data.0.branding_metadata');
+
+    expect(array_keys($response->json('data.0')))->toBe(['id', 'name', 'slug']);
+});
+
+it('searches centers by name or slug', function (): void {
+    Center::factory()->create([
+        'slug' => 'alpha-main',
         'name_translations' => ['en' => 'Alpha Academy'],
     ]);
     Center::factory()->create([
+        'slug' => 'beta-main',
         'name_translations' => ['en' => 'Beta Academy'],
     ]);
 
-    $response = $this->getJson('/api/v1/admin/centers?search=Alpha');
+    $byName = $this->getJson('/api/v1/admin/centers?search=Alpha');
+    $bySlug = $this->getJson('/api/v1/admin/centers?search=beta-main');
 
-    $response->assertOk()->assertJsonCount(1, 'data');
+    $byName->assertOk()->assertJsonCount(1, 'data');
+    $bySlug->assertOk()->assertJsonCount(1, 'data');
 });
 
 it('updates a center but keeps slug immutable', function (): void {

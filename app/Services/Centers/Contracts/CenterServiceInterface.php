@@ -31,6 +31,11 @@ interface CenterServiceInterface
     /**
      * @return LengthAwarePaginator<Center>
      */
+    public function listAdminOptions(AdminCenterFilters $filters): LengthAwarePaginator;
+
+    /**
+     * @return LengthAwarePaginator<Center>
+     */
     public function listUnbranded(CenterFilters $filters): LengthAwarePaginator;
 
     /**

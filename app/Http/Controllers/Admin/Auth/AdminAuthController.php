@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Auth\AdminChangePasswordRequest;
 use App\Http\Requests\Admin\Auth\AdminLoginRequest;
+use App\Http\Requests\Admin\Auth\AdminPasswordForgotRequest;
 use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
@@ -146,12 +148,69 @@ class AdminAuthController extends Controller
             ], 401);
         }
 
-        $user->loadMissing('roles.permissions');
+        $user->loadMissing(['roles.permissions', 'center']);
 
         return response()->json([
             'success' => true,
             'data' => [
                 'user' => new AdminUserResource($user),
+            ],
+        ]);
+    }
+
+    /**
+     * Request a password reset link (used for both forgot-password and invite flows).
+     */
+    public function forgotPassword(AdminPasswordForgotRequest $request): JsonResponse
+    {
+        /** @var array{email:string} $data */
+        $data = $request->validated();
+        $this->authService->sendPasswordResetLink($data['email']);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'message' => 'If the account exists, a password reset link has been sent.',
+            ],
+        ]);
+    }
+
+    /**
+     * Change the current admin password.
+     */
+    public function changePassword(AdminChangePasswordRequest $request): JsonResponse
+    {
+        /** @var array{current_password:string,new_password:string} $data */
+        $data = $request->validated();
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('admin');
+        $user = $guard->user() ?? $guard->authenticate();
+
+        if (! $user instanceof User) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Unauthorized.',
+                ],
+            ], 401);
+        }
+
+        $changed = $this->authService->changePassword($user, $data['current_password'], $data['new_password']);
+        if (! $changed) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'INVALID_CREDENTIALS',
+                    'message' => 'Current password is incorrect.',
+                ],
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'message' => 'Password changed successfully.',
             ],
         ]);
     }

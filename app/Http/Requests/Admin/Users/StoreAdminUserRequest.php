@@ -26,7 +26,7 @@ class StoreAdminUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')],
             'phone' => ['required', 'string', 'max:30', Rule::unique('users', 'phone')],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['prohibited'],
             'status' => ['nullable', 'integer', 'in:0,1,2'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
@@ -86,8 +86,8 @@ class StoreAdminUserRequest extends FormRequest
                 'example' => '19990000003',
             ],
             'password' => [
-                'description' => 'Admin password.',
-                'example' => 'secret123',
+                'description' => 'Not accepted. Admin creation is invitation-only.',
+                'example' => null,
             ],
             'status' => [
                 'description' => 'Admin status (0 inactive, 1 active, 2 banned).',

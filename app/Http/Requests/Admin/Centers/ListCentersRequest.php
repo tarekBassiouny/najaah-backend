@@ -86,7 +86,7 @@ class ListCentersRequest extends AdminListRequest
                 'example' => 'ACTIVE',
             ],
             'search' => [
-                'description' => 'Search centers by name.',
+                'description' => 'Search centers by name or slug.',
                 'example' => 'Academy',
             ],
             'created_from' => [

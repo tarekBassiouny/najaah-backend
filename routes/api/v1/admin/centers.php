@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Centers\CenterOperationsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['require.permission:center.manage', 'require.role:super_admin', 'scope.system_admin'])->group(function (): void {
+    Route::get('/centers/options', [CenterController::class, 'options']);
     Route::get('/centers', [CenterController::class, 'index']);
     Route::post('/centers', [CenterController::class, 'store']);
     Route::get('/centers/{center}', [CenterController::class, 'show'])->whereNumber('center');
