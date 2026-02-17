@@ -54,7 +54,7 @@ class AdminUserResource extends JsonResource
             'phone' => $user->phone,
             'center_id' => $user->center_id,
             'country_code' => $user->country_code,
-            'last_active' => $user->last_login_at?->format('d-m-Y'),
+            'last_active' => $user->last_login_at?->toIso8601String(),
             'status' => $status?->value ?? $user->status,
             'status_key' => $status !== null ? Str::snake($status->name) : null,
             'status_label' => $status?->name,
