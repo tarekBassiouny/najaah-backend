@@ -89,10 +89,12 @@ class StudentProfileController extends Controller
         }
 
         $resolvedCenterId = $request->attributes->get('resolved_center_id');
-        $this->studentProfileQueryService->assertMatchesResolvedCenterScope(
-            $user,
-            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
-        );
+        if (is_numeric($resolvedCenterId)) {
+            $this->studentProfileQueryService->assertMatchesResolvedCenterScope(
+                $user,
+                (int) $resolvedCenterId
+            );
+        }
 
         $cacheKey = $this->getCacheKey($user);
 
