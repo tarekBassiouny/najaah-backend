@@ -27,6 +27,7 @@ class AdminNotificationService implements AdminNotificationServiceInterface
     {
         $centerId = $this->getActorCenterId($actor);
 
+        /** @var Builder<AdminNotification> $query */
         $query = AdminNotification::query()
             ->forUser($actor, $centerId)
             ->orderByDesc('created_at');
@@ -178,7 +179,7 @@ class AdminNotificationService implements AdminNotificationServiceInterface
     }
 
     /**
-     * @param Builder<AdminNotification> $query
+     * @param  Builder<AdminNotification>  $query
      */
     private function excludeDeletedForActor(Builder $query, User $actor): void
     {

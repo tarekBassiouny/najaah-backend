@@ -20,11 +20,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property AdminNotification $notification
  * @property User $user
  */
-/**
- * @uses HasFactory<\Database\Factories\AdminNotificationUserStateFactory>
- */
 class AdminNotificationUserState extends Model
 {
+    /** @use HasFactory<\Database\Factories\AdminNotificationUserStateFactory> */
     use HasFactory;
     use SoftDeletes;
 

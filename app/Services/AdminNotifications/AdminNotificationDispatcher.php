@@ -101,7 +101,7 @@ class AdminNotificationDispatcher
             data: [
                 'entity_type' => 'survey_response',
                 'entity_id' => $response->id,
-                'action_url' => '/admin/surveys/'.$survey?->id.'/responses/'.$response->id,
+                'action_url' => '/admin/surveys/'.$survey->id.'/responses/'.$response->id,
                 'student_id' => $student->id,
                 'student_name' => $student->name,
                 'survey_id' => $survey->id,
