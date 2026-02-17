@@ -120,6 +120,9 @@ class AdminAuthService implements AdminAuthServiceInterface
         return true;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function updateProfile(User $user, array $data): User
     {
         $updates = [];

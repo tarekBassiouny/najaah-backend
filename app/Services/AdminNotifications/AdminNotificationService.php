@@ -7,6 +7,7 @@ namespace App\Services\AdminNotifications;
 use App\Enums\AdminNotificationType;
 use App\Filters\Admin\AdminNotificationFilters;
 use App\Models\AdminNotification;
+use App\Models\AdminNotificationUserState;
 use App\Models\User;
 use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
 use App\Services\Centers\CenterScopeService;
@@ -30,8 +31,20 @@ class AdminNotificationService implements AdminNotificationServiceInterface
             ->forUser($actor, $centerId)
             ->orderByDesc('created_at');
 
+        $this->excludeDeletedForActor($query, $actor);
+
+        $query->with([
+            'userStates' => function (Builder $builder) use ($actor): void {
+                $builder->where('user_id', $actor->id)
+                    ->whereNull('deleted_at');
+            },
+        ]);
+
         if ($filters->unreadOnly) {
-            $query->unread();
+            $query->whereDoesntHave('userStates', function (Builder $state) use ($actor): void {
+                $state->where('user_id', $actor->id)
+                    ->whereNotNull('read_at');
+            });
         }
 
         if ($filters->type !== null) {
@@ -54,10 +67,15 @@ class AdminNotificationService implements AdminNotificationServiceInterface
     {
         $centerId = $this->getActorCenterId($actor);
 
-        return AdminNotification::query()
-            ->forUser($actor, $centerId)
-            ->unread()
-            ->count();
+        $query = AdminNotification::query()
+            ->forUser($actor, $centerId);
+
+        $this->excludeDeletedForActor($query, $actor);
+
+        return $query->whereDoesntHave('userStates', function (Builder $state) use ($actor): void {
+            $state->where('user_id', $actor->id)
+                ->whereNotNull('read_at');
+        })->count();
     }
 
     /**
@@ -85,7 +103,7 @@ class AdminNotificationService implements AdminNotificationServiceInterface
     {
         $this->assertCanAccess($notification, $actor);
 
-        $notification->markAsRead();
+        $this->upsertUserState($notification->id, $actor->id, now());
 
         return $notification->fresh() ?? $notification;
     }
@@ -94,17 +112,39 @@ class AdminNotificationService implements AdminNotificationServiceInterface
     {
         $centerId = $this->getActorCenterId($actor);
 
-        return AdminNotification::query()
-            ->forUser($actor, $centerId)
-            ->unread()
-            ->update(['read_at' => now()]);
+        $query = AdminNotification::query()
+            ->forUser($actor, $centerId);
+
+        $this->excludeDeletedForActor($query, $actor);
+
+        $unreadIds = $query
+            ->whereDoesntHave('userStates', function (Builder $state) use ($actor): void {
+                $state->where('user_id', $actor->id)
+                    ->whereNotNull('read_at');
+            })
+            ->pluck('id')
+            ->all();
+
+        foreach ($unreadIds as $notificationId) {
+            $this->upsertUserState($notificationId, $actor->id, now());
+        }
+
+        return count($unreadIds);
     }
 
     public function delete(AdminNotification $notification, User $actor): void
     {
         $this->assertCanAccess($notification, $actor);
 
-        $notification->delete();
+        AdminNotificationUserState::updateOrCreate(
+            [
+                'admin_notification_id' => $notification->id,
+                'user_id' => $actor->id,
+            ],
+            [
+                'deleted_at' => now(),
+            ]
+        );
     }
 
     private function getActorCenterId(User $actor): ?int
@@ -120,10 +160,13 @@ class AdminNotificationService implements AdminNotificationServiceInterface
     {
         $centerId = $this->getActorCenterId($actor);
 
-        $canAccess = AdminNotification::query()
+        $query = AdminNotification::query()
             ->where('id', $notification->id)
-            ->forUser($actor, $centerId)
-            ->exists();
+            ->forUser($actor, $centerId);
+
+        $this->excludeDeletedForActor($query, $actor);
+
+        $canAccess = $query->exists();
 
         if (! $canAccess) {
             throw new \App\Exceptions\DomainException(
@@ -132,5 +175,30 @@ class AdminNotificationService implements AdminNotificationServiceInterface
                 403
             );
         }
+    }
+
+    /**
+     * @param Builder<AdminNotification> $query
+     */
+    private function excludeDeletedForActor(Builder $query, User $actor): void
+    {
+        $query->whereDoesntHave('userStates', function (Builder $state) use ($actor): void {
+            $state->where('user_id', $actor->id)
+                ->whereNotNull('deleted_at');
+        });
+    }
+
+    private function upsertUserState(int $notificationId, int $userId, ?\DateTimeInterface $readAt = null): void
+    {
+        AdminNotificationUserState::updateOrCreate(
+            [
+                'admin_notification_id' => $notificationId,
+                'user_id' => $userId,
+            ],
+            [
+                'read_at' => $readAt,
+                'deleted_at' => null,
+            ]
+        );
     }
 }
