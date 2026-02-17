@@ -55,6 +55,8 @@ class AdminAuthService implements AdminAuthServiceInterface
         }
 
         if (! $user->force_password_reset && $centerAccessValid && $apiScopeValid) {
+            $user->last_login_at = now();
+            $user->save();
             $this->auditLogService->log($user, $user, AuditActions::ADMIN_LOGIN);
         }
 
