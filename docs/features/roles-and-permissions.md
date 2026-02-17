@@ -39,6 +39,7 @@ All modules share the same permission catalog whether the admin is system scoped
 | `course.manage` | Courses | Manage course CRUD |
 | `course.publish` | Courses | Publish ready courses |
 | `section.manage` | Sections | CRUD sections inside a course |
+| `analytics.manage` | Analytics | Manage analytics dashboards |
 | `video.manage` | Videos | Manage videos |
 | `video.upload` | Videos | Authorize uploads |
 | `video.playback.override` | Playback | Override playback constraints (debug) |
@@ -46,12 +47,17 @@ All modules share the same permission catalog whether the admin is system scoped
 | `enrollment.manage` | Enrollments | Manage student enrollments |
 | `center.manage` | Centers | Create and configure centers |
 | `settings.manage` | Settings | Manage system or center settings |
+| `settings.view` | Settings | View configured settings |
 | `student.manage` | Students | Manage student accounts |
 | `survey.manage` | Surveys | CRUD surveys and related metadata |
 | `audit.view` | Analytics | Read audit logs and analytics dashboards |
+| `notification.manage` | Notifications | Manage admin notifications |
 | `device_change.manage` | Device change requests | Approve/reject device-change flows |
 | `extra_view.manage` | Extra views | Manage extra view requests |
 | `instructor.manage` | Instructors | Manage instructor profiles |
+| `agent.execute` | Agents | Execute general agents |
+| `agent.content_publishing` | Agents | Execute content publishing agents |
+| `agent.enrollment.bulk` | Agents | Execute bulk enrollment agents |
 
 Because the permissions behave identically for `scope.system_admin` and `scope.center_route`, reuse the same checkbox/grid for both contexts. Controls that mutate roles or permissions should remain hidden unless the system API key grants `scope.system_admin`.
 
