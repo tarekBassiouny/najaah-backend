@@ -40,24 +40,26 @@ class JwtMobileMiddleware
         | Center validation
         |--------------------------------------------------------------------------
         */
+        $resolvedCenterId = $this->resolveCenterId($request->attributes->get('resolved_center_id'));
+
+        if ($resolvedCenterId === null) {
+            if (is_numeric($user->center_id)) {
+                return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
+            }
+        } elseif (! is_numeric($user->center_id) || (int) $user->center_id !== $resolvedCenterId) {
+            return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
+        }
+
         $requestedCenterId = $request->input('center_id');
 
         if (is_numeric($requestedCenterId)) {
             $requestedCenterId = (int) $requestedCenterId;
-
-            if (is_numeric($user->center_id) && (int) $user->center_id !== $requestedCenterId) {
+            if ($resolvedCenterId !== null && $requestedCenterId !== $resolvedCenterId) {
                 return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
             }
 
-            if ($user->center_id === null) {
-                $isUnbranded = Center::query()
-                    ->where('id', $requestedCenterId)
-                    ->where('type', 0)
-                    ->exists();
-
-                if (! $isUnbranded) {
-                    return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
-                }
+            if (! $this->studentCanAccessRequestedCenter($user, $requestedCenterId)) {
+                return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
             }
         }
 
@@ -124,5 +126,22 @@ class JwtMobileMiddleware
                 'message' => $message,
             ],
         ], Response::HTTP_FORBIDDEN);
+    }
+
+    private function resolveCenterId(mixed $value): ?int
+    {
+        return is_numeric($value) ? (int) $value : null;
+    }
+
+    private function studentCanAccessRequestedCenter(User $user, int $requestedCenterId): bool
+    {
+        if (is_numeric($user->center_id)) {
+            return (int) $user->center_id === $requestedCenterId;
+        }
+
+        return Center::query()
+            ->where('id', $requestedCenterId)
+            ->where('type', 0)
+            ->exists();
     }
 }

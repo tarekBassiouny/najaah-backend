@@ -120,3 +120,55 @@ it('blocks signed url for hidden pdfs', function (): void {
 
     $response->assertStatus(403);
 });
+
+it('blocks system students from accessing branded center pdf content', function (): void {
+    $center = Center::factory()->create([
+        'type' => 1,
+        'pdf_download_permission' => true,
+    ]);
+    $creator = User::factory()->create(['center_id' => $center->id, 'is_student' => false]);
+    $student = User::factory()->create([
+        'center_id' => null,
+        'is_student' => true,
+        'password' => 'secret123',
+    ]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $creator->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
+    $section = Section::factory()->create(['course_id' => $course->id, 'order_index' => 1]);
+
+    $path = 'centers/'.$center->id.'/pdfs/demo.pdf';
+    $pdf = Pdf::factory()->create([
+        'created_by' => $creator->id,
+        'source_id' => $path,
+        'source_url' => null,
+    ]);
+
+    CoursePdf::create([
+        'course_id' => $course->id,
+        'pdf_id' => $pdf->id,
+        'section_id' => $section->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet(
+        "/api/v1/centers/{$center->id}/courses/{$course->id}/pdfs/{$pdf->id}/signed-url",
+        ['X-Api-Key' => (string) config('services.system_api_key')]
+    );
+
+    $response->assertStatus(403);
+});

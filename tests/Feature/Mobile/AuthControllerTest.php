@@ -117,7 +117,7 @@ test('send validates base phone and country code formats', function (): void {
 
 test('verify otp issues tokens', function (): void {
     /** @var User $user */
-    $user = User::factory()->create(['phone' => '1234567890', 'country_code' => '+20']);
+    $user = User::factory()->create(['phone' => '1234567890', 'country_code' => '+20', 'center_id' => null]);
     OtpCode::factory()->create([
         'user_id' => $user->id,
         'phone' => '1234567890',
@@ -171,6 +171,66 @@ test('verify rejects center mismatch', function (): void {
         'device_uuid' => 'device-1',
     ], [
         'X-Api-Key' => $centerB->api_key,
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
+test('verify rejects branded student when using system api key', function (): void {
+    $center = Center::factory()->create(['api_key' => 'center-a-key']);
+
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'center_id' => $center->id,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-system-scope-mismatch',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-system-scope-mismatch',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
+test('verify rejects system student when using center api key', function (): void {
+    $center = Center::factory()->create(['api_key' => 'center-a-key']);
+
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'center_id' => null,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-center-scope-mismatch',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-center-scope-mismatch',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => $center->api_key,
     ]);
 
     $response->assertStatus(422)
@@ -237,6 +297,7 @@ test('verify rejects login from another device when active device exists', funct
     $user = User::factory()->create([
         'phone' => '9990001111',
         'country_code' => '+20',
+        'center_id' => null,
     ]);
 
     UserDevice::factory()->create([
@@ -267,7 +328,7 @@ test('verify rejects login from another device when active device exists', funct
 
 test('otp cannot be reused after consumption', function (): void {
     /** @var User $user */
-    $user = User::factory()->create(['phone' => '5555555555', 'country_code' => '+20']);
+    $user = User::factory()->create(['phone' => '5555555555', 'country_code' => '+20', 'center_id' => null]);
     $otp = OtpCode::factory()->create([
         'user_id' => $user->id,
         'phone' => '5555555555',

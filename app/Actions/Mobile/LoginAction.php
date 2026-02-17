@@ -59,18 +59,11 @@ class LoginAction
         if (is_numeric($centerId)) {
             $centerIdValue = $centerId;
 
-            if (is_numeric($user->center_id) && (int) $user->center_id !== $centerIdValue) {
+            if (! is_numeric($user->center_id) || (int) $user->center_id !== $centerIdValue) {
                 return ['error' => 'CENTER_MISMATCH'];
             }
-
-            if ($user->center_id === null) {
-                $user->center_id = $centerIdValue;
-                $user->save();
-
-                $user->centers()->syncWithoutDetaching([
-                    $centerIdValue => ['type' => 'student'],
-                ]);
-            }
+        } elseif (is_numeric($user->center_id)) {
+            return ['error' => 'CENTER_MISMATCH'];
         }
 
         $device = $this->deviceService->register(

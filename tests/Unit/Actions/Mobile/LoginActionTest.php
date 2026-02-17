@@ -19,7 +19,7 @@ uses(TestCase::class, RefreshDatabase::class)->group('auth', 'actions', 'mobile'
 test('execute returns payload when otp valid', function (): void {
 
     // UNIT TEST → use make() not create()
-    $user = User::factory()->make();
+    $user = User::factory()->make(['center_id' => null]);
 
     $device = UserDevice::factory()->make(['user_id' => $user->id]);
 
@@ -115,6 +115,86 @@ test('execute returns error when otp invalid', function (): void {
 
 test('execute returns error when center mismatches', function (): void {
     $user = User::factory()->make(['center_id' => 10]);
+    $otpCode = OtpCode::factory()->make();
+    $otpCode->setRelation('user', $user);
+
+    $otpService = \Mockery::mock(OtpServiceInterface::class);
+    $otpService->shouldReceive('verify')
+        ->once()
+        ->with('123456', 'token-123')
+        ->andReturn($otpCode);
+
+    $deviceService = \Mockery::mock(DeviceServiceInterface::class);
+    $deviceService->shouldNotReceive('register');
+
+    $jwtService = \Mockery::mock(JwtServiceInterface::class);
+    $jwtService->shouldNotReceive('create');
+
+    $studentService = \Mockery::mock(StudentService::class);
+    $studentService->shouldNotReceive('create');
+
+    $auditLogService = \Mockery::mock(AuditLogService::class);
+    $auditLogService->shouldNotReceive('log');
+
+    $action = new LoginAction(
+        $otpService,
+        $deviceService,
+        $jwtService,
+        $studentService,
+        $auditLogService
+    );
+
+    $result = $action->execute([
+        'otp' => '123456',
+        'token' => 'token-123',
+        'device_uuid' => 'device-1',
+    ], 99);
+
+    expect($result)->toBe(['error' => 'CENTER_MISMATCH']);
+});
+
+test('execute returns error when system scope login is used for center student', function (): void {
+    $user = User::factory()->make(['center_id' => 10]);
+    $otpCode = OtpCode::factory()->make();
+    $otpCode->setRelation('user', $user);
+
+    $otpService = \Mockery::mock(OtpServiceInterface::class);
+    $otpService->shouldReceive('verify')
+        ->once()
+        ->with('123456', 'token-123')
+        ->andReturn($otpCode);
+
+    $deviceService = \Mockery::mock(DeviceServiceInterface::class);
+    $deviceService->shouldNotReceive('register');
+
+    $jwtService = \Mockery::mock(JwtServiceInterface::class);
+    $jwtService->shouldNotReceive('create');
+
+    $studentService = \Mockery::mock(StudentService::class);
+    $studentService->shouldNotReceive('create');
+
+    $auditLogService = \Mockery::mock(AuditLogService::class);
+    $auditLogService->shouldNotReceive('log');
+
+    $action = new LoginAction(
+        $otpService,
+        $deviceService,
+        $jwtService,
+        $studentService,
+        $auditLogService
+    );
+
+    $result = $action->execute([
+        'otp' => '123456',
+        'token' => 'token-123',
+        'device_uuid' => 'device-1',
+    ], null);
+
+    expect($result)->toBe(['error' => 'CENTER_MISMATCH']);
+});
+
+test('execute returns error when center scope login is used for system student', function (): void {
+    $user = User::factory()->make(['center_id' => null]);
     $otpCode = OtpCode::factory()->make();
     $otpCode->setRelation('user', $user);
 

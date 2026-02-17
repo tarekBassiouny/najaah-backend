@@ -22,10 +22,10 @@ beforeEach(function (): void {
     config(['services.system_api_key' => 'system-key']);
 });
 
-function authHeaders(?string $token = null): array
+function authHeaders(?string $token = null, ?string $apiKey = null): array
 {
     $headers = [
-        'X-Api-Key' => 'system-key',
+        'X-Api-Key' => $apiKey ?? 'system-key',
     ];
 
     if (is_string($token) && $token !== '') {
@@ -39,6 +39,7 @@ test('returns current student on /auth/me', function (): void {
     $user = User::factory()->create([
         'is_student' => true,
         'password' => 'secret123',
+        'center_id' => null,
     ]);
 
     $device = UserDevice::factory()->create([
@@ -65,7 +66,9 @@ test('returns current student on /auth/me', function (): void {
 });
 
 test('returns detailed current student profile on /auth/me/profile', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create([
+        'api_key' => 'center-me-profile-key',
+    ]);
     $category = Category::factory()->for($center, 'center')->create();
     $creator = User::factory()->for($center, 'center')->create(['is_student' => false]);
 
@@ -128,7 +131,7 @@ test('returns detailed current student profile on /auth/me/profile', function ()
         'is_full_play' => true,
     ]);
 
-    $response = $this->getJson('/api/v1/auth/me/profile', authHeaders($access));
+    $response = $this->getJson('/api/v1/auth/me/profile', authHeaders($access, 'center-me-profile-key'));
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -217,6 +220,7 @@ test('revokes token on logout and blocks reuse', function (): void {
     $user = User::factory()->create([
         'is_student' => true,
         'password' => 'secret123',
+        'center_id' => null,
     ]);
 
     $device = UserDevice::factory()->create([
@@ -352,6 +356,7 @@ test('updates student profile name', function (): void {
         'is_student' => true,
         'password' => 'secret123',
         'name' => 'Old Name',
+        'center_id' => null,
     ]);
 
     $device = UserDevice::factory()->create([

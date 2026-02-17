@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Requests;
 
+use App\Enums\CenterType;
 use App\Enums\DeviceChangeRequestStatus;
 use App\Enums\EnrollmentStatus;
 use App\Enums\ExtraViewRequestStatus;
@@ -44,6 +45,7 @@ class RequestService
         ?string $reason
     ): void {
         $this->studentAccessService->assertStudent($student);
+        $this->assertCenterAccess($student, $center);
         $this->courseAccessService->assertCourseInCenter($course, $center);
 
         DB::transaction(function () use ($student, $course, $video, $reason): void {
@@ -94,6 +96,7 @@ class RequestService
         ?string $reason
     ): void {
         $this->studentAccessService->assertStudent($student);
+        $this->assertCenterAccess($student, $center);
         $this->courseAccessService->assertCourseInCenter($course, $center);
 
         DB::transaction(function () use ($student, $course): void {
@@ -178,5 +181,20 @@ class RequestService
     private function deny(string $code, string $message, int $status): void
     {
         throw new DomainException($message, $code, $status);
+    }
+
+    private function assertCenterAccess(User $student, Center $center): void
+    {
+        if (is_numeric($student->center_id)) {
+            if ((int) $student->center_id !== (int) $center->id) {
+                $this->deny(ErrorCodes::CENTER_MISMATCH, 'Center mismatch.', 403);
+            }
+
+            return;
+        }
+
+        if ($center->type !== CenterType::Unbranded) {
+            $this->deny(ErrorCodes::CENTER_MISMATCH, 'Center mismatch.', 403);
+        }
     }
 }

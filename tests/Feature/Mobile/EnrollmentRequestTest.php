@@ -119,6 +119,31 @@ it('blocks enrollment request on center mismatch', function (): void {
 
     $response = $this->apiPost("/api/v1/centers/{$centerB->id}/courses/{$course->id}/enroll-request");
 
-    $response->assertStatus(404)
-        ->assertJsonPath('error.code', 'NOT_FOUND');
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
+it('blocks system students from requesting enrollment in branded center courses', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/enroll-request", [
+        'reason' => 'Interested in joining',
+    ], [
+        'X-Api-Key' => (string) config('services.system_api_key'),
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
 });
