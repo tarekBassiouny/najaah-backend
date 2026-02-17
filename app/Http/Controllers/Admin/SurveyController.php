@@ -8,10 +8,14 @@ use App\Enums\SurveyScopeType;
 use App\Filters\Admin\SurveyFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Surveys\AssignSurveyRequest;
+use App\Http\Requests\Admin\Surveys\BulkCloseSurveysRequest;
+use App\Http\Requests\Admin\Surveys\BulkDeleteSurveysRequest;
+use App\Http\Requests\Admin\Surveys\BulkUpdateSurveyStatusRequest;
 use App\Http\Requests\Admin\Surveys\ListSurveysRequest;
 use App\Http\Requests\Admin\Surveys\ListSurveyTargetStudentsRequest;
 use App\Http\Requests\Admin\Surveys\StoreSurveyRequest;
 use App\Http\Requests\Admin\Surveys\UpdateSurveyRequest;
+use App\Http\Requests\Admin\Surveys\UpdateSurveyStatusRequest;
 use App\Http\Resources\Admin\SurveyAnalyticsResource;
 use App\Http\Resources\Admin\SurveyResource;
 use App\Http\Resources\Admin\SurveyTargetStudentResource;
@@ -46,7 +50,13 @@ class SurveyController extends Controller
             scopeType: SurveyScopeType::System->value,
             centerId: null,
             isActive: $requestFilters->isActive,
-            type: $requestFilters->type
+            isMandatory: $requestFilters->isMandatory,
+            type: $requestFilters->type,
+            search: $requestFilters->search,
+            startFrom: $requestFilters->startFrom,
+            startTo: $requestFilters->startTo,
+            endFrom: $requestFilters->endFrom,
+            endTo: $requestFilters->endTo
         );
 
         $paginator = $this->surveyService->paginate($filters, $admin);
@@ -67,7 +77,13 @@ class SurveyController extends Controller
             scopeType: SurveyScopeType::Center->value,
             centerId: (int) $center->id,
             isActive: $requestFilters->isActive,
-            type: $requestFilters->type
+            isMandatory: $requestFilters->isMandatory,
+            type: $requestFilters->type,
+            search: $requestFilters->search,
+            startFrom: $requestFilters->startFrom,
+            startTo: $requestFilters->startTo,
+            endFrom: $requestFilters->endFrom,
+            endTo: $requestFilters->endTo
         );
 
         $paginator = $this->surveyService->paginate($filters, $admin);
@@ -128,7 +144,11 @@ class SurveyController extends Controller
         $data['scope_type'] = SurveyScopeType::System->value;
         $data['center_id'] = null;
 
-        $survey = $this->surveyService->create($data, $admin);
+        try {
+            $survey = $this->surveyService->create($data, $admin);
+        } catch (\InvalidArgumentException $invalidArgumentException) {
+            $this->invalidAssignment($invalidArgumentException->getMessage());
+        }
 
         return response()->json([
             'success' => true,
@@ -148,7 +168,11 @@ class SurveyController extends Controller
         $data['scope_type'] = SurveyScopeType::Center->value;
         $data['center_id'] = (int) $center->id;
 
-        $survey = $this->surveyService->create($data, $admin);
+        try {
+            $survey = $this->surveyService->create($data, $admin);
+        } catch (\InvalidArgumentException $invalidArgumentException) {
+            $this->invalidAssignment($invalidArgumentException->getMessage());
+        }
 
         return response()->json([
             'success' => true,
@@ -240,12 +264,451 @@ class SurveyController extends Controller
     }
 
     /**
+     * Update system survey active status.
+     */
+    public function systemUpdateStatus(UpdateSurveyStatusRequest $request, Survey $survey): JsonResponse
+    {
+        $admin = $this->requireAdmin($request);
+        $this->assertSystemSurvey($survey);
+        /** @var array{is_active: bool} $data */
+        $data = $request->validated();
+
+        $updated = $this->surveyService->update($survey, ['is_active' => (bool) $data['is_active']], $admin);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Survey status updated successfully',
+            'data' => new SurveyResource($updated),
+        ]);
+    }
+
+    /**
+     * Update center survey active status.
+     */
+    public function centerUpdateStatus(
+        UpdateSurveyStatusRequest $request,
+        Center $center,
+        Survey $survey
+    ): JsonResponse {
+        $admin = $this->requireAdmin($request);
+        $this->assertCenterSurvey($center, $survey);
+        /** @var array{is_active: bool} $data */
+        $data = $request->validated();
+
+        $updated = $this->surveyService->update($survey, ['is_active' => (bool) $data['is_active']], $admin);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Survey status updated successfully',
+            'data' => new SurveyResource($updated),
+        ]);
+    }
+
+    /**
+     * Bulk update system surveys active status.
+     */
+    public function systemBulkUpdateStatus(BulkUpdateSurveyStatusRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin($request);
+        /** @var array{is_active: bool, survey_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
+        $surveys = Survey::query()
+            ->whereIn('id', $requestedIds)
+            ->get()
+            ->keyBy('id');
+
+        $updated = [];
+        $skipped = [];
+        $failed = [];
+        $statusValue = (bool) $data['is_active'];
+
+        foreach ($requestedIds as $surveyId) {
+            $surveyModel = $surveys->get($surveyId);
+            if (
+                ! $surveyModel instanceof Survey
+                || $surveyModel->scope_type !== SurveyScopeType::System
+                || $surveyModel->center_id !== null
+            ) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => 'Survey not found.',
+                ];
+
+                continue;
+            }
+
+            if ((bool) $surveyModel->is_active === $statusValue) {
+                $skipped[] = $surveyId;
+
+                continue;
+            }
+
+            try {
+                $updated[] = $this->surveyService->update($surveyModel, ['is_active' => $statusValue], $admin);
+            } catch (\InvalidArgumentException $exception) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk survey status update processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'updated' => count($updated),
+                    'skipped' => count($skipped),
+                    'failed' => count($failed),
+                ],
+                'updated' => SurveyResource::collection($updated),
+                'skipped' => $skipped,
+                'failed' => $failed,
+            ],
+        ]);
+    }
+
+    /**
+     * Bulk update center surveys active status.
+     */
+    public function centerBulkUpdateStatus(
+        BulkUpdateSurveyStatusRequest $request,
+        Center $center
+    ): JsonResponse {
+        $admin = $this->requireAdmin($request);
+        /** @var array{is_active: bool, survey_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
+        $surveys = Survey::query()
+            ->whereIn('id', $requestedIds)
+            ->get()
+            ->keyBy('id');
+
+        $updated = [];
+        $skipped = [];
+        $failed = [];
+        $statusValue = (bool) $data['is_active'];
+
+        foreach ($requestedIds as $surveyId) {
+            $surveyModel = $surveys->get($surveyId);
+            if (
+                ! $surveyModel instanceof Survey
+                || $surveyModel->scope_type !== SurveyScopeType::Center
+                || ! is_numeric($surveyModel->center_id)
+                || (int) $surveyModel->center_id !== (int) $center->id
+            ) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => 'Survey not found.',
+                ];
+
+                continue;
+            }
+
+            if ((bool) $surveyModel->is_active === $statusValue) {
+                $skipped[] = $surveyId;
+
+                continue;
+            }
+
+            try {
+                $updated[] = $this->surveyService->update($surveyModel, ['is_active' => $statusValue], $admin);
+            } catch (\InvalidArgumentException $exception) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk survey status update processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'updated' => count($updated),
+                    'skipped' => count($skipped),
+                    'failed' => count($failed),
+                ],
+                'updated' => SurveyResource::collection($updated),
+                'skipped' => $skipped,
+                'failed' => $failed,
+            ],
+        ]);
+    }
+
+    /**
+     * Bulk close system surveys.
+     */
+    public function systemBulkClose(BulkCloseSurveysRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin($request);
+        /** @var array{survey_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
+        $surveys = Survey::query()
+            ->whereIn('id', $requestedIds)
+            ->get()
+            ->keyBy('id');
+
+        $closed = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($requestedIds as $surveyId) {
+            $surveyModel = $surveys->get($surveyId);
+            if (! $surveyModel instanceof Survey || ! $this->isSystemSurveyModel($surveyModel)) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => 'Survey not found.',
+                ];
+
+                continue;
+            }
+
+            if (! $surveyModel->is_active) {
+                $skipped[] = $surveyId;
+
+                continue;
+            }
+
+            try {
+                $closed[] = $this->surveyService->close($surveyModel, $admin);
+            } catch (\InvalidArgumentException $exception) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk survey close processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'closed' => count($closed),
+                    'skipped' => count($skipped),
+                    'failed' => count($failed),
+                ],
+                'closed' => SurveyResource::collection($closed),
+                'skipped' => $skipped,
+                'failed' => $failed,
+            ],
+        ]);
+    }
+
+    /**
+     * Bulk close center surveys.
+     */
+    public function centerBulkClose(BulkCloseSurveysRequest $request, Center $center): JsonResponse
+    {
+        $admin = $this->requireAdmin($request);
+        /** @var array{survey_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
+        $surveys = Survey::query()
+            ->whereIn('id', $requestedIds)
+            ->get()
+            ->keyBy('id');
+
+        $closed = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($requestedIds as $surveyId) {
+            $surveyModel = $surveys->get($surveyId);
+            if (! $surveyModel instanceof Survey || ! $this->isCenterSurveyModelFor($surveyModel, $center)) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => 'Survey not found.',
+                ];
+
+                continue;
+            }
+
+            if (! $surveyModel->is_active) {
+                $skipped[] = $surveyId;
+
+                continue;
+            }
+
+            try {
+                $closed[] = $this->surveyService->close($surveyModel, $admin);
+            } catch (\InvalidArgumentException $exception) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk survey close processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'closed' => count($closed),
+                    'skipped' => count($skipped),
+                    'failed' => count($failed),
+                ],
+                'closed' => SurveyResource::collection($closed),
+                'skipped' => $skipped,
+                'failed' => $failed,
+            ],
+        ]);
+    }
+
+    /**
+     * Bulk delete system surveys with safety checks.
+     */
+    public function systemBulkDestroy(BulkDeleteSurveysRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin($request);
+        /** @var array{survey_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
+        $surveys = Survey::query()
+            ->whereIn('id', $requestedIds)
+            ->withCount('responses')
+            ->get()
+            ->keyBy('id');
+
+        $deleted = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($requestedIds as $surveyId) {
+            $surveyModel = $surveys->get($surveyId);
+            if (! $surveyModel instanceof Survey || ! $this->isSystemSurveyModel($surveyModel)) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => 'Survey not found.',
+                ];
+
+                continue;
+            }
+
+            $skipReason = $this->bulkDeleteSkipReason($surveyModel);
+            if ($skipReason !== null) {
+                $skipped[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => $skipReason,
+                ];
+
+                continue;
+            }
+
+            try {
+                $this->surveyService->delete($surveyModel, $admin);
+                $deleted[] = $surveyId;
+            } catch (\InvalidArgumentException $exception) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk survey delete processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'deleted' => count($deleted),
+                    'skipped' => count($skipped),
+                    'failed' => count($failed),
+                ],
+                'deleted' => $deleted,
+                'skipped' => $skipped,
+                'failed' => $failed,
+            ],
+        ]);
+    }
+
+    /**
+     * Bulk delete center surveys with safety checks.
+     */
+    public function centerBulkDestroy(BulkDeleteSurveysRequest $request, Center $center): JsonResponse
+    {
+        $admin = $this->requireAdmin($request);
+        /** @var array{survey_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
+        $surveys = Survey::query()
+            ->whereIn('id', $requestedIds)
+            ->withCount('responses')
+            ->get()
+            ->keyBy('id');
+
+        $deleted = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($requestedIds as $surveyId) {
+            $surveyModel = $surveys->get($surveyId);
+            if (! $surveyModel instanceof Survey || ! $this->isCenterSurveyModelFor($surveyModel, $center)) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => 'Survey not found.',
+                ];
+
+                continue;
+            }
+
+            $skipReason = $this->bulkDeleteSkipReason($surveyModel);
+            if ($skipReason !== null) {
+                $skipped[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => $skipReason,
+                ];
+
+                continue;
+            }
+
+            try {
+                $this->surveyService->delete($surveyModel, $admin);
+                $deleted[] = $surveyId;
+            } catch (\InvalidArgumentException $exception) {
+                $failed[] = [
+                    'survey_id' => $surveyId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk survey delete processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'deleted' => count($deleted),
+                    'skipped' => count($skipped),
+                    'failed' => count($failed),
+                ],
+                'deleted' => $deleted,
+                'skipped' => $skipped,
+                'failed' => $failed,
+            ],
+        ]);
+    }
+
+    /**
      * Delete a system-scoped survey.
      */
     public function systemDestroy(Request $request, Survey $survey): JsonResponse
     {
         $admin = $this->requireAdmin($request);
         $this->assertSystemSurvey($survey);
+        $this->assertSurveyCanBeDeleted($survey);
         $this->surveyService->delete($survey, $admin);
 
         return response()->json([
@@ -262,6 +725,7 @@ class SurveyController extends Controller
     {
         $admin = $this->requireAdmin($request);
         $this->assertCenterSurvey($center, $survey);
+        $this->assertSurveyCanBeDeleted($survey);
         $this->surveyService->delete($survey, $admin);
 
         return response()->json([
@@ -281,8 +745,13 @@ class SurveyController extends Controller
         /** @var array{assignments: array<int, array{type: string, id?: int}>} $data */
         $data = $request->validated();
 
-        $warnings = $this->assignmentService->getPendingActiveWarnings($survey, $data['assignments']);
-        $this->assignmentService->assignMultiple($survey, $data['assignments'], $admin);
+        try {
+            $warnings = $this->assignmentService->getPendingActiveWarnings($survey, $data['assignments']);
+            $this->assignmentService->assignMultiple($survey, $data['assignments'], $admin);
+        } catch (\InvalidArgumentException $invalidArgumentException) {
+            $this->invalidAssignment($invalidArgumentException->getMessage());
+        }
+
         $survey->refresh()->load(['questions.options', 'center', 'creator', 'assignments']);
 
         return response()->json([
@@ -303,8 +772,13 @@ class SurveyController extends Controller
         /** @var array{assignments: array<int, array{type: string, id?: int}>} $data */
         $data = $request->validated();
 
-        $warnings = $this->assignmentService->getPendingActiveWarnings($survey, $data['assignments']);
-        $this->assignmentService->assignMultiple($survey, $data['assignments'], $admin);
+        try {
+            $warnings = $this->assignmentService->getPendingActiveWarnings($survey, $data['assignments']);
+            $this->assignmentService->assignMultiple($survey, $data['assignments'], $admin);
+        } catch (\InvalidArgumentException $invalidArgumentException) {
+            $this->invalidAssignment($invalidArgumentException->getMessage());
+        }
+
         $survey->refresh()->load(['questions.options', 'center', 'creator', 'assignments']);
 
         return response()->json([
@@ -414,6 +888,44 @@ class SurveyController extends Controller
         }
     }
 
+    private function isSystemSurveyModel(Survey $survey): bool
+    {
+        return $survey->scope_type === SurveyScopeType::System && $survey->center_id === null;
+    }
+
+    private function isCenterSurveyModelFor(Survey $survey, Center $center): bool
+    {
+        return $survey->scope_type === SurveyScopeType::Center
+            && is_numeric($survey->center_id)
+            && (int) $survey->center_id === (int) $center->id;
+    }
+
+    private function bulkDeleteSkipReason(Survey $survey): ?string
+    {
+        $responsesCount = is_numeric($survey->responses_count ?? null)
+            ? (int) $survey->responses_count
+            : 0;
+
+        if ($responsesCount > 0) {
+            return 'Survey with responses cannot be deleted.';
+        }
+
+        if ($survey->is_active) {
+            return 'Active survey cannot be deleted. Close it first.';
+        }
+
+        return null;
+    }
+
+    private function assertSurveyCanBeDeleted(Survey $survey): void
+    {
+        $survey->loadCount('responses');
+        $skipReason = $this->bulkDeleteSkipReason($survey);
+        if ($skipReason !== null) {
+            $this->deleteNotAllowed($skipReason);
+        }
+    }
+
     /**
      * @param  array<int, Survey>  $surveys
      */
@@ -469,5 +981,27 @@ class SurveyController extends Controller
                 'message' => $message,
             ],
         ], 404));
+    }
+
+    private function invalidAssignment(string $message): never
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'VALIDATION_ERROR',
+                'message' => $message !== '' ? $message : 'Validation failed.',
+            ],
+        ], 422));
+    }
+
+    private function deleteNotAllowed(string $message): never
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'VALIDATION_ERROR',
+                'message' => $message !== '' ? $message : 'Validation failed.',
+            ],
+        ], 422));
     }
 }

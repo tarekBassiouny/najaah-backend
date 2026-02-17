@@ -44,7 +44,7 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
 
         if ($survey->scope_type === SurveyScopeType::System) {
             return match ($type) {
-                SurveyAssignableType::Center => $this->isValidCenterForSystemScope($model),
+                SurveyAssignableType::Center => false,
                 SurveyAssignableType::User => $this->isValidStudentForSystemScope($model),
                 SurveyAssignableType::Course => $this->isValidCourseForSystemScope($model),
                 default => false,
@@ -197,7 +197,7 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
     /**
      * Assign survey to all eligible students based on survey scope.
      * - CENTER scoped: All students in the survey's center
-     * - SYSTEM scoped: All students in unbranded centers + students without center
+     * - SYSTEM scoped: All students in Najaah app (students without center)
      */
     public function assignAll(Survey $survey): int
     {
@@ -207,13 +207,8 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
             // CENTER scoped: only students in this center
             $query->where('center_id', $survey->center_id);
         } else {
-            // SYSTEM scoped: students without center OR in unbranded centers
-            $query->where(function ($q): void {
-                $q->whereNull('center_id')
-                    ->orWhereHas('center', function ($centerQuery): void {
-                        $centerQuery->where('type', CenterType::Unbranded->value);
-                    });
-            });
+            // SYSTEM scoped: students without center only
+            $query->whereNull('center_id');
         }
 
         $studentIds = $query->pluck('id');
@@ -307,28 +302,13 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
         throw new \InvalidArgumentException('Assignment ID must be an integer.');
     }
 
-    private function isValidCenterForSystemScope(Center|Course|Video|User $model): bool
-    {
-        return $model instanceof Center && $model->type === CenterType::Unbranded;
-    }
-
     private function isValidStudentForSystemScope(object $model): bool
     {
         if (! $model instanceof User || ! $model->is_student) {
             return false;
         }
 
-        if ($model->center_id === null) {
-            return true;
-        }
-
-        if (! is_numeric($model->center_id)) {
-            return false;
-        }
-
-        $center = $model->center;
-
-        return $center instanceof Center && $center->type === CenterType::Unbranded;
+        return $model->center_id === null;
     }
 
     private function isValidCourseForSystemScope(object $model): bool

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Surveys;
 
-use App\Enums\CenterType;
 use App\Enums\SurveyScopeType;
 use App\Http\Requests\Admin\AdminListRequest;
 use App\Models\Center;
@@ -65,16 +64,7 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
                 return;
             }
 
-            $isUnbranded = Center::query()
-                ->whereKey($centerId)
-                ->where('type', CenterType::Unbranded->value)
-                ->exists();
-
-            if ($isUnbranded) {
-                return;
-            }
-
-            $validator->errors()->add('center_id', 'System survey targeting supports only unbranded centers.');
+            $validator->errors()->add('center_id', 'System survey targeting supports only Najaah app students (center_id = null).');
         });
     }
 
@@ -94,7 +84,7 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
         $data = $this->validated();
         $routeCenterId = $this->routeCenterId();
         $scopeType = $routeCenterId !== null ? SurveyScopeType::Center : SurveyScopeType::System;
-        $centerId = $routeCenterId ?? FilterInput::intOrNull($data, 'center_id');
+        $centerId = $routeCenterId;
 
         return [
             'scope_type' => $scopeType,
@@ -117,7 +107,7 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
                 'example' => '2',
             ],
             'center_id' => [
-                'description' => 'Optional. For center routes it must match route center. For system routes, if provided, it must be an unbranded center.',
+                'description' => 'Optional. For center routes it must match route center. For system routes it must be null (or omitted).',
                 'example' => '10',
             ],
             'status' => [

@@ -90,8 +90,12 @@ Surveys are split by route scope:
 
 - `GET /api/v1/admin/surveys`
 - `POST /api/v1/admin/surveys`
+- `POST /api/v1/admin/surveys/bulk-close`
+- `POST /api/v1/admin/surveys/bulk-delete`
+- `POST /api/v1/admin/surveys/bulk-status`
 - `GET /api/v1/admin/surveys/{survey}`
 - `PUT /api/v1/admin/surveys/{survey}`
+- `PUT /api/v1/admin/surveys/{survey}/status`
 - `DELETE /api/v1/admin/surveys/{survey}`
 - `POST /api/v1/admin/surveys/{survey}/assign`
 - `POST /api/v1/admin/surveys/{survey}/close`
@@ -100,15 +104,21 @@ Surveys are split by route scope:
 
 Rules:
 - system routes manage **system surveys only** (`scope_type=system`, `center_id=null`)
-- system target students include Najaah App students (`center_id=null`) and students in unbranded centers
-- optional `center_id` filter on system target-students must be an unbranded center
+- system target students include only Najaah App students (`center_id=null`)
+- `center_id` filter is not allowed on system target-students (must be null/omitted)
+- system assignments allow `all`, `user` (student `center_id=null`), and `course` (course in unbranded center)
+- system assignments reject `center` and `video`
 
 ### Center Scope (Branded Center App)
 
 - `GET /api/v1/admin/centers/{center}/surveys`
 - `POST /api/v1/admin/centers/{center}/surveys`
+- `POST /api/v1/admin/centers/{center}/surveys/bulk-close`
+- `POST /api/v1/admin/centers/{center}/surveys/bulk-delete`
+- `POST /api/v1/admin/centers/{center}/surveys/bulk-status`
 - `GET /api/v1/admin/centers/{center}/surveys/{survey}`
 - `PUT /api/v1/admin/centers/{center}/surveys/{survey}`
+- `PUT /api/v1/admin/centers/{center}/surveys/{survey}/status`
 - `DELETE /api/v1/admin/centers/{center}/surveys/{survey}`
 - `POST /api/v1/admin/centers/{center}/surveys/{survey}/assign`
 - `POST /api/v1/admin/centers/{center}/surveys/{survey}/close`

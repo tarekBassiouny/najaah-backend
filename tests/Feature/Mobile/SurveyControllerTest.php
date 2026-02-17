@@ -30,11 +30,11 @@ it('lists assigned surveys for a student', function (): void {
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create();
+    $survey = Survey::factory()->center($center)->active()->create();
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
     ]);
 
     $response = $this->apiGet('/api/v1/surveys/assigned');
@@ -55,15 +55,15 @@ it('returns only the highest-priority assigned survey', function (): void {
     ]);
     $this->asApiUser($student);
 
-    $nonMandatory = Survey::factory()->system()->active()->create([
+    $nonMandatory = Survey::factory()->center($center)->active()->create([
         'is_mandatory' => false,
         'end_at' => null,
     ]);
-    $mandatoryLaterDeadline = Survey::factory()->system()->active()->create([
+    $mandatoryLaterDeadline = Survey::factory()->center($center)->active()->create([
         'is_mandatory' => true,
         'end_at' => now()->addDays(3),
     ]);
-    $mandatoryEarlierDeadline = Survey::factory()->system()->active()->create([
+    $mandatoryEarlierDeadline = Survey::factory()->center($center)->active()->create([
         'is_mandatory' => true,
         'end_at' => now()->addDay(),
     ]);
@@ -71,8 +71,8 @@ it('returns only the highest-priority assigned survey', function (): void {
     foreach ([$nonMandatory, $mandatoryLaterDeadline, $mandatoryEarlierDeadline] as $survey) {
         SurveyAssignment::create([
             'survey_id' => $survey->id,
-            'assignable_type' => SurveyAssignableType::Center,
-            'assignable_id' => $center->id,
+            'assignable_type' => SurveyAssignableType::User,
+            'assignable_id' => $student->id,
         ]);
     }
 
@@ -94,13 +94,13 @@ it('uses newest survey when priority ties and no deadline exists', function (): 
     ]);
     $this->asApiUser($student);
 
-    $olderSurvey = Survey::factory()->system()->active()->create([
+    $olderSurvey = Survey::factory()->center($center)->active()->create([
         'is_mandatory' => false,
         'end_at' => null,
     ]);
     $olderSurvey->forceFill(['created_at' => now()->subDays(2)])->save();
 
-    $newerSurvey = Survey::factory()->system()->active()->create([
+    $newerSurvey = Survey::factory()->center($center)->active()->create([
         'is_mandatory' => false,
         'end_at' => null,
     ]);
@@ -108,8 +108,8 @@ it('uses newest survey when priority ties and no deadline exists', function (): 
     foreach ([$olderSurvey, $newerSurvey] as $survey) {
         SurveyAssignment::create([
             'survey_id' => $survey->id,
-            'assignable_type' => SurveyAssignableType::Center,
-            'assignable_id' => $center->id,
+            'assignable_type' => SurveyAssignableType::User,
+            'assignable_id' => $student->id,
         ]);
     }
 
@@ -131,7 +131,7 @@ it('lists survey assigned directly to the student', function (): void {
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create([
+    $survey = Survey::factory()->center($center)->active()->create([
         'is_mandatory' => true,
     ]);
     SurveyAssignment::create([
@@ -162,7 +162,7 @@ it('does not list survey assigned directly to a different student', function ():
     ]);
     $this->asApiUser($otherStudent);
 
-    $survey = Survey::factory()->system()->active()->create();
+    $survey = Survey::factory()->center($center)->active()->create();
     SurveyAssignment::create([
         'survey_id' => $survey->id,
         'assignable_type' => SurveyAssignableType::User->value,
@@ -196,6 +196,62 @@ it('lists system survey for student without center when directly assigned', func
         ->assertJsonPath('success', true)
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $survey->id);
+});
+
+it('submits system survey for student without center', function (): void {
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+    $this->asApiUser($student);
+
+    $survey = Survey::factory()->system()->active()->create([
+        'allow_multiple_submissions' => true,
+    ]);
+    SurveyAssignment::create([
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
+    ]);
+    $question = SurveyQuestion::factory()->text()->required()->for($survey)->create();
+
+    $response = $this->apiPost("/api/v1/surveys/{$survey->id}/submit", [
+        'answers' => [
+            ['question_id' => $question->id, 'answer' => 'System student response'],
+        ],
+    ]);
+
+    $response->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.survey_id', $survey->id);
+
+    $this->assertDatabaseHas('survey_responses', [
+        'survey_id' => $survey->id,
+        'user_id' => $student->id,
+        'center_id' => null,
+    ]);
+});
+
+it('does not list system survey for student with center even when directly assigned', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Unbranded]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $this->asApiUser($student);
+
+    $survey = Survey::factory()->system()->active()->create();
+    SurveyAssignment::create([
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
+    ]);
+
+    $response = $this->apiGet('/api/v1/surveys/assigned');
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(0, 'data');
 });
 
 it('lists video-assigned center survey only after full play', function (): void {
@@ -256,13 +312,13 @@ it('does not list surveys already submitted even when multiple submissions are e
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->create([
+    $survey = Survey::factory()->center($center)->create([
         'allow_multiple_submissions' => true,
     ]);
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
     ]);
 
     SurveyResponse::factory()->create([
@@ -286,11 +342,11 @@ it('shows a survey with submission status', function (): void {
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create();
+    $survey = Survey::factory()->center($center)->active()->create();
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
     ]);
     SurveyQuestion::factory()->for($survey)->create();
 
@@ -316,11 +372,11 @@ it('returns not found for unavailable survey in show endpoint', function (): voi
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->inactive()->create();
+    $survey = Survey::factory()->center($center)->inactive()->create();
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
     ]);
 
     $this->apiGet("/api/v1/surveys/{$survey->id}")
@@ -336,11 +392,15 @@ it('returns not found for surveys not assigned to the student in show endpoint',
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create();
+    $survey = Survey::factory()->center($center)->active()->create();
+    $otherStudent = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => Center::factory()->create(['type' => CenterType::Unbranded])->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $otherStudent->id,
     ]);
 
     $this->apiGet("/api/v1/surveys/{$survey->id}")
@@ -356,13 +416,13 @@ it('returns not found for surveys already submitted in show endpoint', function 
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create([
+    $survey = Survey::factory()->center($center)->active()->create([
         'allow_multiple_submissions' => true,
     ]);
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
     ]);
 
     SurveyResponse::factory()->create([
@@ -384,13 +444,13 @@ it('submits survey responses and blocks duplicate submissions even when multiple
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create([
+    $survey = Survey::factory()->center($center)->active()->create([
         'allow_multiple_submissions' => true,
     ]);
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
     ]);
     $question = SurveyQuestion::factory()->text()->required()->for($survey)->create();
 
@@ -433,11 +493,15 @@ it('forbids submitting surveys that are not assigned to the student', function (
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create();
+    $survey = Survey::factory()->center($center)->active()->create();
+    $otherStudent = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => Center::factory()->create(['type' => CenterType::Unbranded])->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $otherStudent->id,
     ]);
     $question = SurveyQuestion::factory()->text()->required()->for($survey)->create();
 
@@ -460,13 +524,13 @@ it('stores boolean yes/no answers as numeric values', function (): void {
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create([
+    $survey = Survey::factory()->center($center)->active()->create([
         'allow_multiple_submissions' => true,
     ]);
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
     ]);
     $question = SurveyQuestion::factory()->yesNo()->required()->for($survey)->create();
 
@@ -492,11 +556,11 @@ it('returns validation error for invalid single-choice option', function (): voi
     ]);
     $this->asApiUser($student);
 
-    $survey = Survey::factory()->system()->active()->create();
+    $survey = Survey::factory()->center($center)->active()->create();
     SurveyAssignment::create([
         'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::User,
+        'assignable_id' => $student->id,
     ]);
     $question = SurveyQuestion::factory()->singleChoice()->required()->for($survey)->create();
     SurveyQuestionOption::factory()->count(2)->create([

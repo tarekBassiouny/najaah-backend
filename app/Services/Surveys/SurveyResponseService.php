@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Surveys;
 
-use App\Enums\CenterType;
 use App\Enums\SurveyAssignableType;
 use App\Enums\SurveyQuestionType;
 use App\Enums\SurveyScopeType;
@@ -44,14 +43,6 @@ class SurveyResponseService implements SurveyResponseServiceInterface
             $query->where('scope_type', SurveyScopeType::System);
         } elseif (! $center instanceof Center) {
             return collect();
-        } elseif ($center->type === CenterType::Unbranded) {
-            $query->where(function ($q) use ($centerId): void {
-                $q->where('scope_type', SurveyScopeType::System)
-                    ->orWhere(function ($sq) use ($centerId): void {
-                        $sq->where('scope_type', SurveyScopeType::Center)
-                            ->where('center_id', $centerId);
-                    });
-            });
         } else {
             $query->where('scope_type', SurveyScopeType::Center)
                 ->where('center_id', $centerId);
@@ -151,10 +142,8 @@ class SurveyResponseService implements SurveyResponseServiceInterface
 
     public function isSurveyAssignedToStudent(Survey $survey, User $student): bool
     {
-        $center = $student->center;
-
         if ($survey->scope_type === SurveyScopeType::System) {
-            if (is_numeric($student->center_id) && (! $center instanceof Center || $center->type !== CenterType::Unbranded)) {
+            if (is_numeric($student->center_id)) {
                 return false;
             }
         } elseif (! is_numeric($student->center_id) || $survey->center_id !== (int) $student->center_id) {

@@ -17,6 +17,7 @@ use App\Services\Surveys\Contracts\SurveyAssignmentServiceInterface;
 use App\Services\Surveys\Contracts\SurveyServiceInterface;
 use App\Support\AuditActions;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class SurveyService implements SurveyServiceInterface
@@ -31,8 +32,13 @@ class SurveyService implements SurveyServiceInterface
     public function paginate(SurveyFilters $filters, User $actor): LengthAwarePaginator
     {
         $query = Survey::query()
-            ->with(['center', 'creator', 'questions.options'])
+            ->with(['center', 'creator', 'questions.options', 'assignments'])
             ->withCount('responses')
+            ->withCount([
+                'responses as submitted_users_count' => function ($query): void {
+                    $query->select(DB::raw('count(distinct user_id)'));
+                },
+            ])
             ->orderByDesc('created_at');
 
         if ($this->centerScopeService->isSystemSuperAdmin($actor)) {
@@ -55,8 +61,36 @@ class SurveyService implements SurveyServiceInterface
             $query->where('is_active', $filters->isActive);
         }
 
+        if ($filters->isMandatory !== null) {
+            $query->where('is_mandatory', $filters->isMandatory);
+        }
+
         if ($filters->type !== null) {
             $query->where('type', $filters->type);
+        }
+
+        if ($filters->search !== null) {
+            $search = $filters->search;
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('title_translations->en', 'like', '%'.$search.'%')
+                    ->orWhere('title_translations->ar', 'like', '%'.$search.'%');
+            });
+        }
+
+        if ($filters->startFrom !== null) {
+            $query->whereDate('start_at', '>=', $filters->startFrom);
+        }
+
+        if ($filters->startTo !== null) {
+            $query->whereDate('start_at', '<=', $filters->startTo);
+        }
+
+        if ($filters->endFrom !== null) {
+            $query->whereDate('end_at', '>=', $filters->endFrom);
+        }
+
+        if ($filters->endTo !== null) {
+            $query->whereDate('end_at', '<=', $filters->endTo);
         }
 
         return $query->paginate(

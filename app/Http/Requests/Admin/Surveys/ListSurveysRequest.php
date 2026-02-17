@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Requests\Admin\Surveys;
 
 use App\Enums\SurveyScopeType;
+use App\Enums\SurveyType;
 use App\Filters\Admin\SurveyFilters;
 use App\Http\Requests\Admin\AdminListRequest;
 use App\Support\Filters\FilterInput;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
 
 class ListSurveysRequest extends AdminListRequest
@@ -27,8 +29,53 @@ class ListSurveysRequest extends AdminListRequest
             'scope_type' => ['sometimes', 'integer', Rule::in(array_column(SurveyScopeType::cases(), 'value'))],
             'center_id' => ['sometimes', 'integer', 'exists:centers,id'],
             'is_active' => ['sometimes', 'boolean'],
-            'type' => ['sometimes', 'integer'],
+            'is_mandatory' => ['sometimes', 'boolean'],
+            'type' => ['sometimes', 'integer', Rule::in(array_column(SurveyType::cases(), 'value'))],
+            'search' => ['sometimes', 'string', 'max:255'],
+            'start_from' => ['sometimes', 'date_format:Y-m-d'],
+            'start_to' => ['sometimes', 'date_format:Y-m-d'],
+            'end_from' => ['sometimes', 'date_format:Y-m-d'],
+            'end_to' => ['sometimes', 'date_format:Y-m-d'],
         ]);
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $startFrom = FilterInput::stringOrNull($this->all(), 'start_from');
+            $startTo = FilterInput::stringOrNull($this->all(), 'start_to');
+            $endFrom = FilterInput::stringOrNull($this->all(), 'end_from');
+            $endTo = FilterInput::stringOrNull($this->all(), 'end_to');
+
+            if ($startFrom !== null && $startTo !== null && $startFrom > $startTo) {
+                $validator->errors()->add('start_from', 'start_from must be before or equal to start_to.');
+            }
+
+            if ($endFrom !== null && $endTo !== null && $endFrom > $endTo) {
+                $validator->errors()->add('end_from', 'end_from must be before or equal to end_to.');
+            }
+        });
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $normalized = [];
+
+        foreach (['is_active', 'is_mandatory'] as $key) {
+            $raw = $this->input($key);
+            if (! is_string($raw)) {
+                continue;
+            }
+
+            $value = filter_var($raw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($value !== null) {
+                $normalized[$key] = $value;
+            }
+        }
+
+        if ($normalized !== []) {
+            $this->merge($normalized);
+        }
     }
 
     /**
@@ -46,8 +93,12 @@ class ListSurveysRequest extends AdminListRequest
                 'example' => '1',
             ],
             'is_active' => [
-                'description' => 'Filter surveys by active state (1 active, 0 inactive).',
-                'example' => '1',
+                'description' => 'Filter surveys by active state (`true|false` or `1|0`).',
+                'example' => 'true',
+            ],
+            'is_mandatory' => [
+                'description' => 'Filter surveys by mandatory state (`true|false` or `1|0`).',
+                'example' => 'true',
             ],
             'scope_type' => [
                 'description' => 'Filter surveys by scope type (1 system, 2 center).',
@@ -60,6 +111,26 @@ class ListSurveysRequest extends AdminListRequest
             'type' => [
                 'description' => 'Filter surveys by type (1 feedback, 2 mandatory, 3 poll).',
                 'example' => '1',
+            ],
+            'search' => [
+                'description' => 'Search surveys by title (English or Arabic).',
+                'example' => 'feedback',
+            ],
+            'start_from' => [
+                'description' => 'Filter surveys with start_at on or after date (YYYY-MM-DD).',
+                'example' => '2026-02-01',
+            ],
+            'start_to' => [
+                'description' => 'Filter surveys with start_at on or before date (YYYY-MM-DD).',
+                'example' => '2026-02-28',
+            ],
+            'end_from' => [
+                'description' => 'Filter surveys with end_at on or after date (YYYY-MM-DD).',
+                'example' => '2026-03-01',
+            ],
+            'end_to' => [
+                'description' => 'Filter surveys with end_at on or before date (YYYY-MM-DD).',
+                'example' => '2026-03-31',
             ],
         ];
     }
@@ -83,7 +154,13 @@ class ListSurveysRequest extends AdminListRequest
             scopeType: FilterInput::intOrNull($data, 'scope_type'),
             centerId: FilterInput::intOrNull($data, 'center_id'),
             isActive: FilterInput::boolOrNull($data, 'is_active'),
-            type: FilterInput::intOrNull($data, 'type')
+            isMandatory: FilterInput::boolOrNull($data, 'is_mandatory'),
+            type: FilterInput::intOrNull($data, 'type'),
+            search: FilterInput::stringOrNull($data, 'search'),
+            startFrom: FilterInput::stringOrNull($data, 'start_from'),
+            startTo: FilterInput::stringOrNull($data, 'start_to'),
+            endFrom: FilterInput::stringOrNull($data, 'end_from'),
+            endTo: FilterInput::stringOrNull($data, 'end_to')
         );
     }
 }
