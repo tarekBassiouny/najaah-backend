@@ -138,15 +138,19 @@ class AdminNotificationService implements AdminNotificationServiceInterface
     {
         $this->assertCanAccess($notification, $actor);
 
-        AdminNotificationUserState::updateOrCreate(
+        $state = AdminNotificationUserState::updateOrCreate(
             [
                 'admin_notification_id' => $notification->id,
                 'user_id' => $actor->id,
             ],
             [
-                'deleted_at' => now(),
+                'read_at' => null,
             ]
         );
+
+        if (! $state->trashed()) {
+            $state->delete();
+        }
     }
 
     private function getActorCenterId(User $actor): ?int

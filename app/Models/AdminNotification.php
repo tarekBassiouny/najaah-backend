@@ -75,19 +75,25 @@ class AdminNotification extends Model
      */
     public function scopeForUser(Builder $query, User $user, ?int $centerId = null): Builder
     {
-        if ($centerId === null) {
-            return $query;
-        }
-
         return $query->where(function (Builder $q) use ($user, $centerId): void {
-            $q->where('user_id', $user->id)
-                ->orWhere(function (Builder $subQ) use ($centerId): void {
-                    $subQ->whereNull('user_id')
-                        ->where(function (Builder $centerQ) use ($centerId): void {
-                            $centerQ->where('center_id', $centerId)
-                                ->orWhereNull('center_id');
-                        });
+            $q->where('user_id', $user->id);
+
+            if ($centerId === null) {
+                $q->orWhere(function (Builder $sub): void {
+                    $sub->whereNull('user_id')
+                        ->whereNull('center_id');
                 });
+
+                return;
+            }
+
+            $q->orWhere(function (Builder $subQ) use ($centerId): void {
+                $subQ->whereNull('user_id')
+                    ->where(function (Builder $centerQ) use ($centerId): void {
+                        $centerQ->where('center_id', $centerId)
+                            ->orWhereNull('center_id');
+                    });
+            });
         });
     }
 
