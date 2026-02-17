@@ -14,6 +14,7 @@ Route::middleware(['require.permission:role.manage', 'scope.system_admin'])->gro
     Route::put('/roles/{role}', [RoleController::class, 'update']);
     Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
     Route::put('/roles/{role}/permissions', [RoleController::class, 'syncPermissions']);
+    Route::post('/roles/permissions/bulk', [RoleController::class, 'bulkSyncPermissions']);
 });
 
 Route::get('/permissions', [PermissionController::class, 'index'])

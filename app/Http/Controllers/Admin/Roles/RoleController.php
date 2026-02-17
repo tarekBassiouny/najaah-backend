@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin\Roles;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Roles\BulkAssignRolePermissionsRequest;
 use App\Http\Requests\Admin\Roles\ListRolesRequest;
 use App\Http\Requests\Admin\Roles\StoreRoleRequest;
 use App\Http\Requests\Admin\Roles\SyncRolePermissionsRequest;
@@ -119,6 +120,23 @@ class RoleController extends Controller
         return response()->json([
             'success' => true,
             'data' => new RoleResource($role),
+        ]);
+    }
+
+    public function bulkSyncPermissions(BulkAssignRolePermissionsRequest $request): JsonResponse
+    {
+        $admin = $request->user();
+        /** @var array{role_ids: array<int, int>, permission_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $summary = $this->roleService->bulkSyncPermissions(
+            $data['role_ids'],
+            $data['permission_ids'],
+            $admin instanceof User ? $admin : null
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => $summary,
         ]);
     }
 }

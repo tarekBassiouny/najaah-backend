@@ -15,6 +15,7 @@ use App\Services\Roles\Contracts\RoleServiceInterface;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class RoleService implements RoleServiceInterface
 {
@@ -110,6 +111,39 @@ class RoleService implements RoleServiceInterface
         ]);
 
         return $role->fresh(['permissions']) ?? $role;
+    }
+
+    /**
+     * @param  array<int, int>  $roleIds
+     * @param  array<int, int>  $permissionIds
+     */
+    public function bulkSyncPermissions(array $roleIds, array $permissionIds, ?User $actor = null): array
+    {
+        $this->assertSystemAdminScope($actor);
+
+        $uniqueRoleIds = array_values(array_unique(array_map('intval', $roleIds)));
+        $roles = Role::query()->whereIn('id', $uniqueRoleIds)->get();
+
+        if (count($uniqueRoleIds) !== $roles->count()) {
+            throw new DomainException('One or more roles were not found.', ErrorCodes::NOT_FOUND, 404);
+        }
+
+        $updatedRoles = [];
+
+        DB::transaction(function () use ($roles, $permissionIds, $actor, &$updatedRoles): void {
+            foreach ($roles as $role) {
+                $role->permissions()->sync($permissionIds);
+                $this->auditLogService->log($actor, $role, AuditActions::ROLE_PERMISSIONS_SYNCED, [
+                    'permission_ids' => $permissionIds,
+                ]);
+                $updatedRoles[] = $role->id;
+            }
+        });
+
+        return [
+            'roles' => $updatedRoles,
+            'permission_ids' => $permissionIds,
+        ];
     }
 
     /**

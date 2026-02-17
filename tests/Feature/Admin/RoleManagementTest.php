@@ -153,6 +153,41 @@ it('syncs role permissions', function (): void {
         ->assertJsonPath('data.permissions.0', 'course.manage');
 });
 
+it('bulk assigns permissions to multiple roles', function (): void {
+    $this->asAdmin();
+    $roles = Role::factory()->count(2)->create();
+    $permissionA = Permission::firstOrCreate(['name' => 'course.manage'], [
+        'description' => 'Manage courses',
+    ]);
+    $permissionB = Permission::firstOrCreate(['name' => 'audit.view'], [
+        'description' => 'View audits',
+    ]);
+
+    $response = $this->postJson('/api/v1/admin/roles/permissions/bulk', [
+        'role_ids' => $roles->pluck('id')->all(),
+        'permission_ids' => [$permissionA->id, $permissionB->id],
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(2, 'data.roles')
+        ->assertJsonPath('data.permission_ids', [$permissionA->id, $permissionB->id]);
+});
+
+it('validates bulk permission assignment inputs', function (): void {
+    $this->asAdmin();
+
+    $response = $this->postJson('/api/v1/admin/roles/permissions/bulk', [
+        'role_ids' => [],
+        'permission_ids' => [],
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.details.role_ids.0', 'The role ids field is required.')
+        ->assertJsonPath('error.details.permission_ids.0', 'The permission ids field is required.');
+});
+
 it('allows removing all permissions from a role', function (): void {
     $this->asAdmin();
     $role = Role::factory()->create(['slug' => 'content_admin']);
