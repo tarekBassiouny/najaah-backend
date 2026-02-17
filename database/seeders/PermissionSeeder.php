@@ -6,7 +6,6 @@ namespace Database\Seeders;
 
 use App\Models\Permission;
 use Illuminate\Database\Seeder;
-
 use Illuminate\Support\Facades\DB;
 
 class PermissionSeeder extends Seeder
@@ -20,6 +19,7 @@ class PermissionSeeder extends Seeder
             'course.manage' => 'Manage courses',
             'course.publish' => 'Publish courses',
             'section.manage' => 'Manage sections',
+            'analytics.manage' => 'Manage analytics dashboards',
             'video.manage' => 'Manage videos',
             'video.upload' => 'Authorize video uploads',
             'video.playback.override' => 'Override playback restrictions',
@@ -27,9 +27,11 @@ class PermissionSeeder extends Seeder
             'enrollment.manage' => 'Manage enrollments',
             'center.manage' => 'Manage centers',
             'settings.manage' => 'Manage settings',
+            'settings.view' => 'View settings',
             'student.manage' => 'Manage student accounts',
             'survey.manage' => 'Manage surveys',
             'audit.view' => 'View analytics and audit logs',
+            'notification.manage' => 'Manage admin notifications',
             'device_change.manage' => 'Manage device change requests',
             'extra_view.manage' => 'Manage extra view requests',
             'instructor.manage' => 'Manage instructors',

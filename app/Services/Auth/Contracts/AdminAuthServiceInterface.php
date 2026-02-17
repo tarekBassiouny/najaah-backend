@@ -33,7 +33,7 @@ interface AdminAuthServiceInterface
      * Update the authenticated admin profile.
      */
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateProfile(User $user, array $data): User;
 }

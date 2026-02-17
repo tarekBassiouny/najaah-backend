@@ -32,7 +32,6 @@ class AdminNotificationFactory extends Factory
                 'entity_type' => 'test',
                 'entity_id' => $this->faker->randomNumber(),
             ],
-            'read_at' => null,
         ];
     }
 
@@ -54,20 +53,6 @@ class AdminNotificationFactory extends Factory
     {
         return $this->state(fn (): array => [
             'type' => $type,
-        ]);
-    }
-
-    public function read(): static
-    {
-        return $this->state(fn (): array => [
-            'read_at' => now(),
-        ]);
-    }
-
-    public function unread(): static
-    {
-        return $this->state(fn (): array => [
-            'read_at' => null,
         ]);
     }
 

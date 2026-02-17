@@ -51,7 +51,7 @@ class UpdateAdminUserRequest extends FormRequest
             $updates['country_code'] = trim((string) $sanitizedCountry);
         }
 
-        if (count($updates) > 0) {
+        if ($updates !== []) {
             $this->merge($updates);
         }
     }

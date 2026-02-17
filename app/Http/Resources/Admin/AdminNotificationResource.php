@@ -18,6 +18,8 @@ class AdminNotificationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $state = $this->userStates->first();
+
         return [
             'id' => $this->id,
             'type' => $this->type->value,
@@ -27,8 +29,8 @@ class AdminNotificationResource extends JsonResource
             'title' => $this->title,
             'body' => $this->body,
             'data' => $this->data,
-            'is_read' => $this->isRead(),
-            'read_at' => $this->read_at?->toIso8601String(),
+            'is_read' => $state?->read_at !== null,
+            'read_at' => $state?->read_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

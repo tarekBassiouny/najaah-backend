@@ -124,9 +124,8 @@ class RoleService implements RoleServiceInterface
     }
 
     /**
-     * @param array<int, int> $roleIds
-     * @param array<int, int> $permissionIds
-     *
+     * @param  array<int, int>  $roleIds
+     * @param  array<int, int>  $permissionIds
      * @return array{roles: array<int, int>, permission_ids: array<int, int>}
      */
     public function bulkSyncPermissions(array $roleIds, array $permissionIds, ?User $actor = null): array
