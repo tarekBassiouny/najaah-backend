@@ -327,7 +327,8 @@ it('supports deleted filter mode for centers list', function (): void {
     $onlyDeleted = $this->getJson('/api/v1/admin/centers?deleted=only_deleted');
     $onlyDeleted->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $deleted->id);
+        ->assertJsonPath('data.0.id', $deleted->id)
+        ->assertJsonPath('data.0.deleted_at', fn ($value) => is_string($value) && $value !== '');
 
     $withDeleted = $this->getJson('/api/v1/admin/centers?deleted=with_deleted');
     $withDeleted->assertOk()
@@ -336,7 +337,8 @@ it('supports deleted filter mode for centers list', function (): void {
     $activeOnly = $this->getJson('/api/v1/admin/centers?deleted=active');
     $activeOnly->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $active->id);
+        ->assertJsonPath('data.0.id', $active->id)
+        ->assertJsonPath('data.0.deleted_at', null);
 });
 
 it('bulk updates center statuses', function (): void {

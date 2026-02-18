@@ -35,6 +35,7 @@ class CenterResource extends JsonResource
             'is_featured' => $center->is_featured,
             'status' => $status->value,
             'status_label' => $this->resolveStatusLabel($status),
+            'deleted_at' => $center->deleted_at?->toISOString(),
             'name' => $center->translate('name'),
             'description' => $center->translate('description'),
             'name_translations' => $center->name_translations,
