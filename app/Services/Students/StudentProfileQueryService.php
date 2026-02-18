@@ -44,6 +44,10 @@ class StudentProfileQueryService
     public function assertMatchesResolvedCenterScope(User $student, ?int $resolvedCenterId): void
     {
         if ($resolvedCenterId === null) {
+            if (is_numeric($student->center_id)) {
+                throw new CenterMismatchException('Student does not belong to system scope.');
+            }
+
             return;
         }
 

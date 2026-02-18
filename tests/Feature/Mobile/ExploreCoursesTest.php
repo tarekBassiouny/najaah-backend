@@ -83,6 +83,42 @@ it('lists only unbranded center courses for system students', function (): void 
         ->assertJsonPath('data.0.center.id', $unbranded->id);
 });
 
+it('excludes inactive unbranded center courses for system students', function (): void {
+    $activeUnbranded = Center::factory()->create([
+        'type' => 0,
+        'status' => Center::STATUS_ACTIVE,
+    ]);
+    $inactiveUnbranded = Center::factory()->create([
+        'type' => 0,
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+
+    $activeCourse = Course::factory()->create([
+        'center_id' => $activeUnbranded->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
+    Course::factory()->create([
+        'center_id' => $inactiveUnbranded->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/courses/explore');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $activeCourse->id)
+        ->assertJsonPath('data.0.center.id', $activeUnbranded->id);
+});
+
 it('applies filters and pagination', function (): void {
     $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
     $category = Category::factory()->create();

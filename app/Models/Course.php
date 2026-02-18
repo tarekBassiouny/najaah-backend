@@ -214,11 +214,17 @@ class Course extends Model
     public function scopeVisibleToStudent(Builder $query, User $student): Builder
     {
         if (is_numeric($student->center_id)) {
-            return $query->where('center_id', (int) $student->center_id);
+            return $query
+                ->where('center_id', (int) $student->center_id)
+                ->whereHas('center', function ($query): void {
+                    $query->where('status', Center::STATUS_ACTIVE->value);
+                });
         }
 
         return $query->whereHas('center', function ($query): void {
-            $query->where('type', CenterType::Unbranded->value);
+            $query
+                ->where('type', CenterType::Unbranded->value)
+                ->where('status', Center::STATUS_ACTIVE->value);
         });
     }
 

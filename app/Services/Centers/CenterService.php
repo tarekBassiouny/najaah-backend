@@ -46,10 +46,11 @@ class CenterService implements CenterServiceInterface
     public function listAdminOptions(AdminCenterFilters $filters): LengthAwarePaginator
     {
         $query = Center::query()
-            ->select(['id', 'slug', 'name_translations'])
-            ->orderByDesc('created_at');
+            ->select(['id', 'slug', 'name_translations']);
 
+        $this->applyDeletedMode($query, $filters);
         $this->applyAdminFilters($query, $filters);
+        $query->orderByDesc('created_at');
 
         return $query->paginate(
             $filters->perPage,
@@ -163,6 +164,7 @@ class CenterService implements CenterServiceInterface
         $query = Center::query()
             ->with('setting')
             ->where('type', CenterType::Unbranded->value)
+            ->where('status', Center::STATUS_ACTIVE->value)
             ->orderByDesc('id');
 
         if ($filters->search !== null && $filters->search !== '') {
@@ -191,11 +193,11 @@ class CenterService implements CenterServiceInterface
     private function adminQuery(AdminCenterFilters $filters): Builder
     {
         $query = Center::query()
-            ->with('setting')
-            // ->orderByDesc('is_featured')
-            ->orderByDesc('created_at');
+            ->with('setting');
 
+        $this->applyDeletedMode($query, $filters);
         $this->applyAdminFilters($query, $filters);
+        $query->orderByDesc('created_at');
 
         return $query;
     }
@@ -221,6 +223,14 @@ class CenterService implements CenterServiceInterface
             $query->where('is_featured', $filters->isFeatured);
         }
 
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
+        if ($filters->isDemo !== null) {
+            $query->where('is_demo', $filters->isDemo);
+        }
+
         if ($filters->onboardingStatus !== null) {
             $query->where('onboarding_status', $filters->onboardingStatus);
         }
@@ -243,6 +253,14 @@ class CenterService implements CenterServiceInterface
 
         if ($filters->createdTo !== null) {
             $query->where('created_at', '<=', Carbon::parse($filters->createdTo)->endOfDay());
+        }
+
+        if ($filters->updatedFrom !== null) {
+            $query->where('updated_at', '>=', Carbon::parse($filters->updatedFrom)->startOfDay());
+        }
+
+        if ($filters->updatedTo !== null) {
+            $query->where('updated_at', '<=', Carbon::parse($filters->updatedTo)->endOfDay());
         }
     }
 
@@ -267,7 +285,7 @@ class CenterService implements CenterServiceInterface
      */
     private function unbrandedCourseQuery(User $student, Center $center): Builder
     {
-        if ($center->type !== CenterType::Unbranded) {
+        if ($center->type !== CenterType::Unbranded || $center->status !== Center::STATUS_ACTIVE) {
             $this->notFound();
         }
 
@@ -287,6 +305,22 @@ class CenterService implements CenterServiceInterface
                     });
             })
             ->orderByDesc('created_at');
+    }
+
+    /**
+     * @param  Builder<Center>  $query
+     */
+    private function applyDeletedMode(Builder $query, AdminCenterFilters $filters): void
+    {
+        if ($filters->deleted === 'with_deleted') {
+            $query->withTrashed();
+
+            return;
+        }
+
+        if ($filters->deleted === 'only_deleted') {
+            $query->onlyTrashed();
+        }
     }
 
     private function notFound(): void

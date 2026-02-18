@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Centers;
 
+use App\Enums\CenterStatus;
 use App\Enums\CenterTier;
 use App\Enums\CenterType;
 use App\Models\Center;
@@ -24,6 +25,7 @@ class CenterResource extends JsonResource
         /** @var Center $center */
         $center = $this->resource;
         $logoUrlResolver = app(CenterLogoUrlResolver::class);
+        $status = $center->status instanceof CenterStatus ? $center->status : Center::STATUS_ACTIVE;
 
         return [
             'id' => $center->id,
@@ -31,6 +33,9 @@ class CenterResource extends JsonResource
             'type' => $this->resolveType($center->type),
             'tier' => $this->resolveTier($center->tier),
             'is_featured' => $center->is_featured,
+            'status' => $status->value,
+            'status_label' => $this->resolveStatusLabel($status),
+            'deleted_at' => $center->deleted_at?->toISOString(),
             'name' => $center->translate('name'),
             'description' => $center->translate('description'),
             'name_translations' => $center->name_translations,
@@ -63,6 +68,14 @@ class CenterResource extends JsonResource
             Center::TIER_PREMIUM => 'premium',
             Center::TIER_VIP => 'vip',
             default => 'standard',
+        };
+    }
+
+    private function resolveStatusLabel(?CenterStatus $status): string
+    {
+        return match ($status) {
+            Center::STATUS_INACTIVE => 'Inactive',
+            default => 'Active',
         };
     }
 }

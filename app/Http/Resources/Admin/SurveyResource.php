@@ -44,6 +44,10 @@ class SurveyResource extends JsonResource
             'questions' => SurveyQuestionResource::collection($this->whenLoaded('questions')),
             'assignments' => SurveyAssignmentResource::collection($this->whenLoaded('assignments')),
             'responses_count' => $this->when($survey->responses_count !== null, $survey->responses_count),
+            'submitted_users_count' => $this->when(
+                $survey->submitted_users_count !== null || $survey->responses_count !== null,
+                (int) ($survey->submitted_users_count ?? $survey->responses_count ?? 0)
+            ),
             'created_at' => $survey->created_at->toIso8601String(),
             'updated_at' => $survey->updated_at->toIso8601String(),
         ];

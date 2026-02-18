@@ -105,34 +105,49 @@ it('allows admins with permission and center access', function (): void {
     $response->assertOk();
 });
 
-it('restricts center management to super admins', function (): void {
+it('allows center management for system admins with permission and blocks center-scoped admins', function (): void {
     $permission = Permission::factory()->create(['name' => 'center.manage']);
     $role = Role::factory()->create(['slug' => 'center_admin']);
     $role->permissions()->sync([$permission->id]);
 
-    $admin = User::factory()->create([
+    $center = Center::factory()->create();
+    $centerScopedAdmin = User::factory()->create([
         'password' => 'secret123',
         'is_student' => false,
+        'center_id' => $center->id,
     ]);
-    $admin->roles()->sync([$role->id]);
+    $centerScopedAdmin->roles()->sync([$role->id]);
 
-    $token = (string) Auth::guard('admin')->attempt([
-        'email' => $admin->email,
+    $centerScopedToken = (string) Auth::guard('admin')->attempt([
+        'email' => $centerScopedAdmin->email,
         'password' => 'secret123',
         'is_student' => false,
     ]);
 
     $forbidden = $this->getJson('/api/v1/admin/centers', [
-        'Authorization' => 'Bearer '.$token,
+        'Authorization' => 'Bearer '.$centerScopedToken,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),
     ]);
 
-    $forbidden->assertForbidden();
+    $forbidden->assertForbidden()
+        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
 
-    $super = $this->asAdmin();
+    $systemAdmin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => null,
+    ]);
+    $systemAdmin->roles()->sync([$role->id]);
+
+    $systemToken = (string) Auth::guard('admin')->attempt([
+        'email' => $systemAdmin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
     $allowed = $this->getJson('/api/v1/admin/centers', [
-        'Authorization' => 'Bearer '.$this->adminToken,
+        'Authorization' => 'Bearer '.$systemToken,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),
     ]);

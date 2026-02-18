@@ -50,3 +50,43 @@ it('retries onboarding without duplicating the owner user', function (): void {
 
     Bus::assertDispatched(SendAdminInvitationEmailJob::class);
 });
+
+it('bulk retries onboarding for multiple centers', function (): void {
+    Role::factory()->create(['slug' => 'center_owner']);
+    Bus::fake();
+
+    $centerA = Center::factory()->create([
+        'slug' => 'retry-a',
+        'onboarding_status' => Center::ONBOARDING_FAILED,
+    ]);
+    $centerB = Center::factory()->create([
+        'slug' => 'retry-b',
+        'onboarding_status' => Center::ONBOARDING_FAILED,
+    ]);
+
+    $ownerA = User::factory()->create([
+        'center_id' => $centerA->id,
+        'is_student' => false,
+        'email' => 'retry-a@example.com',
+    ]);
+    $ownerB = User::factory()->create([
+        'center_id' => $centerB->id,
+        'is_student' => false,
+        'email' => 'retry-b@example.com',
+    ]);
+
+    $centerA->users()->syncWithoutDetaching([$ownerA->id => ['type' => 'owner']]);
+    $centerB->users()->syncWithoutDetaching([$ownerB->id => ['type' => 'owner']]);
+
+    $response = $this->postJson('/api/v1/admin/centers/bulk-onboarding-retry', [
+        'center_ids' => [$centerA->id, $centerB->id, 999999],
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.counts.total', 3)
+        ->assertJsonPath('data.counts.retried', 2)
+        ->assertJsonPath('data.counts.failed', 1);
+
+    expect($centerA->fresh()?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE)
+        ->and($centerB->fresh()?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
+});

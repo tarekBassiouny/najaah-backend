@@ -43,7 +43,7 @@ it('creates a center', function (): void {
     $response->assertCreated()->assertJsonPath('data.center.slug', 'center-1');
     $response->assertJsonPath('data.center.type', 'branded');
     $response->assertJsonPath('data.center.tier', 'premium');
-    $response->assertJsonPath('data.center.api_key', $response->json('data.center.api_key'));
+    $response->assertJsonMissingPath('data.center.api_key');
     $response->assertJsonPath('data.email_sent', true);
     $this->assertDatabaseHas('centers', ['slug' => 'center-1']);
     $this->assertDatabaseHas('user_centers', [
@@ -178,6 +178,23 @@ it('updates tier using string enums', function (): void {
     expect($center->tier)->toBe(Center::TIER_PREMIUM);
 });
 
+it('updates center status via dedicated endpoint', function (): void {
+    $center = Center::factory()->create([
+        'status' => Center::STATUS_ACTIVE,
+    ]);
+
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}/status", [
+        'status' => 0,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.status', 0)
+        ->assertJsonPath('data.status_label', 'Inactive');
+
+    $center->refresh();
+    expect($center->status)->toBe(Center::STATUS_INACTIVE);
+});
+
 it('rejects numeric tier on update', function (): void {
     $center = Center::factory()->create();
 
@@ -211,6 +228,27 @@ it('defaults logo path on create when missing', function (): void {
     expect($logoUrl)
         ->not->toBe('centers/defaults/logo.png')
         ->toContain('centers/defaults/logo.png');
+});
+
+it('does not expose api key in center create response', function (): void {
+    Bus::fake();
+    Role::factory()->create(['slug' => 'center_owner']);
+
+    $response = $this->postJson('/api/v1/admin/centers', [
+        'slug' => 'hidden-api-key',
+        'type' => 'branded',
+        'name' => 'Hidden API Key',
+        'branding_metadata' => [
+            'primary_color' => '#123456',
+        ],
+        'admin' => [
+            'name' => 'Admin User',
+            'email' => 'hidden-api-key@example.com',
+        ],
+    ]);
+
+    $response->assertCreated()
+        ->assertJsonMissingPath('data.center.api_key');
 });
 
 it('does not expose api key in center show', function (): void {
@@ -262,7 +300,106 @@ it('filters centers by tier and date range', function (): void {
     $response->assertOk()->assertJsonCount(1, 'data');
 });
 
-it('blocks delete for non super admins', function (): void {
+it('filters centers by status', function (): void {
+    Center::factory()->create([
+        'name_translations' => ['en' => 'Active Center'],
+        'status' => Center::STATUS_ACTIVE,
+    ]);
+    Center::factory()->create([
+        'name_translations' => ['en' => 'Inactive Center'],
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/centers?status=0');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.name', 'Inactive Center')
+        ->assertJsonPath('data.0.status', 0)
+        ->assertJsonPath('data.0.status_label', 'Inactive');
+});
+
+it('supports deleted filter mode for centers list', function (): void {
+    $active = Center::factory()->create();
+    $deleted = Center::factory()->create();
+    $deleted->delete();
+
+    $onlyDeleted = $this->getJson('/api/v1/admin/centers?deleted=only_deleted');
+    $onlyDeleted->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $deleted->id)
+        ->assertJsonPath('data.0.deleted_at', fn ($value) => is_string($value) && $value !== '');
+
+    $withDeleted = $this->getJson('/api/v1/admin/centers?deleted=with_deleted');
+    $withDeleted->assertOk()
+        ->assertJsonPath('meta.total', 2);
+
+    $activeOnly = $this->getJson('/api/v1/admin/centers?deleted=active');
+    $activeOnly->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $active->id)
+        ->assertJsonPath('data.0.deleted_at', null);
+});
+
+it('bulk updates center statuses', function (): void {
+    $toUpdate = Center::factory()->create(['status' => Center::STATUS_ACTIVE]);
+    $alreadyTarget = Center::factory()->create(['status' => Center::STATUS_INACTIVE]);
+
+    $response = $this->postJson('/api/v1/admin/centers/bulk-status', [
+        'status' => 0,
+        'center_ids' => [$toUpdate->id, $alreadyTarget->id, 999999],
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.counts.total', 3)
+        ->assertJsonPath('data.counts.updated', 1)
+        ->assertJsonPath('data.counts.skipped', 1)
+        ->assertJsonPath('data.counts.failed', 1);
+
+    $toUpdate->refresh();
+    expect($toUpdate->status)->toBe(Center::STATUS_INACTIVE);
+});
+
+it('bulk updates center featured and tier', function (): void {
+    $center = Center::factory()->create([
+        'is_featured' => false,
+        'tier' => Center::TIER_STANDARD,
+    ]);
+
+    $featured = $this->postJson('/api/v1/admin/centers/bulk-featured', [
+        'is_featured' => true,
+        'center_ids' => [$center->id],
+    ]);
+    $featured->assertOk()->assertJsonPath('data.counts.updated', 1);
+
+    $tier = $this->postJson('/api/v1/admin/centers/bulk-tier', [
+        'tier' => 'vip',
+        'center_ids' => [$center->id],
+    ]);
+    $tier->assertOk()->assertJsonPath('data.counts.updated', 1);
+
+    $center->refresh();
+    expect($center->is_featured)->toBeTrue()
+        ->and($center->tier)->toBe(Center::TIER_VIP);
+});
+
+it('bulk deletes and restores centers', function (): void {
+    $center = Center::factory()->create();
+
+    $delete = $this->postJson('/api/v1/admin/centers/bulk-delete', [
+        'center_ids' => [$center->id],
+    ]);
+    $delete->assertOk()->assertJsonPath('data.counts.deleted', 1);
+    $this->assertSoftDeleted('centers', ['id' => $center->id]);
+
+    $restore = $this->postJson('/api/v1/admin/centers/bulk-restore', [
+        'center_ids' => [$center->id],
+    ]);
+    $restore->assertOk()->assertJsonPath('data.counts.restored', 1);
+    $this->assertDatabaseHas('centers', ['id' => $center->id, 'deleted_at' => null]);
+});
+
+it('allows system admin with center.manage to manage centers without super_admin role', function (): void {
     $this->withMiddleware();
 
     $center = Center::factory()->create();
@@ -294,7 +431,41 @@ it('blocks delete for non super admins', function (): void {
 
     $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}", [], $headers);
 
-    $response->assertStatus(403);
+    $response->assertNoContent();
+    $this->assertSoftDeleted('centers', ['id' => $center->id]);
+});
+
+it('blocks center-scoped admin from system center management routes', function (): void {
+    $this->withMiddleware();
+
+    $center = Center::factory()->create();
+    $permission = Permission::firstOrCreate(['name' => 'center.manage'], [
+        'description' => 'Permission: center.manage',
+    ]);
+    $role = Role::factory()->create([
+        'slug' => 'center_manager_scoped',
+        'name' => 'Center Manager Scoped',
+    ]);
+    $role->permissions()->sync([$permission->id]);
+
+    $centerScopedAdmin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $center->id,
+    ]);
+    $centerScopedAdmin->roles()->syncWithoutDetaching([$role->id]);
+
+    $token = Auth::guard('admin')->attempt([
+        'email' => $centerScopedAdmin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $headers = $this->adminHeaders(['Authorization' => 'Bearer '.$token]);
+
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}", [], $headers);
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
 });
 
 it('soft deletes and restores a center', function (): void {

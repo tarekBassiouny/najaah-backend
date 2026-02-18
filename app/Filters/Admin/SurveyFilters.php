@@ -12,6 +12,12 @@ class SurveyFilters
         public readonly ?int $scopeType,
         public readonly ?int $centerId,
         public readonly ?bool $isActive,
-        public readonly ?int $type
+        public readonly ?bool $isMandatory,
+        public readonly ?int $type,
+        public readonly ?string $search,
+        public readonly ?string $startFrom,
+        public readonly ?string $startTo,
+        public readonly ?string $endFrom,
+        public readonly ?string $endTo
     ) {}
 }

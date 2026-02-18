@@ -27,7 +27,7 @@ class CenterResolveController extends Controller
             return $this->deny('SYSTEM_API_KEY_REQUIRED', 'System API key is required.', 403);
         }
 
-        if ($center->onboarding_status !== Center::ONBOARDING_ACTIVE) {
+        if ($center->onboarding_status !== Center::ONBOARDING_ACTIVE || $center->status !== Center::STATUS_ACTIVE) {
             return $this->deny('CENTER_INACTIVE', 'Center is not active.', 403);
         }
 

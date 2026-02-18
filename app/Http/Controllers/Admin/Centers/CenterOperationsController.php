@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin\Centers;
 use App\Actions\Admin\Centers\RetryCenterOnboardingAction;
 use App\Actions\Admin\Centers\UploadCenterLogoAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Centers\BulkRetryCenterOnboardingRequest;
 use App\Http\Requests\Admin\Centers\RetryCenterOnboardingRequest;
 use App\Http\Requests\Admin\Centers\UpdateCenterSettingsRequest;
 use App\Http\Requests\Admin\Centers\UploadCenterLogoRequest;
@@ -55,6 +56,67 @@ class CenterOperationsController extends Controller
                 'center' => new CenterResource($result['center']),
                 'owner' => new AdminUserResource($result['owner']),
                 'email_sent' => $result['email_sent'],
+            ],
+        ]);
+    }
+
+    /**
+     * Bulk retry center setup.
+     */
+    public function bulkRetry(
+        BulkRetryCenterOnboardingRequest $request,
+        RetryCenterOnboardingAction $action
+    ): JsonResponse {
+        /** @var array{center_ids:array<int,int>} $data */
+        $data = $request->validated();
+        $requestedIds = $this->uniqueCenterIds($data['center_ids']);
+        $centers = Center::query()
+            ->whereIn('id', $requestedIds)
+            ->get()
+            ->keyBy('id');
+
+        /** @var User|null $admin */
+        $admin = $request->user();
+        $retried = [];
+        $failed = [];
+
+        foreach ($requestedIds as $centerId) {
+            $centerModel = $centers->get($centerId);
+            if (! $centerModel instanceof Center) {
+                $failed[] = [
+                    'center_id' => $centerId,
+                    'reason' => 'Center not found.',
+                ];
+
+                continue;
+            }
+
+            try {
+                $result = $action->execute($centerModel, $admin instanceof User ? $admin : null);
+                $retried[] = [
+                    'center' => new CenterResource($result['center']),
+                    'owner' => new AdminUserResource($result['owner']),
+                    'email_sent' => (bool) $result['email_sent'],
+                ];
+            } catch (\Throwable $throwable) {
+                $failed[] = [
+                    'center_id' => $centerId,
+                    'reason' => 'Center onboarding retry failed.',
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk center onboarding retry processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'retried' => count($retried),
+                    'failed' => count($failed),
+                ],
+                'retried' => $retried,
+                'failed' => $failed,
             ],
         ]);
     }
@@ -139,5 +201,14 @@ class CenterOperationsController extends Controller
         }
 
         return $admin;
+    }
+
+    /**
+     * @param  array<int, int|string>  $centerIds
+     * @return array<int, int>
+     */
+    private function uniqueCenterIds(array $centerIds): array
+    {
+        return array_values(array_unique(array_map('intval', $centerIds)));
     }
 }

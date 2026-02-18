@@ -18,6 +18,7 @@ class CenterFactory extends Factory
             'type' => 0,
             'tier' => Center::TIER_STANDARD,
             'is_featured' => false,
+            'status' => Center::STATUS_ACTIVE,
             'name_translations' => [
                 'en' => 'Center Name',
                 'ar' => 'مركز تجريبي',

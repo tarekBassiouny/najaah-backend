@@ -102,6 +102,10 @@ class ExploreCourseService
             'pdfs',
         ]);
 
+        if (($course->center?->status ?? null) !== Center::STATUS_ACTIVE) {
+            $this->centerMismatch();
+        }
+
         if (is_numeric($student->center_id)) {
             if ((int) $course->center_id !== (int) $student->center_id) {
                 $this->centerMismatch();
@@ -110,6 +114,7 @@ class ExploreCourseService
             $isUnbranded = Center::query()
                 ->where('id', $course->center_id)
                 ->where('type', CenterType::Unbranded->value)
+                ->where('status', Center::STATUS_ACTIVE->value)
                 ->exists();
 
             if (! $isUnbranded) {

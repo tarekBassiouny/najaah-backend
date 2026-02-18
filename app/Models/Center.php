@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\CenterStatus;
 use App\Enums\CenterTier;
 use App\Enums\CenterType;
 use App\Models\Concerns\HasTranslatableSearch;
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array<string, mixed>|null $branding_metadata
  * @property string $storage_driver
  * @property string|null $storage_root
+ * @property CenterStatus $status
  * @property int $default_view_limit
  * @property bool $allow_extra_view_requests
  * @property bool $pdf_download_permission
@@ -59,6 +61,10 @@ class Center extends Model
 
     public const TYPE_BRANDED = CenterType::Branded;
 
+    public const STATUS_INACTIVE = CenterStatus::Inactive;
+
+    public const STATUS_ACTIVE = CenterStatus::Active;
+
     /** @use HasFactory<\Database\Factories\CenterFactory> */
     use HasFactory;
 
@@ -73,6 +79,7 @@ class Center extends Model
         'tier',
         'is_featured',
         'is_demo',
+        'status',
         'name_translations',
         'description_translations',
         'logo_url',
@@ -98,6 +105,7 @@ class Center extends Model
         'tier' => CenterTier::class,
         'is_featured' => 'boolean',
         'is_demo' => 'boolean',
+        'status' => CenterStatus::class,
         'allow_extra_view_requests' => 'boolean',
         'pdf_download_permission' => 'boolean',
         'default_view_limit' => 'integer',

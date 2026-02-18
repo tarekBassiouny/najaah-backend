@@ -141,3 +141,22 @@ it('blocks extra view request without enrollment', function (): void {
     $response->assertStatus(403)
         ->assertJsonPath('error.code', 'ENROLLMENT_REQUIRED');
 });
+
+it('blocks system students from requesting extra views in branded centers', function (): void {
+    [$center, $course, $video] = buildExtraViewRequestContext(0);
+    $center->update(['type' => 1]);
+
+    $student = $this->apiUser;
+    $student->center_id = null;
+    $student->save();
+    $this->asApiUser($student);
+
+    $response = $this->apiPost(
+        "/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/extra-view",
+        [],
+        ['X-Api-Key' => (string) config('services.system_api_key')]
+    );
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});

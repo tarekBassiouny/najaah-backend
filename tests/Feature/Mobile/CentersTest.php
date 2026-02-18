@@ -78,6 +78,30 @@ it('lists unbranded centers for system students', function (): void {
         ->assertJsonPath('data.0.theme.primary', '#123456');
 });
 
+it('does not list inactive unbranded centers', function (): void {
+    Center::factory()->create([
+        'type' => 0,
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+    $activeCenter = Center::factory()->create([
+        'type' => 0,
+        'status' => Center::STATUS_ACTIVE,
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/centers');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $activeCenter->id);
+});
+
 it('searches centers by name and description', function (): void {
     $matchName = Center::factory()->create([
         'type' => 0,
@@ -145,6 +169,23 @@ it('shows center with courses for unbranded students', function (): void {
 
 it('rejects branded centers for unbranded students', function (): void {
     $center = Center::factory()->create(['type' => 1]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/centers/'.$center->id);
+
+    $response->assertStatus(404);
+});
+
+it('rejects inactive centers for unbranded students', function (): void {
+    $center = Center::factory()->create([
+        'type' => 0,
+        'status' => Center::STATUS_INACTIVE,
+    ]);
     $student = User::factory()->create([
         'is_student' => true,
         'center_id' => null,

@@ -15,14 +15,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $survey_id
  * @property int $user_id
- * @property int $center_id
+ * @property int|null $center_id
  * @property \Carbon\Carbon $submitted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read Survey $survey
  * @property-read User $user
- * @property-read Center $center
+ * @property-read Center|null $center
  * @property-read \Illuminate\Database\Eloquent\Collection<int, SurveyAnswer> $answers
  */
 class SurveyResponse extends Model

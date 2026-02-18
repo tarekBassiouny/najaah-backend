@@ -109,8 +109,16 @@ systemPrompt: |
      - Center scope:
        - `/api/v1/admin/centers/{center}/surveys...` endpoints
      - Includes list/create/show/update/delete/assign/close/analytics + target students
-     - List filters: `is_active`, `type`, `page`, `per_page` (scope enforced by route)
-     - System survey targeting supports only unbranded centers when `center_id` is provided.
+     - Includes bulk actions:
+       - bulk status: `/surveys/bulk-status`
+       - bulk close: `/surveys/bulk-close`
+       - bulk delete: `/surveys/bulk-delete` (safety checks: active/with-responses skipped)
+     - List filters:
+       - `is_active`, `is_mandatory`, `type`, `search`
+       - `start_from`, `start_to`, `end_from`, `end_to`
+       - `page`, `per_page`
+       - scope enforced by route
+     - System survey targeting supports only Najaah app students (`center_id = null`).
 
   5. **Agents**
      - Primary APIs:

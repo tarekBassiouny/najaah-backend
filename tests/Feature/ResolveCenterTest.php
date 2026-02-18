@@ -114,7 +114,8 @@ it('rejects inactive centers', function (): void {
     Center::factory()->create([
         'slug' => 'alpha-center',
         'type' => 1,
-        'onboarding_status' => Center::ONBOARDING_FAILED,
+        'status' => Center::STATUS_INACTIVE,
+        'onboarding_status' => Center::ONBOARDING_ACTIVE,
         'api_key' => 'alpha-key',
     ]);
 

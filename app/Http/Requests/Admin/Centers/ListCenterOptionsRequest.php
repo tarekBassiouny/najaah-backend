@@ -40,10 +40,15 @@ class ListCenterOptionsRequest extends AdminListRequest
             type: $this->resolveType($data),
             tier: null,
             isFeatured: null,
+            status: null,
+            isDemo: null,
             onboardingStatus: null,
             search: FilterInput::stringOrNull($data, 'search'),
             createdFrom: null,
-            createdTo: null
+            createdTo: null,
+            updatedFrom: null,
+            updatedTo: null,
+            deleted: null
         );
     }
 

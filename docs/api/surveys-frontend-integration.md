@@ -8,7 +8,6 @@ This document defines the survey behavior currently enforced by backend code and
   - Can be created/managed by system super admin.
   - Survey is always system (`scope_type=1`, `center_id=null`) regardless of payload.
   - Targets only:
-    - students in unbranded centers
     - students with `center_id = null`
 - Center routes (`/api/v1/admin/centers/{center}/surveys*`) are for branded center scope.
   - Survey is always center-scoped (`scope_type=2`, `center_id={route center}`) regardless of payload.
@@ -18,7 +17,6 @@ This document defines the survey behavior currently enforced by backend code and
 
 Supported enum values:
 - `all`
-- `center`
 - `course`
 - `video`
 - `user`
@@ -30,10 +28,10 @@ Removed:
 
 - `System` surveys allow:
   - `all`
-  - `center` (unbranded center only)
   - `course` (course must belong to an unbranded center)
-  - `user` (student in unbranded center or `center_id = null`)
+  - `user` (student with `center_id = null`)
 - `System` surveys reject:
+  - `center`
   - `video`
   - `section`
 
@@ -53,8 +51,12 @@ Admin base: `/api/v1/admin`
 - System scope endpoints:
   - `GET /surveys`
   - `POST /surveys`
+  - `POST /surveys/bulk-close`
+  - `POST /surveys/bulk-delete`
+  - `POST /surveys/bulk-status`
   - `GET /surveys/{survey}`
   - `PUT /surveys/{survey}`
+  - `PUT /surveys/{survey}/status`
   - `DELETE /surveys/{survey}`
   - `POST /surveys/{survey}/assign`
   - `POST /surveys/{survey}/close`
@@ -63,8 +65,12 @@ Admin base: `/api/v1/admin`
 - Center scope endpoints:
   - `GET /centers/{center}/surveys`
   - `POST /centers/{center}/surveys`
+  - `POST /centers/{center}/surveys/bulk-close`
+  - `POST /centers/{center}/surveys/bulk-delete`
+  - `POST /centers/{center}/surveys/bulk-status`
   - `GET /centers/{center}/surveys/{survey}`
   - `PUT /centers/{center}/surveys/{survey}`
+  - `PUT /centers/{center}/surveys/{survey}/status`
   - `DELETE /centers/{center}/surveys/{survey}`
   - `POST /centers/{center}/surveys/{survey}/assign`
   - `POST /centers/{center}/surveys/{survey}/close`
@@ -87,7 +93,7 @@ Purpose:
 
 Optional query params:
 - `center_id`
-  - for system route: optional (if sent, must be unbranded center)
+  - for system route: must be null/omitted
   - for center route: optional but must match route center
 - `scope_type`
   - optional
@@ -124,7 +130,7 @@ Use these endpoints before submit:
 
 2. For system survey assignment (`scope_type=1`):
    - centers: `GET /api/v1/admin/centers?type=0` (unbranded only)
-   - students (user assignment): `GET /api/v1/admin/surveys/target-students[?center_id=...]`
+   - students (user assignment): `GET /api/v1/admin/surveys/target-students`
    - courses:
      - select unbranded center first
      - then `GET /api/v1/admin/centers/{center}/courses`
@@ -144,10 +150,21 @@ Use paginated loading for survey page lists. Do not request bulk pages like `per
 - Query:
   - `page` (start at `1`)
   - `per_page` (recommended `20`, maximum `50`)
-  - optional filters: `is_active`, `type`
+  - optional filters:
+    - `is_active` (`true|false` or `1|0`)
+    - `is_mandatory` (`true|false` or `1|0`)
+    - `type`
+    - `search` (title in EN/AR)
+    - `start_from` / `start_to` (YYYY-MM-DD)
+    - `end_from` / `end_to` (YYYY-MM-DD)
 - Continue loading while:
   - `page <= meta.last_page`
   - or loaded count `< meta.total`
+
+Each survey item in `data[]` includes:
+- `assignments`: assignment objects (`type`, `assignable_id`, `assignable_name`)
+- `responses_count`: total response rows
+- `submitted_users_count`: distinct students who submitted (deduplicated by `user_id`)
 
 Suggested infinite scroll loop:
 1. Initial request with `page=1&per_page=20`.
@@ -168,8 +185,35 @@ Valid:
 Invalid:
 - `{ "type": "all", "id": 42 }` (ignored by business intent, FE should avoid)
 - `{ "type": "section", "id": 10 }`
+- System + `{ "type": "center", "id": 10 }`
 - System + `{ "type": "video", "id": 10 }`
 - Center + `{ "type": "center", "id": 10 }`
+
+## Bulk Actions
+
+- Bulk status:
+  - `POST /api/v1/admin/surveys/bulk-status`
+  - `POST /api/v1/admin/centers/{center}/surveys/bulk-status`
+  - body: `{ "is_active": true|false, "survey_ids": [1,2,3] }`
+- Bulk close:
+  - `POST /api/v1/admin/surveys/bulk-close`
+  - `POST /api/v1/admin/centers/{center}/surveys/bulk-close`
+  - body: `{ "survey_ids": [1,2,3] }`
+- Bulk delete (with safety checks):
+  - `POST /api/v1/admin/surveys/bulk-delete`
+  - `POST /api/v1/admin/centers/{center}/surveys/bulk-delete`
+  - body: `{ "survey_ids": [1,2,3] }`
+  - Safety behavior:
+    - active surveys are skipped
+    - surveys with responses are skipped
+    - wrong-scope IDs are failed as not found
+
+- Single delete safety (same rules as bulk delete):
+  - `DELETE /api/v1/admin/surveys/{survey}`
+  - `DELETE /api/v1/admin/centers/{center}/surveys/{survey}`
+  - returns `422 VALIDATION_ERROR` if:
+    - survey is active
+    - survey has responses
 
 ## Submission and Visibility Notes (Mobile)
 
@@ -190,8 +234,8 @@ Invalid:
 - Always coerce assignment IDs to integer.
 - Do not render invalid type/scope combinations in UI.
 - Always scope student picker by survey scope using `/surveys/target-students`.
-- For system scope, do not allow branded center entities in selectors.
+- For system scope, only allow Najaah app students (`center_id=null`) in selectors.
 - For center scope, force center-bound lists (`students`, `courses`, `videos`) by selected center.
+- Use `/surveys/{id}/status` and `/surveys/bulk-status` to toggle `is_active` without editing other fields.
 - Use paginated loading (`per_page=20`) for survey-page and target-student lists.
 - Treat 422 as validation error and show field messages.
-- Guard for possible 500 from invalid business combinations if client-side validation misses a case.

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\CenterType;
 use App\Enums\SurveyScopeType;
 use App\Models\Center;
 use App\Models\Permission;
@@ -14,23 +13,16 @@ use Illuminate\Support\Facades\Config;
 
 uses(RefreshDatabase::class)->group('surveys', 'admin', 'target-students');
 
-it('lists only unbranded and null-center students for system survey targeting', function (): void {
+it('lists only students without center for system survey targeting', function (): void {
     $this->asAdmin();
 
-    $unbrandedCenter = Center::factory()->create(['type' => CenterType::Unbranded]);
-    $brandedCenter = Center::factory()->create(['type' => CenterType::Branded]);
-
-    $unbrandedStudent = User::factory()->create([
-        'is_student' => true,
-        'center_id' => $unbrandedCenter->id,
-    ]);
     $nullCenterStudent = User::factory()->create([
         'is_student' => true,
         'center_id' => null,
     ]);
-    $brandedStudent = User::factory()->create([
+    $centerStudent = User::factory()->create([
         'is_student' => true,
-        'center_id' => $brandedCenter->id,
+        'center_id' => Center::factory()->create()->id,
     ]);
 
     $response = $this->getJson(
@@ -42,45 +34,17 @@ it('lists only unbranded and null-center students for system survey targeting', 
         ->assertJsonPath('success', true);
 
     $ids = collect($response->json('data'))->pluck('id')->all();
-    expect($ids)->toContain($unbrandedStudent->id);
     expect($ids)->toContain($nullCenterStudent->id);
-    expect($ids)->not->toContain($brandedStudent->id);
+    expect($ids)->not->toContain($centerStudent->id);
 });
 
-it('filters system survey target students by unbranded center id when provided', function (): void {
+it('rejects center filter for system survey targeting', function (): void {
     $this->asAdmin();
 
-    $centerA = Center::factory()->create(['type' => CenterType::Unbranded]);
-    $centerB = Center::factory()->create(['type' => CenterType::Unbranded]);
-
-    $studentA = User::factory()->create([
-        'is_student' => true,
-        'center_id' => $centerA->id,
-    ]);
-    $studentB = User::factory()->create([
-        'is_student' => true,
-        'center_id' => $centerB->id,
-    ]);
+    $center = Center::factory()->create();
 
     $response = $this->getJson(
-        '/api/v1/admin/surveys/target-students?scope_type='.SurveyScopeType::System->value.'&center_id='.$centerA->id,
-        $this->adminHeaders()
-    );
-
-    $response->assertOk()->assertJsonPath('success', true);
-    $ids = collect($response->json('data'))->pluck('id')->all();
-
-    expect($ids)->toContain($studentA->id);
-    expect($ids)->not->toContain($studentB->id);
-});
-
-it('rejects branded center filter for system survey targeting', function (): void {
-    $this->asAdmin();
-
-    $brandedCenter = Center::factory()->create(['type' => CenterType::Branded]);
-
-    $response = $this->getJson(
-        '/api/v1/admin/surveys/target-students?scope_type='.SurveyScopeType::System->value.'&center_id='.$brandedCenter->id,
+        '/api/v1/admin/surveys/target-students?scope_type='.SurveyScopeType::System->value.'&center_id='.$center->id,
         $this->adminHeaders()
     );
 
@@ -102,7 +66,7 @@ it('rejects target students page size above 50', function (): void {
         ->assertJsonPath('error.code', 'VALIDATION_ERROR');
 });
 
-it('requires center id for center survey targeting', function (): void {
+it('rejects center scope type on system target students route', function (): void {
     $this->asAdmin();
 
     $response = $this->getJson(
@@ -130,7 +94,6 @@ it('lists only selected center students for center survey targeting', function (
         'center_id' => $centerB->id,
     ]);
 
-    // Super admin uses center-scoped route for center surveys
     $response = $this->getJson(
         "/api/v1/admin/centers/{$centerA->id}/surveys/target-students",
         $this->adminHeaders()
@@ -227,7 +190,6 @@ it('allows center admin to list only own center target students for center scope
         Config::set('services.system_api_key', $systemKey);
     }
 
-    // Center admin uses center-scoped route
     $response = $this->getJson(
         "/api/v1/admin/centers/{$center->id}/surveys/target-students",
         [

@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('surveys', 'admin', 'assignments');
 
-it('assigns system survey to unbranded center', function (): void {
+it('rejects assigning system survey to center target even for unbranded center', function (): void {
     $this->asAdmin();
     $survey = Survey::factory()->system()->create();
     $center = Center::factory()->create(['type' => CenterType::Unbranded]);
@@ -24,28 +24,13 @@ it('assigns system survey to unbranded center', function (): void {
         ],
     ], $this->adminHeaders());
 
-    $response->assertOk()->assertJsonPath('success', true);
-    $this->assertDatabaseHas('survey_assignments', [
-        'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::Center->value,
-        'assignable_id' => $center->id,
-    ]);
-});
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
 
-it('prevents assigning system survey to branded center', function (): void {
-    $this->asAdmin();
-    $survey = Survey::factory()->system()->create();
-    $center = Center::factory()->create(['type' => CenterType::Branded]);
-
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
-        'assignments' => [
-            ['type' => SurveyAssignableType::Center->value, 'id' => $center->id],
-        ],
-    ], $this->adminHeaders());
-
-    $response->assertStatus(500); // InvalidArgumentException
     $this->assertDatabaseMissing('survey_assignments', [
         'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::Center->value,
         'assignable_id' => $center->id,
     ]);
 });
@@ -82,7 +67,9 @@ it('prevents assigning system survey to course in branded center', function (): 
         ],
     ], $this->adminHeaders());
 
-    $response->assertStatus(500); // InvalidArgumentException
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
     $this->assertDatabaseMissing('survey_assignments', [
         'survey_id' => $survey->id,
         'assignable_id' => $course->id,
@@ -138,7 +125,9 @@ it('prevents cross-center assignment', function (): void {
         ],
     ], $this->adminHeaders());
 
-    $response->assertStatus(500); // InvalidArgumentException
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
     $this->assertDatabaseMissing('survey_assignments', [
         'survey_id' => $survey->id,
         'assignable_id' => $course->id,
@@ -169,14 +158,12 @@ it('prevents duplicate assignments', function (): void {
     $survey = Survey::factory()->center($center)->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
 
-    // First assignment
     $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Course->value, 'id' => $course->id],
         ],
     ], $this->adminHeaders());
 
-    // Second assignment (same)
     $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Course->value, 'id' => $course->id],
@@ -192,11 +179,13 @@ it('rejects assignment to non-existent entity', function (): void {
 
     $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
         'assignments' => [
-            ['type' => SurveyAssignableType::Center->value, 'id' => 999999],
+            ['type' => SurveyAssignableType::Course->value, 'id' => 999999],
         ],
     ], $this->adminHeaders());
 
-    $response->assertStatus(500);
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
 });
 
 it('rejects assigning center-scoped survey by center type', function (): void {
@@ -210,7 +199,9 @@ it('rejects assigning center-scoped survey by center type', function (): void {
         ],
     ], $this->adminHeaders());
 
-    $response->assertStatus(500);
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
     $this->assertDatabaseMissing('survey_assignments', [
         'survey_id' => $survey->id,
         'assignable_type' => SurveyAssignableType::Center->value,
@@ -230,7 +221,9 @@ it('rejects assigning center survey to a different center', function (): void {
         ],
     ], $this->adminHeaders());
 
-    $response->assertStatus(500);
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
     $this->assertDatabaseMissing('survey_assignments', [
         'survey_id' => $survey->id,
         'assignable_type' => SurveyAssignableType::Center->value,
@@ -238,9 +231,10 @@ it('rejects assigning center survey to a different center', function (): void {
     ]);
 });
 
-it('returns warning when assigned cohort already has an active survey', function (): void {
+it('returns warning when assigned course already has an active survey', function (): void {
     $this->asAdmin();
     $center = Center::factory()->create(['type' => CenterType::Unbranded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
 
     $existingSurvey = Survey::factory()->system()->active()->create([
         'is_mandatory' => true,
@@ -249,20 +243,20 @@ it('returns warning when assigned cohort already has an active survey', function
 
     SurveyAssignment::create([
         'survey_id' => $existingSurvey->id,
-        'assignable_type' => SurveyAssignableType::Center,
-        'assignable_id' => $center->id,
+        'assignable_type' => SurveyAssignableType::Course,
+        'assignable_id' => $course->id,
     ]);
 
     $response = $this->postJson("/api/v1/admin/surveys/{$newSurvey->id}/assign", [
         'assignments' => [
-            ['type' => SurveyAssignableType::Center->value, 'id' => $center->id],
+            ['type' => SurveyAssignableType::Course->value, 'id' => $course->id],
         ],
     ], $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('warnings.0.type', SurveyAssignableType::Center->value)
-        ->assertJsonPath('warnings.0.id', $center->id)
+        ->assertJsonPath('warnings.0.type', SurveyAssignableType::Course->value)
+        ->assertJsonPath('warnings.0.id', $course->id)
         ->assertJsonPath('warnings.0.conflicting_count', 1);
 
     expect($response->json('warnings.0.conflicting_survey_ids'))->toContain($existingSurvey->id);
@@ -309,7 +303,9 @@ it('rejects assigning survey directly to non-student user', function (): void {
         ],
     ], $this->adminHeaders());
 
-    $response->assertStatus(500);
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
     $this->assertDatabaseMissing('survey_assignments', [
         'survey_id' => $survey->id,
         'assignable_type' => SurveyAssignableType::User->value,
@@ -330,7 +326,9 @@ it('rejects assigning center survey to student from different center', function 
         ],
     ], $this->adminHeaders());
 
-    $response->assertStatus(500);
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
     $this->assertDatabaseMissing('survey_assignments', [
         'survey_id' => $survey->id,
         'assignable_type' => SurveyAssignableType::User->value,
@@ -361,7 +359,33 @@ it('assigns system survey to student without center', function (): void {
     ]);
 });
 
-it('supports all assignment in assign endpoint without id', function (): void {
+it('rejects assigning system survey to student with center', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create(['type' => CenterType::Unbranded]);
+    $survey = Survey::factory()->system()->create();
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+
+    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+        'assignments' => [
+            ['type' => SurveyAssignableType::User->value, 'id' => $student->id],
+        ],
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+
+    $this->assertDatabaseMissing('survey_assignments', [
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::User->value,
+        'assignable_id' => $student->id,
+    ]);
+});
+
+it('supports all assignment in center assign endpoint without id', function (): void {
     $this->asAdmin();
     $center = Center::factory()->create();
     $survey = Survey::factory()->center($center)->create();
@@ -377,4 +401,39 @@ it('supports all assignment in assign endpoint without id', function (): void {
 
     $response->assertOk()->assertJsonPath('success', true);
     expect(SurveyAssignment::where('survey_id', $survey->id)->count())->toBe(2);
+});
+
+it('supports all assignment in system assign endpoint and targets only students without center', function (): void {
+    $this->asAdmin();
+    $survey = Survey::factory()->system()->create();
+    $nullCenterA = User::factory()->create(['is_student' => true, 'center_id' => null]);
+    $nullCenterB = User::factory()->create(['is_student' => true, 'center_id' => null]);
+    $centerStudent = User::factory()->create([
+        'is_student' => true,
+        'center_id' => Center::factory()->create()->id,
+    ]);
+
+    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+        'assignments' => [
+            ['type' => SurveyAssignableType::All->value],
+        ],
+    ], $this->adminHeaders());
+
+    $response->assertOk()->assertJsonPath('success', true);
+
+    $this->assertDatabaseHas('survey_assignments', [
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::All->value,
+        'assignable_id' => $nullCenterA->id,
+    ]);
+    $this->assertDatabaseHas('survey_assignments', [
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::All->value,
+        'assignable_id' => $nullCenterB->id,
+    ]);
+    $this->assertDatabaseMissing('survey_assignments', [
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::All->value,
+        'assignable_id' => $centerStudent->id,
+    ]);
 });

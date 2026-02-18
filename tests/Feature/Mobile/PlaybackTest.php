@@ -305,6 +305,18 @@ test('it blocks branded student playback for another center', function (): void 
     $response->assertStatus(403)->assertJsonPath('error.code', 'CENTER_MISMATCH');
 });
 
+test('it blocks playback when center is inactive', function (): void {
+    [$student, $center, $course, $video] = buildPlaybackContext([
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+
+    $response->assertStatus(403)->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
 test('it rejects playback when course is not published', function (): void {
     [$student, $center, $course, $video] = buildPlaybackContext();
     $course->update(['status' => 0, 'is_published' => false]);

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Surveys;
 
-use App\Enums\CenterType;
 use App\Enums\SurveyScopeType;
-use App\Models\Center;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -53,16 +51,7 @@ class SurveyTargetStudentService
                 throw new \InvalidArgumentException('Only system super admins can target system survey students.');
             }
 
-            $query->where(function (Builder $builder): void {
-                $builder->whereNull('center_id')
-                    ->orWhereIn('center_id', Center::query()
-                        ->select('id')
-                        ->where('type', CenterType::Unbranded->value));
-            });
-
-            if ($centerId !== null) {
-                $query->where('center_id', $centerId);
-            }
+            $query->whereNull('center_id');
         } else {
             $this->centerScopeService->assertAdminCenterId($actor, $centerId);
             $query->where('center_id', $centerId);

@@ -93,6 +93,28 @@ test('send rejects invalid api key', function (): void {
         ->assertJsonPath('error.code', 'INVALID_API_KEY');
 });
 
+test('send rejects inactive center api key', function (): void {
+    Center::factory()->create([
+        'api_key' => 'inactive-center-key',
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/send-otp', [
+        'phone' => '1234567890',
+        'country_code' => '+20',
+    ], [
+        'X-Api-Key' => 'inactive-center-key',
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_INACTIVE');
+
+    $this->assertDatabaseMissing('otp_codes', [
+        'phone' => '1234567890',
+        'country_code' => '+20',
+    ]);
+});
+
 test('send validates base phone and country code formats', function (): void {
     $response = $this->postJson('/api/v1/auth/send-otp', [
         'phone' => '01225291841',
@@ -117,7 +139,7 @@ test('send validates base phone and country code formats', function (): void {
 
 test('verify otp issues tokens', function (): void {
     /** @var User $user */
-    $user = User::factory()->create(['phone' => '1234567890', 'country_code' => '+20']);
+    $user = User::factory()->create(['phone' => '1234567890', 'country_code' => '+20', 'center_id' => null]);
     OtpCode::factory()->create([
         'user_id' => $user->id,
         'phone' => '1234567890',
@@ -171,6 +193,99 @@ test('verify rejects center mismatch', function (): void {
         'device_uuid' => 'device-1',
     ], [
         'X-Api-Key' => $centerB->api_key,
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
+test('verify rejects inactive center api key', function (): void {
+    $center = Center::factory()->create([
+        'api_key' => 'inactive-center-key',
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'center_id' => $center->id,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-inactive-center',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-inactive-center',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_INACTIVE');
+});
+
+test('verify rejects branded student when using system api key', function (): void {
+    $center = Center::factory()->create(['api_key' => 'center-a-key']);
+
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'center_id' => $center->id,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-system-scope-mismatch',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-system-scope-mismatch',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
+test('verify rejects system student when using center api key', function (): void {
+    $center = Center::factory()->create(['api_key' => 'center-a-key']);
+
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'center_id' => null,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112223333',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-center-scope-mismatch',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-center-scope-mismatch',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => $center->api_key,
     ]);
 
     $response->assertStatus(422)
@@ -237,6 +352,7 @@ test('verify rejects login from another device when active device exists', funct
     $user = User::factory()->create([
         'phone' => '9990001111',
         'country_code' => '+20',
+        'center_id' => null,
     ]);
 
     UserDevice::factory()->create([
@@ -267,7 +383,7 @@ test('verify rejects login from another device when active device exists', funct
 
 test('otp cannot be reused after consumption', function (): void {
     /** @var User $user */
-    $user = User::factory()->create(['phone' => '5555555555', 'country_code' => '+20']);
+    $user = User::factory()->create(['phone' => '5555555555', 'country_code' => '+20', 'center_id' => null]);
     $otp = OtpCode::factory()->create([
         'user_id' => $user->id,
         'phone' => '5555555555',
@@ -323,6 +439,39 @@ test('refresh returns empty tokens for invalid refresh token', function (): void
         'refresh_token' => 'invalid-refresh',
     ], [
         'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('token.access_token', '')
+        ->assertJsonPath('token.refresh_token', '');
+});
+
+test('refresh returns empty tokens when inactive center api key is used', function (): void {
+    $center = Center::factory()->create([
+        'api_key' => 'inactive-center-key',
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+    $user = User::factory()->create([
+        'center_id' => $center->id,
+        'is_student' => true,
+    ]);
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+        'status' => UserDevice::STATUS_ACTIVE,
+    ]);
+
+    JwtToken::factory()->create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'refresh_token' => 'inactive-refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDay(),
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/refresh', [
+        'refresh_token' => 'inactive-refresh-token',
+    ], [
+        'X-Api-Key' => $center->api_key,
     ]);
 
     $response->assertOk()

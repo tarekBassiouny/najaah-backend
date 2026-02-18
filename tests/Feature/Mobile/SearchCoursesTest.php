@@ -179,6 +179,46 @@ it('scopes search results to student center or unbranded centers', function (): 
         ->assertJsonPath('data.0.id', $unbrandedCourse->id);
 });
 
+it('excludes inactive unbranded center courses from search for system students', function (): void {
+    $activeUnbranded = Center::factory()->create([
+        'type' => 0,
+        'status' => Center::STATUS_ACTIVE,
+    ]);
+    $inactiveUnbranded = Center::factory()->create([
+        'type' => 0,
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $activeCourse = Course::factory()->create([
+        'center_id' => $activeUnbranded->id,
+        'title_translations' => ['en' => 'Shared Course'],
+        'status' => 3,
+        'is_published' => true,
+    ]);
+    $inactiveCourse = Course::factory()->create([
+        'center_id' => $inactiveUnbranded->id,
+        'title_translations' => ['en' => 'Shared Course'],
+        'status' => 3,
+        'is_published' => true,
+    ]);
+
+    attachReadyVideoToCourse($activeCourse, $activeUnbranded);
+    attachReadyVideoToCourse($inactiveCourse, $inactiveUnbranded);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/search?search=Shared');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $activeCourse->id);
+});
+
 it('paginates search results', function (): void {
     $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
     $student = User::factory()->create([

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Exceptions\DomainException;
 use App\Http\Middleware\EnsureActiveEnrollment;
+use App\Http\Middleware\EnsureCenterlessSystemAdminScope;
 use App\Http\Middleware\EnsureCenterRouteScope;
 use App\Http\Middleware\EnsureSystemAdminScope;
 use App\Http\Middleware\EnsureUnbrandedStudent;
@@ -100,6 +101,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'require.role' => RequireRole::class,
             'scope.center_route' => EnsureCenterRouteScope::class,
             'scope.system_admin' => EnsureSystemAdminScope::class,
+            'scope.system_centerless' => EnsureCenterlessSystemAdminScope::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

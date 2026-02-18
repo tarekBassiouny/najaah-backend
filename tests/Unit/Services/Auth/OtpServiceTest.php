@@ -71,6 +71,7 @@ it('creates otp record and sends via provider', function (): void {
         'phone' => '555000111',
         'country_code' => '+1',
         'is_student' => true,
+        'center_id' => null,
     ]);
 
     $sender = Mockery::mock(OtpSenderInterface::class);
@@ -96,4 +97,64 @@ it('creates otp record and sends via provider', function (): void {
         ->and($otpRecord->otp_token)->toBe($response)
         ->and($otpRecord->expires_at)->not->toBeNull()
         ->and($otpRecord->expires_at->greaterThan($startedAt))->toBeTrue();
+});
+
+it('matches otp send to system student when center scope is null', function (): void {
+    $center = \App\Models\Center::factory()->create();
+
+    User::factory()->create([
+        'phone' => '777000111',
+        'country_code' => '+1',
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+
+    $systemStudent = User::factory()->create([
+        'phone' => '777000111',
+        'country_code' => '+1',
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $sender = Mockery::mock(OtpSenderInterface::class);
+    $sender->shouldReceive('provider')->once()->andReturn('whatsapp');
+    $sender->shouldReceive('send')->once();
+
+    $service = new OtpService($sender);
+    $token = $service->send('777000111', '+1', null);
+
+    assertDatabaseHas('otp_codes', [
+        'otp_token' => $token,
+        'user_id' => $systemStudent->id,
+    ]);
+});
+
+it('matches otp send to center student when center scope is provided', function (): void {
+    $center = \App\Models\Center::factory()->create();
+
+    $centerStudent = User::factory()->create([
+        'phone' => '888000111',
+        'country_code' => '+1',
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+
+    User::factory()->create([
+        'phone' => '888000111',
+        'country_code' => '+1',
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $sender = Mockery::mock(OtpSenderInterface::class);
+    $sender->shouldReceive('provider')->once()->andReturn('whatsapp');
+    $sender->shouldReceive('send')->once();
+
+    $service = new OtpService($sender);
+    $token = $service->send('888000111', '+1', (int) $center->id);
+
+    assertDatabaseHas('otp_codes', [
+        'otp_token' => $token,
+        'user_id' => $centerStudent->id,
+    ]);
 });
