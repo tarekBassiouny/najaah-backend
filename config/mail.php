@@ -2,10 +2,6 @@
 
 return [
 
-    'queue_connection' => env('MAIL_QUEUE_CONNECTION', 'database'),
-
-    'queue' => env('MAIL_QUEUE', 'mail'),
-
     /*
     |--------------------------------------------------------------------------
     | Default Mailer
@@ -58,13 +54,6 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
-        'mailgun' => [
-            'transport' => 'mailgun',
-            'client' => [
-                'timeout' => (int) env('MAILGUN_TIMEOUT', 10),
-            ],
-        ],
-
         'ses' => [
             'transport' => 'ses',
         ],
@@ -98,7 +87,7 @@ return [
         'failover' => [
             'transport' => 'failover',
             'mailers' => [
-                'mailgun',
+                'smtp',
                 'log',
             ],
             'retry_after' => 60,
@@ -127,8 +116,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'support@najaah.me'),
-        'name' => env('MAIL_FROM_NAME', 'Najaah'),
+        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
 ];

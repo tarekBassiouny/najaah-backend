@@ -24,9 +24,24 @@ class DeviceChangeRequestQueryService
     public function build(User $admin, DeviceChangeRequestFilters $filters): Builder
     {
         $query = DeviceChangeRequest::query()->with(['user', 'center', 'decider']);
-        $this->applyFilters($query, $filters);
 
-        if ($this->isSystemScopedAdmin($admin)) {
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
+        if ($filters->userId !== null) {
+            $query->where('user_id', $filters->userId);
+        }
+
+        if ($filters->dateFrom !== null) {
+            $query->where('created_at', '>=', Carbon::parse($filters->dateFrom)->startOfDay());
+        }
+
+        if ($filters->dateTo !== null) {
+            $query->where('created_at', '<=', Carbon::parse($filters->dateTo)->endOfDay());
+        }
+
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
                 $query->where('center_id', $filters->centerId);
             }
@@ -49,7 +64,22 @@ class DeviceChangeRequestQueryService
         $query = DeviceChangeRequest::query()
             ->with(['user', 'center', 'decider'])
             ->where('center_id', $centerId);
-        $this->applyFilters($query, $filters);
+
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
+        if ($filters->userId !== null) {
+            $query->where('user_id', $filters->userId);
+        }
+
+        if ($filters->dateFrom !== null) {
+            $query->where('created_at', '>=', Carbon::parse($filters->dateFrom)->startOfDay());
+        }
+
+        if ($filters->dateTo !== null) {
+            $query->where('created_at', '<=', Carbon::parse($filters->dateTo)->endOfDay());
+        }
 
         return $query->orderByDesc('created_at');
     }
@@ -78,60 +108,5 @@ class DeviceChangeRequestQueryService
             'page',
             $filters->page
         );
-    }
-
-    /**
-     * @param  Builder<DeviceChangeRequest>  $query
-     */
-    private function applyFilters(Builder $query, DeviceChangeRequestFilters $filters): void
-    {
-        if ($filters->status !== null) {
-            $query->where('status', $filters->status);
-        }
-
-        if ($filters->userId !== null) {
-            $query->where('user_id', $filters->userId);
-        }
-
-        if ($filters->search !== null) {
-            $term = trim($filters->search);
-            if ($term !== '') {
-                $query->whereHas('user', static function (Builder $userQuery) use ($term): void {
-                    $userQuery
-                        ->where('name', 'like', sprintf('%%%s%%', $term))
-                        ->orWhere('email', 'like', sprintf('%%%s%%', $term))
-                        ->orWhere('phone', 'like', sprintf('%%%s%%', $term));
-                });
-            }
-        }
-
-        if ($filters->requestSource !== null) {
-            $query->where('request_source', $filters->requestSource);
-        }
-
-        if ($filters->decidedBy !== null) {
-            $query->where('decided_by', $filters->decidedBy);
-        }
-
-        if ($filters->currentDeviceId !== null) {
-            $query->where('current_device_id', $filters->currentDeviceId);
-        }
-
-        if ($filters->newDeviceId !== null) {
-            $query->where('new_device_id', $filters->newDeviceId);
-        }
-
-        if ($filters->dateFrom !== null) {
-            $query->where('created_at', '>=', Carbon::parse($filters->dateFrom)->startOfDay());
-        }
-
-        if ($filters->dateTo !== null) {
-            $query->where('created_at', '<=', Carbon::parse($filters->dateTo)->endOfDay());
-        }
-    }
-
-    private function isSystemScopedAdmin(User $admin): bool
-    {
-        return ! $admin->is_student && ! is_numeric($admin->center_id);
     }
 }

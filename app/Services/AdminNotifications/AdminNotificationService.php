@@ -26,10 +26,12 @@ class AdminNotificationService implements AdminNotificationServiceInterface
      */
     public function list(AdminNotificationFilters $filters, User $actor): LengthAwarePaginator
     {
+        $centerId = $this->getActorCenterId($actor);
+
         /** @var Builder<AdminNotification> $query */
         $query = AdminNotification::query()
+            ->forUser($actor, $centerId)
             ->orderByDesc('created_at');
-        $this->applyVisibilityScope($query, $actor);
 
         $this->excludeDeletedForActor($query, $actor);
 
@@ -65,8 +67,10 @@ class AdminNotificationService implements AdminNotificationServiceInterface
 
     public function getUnreadCount(User $actor): int
     {
-        $query = AdminNotification::query();
-        $this->applyVisibilityScope($query, $actor);
+        $centerId = $this->getActorCenterId($actor);
+
+        $query = AdminNotification::query()
+            ->forUser($actor, $centerId);
 
         $this->excludeDeletedForActor($query, $actor);
 
@@ -108,8 +112,10 @@ class AdminNotificationService implements AdminNotificationServiceInterface
 
     public function markAllAsRead(User $actor): int
     {
-        $query = AdminNotification::query();
-        $this->applyVisibilityScope($query, $actor);
+        $centerId = $this->getActorCenterId($actor);
+
+        $query = AdminNotification::query()
+            ->forUser($actor, $centerId);
 
         $this->excludeDeletedForActor($query, $actor);
 
@@ -147,10 +153,22 @@ class AdminNotificationService implements AdminNotificationServiceInterface
         }
     }
 
+    private function getActorCenterId(User $actor): ?int
+    {
+        if ($this->centerScopeService->isSystemSuperAdmin($actor)) {
+            return null;
+        }
+
+        return $actor->center_id;
+    }
+
     private function assertCanAccess(AdminNotification $notification, User $actor): void
     {
-        $query = AdminNotification::query()->where('id', $notification->id);
-        $this->applyVisibilityScope($query, $actor);
+        $centerId = $this->getActorCenterId($actor);
+
+        $query = AdminNotification::query()
+            ->where('id', $notification->id)
+            ->forUser($actor, $centerId);
 
         $this->excludeDeletedForActor($query, $actor);
 
@@ -173,33 +191,6 @@ class AdminNotificationService implements AdminNotificationServiceInterface
         $query->whereDoesntHave('userStates', function (Builder $state) use ($actor): void {
             $state->where('user_id', $actor->id)
                 ->whereNotNull('deleted_at');
-        });
-    }
-
-    /**
-     * @param  Builder<AdminNotification>  $query
-     */
-    private function applyVisibilityScope(Builder $query, User $actor): void
-    {
-        if (! $actor->is_student && ! is_numeric($actor->center_id)) {
-            $query->where(function (Builder $visible) use ($actor): void {
-                $visible->whereNull('user_id')
-                    ->orWhere('user_id', $actor->id);
-            });
-
-            return;
-        }
-
-        $actorCenterId = $this->centerScopeService->resolveAdminCenterId($actor);
-        $query->where(function (Builder $visible) use ($actor, $actorCenterId): void {
-            $visible->where('user_id', $actor->id);
-
-            if ($actorCenterId !== null) {
-                $visible->orWhere(function (Builder $centerScoped) use ($actorCenterId): void {
-                    $centerScoped->whereNull('user_id')
-                        ->where('center_id', $actorCenterId);
-                });
-            }
         });
     }
 

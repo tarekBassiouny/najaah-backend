@@ -232,22 +232,22 @@ it('scopes students to admin center', function (): void {
     $blockedResponse->assertForbidden();
 });
 
-it('filters students by status and student search fields', function (): void {
+it('filters students by status and search', function (): void {
     $this->asAdmin();
 
     User::factory()->create([
         'name' => 'Alpha Student',
-        'email' => 'alpha.search@example.com',
+        'email' => 'alpha.student@example.com',
         'is_student' => true,
         'status' => 0,
-        'phone' => '19991234016',
+        'phone' => '19990000016',
     ]);
     User::factory()->create([
         'name' => 'Beta Student',
-        'email' => 'beta.search@example.com',
+        'email' => 'beta.student@example.com',
         'is_student' => true,
         'status' => 1,
-        'phone' => '19995678017',
+        'phone' => '19990000017',
     ]);
 
     $byStatus = $this->getJson('/api/v1/admin/students?status=0', $this->adminHeaders());
@@ -256,24 +256,9 @@ it('filters students by status and student search fields', function (): void {
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.status', 0);
 
-    $byLegacySearch = $this->getJson('/api/v1/admin/students?search=Alpha', $this->adminHeaders());
-    $byName = $this->getJson('/api/v1/admin/students?student_name=Alpha', $this->adminHeaders());
-    $byPhone = $this->getJson('/api/v1/admin/students?student_phone=1234', $this->adminHeaders());
-    $byEmail = $this->getJson('/api/v1/admin/students?student_email=alpha.search', $this->adminHeaders());
+    $bySearch = $this->getJson('/api/v1/admin/students?search=Alpha', $this->adminHeaders());
 
-    $byLegacySearch->assertOk()
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.name', 'Alpha Student');
-
-    $byName->assertOk()
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.name', 'Alpha Student');
-
-    $byPhone->assertOk()
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.name', 'Alpha Student');
-
-    $byEmail->assertOk()
+    $bySearch->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.name', 'Alpha Student');
 });

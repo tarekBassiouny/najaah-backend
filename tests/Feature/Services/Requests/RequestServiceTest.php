@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\AdminNotificationType;
 use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
@@ -47,13 +46,6 @@ test('createEnrollmentRequest creates pending enrollment in transaction', functi
         'course_id' => $course->id,
         'center_id' => $center->id,
         'status' => Enrollment::STATUS_PENDING,
-        'reason' => 'Test reason',
-    ]);
-    $this->assertDatabaseHas('admin_notifications', [
-        'type' => AdminNotificationType::NEW_ENROLLMENT->value,
-        'title' => 'New Enrollment Request',
-        'center_id' => $center->id,
-        'user_id' => null,
     ]);
 });
 
@@ -126,11 +118,6 @@ test('createDeviceChangeRequest creates pending request in transaction', functio
         'current_device_id' => 'test-device-123',
         'status' => DeviceChangeRequest::STATUS_PENDING,
         'reason' => 'Need new phone',
-    ]);
-    $this->assertDatabaseHas('admin_notifications', [
-        'type' => AdminNotificationType::DEVICE_CHANGE_REQUEST->value,
-        'center_id' => $center->id,
-        'user_id' => null,
     ]);
 });
 
@@ -213,11 +200,6 @@ test('createExtraViewRequest creates pending request in transaction', function (
         'course_id' => $course->id,
         'status' => ExtraViewRequest::STATUS_PENDING,
         'reason' => 'Need more views',
-    ]);
-    $this->assertDatabaseHas('admin_notifications', [
-        'type' => AdminNotificationType::EXTRA_VIEW_REQUEST->value,
-        'center_id' => $center->id,
-        'user_id' => null,
     ]);
 });
 

@@ -12,8 +12,6 @@
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.0",
         "php-open-source-saver/jwt-auth": "*",
-        "symfony/http-client": "^7.0",
-        "symfony/mailgun-mailer": "^7.0",
         "toshy/bunnynet-php": "^8.0"
     },
 

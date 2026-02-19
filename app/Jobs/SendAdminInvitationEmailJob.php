@@ -25,16 +25,7 @@ class SendAdminInvitationEmailJob implements ShouldQueue
 
     public int $tries = 3;
 
-    public int $timeout = 30;
-
-    /** @var array<int, int> */
-    public array $backoff = [60, 300, 900];
-
-    public function __construct(public readonly int $centerId, public readonly int $ownerId)
-    {
-        $this->onConnection((string) config('mail.queue_connection', 'database'));
-        $this->onQueue((string) config('mail.queue', 'mail'));
-    }
+    public function __construct(public readonly int $centerId, public readonly int $ownerId) {}
 
     public function handle(): void
     {

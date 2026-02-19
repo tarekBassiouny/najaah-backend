@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $user_id
  * @property int $course_id
  * @property int $center_id
- * @property string|null $reason
  * @property EnrollmentStatus $status
  * @property \Illuminate\Support\Carbon $enrolled_at
  * @property \Illuminate\Support\Carbon|null $expires_at
@@ -43,7 +42,6 @@ class Enrollment extends Model
         'user_id',
         'course_id',
         'center_id',
-        'reason',
         'status',
         'enrolled_at',
         'expires_at',
@@ -95,7 +93,7 @@ class Enrollment extends Model
     /** @return BelongsTo<Center, self> */
     public function center(): BelongsTo
     {
-        return $this->belongsTo(Center::class)->withTrashed();
+        return $this->belongsTo(Center::class);
     }
 
     /**

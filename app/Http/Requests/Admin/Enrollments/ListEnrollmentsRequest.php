@@ -10,17 +10,6 @@ use App\Support\Filters\FilterInput;
 
 class ListEnrollmentsRequest extends AdminListRequest
 {
-    protected function prepareForValidation(): void
-    {
-        if (! $this->has('status')) {
-            return;
-        }
-
-        $this->merge([
-            'status' => strtoupper(trim((string) $this->input('status'))),
-        ]);
-    }
-
     public function authorize(): bool
     {
         return true;
@@ -32,13 +21,9 @@ class ListEnrollmentsRequest extends AdminListRequest
     public function rules(): array
     {
         return array_merge($this->listRules(), [
-            'center_id' => ['sometimes', 'integer'],
             'course_id' => ['sometimes', 'integer'],
             'user_id' => ['sometimes', 'integer'],
-            'search' => ['sometimes', 'string', 'max:255'],
-            'status' => ['sometimes', 'string', 'in:ACTIVE,DEACTIVATED,CANCELLED,PENDING'],
-            'date_from' => ['sometimes', 'date'],
-            'date_to' => ['sometimes', 'date'],
+            'status' => ['sometimes', 'string'],
         ]);
     }
 
@@ -50,13 +35,10 @@ class ListEnrollmentsRequest extends AdminListRequest
         return new EnrollmentFilters(
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
-            centerId: FilterInput::intOrNull($data, 'center_id'),
+            centerId: null,
             courseId: FilterInput::intOrNull($data, 'course_id'),
             userId: FilterInput::intOrNull($data, 'user_id'),
-            search: FilterInput::stringOrNull($data, 'search'),
-            status: FilterInput::stringOrNull($data, 'status'),
-            dateFrom: FilterInput::stringOrNull($data, 'date_from'),
-            dateTo: FilterInput::stringOrNull($data, 'date_to')
+            status: FilterInput::stringOrNull($data, 'status')
         );
     }
 
@@ -74,10 +56,6 @@ class ListEnrollmentsRequest extends AdminListRequest
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
             ],
-            'center_id' => [
-                'description' => 'Filter enrollments by center ID (system scope only).',
-                'example' => '2',
-            ],
             'course_id' => [
                 'description' => 'Filter enrollments by course ID.',
                 'example' => '10',
@@ -86,21 +64,9 @@ class ListEnrollmentsRequest extends AdminListRequest
                 'description' => 'Filter enrollments by user ID.',
                 'example' => '5',
             ],
-            'search' => [
-                'description' => 'Search by student name, phone, or email (partial match).',
-                'example' => '0101',
-            ],
             'status' => [
                 'description' => 'Filter by enrollment status.',
                 'example' => 'ACTIVE',
-            ],
-            'date_from' => [
-                'description' => 'Filter enrollments created from this date.',
-                'example' => '2025-01-01',
-            ],
-            'date_to' => [
-                'description' => 'Filter enrollments created up to this date.',
-                'example' => '2025-12-31',
             ],
         ];
     }

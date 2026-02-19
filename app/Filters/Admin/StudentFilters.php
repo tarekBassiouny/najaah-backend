@@ -12,9 +12,6 @@ class StudentFilters
         public readonly ?int $centerId,
         public readonly ?int $status,
         public readonly ?string $search,
-        public readonly ?string $studentName,
-        public readonly ?string $studentPhone,
-        public readonly ?string $studentEmail,
         public readonly ?int $centerType = null
     ) {}
 }
