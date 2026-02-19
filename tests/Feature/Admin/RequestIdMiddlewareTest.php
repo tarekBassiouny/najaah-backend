@@ -25,6 +25,17 @@ it('accepts X-Request-ID and normalizes it', function () {
     $response->assertHeader('X-Request-Id', 'req-upper-456');
 });
 
+it('replaces invalid incoming X-Request-Id header', function () {
+    $response = $this
+        ->withHeader('X-Request-Id', "bad\r\nvalue")
+        ->getJson('/health');
+
+    $response->assertHeader('X-Request-Id');
+    expect($response->headers->get('X-Request-Id'))
+        ->not->toBeEmpty()
+        ->not->toBe("bad\r\nvalue");
+});
+
 it('includes X-Request-Id on validation errors', function () {
     $response = $this->postJson('/api/v1/admin/auth/login', [], [
         'X-Api-Key' => config('services.system_api_key'),

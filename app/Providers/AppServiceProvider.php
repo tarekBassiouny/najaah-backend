@@ -79,14 +79,25 @@ use App\Services\Videos\Contracts\VideoUploadServiceInterface;
 use App\Services\Videos\VideoService;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Queue\Job as QueueJobContract;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * @var array<string, float>
+     */
+    private static array $queueJobStartedAt = [];
+
     /**
      * Register any application services.
      */
@@ -208,5 +219,155 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($request->ip().'|'.$email);
         });
+
+        $this->registerQueuePayloadContext();
+        $this->registerQueueLifecycleLogging();
+    }
+
+    private function registerQueuePayloadContext(): void
+    {
+        Queue::createPayloadUsing(static function (?string $connection, ?string $queue, array $payload): array {
+            $request = app()->bound('request') ? app('request') : null;
+            if (! $request instanceof Request) {
+                return [];
+            }
+
+            $requestId = $request->headers->get('X-Request-Id')
+                ?? $request->attributes->get('request_id');
+
+            if (! is_string($requestId) || $requestId === '') {
+                return [];
+            }
+
+            return [
+                'meta' => [
+                    'request_id' => $requestId,
+                ],
+            ];
+        });
+    }
+
+    private function registerQueueLifecycleLogging(): void
+    {
+        if (! (bool) config('logging.job_logging.enabled', true)) {
+            return;
+        }
+
+        $channel = (string) config('logging.job_logging.channel', 'jobs');
+
+        Queue::before(function (JobProcessing $event) use ($channel): void {
+            $identifier = $this->jobIdentifier($event->job);
+            self::$queueJobStartedAt[$identifier] = microtime(true);
+
+            Log::channel($channel)->info('job_processing', $this->buildJobLogContext(
+                $event->job,
+                $event->connectionName,
+                'processing',
+                null
+            ));
+        });
+
+        Queue::after(function (JobProcessed $event) use ($channel): void {
+            Log::channel($channel)->info('job_processed', $this->buildJobLogContext(
+                $event->job,
+                $event->connectionName,
+                'processed',
+                $this->jobDurationMs($event->job)
+            ));
+        });
+
+        Queue::failing(function (JobFailed $event) use ($channel): void {
+            $context = $this->buildJobLogContext(
+                $event->job,
+                $event->connectionName,
+                'failed',
+                $this->jobDurationMs($event->job)
+            );
+            $context['exception_class'] = $event->exception::class;
+            $context['exception_message'] = $event->exception->getMessage();
+
+            Log::channel($channel)->error('job_failed', $context);
+        });
+    }
+
+    /**
+     * @return array{
+     *   status:string,
+     *   connection:string,
+     *   queue:string|null,
+     *   job_name:string,
+     *   job_id:string|int|null,
+     *   job_uuid:string|null,
+     *   attempts:int,
+     *   request_id:string|null,
+     *   duration_ms:int|null
+     * }
+     */
+    private function buildJobLogContext(
+        QueueJobContract $job,
+        string $connectionName,
+        string $status,
+        ?int $durationMs
+    ): array {
+        $payload = $this->jobPayload($job);
+        $requestId = data_get($payload, 'meta.request_id');
+        $jobUuid = data_get($payload, 'uuid');
+        $queue = method_exists($job, 'getQueue') ? $job->getQueue() : null;
+        $jobName = method_exists($job, 'resolveName') ? $job->resolveName() : $job::class;
+        $jobId = method_exists($job, 'getJobId') ? $job->getJobId() : null;
+        $attempts = method_exists($job, 'attempts') ? (int) $job->attempts() : 0;
+
+        return [
+            'status' => $status,
+            'connection' => $connectionName,
+            'queue' => $queue,
+            'job_name' => $jobName,
+            'job_id' => $jobId,
+            'job_uuid' => is_string($jobUuid) && $jobUuid !== '' ? $jobUuid : null,
+            'attempts' => $attempts,
+            'request_id' => is_string($requestId) && $requestId !== '' ? $requestId : null,
+            'duration_ms' => $durationMs,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function jobPayload(QueueJobContract $job): array
+    {
+        if (! method_exists($job, 'payload')) {
+            return [];
+        }
+
+        try {
+            $payload = $job->payload();
+        } catch (\Throwable) {
+            return [];
+        }
+
+        return is_array($payload) ? $payload : [];
+    }
+
+    private function jobIdentifier(QueueJobContract $job): string
+    {
+        $jobId = method_exists($job, 'getJobId') ? $job->getJobId() : null;
+        if (is_string($jobId) && $jobId !== '') {
+            return $jobId;
+        }
+
+        return spl_object_hash($job);
+    }
+
+    private function jobDurationMs(QueueJobContract $job): ?int
+    {
+        $identifier = $this->jobIdentifier($job);
+        $startedAt = self::$queueJobStartedAt[$identifier] ?? null;
+        unset(self::$queueJobStartedAt[$identifier]);
+
+        if (! is_int($startedAt) && ! is_float($startedAt)) {
+            return null;
+        }
+
+        return (int) round((microtime(true) - (float) $startedAt) * 1000);
     }
 }

@@ -36,6 +36,21 @@ return [
         'trace' => env('LOG_DEPRECATIONS_TRACE', false),
     ],
 
+    'request_logging' => [
+        'enabled' => (bool) env('LOG_REQUESTS_ENABLED', true),
+        'channel' => env('LOG_REQUESTS_CHANNEL', 'requests'),
+        'slow_ms' => (int) env('LOG_REQUESTS_SLOW_MS', 1500),
+        'exclude_paths' => array_values(array_filter(array_map(
+            static fn (string $path): string => trim($path),
+            explode(',', (string) env('LOG_REQUESTS_EXCLUDE_PATHS', 'up,health'))
+        ))),
+    ],
+
+    'job_logging' => [
+        'enabled' => (bool) env('LOG_JOBS_ENABLED', true),
+        'channel' => env('LOG_JOBS_CHANNEL', 'jobs'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Log Channels
@@ -141,6 +156,22 @@ return [
             'path' => storage_path('logs/domain.log'),
             'level' => env('LOG_DOMAIN_LEVEL', env('LOG_LEVEL', 'info')),
             'days' => env('LOG_DOMAIN_DAYS', env('LOG_DAILY_DAYS', 14)),
+            'replace_placeholders' => true,
+        ],
+
+        'requests' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/requests.log'),
+            'level' => env('LOG_REQUESTS_LEVEL', env('LOG_LEVEL', 'info')),
+            'days' => env('LOG_REQUESTS_DAYS', env('LOG_DAILY_DAYS', 30)),
+            'replace_placeholders' => true,
+        ],
+
+        'jobs' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/jobs.log'),
+            'level' => env('LOG_JOBS_LEVEL', env('LOG_LEVEL', 'info')),
+            'days' => env('LOG_JOBS_DAYS', env('LOG_DAILY_DAYS', 30)),
             'replace_placeholders' => true,
         ],
 

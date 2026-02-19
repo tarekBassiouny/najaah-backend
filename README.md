@@ -66,6 +66,64 @@ After deployment:
 php artisan queue:restart
 ```
 
+## Production Debugging (No Extra Cost)
+
+Use Laravel daily file logs + queue failed jobs for production observability without paid tools.
+
+### 1) Environment
+
+Set in production `.env`:
+
+```bash
+APP_ENV=production
+APP_DEBUG=false
+LOG_CHANNEL=stack
+LOG_STACK=daily
+LOG_LEVEL=info
+LOG_DAILY_DAYS=30
+LOG_REQUESTS_ENABLED=true
+LOG_REQUESTS_CHANNEL=requests
+LOG_REQUESTS_LEVEL=info
+LOG_REQUESTS_DAYS=30
+LOG_REQUESTS_SLOW_MS=1500
+LOG_REQUESTS_EXCLUDE_PATHS=up,health
+LOG_JOBS_ENABLED=true
+LOG_JOBS_CHANNEL=jobs
+LOG_JOBS_LEVEL=info
+LOG_JOBS_DAYS=30
+QUEUE_FAILED_DRIVER=database-uuids
+```
+
+### 2) Forge deploy safety
+
+- Keep `storage` shared across releases (`storage/logs` must be persistent).
+- Do not remove `storage/logs` in deploy script.
+- After every deploy:
+
+```bash
+php artisan optimize:clear
+php artisan migrate --force
+php artisan queue:restart
+```
+
+### 3) Queue worker
+
+Run worker as a Forge background process:
+
+```bash
+php8.4 /home/forge/<site>/current/artisan queue:work database --queue=mail,default --sleep=3 --tries=3 --timeout=60 --daemon --quiet
+```
+
+### 4) Debug commands
+
+```bash
+php artisan queue:failed
+php artisan queue:retry all
+tail -f storage/logs/laravel-*.log
+tail -f storage/logs/requests-*.log
+tail -f storage/logs/jobs-*.log
+```
+
 ## Code of Conduct
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
