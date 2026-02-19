@@ -46,26 +46,6 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Mail Delivery and Queue Workers
-
-This project sends admin invitation/reset emails asynchronously through queued jobs.
-
-- Set `MAIL_MAILER=mailgun`
-- Set `MAILGUN_DOMAIN`, `MAILGUN_SECRET`, `MAILGUN_ENDPOINT` (`api.eu.mailgun.net` for EU domains)
-- Set `MAIL_QUEUE_CONNECTION=database` (or `redis`) and `MAIL_QUEUE=mail`
-
-Run queue workers in production so emails are processed after API responses:
-
-```bash
-php artisan queue:work --queue=mail,default --tries=3 --timeout=30
-```
-
-After deployment:
-
-```bash
-php artisan queue:restart
-```
-
 ## Code of Conduct
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).

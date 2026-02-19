@@ -35,7 +35,7 @@ class AdminNotificationDispatcher
             body: sprintf(
                 '%s has requested to change their device to %s.',
                 $student->name ?? 'A student',
-                $request->new_model !== '' ? $request->new_model : 'a new device'
+                $request->new_device_model ?? 'a new device'
             ),
             data: [
                 'entity_type' => 'device_change_request',
@@ -43,7 +43,7 @@ class AdminNotificationDispatcher
                 'action_url' => '/admin/device-requests/'.$request->id,
                 'student_id' => $student->id,
                 'student_name' => $student->name,
-                'device_model' => $request->new_model,
+                'device_model' => $request->new_device_model,
             ],
             userId: null,
             centerId: $centerId
@@ -56,9 +56,7 @@ class AdminNotificationDispatcher
         $student = $request->user;
         /** @var Video $video */
         $video = $request->video;
-        $centerId = is_numeric($request->center_id)
-            ? (int) $request->center_id
-            : (is_numeric($request->course->center_id) ? (int) $request->course->center_id : null);
+        $centerId = $student->center_id;
 
         return $this->notificationService->create(
             type: AdminNotificationType::EXTRA_VIEW_REQUEST,
@@ -66,7 +64,7 @@ class AdminNotificationDispatcher
             body: sprintf(
                 '%s has requested %d extra view(s) for "%s".',
                 $student->name,
-                1,
+                $request->requested_views ?? 1,
                 $video->title,
             ),
             data: [
@@ -77,7 +75,7 @@ class AdminNotificationDispatcher
                 'student_name' => $student->name,
                 'video_id' => $video->id,
                 'video_title' => $video->title,
-                'requested_views' => 1,
+                'requested_views' => $request->requested_views,
             ],
             userId: null,
             centerId: $centerId
@@ -132,36 +130,6 @@ class AdminNotificationDispatcher
             ),
             data: [
                 'entity_type' => 'enrollment',
-                'entity_id' => $enrollment->id,
-                'action_url' => '/admin/enrollments/'.$enrollment->id,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'course_id' => $course->id,
-                'course_title' => $course->title,
-            ],
-            userId: null,
-            centerId: $centerId
-        );
-    }
-
-    public function dispatchEnrollmentRequest(Enrollment $enrollment): AdminNotification
-    {
-        /** @var User $student */
-        $student = $enrollment->user;
-        /** @var Course $course */
-        $course = $enrollment->course;
-        $centerId = $course->center_id;
-
-        return $this->notificationService->create(
-            type: AdminNotificationType::NEW_ENROLLMENT,
-            title: 'New Enrollment Request',
-            body: sprintf(
-                '%s has requested enrollment in "%s".',
-                $student->name,
-                $course->title
-            ),
-            data: [
-                'entity_type' => 'enrollment_request',
                 'entity_id' => $enrollment->id,
                 'action_url' => '/admin/enrollments/'.$enrollment->id,
                 'student_id' => $student->id,

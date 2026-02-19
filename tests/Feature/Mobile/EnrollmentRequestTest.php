@@ -38,7 +38,6 @@ it('creates enrollment request when not enrolled', function (): void {
         'user_id' => $student->id,
         'course_id' => $course->id,
         'status' => Enrollment::STATUS_PENDING,
-        'reason' => 'Interested in joining',
     ]);
 });
 

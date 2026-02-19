@@ -101,17 +101,12 @@ class DeviceChangeService implements DeviceChangeServiceInterface
         $resolvedModel = $model ?? $request->new_model;
         $resolvedOsVersion = $osVersion ?? $request->new_os_version;
 
-        $hasDevicePayload = $resolvedDeviceId !== '' || $resolvedModel !== '' || $resolvedOsVersion !== '';
-        if (! $hasDevicePayload) {
-            return $this->preApprove($admin, $request);
+        if ($resolvedDeviceId === '' || $resolvedDeviceId === $request->current_device_id) {
+            $this->deny(ErrorCodes::INVALID_STATE, 'A new device identifier is required to approve this request.', 422);
         }
 
         if ($resolvedModel === '' || $resolvedOsVersion === '') {
             $this->deny(ErrorCodes::INVALID_STATE, 'Device model and OS version are required to approve this request.', 422);
-        }
-
-        if ($resolvedDeviceId === '' || $resolvedDeviceId === $request->current_device_id) {
-            $this->deny(ErrorCodes::INVALID_STATE, 'A new device identifier is required to approve this request.', 422);
         }
 
         return DB::transaction(function () use ($admin, $request, $resolvedDeviceId, $resolvedModel, $resolvedOsVersion): DeviceChangeRequest {
@@ -204,50 +199,46 @@ class DeviceChangeService implements DeviceChangeServiceInterface
             403
         );
 
-        return DB::transaction(function () use ($student, $newDeviceId, $model, $osVersion, $reason, $otpVerifiedAt): DeviceChangeRequest {
-            $pending = DeviceChangeRequest::query()
-                ->forUser($student)
-                ->pendingOrPreApproved()
-                ->notDeleted()
-                ->lockForUpdate()
-                ->exists();
+        $pending = DeviceChangeRequest::query()
+            ->forUser($student)
+            ->pendingOrPreApproved()
+            ->notDeleted()
+            ->exists();
 
-            if ($pending) {
-                $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists.', 422);
-            }
+        if ($pending) {
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists.', 422);
+        }
 
-            /** @var UserDevice|null $active */
-            $active = $student->devices()
-                ->active()
-                ->notDeleted()
-                ->lockForUpdate()
-                ->first();
+        /** @var UserDevice|null $active */
+        $active = $student->devices()
+            ->active()
+            ->notDeleted()
+            ->first();
 
-            /** @var DeviceChangeRequest $request */
-            $request = DeviceChangeRequest::create([
-                'user_id' => $student->id,
-                'center_id' => $student->center_id,
-                'current_device_id' => $active?->device_id,
-                'new_device_id' => $newDeviceId,
-                'new_model' => $model,
-                'new_os_version' => $osVersion,
-                'status' => DeviceChangeRequestStatus::Pending,
-                'request_source' => DeviceChangeRequestSource::Otp,
-                'otp_verified_at' => $otpVerifiedAt,
-                'reason' => $reason,
-            ]);
+        /** @var DeviceChangeRequest $request */
+        $request = DeviceChangeRequest::create([
+            'user_id' => $student->id,
+            'center_id' => $student->center_id,
+            'current_device_id' => $active?->device_id,
+            'new_device_id' => $newDeviceId,
+            'new_model' => $model,
+            'new_os_version' => $osVersion,
+            'status' => DeviceChangeRequestStatus::Pending,
+            'request_source' => DeviceChangeRequestSource::Otp,
+            'otp_verified_at' => $otpVerifiedAt,
+            'reason' => $reason,
+        ]);
 
-            $this->audit($student, AuditActions::DEVICE_CHANGE_REQUEST_CREATED_VIA_OTP, [
-                'center_id' => $request->center_id,
-                'old_device_id' => $active?->device_id,
-                'new_device_id' => $newDeviceId,
-            ], $request->id);
+        $this->audit($student, AuditActions::DEVICE_CHANGE_REQUEST_CREATED_VIA_OTP, [
+            'center_id' => $request->center_id,
+            'old_device_id' => $active?->device_id,
+            'new_device_id' => $newDeviceId,
+        ], $request->id);
 
-            $freshRequest = $request->fresh() ?? $request;
-            $this->notificationDispatcher->dispatchDeviceChangeRequest($freshRequest);
+        $freshRequest = $request->fresh() ?? $request;
+        $this->notificationDispatcher->dispatchDeviceChangeRequest($freshRequest);
 
-            return $freshRequest;
-        });
+        return $freshRequest;
     }
 
     public function createByAdmin(User $admin, User $student, ?string $reason = null): DeviceChangeRequest
@@ -258,50 +249,44 @@ class DeviceChangeService implements DeviceChangeServiceInterface
             ErrorCodes::UNAUTHORIZED,
             403
         );
-        if (! $this->isSystemScopedAdmin($admin)) {
-            $this->centerScopeService->assertAdminSameCenter($admin, $student);
+        $this->centerScopeService->assertAdminSameCenter($admin, $student);
+
+        $pending = DeviceChangeRequest::query()
+            ->forUser($student)
+            ->pendingOrPreApproved()
+            ->notDeleted()
+            ->exists();
+
+        if ($pending) {
+            $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists for this student.', 422);
         }
 
-        return DB::transaction(function () use ($admin, $student, $reason): DeviceChangeRequest {
-            $pending = DeviceChangeRequest::query()
-                ->forUser($student)
-                ->pendingOrPreApproved()
-                ->notDeleted()
-                ->lockForUpdate()
-                ->exists();
+        /** @var UserDevice|null $active */
+        $active = $student->devices()
+            ->active()
+            ->notDeleted()
+            ->first();
 
-            if ($pending) {
-                $this->deny(ErrorCodes::PENDING_REQUEST_EXISTS, 'A pending device change request already exists for this student.', 422);
-            }
+        /** @var DeviceChangeRequest $request */
+        $request = DeviceChangeRequest::create([
+            'user_id' => $student->id,
+            'center_id' => $student->center_id,
+            'current_device_id' => $active?->device_id,
+            'new_device_id' => '',
+            'new_model' => '',
+            'new_os_version' => '',
+            'status' => DeviceChangeRequestStatus::Pending,
+            'request_source' => DeviceChangeRequestSource::Admin,
+            'reason' => $reason,
+        ]);
 
-            /** @var UserDevice|null $active */
-            $active = $student->devices()
-                ->active()
-                ->notDeleted()
-                ->lockForUpdate()
-                ->first();
+        $this->audit($admin, AuditActions::DEVICE_CHANGE_REQUEST_CREATED_BY_ADMIN, [
+            'student_id' => $student->id,
+            'center_id' => $request->center_id,
+            'old_device_id' => $active?->device_id,
+        ], $request->id);
 
-            /** @var DeviceChangeRequest $request */
-            $request = DeviceChangeRequest::create([
-                'user_id' => $student->id,
-                'center_id' => $student->center_id,
-                'current_device_id' => $active?->device_id,
-                'new_device_id' => '',
-                'new_model' => '',
-                'new_os_version' => '',
-                'status' => DeviceChangeRequestStatus::Pending,
-                'request_source' => DeviceChangeRequestSource::Admin,
-                'reason' => $reason,
-            ]);
-
-            $this->audit($admin, AuditActions::DEVICE_CHANGE_REQUEST_CREATED_BY_ADMIN, [
-                'student_id' => $student->id,
-                'center_id' => $request->center_id,
-                'old_device_id' => $active?->device_id,
-            ], $request->id);
-
-            return $request->fresh() ?? $request;
-        });
+        return $request->fresh() ?? $request;
     }
 
     public function preApprove(User $admin, DeviceChangeRequest $request, ?string $reason = null): DeviceChangeRequest
@@ -392,16 +377,7 @@ class DeviceChangeService implements DeviceChangeServiceInterface
             $this->deny(ErrorCodes::UNAUTHORIZED, 'Only admins can perform this action.', 403);
         }
 
-        if ($this->isSystemScopedAdmin($admin)) {
-            return;
-        }
-
         $this->centerScopeService->assertAdminSameCenter($admin, $request);
-    }
-
-    private function isSystemScopedAdmin(User $admin): bool
-    {
-        return ! $admin->is_student && ! is_numeric($admin->center_id);
     }
 
     /**

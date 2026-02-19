@@ -6,7 +6,6 @@ namespace App\Http\Resources\Admin\ExtraViews;
 
 use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Http\Resources\Admin\Summary\CourseSummaryResource;
-use App\Http\Resources\Admin\Summary\StudentSummaryResource;
 use App\Http\Resources\Admin\Summary\UserSummaryResource;
 use App\Http\Resources\Admin\Summary\VideoSummaryResource;
 use App\Models\ExtraViewRequest;
@@ -29,7 +28,7 @@ class ExtraViewRequestResource extends JsonResource
 
         return [
             'id' => $req->id,
-            'user' => new StudentSummaryResource($this->whenLoaded('user')),
+            'user' => new UserSummaryResource($this->whenLoaded('user')),
             'video' => new VideoSummaryResource($this->whenLoaded('video')),
             'course' => new CourseSummaryResource($this->whenLoaded('course')),
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
@@ -42,9 +41,7 @@ class ExtraViewRequestResource extends JsonResource
             'decision_reason' => $req->decision_reason,
             'decider' => new UserSummaryResource($this->whenLoaded('decider')),
             'decided_at' => $req->decided_at,
-            'requested_at' => $req->created_at,
             'created_at' => $req->created_at,
-            'updated_at' => $req->updated_at,
         ];
     }
 }

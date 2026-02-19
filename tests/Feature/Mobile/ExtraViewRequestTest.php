@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\Center;
-use App\Models\CenterSetting;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\ExtraViewRequest;
@@ -96,34 +95,6 @@ it('blocks extra view request when views are still available', function (): void
 
     $response->assertStatus(422)
         ->assertJsonPath('error.code', 'VIEWS_AVAILABLE');
-});
-
-it('blocks extra view request when center disables extra view requests', function (): void {
-    [$center, $course, $video] = buildExtraViewRequestContext(0);
-    CenterSetting::factory()->create([
-        'center_id' => $center->id,
-        'settings' => [
-            'allow_extra_view_requests' => false,
-        ],
-    ]);
-
-    $student = $this->apiUser;
-    $student->center_id = $center->id;
-    $student->save();
-    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
-    $this->asApiUser($student);
-
-    Enrollment::factory()->create([
-        'user_id' => $student->id,
-        'course_id' => $course->id,
-        'center_id' => $center->id,
-        'status' => Enrollment::STATUS_ACTIVE,
-    ]);
-
-    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/extra-view");
-
-    $response->assertStatus(403)
-        ->assertJsonPath('error.code', 'FORBIDDEN');
 });
 
 it('blocks duplicate pending extra view requests', function (): void {
