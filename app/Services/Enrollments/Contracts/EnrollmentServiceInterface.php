@@ -30,6 +30,16 @@ interface EnrollmentServiceInterface
      */
     public function bulkEnroll(User $admin, Course $course, int $centerId, array $userIds): array;
 
+    /**
+     * @param  array<int, int|string>  $enrollmentIds
+     * @return array{
+     *   updated: array<int, Enrollment>,
+     *   skipped: array<int, int|string>,
+     *   failed: array<int, array{enrollment_id: int|string, reason: string}>
+     * }
+     */
+    public function bulkUpdateStatus(User $admin, string $status, array $enrollmentIds, ?int $centerId = null): array;
+
     /** @return LengthAwarePaginator<Enrollment> */
     public function paginateForStudent(User $student, int $perPage = 15): LengthAwarePaginator;
 

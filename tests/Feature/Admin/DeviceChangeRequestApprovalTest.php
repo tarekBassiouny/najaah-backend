@@ -3,10 +3,13 @@
 declare(strict_types=1);
 
 use App\Models\DeviceChangeRequest;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 
 uses(RefreshDatabase::class)->group('device-change-requests', 'admin');
 
@@ -114,6 +117,46 @@ it('admin can approve request with provided device details', function (): void {
 
     expect($old?->status)->toBe(UserDevice::STATUS_REVOKED);
     expect($new?->status)->toBe(UserDevice::STATUS_ACTIVE);
+});
+
+it('admin approve falls back to pre-approved flow when request has no target device yet', function (): void {
+    $student = $this->makeApiUser();
+    $centerId = $student->center_id;
+    $this->asApiUser($student, null, 'old-device');
+    registerAdminDevice($student, 'old-device');
+
+    $request = DeviceChangeRequest::create([
+        'user_id' => $student->id,
+        'center_id' => $centerId,
+        'current_device_id' => 'old-device',
+        'new_device_id' => '',
+        'new_model' => '',
+        'new_os_version' => '',
+        'status' => DeviceChangeRequest::STATUS_PENDING,
+    ]);
+    $requestId = $request->id;
+
+    $this->asAdmin();
+
+    $approve = $this->postJson("/api/v1/admin/centers/{$centerId}/device-change-requests/{$requestId}/approve", [], $this->adminHeaders());
+
+    $approve->assertOk()
+        ->assertJsonPath('message', 'Device change request pre-approved')
+        ->assertJsonPath('data.status', DeviceChangeRequest::STATUS_PRE_APPROVED->value);
+
+    $old = UserDevice::where('user_id', $student->id)->where('device_id', 'old-device')->first();
+    expect($old?->status)->toBe(UserDevice::STATUS_REVOKED);
+
+    /** @var DeviceServiceInterface $deviceService */
+    $deviceService = app(DeviceServiceInterface::class);
+    $newDevice = $deviceService->register($student, 'fresh-device', [
+        'device_name' => 'Phone Z',
+        'device_os' => '5.0',
+    ]);
+
+    expect($newDevice->status)->toBe(UserDevice::STATUS_ACTIVE);
+    expect($request->fresh()?->status)->toBe(DeviceChangeRequest::STATUS_APPROVED);
+    expect($request->fresh()?->new_device_id)->toBe('fresh-device');
 });
 
 it('admin can pre-approve pending request', function (): void {
@@ -249,4 +292,92 @@ it('admin can create request for student without active device', function (): vo
     $create->assertCreated()
         ->assertJsonPath('data.current_device_id', null)
         ->assertJsonPath('data.status', DeviceChangeRequest::STATUS_PENDING->value);
+});
+
+it('supports bulk pre-approve in system scope with skipped and failed', function (): void {
+    $student = $this->makeApiUser();
+    $centerId = $student->center_id;
+    $this->asApiUser($student, null, 'old-device');
+    registerAdminDevice($student, 'old-device');
+
+    $pending = DeviceChangeRequest::create([
+        'user_id' => $student->id,
+        'center_id' => $centerId,
+        'current_device_id' => 'old-device',
+        'new_device_id' => '',
+        'new_model' => '',
+        'new_os_version' => '',
+        'status' => DeviceChangeRequest::STATUS_PENDING,
+    ]);
+    $alreadyApproved = DeviceChangeRequest::create([
+        'user_id' => $student->id,
+        'center_id' => $centerId,
+        'current_device_id' => 'old-device',
+        'new_device_id' => 'new-device',
+        'new_model' => 'Model X',
+        'new_os_version' => '2.0',
+        'status' => DeviceChangeRequest::STATUS_APPROVED,
+    ]);
+
+    $this->asAdmin();
+
+    $response = $this->postJson('/api/v1/admin/device-change-requests/bulk-pre-approve', [
+        'request_ids' => [$pending->id, $alreadyApproved->id, 999999],
+        'decision_reason' => 'Bulk support review',
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.counts.total', 3)
+        ->assertJsonPath('data.counts.pre_approved', 1)
+        ->assertJsonPath('data.counts.skipped', 1)
+        ->assertJsonPath('data.counts.failed', 1);
+
+    $this->assertDatabaseHas('device_change_requests', [
+        'id' => $pending->id,
+        'status' => DeviceChangeRequest::STATUS_PRE_APPROVED,
+    ]);
+});
+
+it('allows centerless non-super admin with permission to approve in system scope', function (): void {
+    $permission = Permission::firstOrCreate(['name' => 'device_change.manage'], [
+        'description' => 'Manage device change requests',
+    ]);
+    $role = Role::firstOrCreate(['slug' => 'device_change_manager'], [
+        'name' => 'Device Change Manager',
+        'name_translations' => ['en' => 'Device Change Manager'],
+        'description_translations' => ['en' => 'Device change management role'],
+    ]);
+    $role->permissions()->syncWithoutDetaching([$permission->id]);
+
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => null,
+    ]);
+    $admin->roles()->syncWithoutDetaching([$role->id]);
+
+    $this->adminToken = (string) Auth::guard('admin')->attempt([
+        'email' => $admin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $student = $this->makeApiUser();
+    $this->asApiUser($student, null, 'old-device');
+    registerAdminDevice($student, 'old-device');
+
+    $request = DeviceChangeRequest::create([
+        'user_id' => $student->id,
+        'center_id' => $student->center_id,
+        'current_device_id' => 'old-device',
+        'new_device_id' => 'new-device',
+        'new_model' => 'Model X',
+        'new_os_version' => '2.0',
+        'status' => DeviceChangeRequest::STATUS_PENDING,
+    ]);
+
+    $response = $this->postJson("/api/v1/admin/device-change-requests/{$request->id}/approve", [], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.status', DeviceChangeRequest::STATUS_APPROVED->value);
 });

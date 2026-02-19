@@ -12,6 +12,11 @@ class DeviceChangeRequestFilters
         public readonly ?string $status,
         public readonly ?int $centerId,
         public readonly ?int $userId,
+        public readonly ?string $search,
+        public readonly ?string $requestSource,
+        public readonly ?int $decidedBy,
+        public readonly ?string $currentDeviceId,
+        public readonly ?string $newDeviceId,
         public readonly ?string $dateFrom,
         public readonly ?string $dateTo
     ) {}

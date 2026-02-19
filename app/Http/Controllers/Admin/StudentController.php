@@ -87,6 +87,9 @@ class StudentController extends Controller
             centerId: (int) $center->id,
             status: $requestFilters->status,
             search: $requestFilters->search,
+            studentName: $requestFilters->studentName,
+            studentPhone: $requestFilters->studentPhone,
+            studentEmail: $requestFilters->studentEmail,
             centerType: $requestFilters->centerType
         );
 

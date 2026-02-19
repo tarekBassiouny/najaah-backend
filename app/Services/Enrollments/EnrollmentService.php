@@ -18,6 +18,7 @@ use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Students\Contracts\StudentNotificationServiceInterface;
 use App\Support\AuditActions;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -90,7 +91,9 @@ class EnrollmentService implements EnrollmentServiceInterface
      */
     public function bulkEnroll(User $admin, Course $course, int $centerId, array $userIds): array
     {
-        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+        if (! $this->isSystemScopedAdmin($admin)) {
+            $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+        }
 
         if (! is_numeric($course->center_id)) {
             throw ValidationException::withMessages([
@@ -187,6 +190,77 @@ class EnrollmentService implements EnrollmentServiceInterface
     }
 
     /**
+     * @param  array<int, int|string>  $enrollmentIds
+     * @return array{
+     *   updated: array<int, Enrollment>,
+     *   skipped: array<int, int|string>,
+     *   failed: array<int, array{enrollment_id: int|string, reason: string}>
+     * }
+     */
+    public function bulkUpdateStatus(User $admin, string $status, array $enrollmentIds, ?int $centerId = null): array
+    {
+        if ($centerId !== null && ! $this->isSystemScopedAdmin($admin)) {
+            $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+        }
+
+        $targetStatus = $this->normalizeStatus($status);
+        $uniqueIds = array_values(array_unique(array_map('intval', $enrollmentIds)));
+
+        $query = Enrollment::query()
+            ->whereIn('id', $uniqueIds)
+            ->with(['course', 'user', 'center']);
+
+        if ($centerId !== null) {
+            $query->where('center_id', $centerId);
+        }
+
+        $enrollments = $query->get()->keyBy('id');
+
+        $results = [
+            'updated' => [],
+            'skipped' => [],
+            'failed' => [],
+        ];
+
+        foreach ($uniqueIds as $enrollmentId) {
+            $enrollment = $enrollments->get($enrollmentId);
+
+            if (! $enrollment instanceof Enrollment) {
+                $results['failed'][] = [
+                    'enrollment_id' => $enrollmentId,
+                    'reason' => 'Enrollment not found.',
+                ];
+
+                continue;
+            }
+
+            try {
+                $this->assertAdminCanAccess($admin, $enrollment);
+
+                if ($enrollment->status === $targetStatus) {
+                    $results['skipped'][] = $enrollmentId;
+
+                    continue;
+                }
+
+                $results['updated'][] = $this->updateStatus($enrollment, $targetStatus->name, $admin);
+            } catch (ValidationException $exception) {
+                $results['failed'][] = [
+                    'enrollment_id' => $enrollmentId,
+                    'reason' => $this->formatValidationError($exception),
+                ];
+            } catch (\Throwable $exception) {
+                $results['failed'][] = [
+                    'enrollment_id' => $enrollmentId,
+                    'reason' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Manually send enrollment notification to a student.
      */
     public function sendEnrollmentNotification(Enrollment $enrollment): bool
@@ -198,7 +272,7 @@ class EnrollmentService implements EnrollmentServiceInterface
     {
         $statusValue = $this->normalizeStatus($status);
 
-        if ($actor instanceof User) {
+        if ($actor instanceof User && ! $this->isSystemScopedAdmin($actor)) {
             $this->centerScopeService->assertAdminSameCenter($actor, $enrollment);
         }
 
@@ -218,7 +292,7 @@ class EnrollmentService implements EnrollmentServiceInterface
 
     public function remove(Enrollment $enrollment, ?User $actor = null): void
     {
-        if ($actor instanceof User) {
+        if ($actor instanceof User && ! $this->isSystemScopedAdmin($actor)) {
             $this->centerScopeService->assertAdminSameCenter($actor, $enrollment);
         }
 
@@ -254,10 +328,12 @@ class EnrollmentService implements EnrollmentServiceInterface
             ->with(['course', 'user', 'center'])
             ->orderByDesc('enrolled_at');
 
-        // Scope to admin's accessible centers
-        $centerIds = $this->centerScopeService->getAccessibleCenterIds($admin);
-        if ($centerIds !== null) {
-            $query->whereIn('center_id', $centerIds);
+        // Center-scoped admins are restricted to their center.
+        if (! $this->isSystemScopedAdmin($admin)) {
+            $centerIds = $this->centerScopeService->getAccessibleCenterIds($admin);
+            if ($centerIds !== null) {
+                $query->whereIn('center_id', $centerIds);
+            }
         }
 
         // Apply filters
@@ -273,9 +349,29 @@ class EnrollmentService implements EnrollmentServiceInterface
             $query->where('user_id', $filters->userId);
         }
 
+        if ($filters->search !== null) {
+            $term = trim($filters->search);
+            if ($term !== '') {
+                $query->whereHas('user', static function (Builder $userQuery) use ($term): void {
+                    $userQuery
+                        ->where('name', 'like', sprintf('%%%s%%', $term))
+                        ->orWhere('email', 'like', sprintf('%%%s%%', $term))
+                        ->orWhere('phone', 'like', sprintf('%%%s%%', $term));
+                });
+            }
+        }
+
         if ($filters->status !== null) {
             $statusValue = $this->normalizeStatus($filters->status);
             $query->where('status', $statusValue);
+        }
+
+        if ($filters->dateFrom !== null) {
+            $query->where('enrolled_at', '>=', Carbon::parse($filters->dateFrom)->startOfDay());
+        }
+
+        if ($filters->dateTo !== null) {
+            $query->where('enrolled_at', '<=', Carbon::parse($filters->dateTo)->endOfDay());
         }
 
         return $query->paginate(
@@ -288,6 +384,10 @@ class EnrollmentService implements EnrollmentServiceInterface
 
     public function assertAdminCanAccess(User $admin, Enrollment $enrollment): void
     {
+        if ($this->isSystemScopedAdmin($admin)) {
+            return;
+        }
+
         $this->centerScopeService->assertAdminSameCenter($admin, $enrollment);
     }
 
@@ -305,6 +405,7 @@ class EnrollmentService implements EnrollmentServiceInterface
             'ACTIVE' => EnrollmentStatus::Active,
             'DEACTIVATED' => EnrollmentStatus::Deactivated,
             'CANCELLED' => EnrollmentStatus::Cancelled,
+            'PENDING' => EnrollmentStatus::Pending,
         ];
 
         if (! array_key_exists($value, $map)) {
@@ -326,7 +427,7 @@ class EnrollmentService implements EnrollmentServiceInterface
             ['user_id' => ['Enrollment can only be created for students.']]
         );
 
-        if ($actor instanceof User) {
+        if ($actor instanceof User && ! $this->isSystemScopedAdmin($actor)) {
             $this->centerScopeService->assertAdminSameCenter($actor, $course);
         }
 
@@ -369,6 +470,11 @@ class EnrollmentService implements EnrollmentServiceInterface
         }
 
         return 'Validation failed.';
+    }
+
+    private function isSystemScopedAdmin(User $user): bool
+    {
+        return ! $user->is_student && ! is_numeric($user->center_id);
     }
 
     /**

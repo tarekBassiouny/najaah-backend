@@ -27,6 +27,9 @@ class ListStudentsRequest extends AdminListRequest
             'status' => ['sometimes', 'integer', 'in:0,1,2'],
             'type' => ['sometimes', 'string', Rule::in(['branded', 'unbranded', '0', '1'])],
             'search' => ['sometimes', 'string'],
+            'student_name' => ['sometimes', 'string', 'max:255'],
+            'student_phone' => ['sometimes', 'string', 'max:30'],
+            'student_email' => ['sometimes', 'string', 'max:255'],
         ]);
     }
 
@@ -57,8 +60,20 @@ class ListStudentsRequest extends AdminListRequest
                 'example' => 'branded',
             ],
             'search' => [
-                'description' => 'Search students by name, username, email, or phone.',
+                'description' => 'Legacy broad search by name, username, email, or phone.',
                 'example' => '010',
+            ],
+            'student_name' => [
+                'description' => 'Search by student name (partial match).',
+                'example' => 'Ahmed',
+            ],
+            'student_phone' => [
+                'description' => 'Search by student phone (partial match).',
+                'example' => '0101',
+            ],
+            'student_email' => [
+                'description' => 'Search by student email (partial match).',
+                'example' => 'student@example.com',
             ],
         ];
     }
@@ -82,6 +97,9 @@ class ListStudentsRequest extends AdminListRequest
             centerId: FilterInput::intOrNull($data, 'center_id'),
             status: FilterInput::intOrNull($data, 'status'),
             search: FilterInput::stringOrNull($data, 'search'),
+            studentName: FilterInput::stringOrNull($data, 'student_name'),
+            studentPhone: FilterInput::stringOrNull($data, 'student_phone'),
+            studentEmail: FilterInput::stringOrNull($data, 'student_email'),
             centerType: $this->resolveType($data)
         );
     }

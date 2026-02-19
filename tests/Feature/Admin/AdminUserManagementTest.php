@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Jobs\SendAdminPasswordResetEmailJob;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
-use App\Notifications\AdminPasswordResetNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class)->group('admin-users');
 
@@ -66,7 +66,7 @@ it('denies admin user access without permission', function (): void {
 });
 
 it('creates, updates, and deletes admin users', function (): void {
-    Notification::fake();
+    Bus::fake();
     $this->asAdmin();
 
     $create = $this->postJson('/api/v1/admin/users', [
@@ -84,9 +84,9 @@ it('creates, updates, and deletes admin users', function (): void {
         'id' => (int) $adminId,
         'force_password_reset' => true,
     ]);
-    Notification::assertSentTo(
-        User::findOrFail((int) $adminId),
-        AdminPasswordResetNotification::class
+    Bus::assertDispatched(
+        SendAdminPasswordResetEmailJob::class,
+        fn (SendAdminPasswordResetEmailJob $job): bool => $job->userId === (int) $adminId && $job->isInvite
     );
 
     $update = $this->putJson("/api/v1/admin/users/{$adminId}", [
