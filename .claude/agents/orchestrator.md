@@ -148,7 +148,7 @@ systemPrompt: |
        - Create flow is invite-only:
          - `POST /api/v1/admin/users` does not accept `password`
          - New admin is created with `force_password_reset = true`
-         - Invitation/reset email is sent automatically
+         - Invitation/reset email is queued and sent asynchronously
        - `PUT /api/v1/admin/users/{user}/status`
          - Body: `status` (`0` inactive, `1` active, `2` banned)
        - `POST /api/v1/admin/users/bulk-status`
@@ -168,7 +168,7 @@ systemPrompt: |
        - Create flow is invite-only:
          - `POST /api/v1/admin/centers/{center}/users` does not accept `password`
          - New admin is created with `force_password_reset = true`
-         - Invitation/reset email is sent automatically
+         - Invitation/reset email is queued and sent asynchronously
        - `PUT /api/v1/admin/centers/{center}/users/{user}/status`
          - Body: `status` (`0` inactive, `1` active, `2` banned)
        - `POST /api/v1/admin/centers/{center}/users/bulk-status`
@@ -200,14 +200,71 @@ systemPrompt: |
        - `POST /api/v1/admin/centers/{center}/students/bulk-status`
      - List filters: `center_id`, `status`, `search`, `page`, `per_page`
 
-  9. **Settings (Current State)**
+  9. **Student Requests (Enrollments, Extra Views, Device Changes)**
+     - Enrollments
+       - System scope:
+         - `GET /api/v1/admin/enrollments`
+         - `GET /api/v1/admin/enrollments/{enrollment}`
+         - `POST /api/v1/admin/enrollments`
+         - `PUT /api/v1/admin/enrollments/{enrollment}`
+         - `DELETE /api/v1/admin/enrollments/{enrollment}`
+         - `POST /api/v1/admin/enrollments/bulk`
+         - `POST /api/v1/admin/enrollments/bulk-status`
+       - Center scope:
+         - `GET /api/v1/admin/centers/{center}/enrollments`
+         - `GET /api/v1/admin/centers/{center}/enrollments/{enrollment}`
+         - `POST /api/v1/admin/centers/{center}/enrollments`
+         - `PUT /api/v1/admin/centers/{center}/enrollments/{enrollment}`
+         - `DELETE /api/v1/admin/centers/{center}/enrollments/{enrollment}`
+         - `POST /api/v1/admin/centers/{center}/enrollments/bulk`
+         - `POST /api/v1/admin/centers/{center}/enrollments/bulk-status`
+       - List filters: `center_id` (system), `course_id`, `user_id`, `status`, `date_from`, `date_to`, `page`, `per_page`
+       - Bulk status response: `counts` + `updated` + `skipped` + `failed`
+     - Extra view requests
+       - System scope:
+         - `GET /api/v1/admin/extra-view-requests`
+         - `POST /api/v1/admin/extra-view-requests/{extraViewRequest}/approve`
+         - `POST /api/v1/admin/extra-view-requests/{extraViewRequest}/reject`
+         - `POST /api/v1/admin/extra-view-requests/bulk-approve`
+         - `POST /api/v1/admin/extra-view-requests/bulk-reject`
+       - Center scope:
+         - `GET /api/v1/admin/centers/{center}/extra-view-requests`
+         - `POST /api/v1/admin/centers/{center}/extra-view-requests/{extraViewRequest}/approve`
+         - `POST /api/v1/admin/centers/{center}/extra-view-requests/{extraViewRequest}/reject`
+         - `POST /api/v1/admin/centers/{center}/extra-view-requests/bulk-approve`
+         - `POST /api/v1/admin/centers/{center}/extra-view-requests/bulk-reject`
+       - List filters: `center_id` (system), `status`, `user_id`, `course_id`, `video_id`, `decided_by`, `date_from`, `date_to`, `page`, `per_page`
+       - Bulk responses: `counts` + `approved/rejected` + `skipped` + `failed`
+     - Device change requests
+       - System scope:
+         - `GET /api/v1/admin/device-change-requests`
+         - `POST /api/v1/admin/device-change-requests/{deviceChangeRequest}/approve`
+         - `POST /api/v1/admin/device-change-requests/{deviceChangeRequest}/reject`
+         - `POST /api/v1/admin/device-change-requests/{deviceChangeRequest}/pre-approve`
+         - `POST /api/v1/admin/students/{student}/device-change-requests`
+         - `POST /api/v1/admin/device-change-requests/bulk-approve`
+         - `POST /api/v1/admin/device-change-requests/bulk-reject`
+         - `POST /api/v1/admin/device-change-requests/bulk-pre-approve`
+       - Center scope:
+         - `GET /api/v1/admin/centers/{center}/device-change-requests`
+         - `POST /api/v1/admin/centers/{center}/device-change-requests/{deviceChangeRequest}/approve`
+         - `POST /api/v1/admin/centers/{center}/device-change-requests/{deviceChangeRequest}/reject`
+         - `POST /api/v1/admin/centers/{center}/device-change-requests/{deviceChangeRequest}/pre-approve`
+         - `POST /api/v1/admin/centers/{center}/students/{student}/device-change-requests`
+         - `POST /api/v1/admin/centers/{center}/device-change-requests/bulk-approve`
+         - `POST /api/v1/admin/centers/{center}/device-change-requests/bulk-reject`
+         - `POST /api/v1/admin/centers/{center}/device-change-requests/bulk-pre-approve`
+       - List filters: `center_id` (system), `status`, `user_id`, `request_source`, `decided_by`, `current_device_id`, `new_device_id`, `date_from`, `date_to`, `page`, `per_page`
+       - Bulk responses: `counts` + `approved/rejected/pre_approved` + `skipped` + `failed`
+
+  10. **Settings (Current State)**
      - Implemented APIs:
        - `GET /api/v1/admin/centers/{center}/settings`
        - `PATCH /api/v1/admin/centers/{center}/settings`
        - `GET /api/v1/admin/settings/preview`
      - Important gap: platform-level settings CRUD endpoints are not implemented yet; only center settings read/update and system preview are available.
 
-  10. **Audit Log**
+  11. **Audit Log**
       - Primary APIs:
         - `GET /api/v1/admin/audit-logs`
         - `GET /api/v1/admin/centers/{center}/audit-logs`

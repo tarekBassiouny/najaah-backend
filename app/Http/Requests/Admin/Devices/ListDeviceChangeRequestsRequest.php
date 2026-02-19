@@ -21,8 +21,14 @@ class ListDeviceChangeRequestsRequest extends AdminListRequest
     public function rules(): array
     {
         return array_merge($this->listRules(), [
-            'status' => ['sometimes', 'string', 'in:PENDING,APPROVED,REJECTED'],
+            'status' => ['sometimes', 'string', 'in:PENDING,APPROVED,REJECTED,PRE_APPROVED'],
+            'center_id' => ['sometimes', 'integer'],
             'user_id' => ['sometimes', 'integer'],
+            'search' => ['sometimes', 'string', 'max:255'],
+            'request_source' => ['sometimes', 'string', 'in:MOBILE,OTP,ADMIN'],
+            'decided_by' => ['sometimes', 'integer'],
+            'current_device_id' => ['sometimes', 'string'],
+            'new_device_id' => ['sometimes', 'string'],
             'date_from' => ['sometimes', 'date'],
             'date_to' => ['sometimes', 'date'],
         ]);
@@ -42,6 +48,10 @@ class ListDeviceChangeRequestsRequest extends AdminListRequest
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
             ],
+            'center_id' => [
+                'description' => 'Filter by center ID (system scope only).',
+                'example' => '2',
+            ],
             'status' => [
                 'description' => 'Filter by request status.',
                 'example' => 'PENDING',
@@ -49,6 +59,26 @@ class ListDeviceChangeRequestsRequest extends AdminListRequest
             'user_id' => [
                 'description' => 'Filter by user ID.',
                 'example' => '5',
+            ],
+            'search' => [
+                'description' => 'Search by student name, phone, or email (partial match).',
+                'example' => '0101',
+            ],
+            'request_source' => [
+                'description' => 'Filter by request source (MOBILE, OTP, ADMIN).',
+                'example' => 'ADMIN',
+            ],
+            'decided_by' => [
+                'description' => 'Filter by decider admin ID.',
+                'example' => '8',
+            ],
+            'current_device_id' => [
+                'description' => 'Filter by current device identifier.',
+                'example' => 'old-device-uuid',
+            ],
+            'new_device_id' => [
+                'description' => 'Filter by requested new device identifier.',
+                'example' => 'new-device-uuid',
             ],
             'date_from' => [
                 'description' => 'Filter requests created from this date.',
@@ -78,8 +108,13 @@ class ListDeviceChangeRequestsRequest extends AdminListRequest
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
             status: FilterInput::stringOrNull($data, 'status'),
-            centerId: null,
+            centerId: FilterInput::intOrNull($data, 'center_id'),
             userId: FilterInput::intOrNull($data, 'user_id'),
+            search: FilterInput::stringOrNull($data, 'search'),
+            requestSource: FilterInput::stringOrNull($data, 'request_source'),
+            decidedBy: FilterInput::intOrNull($data, 'decided_by'),
+            currentDeviceId: FilterInput::stringOrNull($data, 'current_device_id'),
+            newDeviceId: FilterInput::stringOrNull($data, 'new_device_id'),
             dateFrom: FilterInput::stringOrNull($data, 'date_from'),
             dateTo: FilterInput::stringOrNull($data, 'date_to')
         );

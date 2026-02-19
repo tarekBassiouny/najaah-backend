@@ -12,6 +12,7 @@ use App\Services\Centers\CenterScopeService;
 use App\Support\AuditActions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 
 class AdminAuthService implements AdminAuthServiceInterface
@@ -95,7 +96,19 @@ class AdminAuthService implements AdminAuthServiceInterface
 
         $token = Password::broker()->createToken($user);
         $user->loadMissing('center');
-        $user->notify(new AdminPasswordResetNotification($token, $isInvite));
+
+        try {
+            $user->notify(new AdminPasswordResetNotification($token, $isInvite));
+        } catch (\Throwable $throwable) {
+            Log::error('Failed to send admin password reset notification.', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'is_invite' => $isInvite,
+                'error' => $throwable->getMessage(),
+            ]);
+
+            return false;
+        }
 
         if ($isInvite && $user->invitation_sent_at === null) {
             $user->invitation_sent_at = now();

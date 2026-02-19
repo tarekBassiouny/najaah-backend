@@ -6,7 +6,7 @@ namespace App\Http\Resources\Admin;
 
 use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Http\Resources\Admin\Summary\CourseSummaryResource;
-use App\Http\Resources\Admin\Summary\UserSummaryResource;
+use App\Http\Resources\Admin\Summary\StudentSummaryResource;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,15 +30,16 @@ class EnrollmentResource extends JsonResource
             'status' => $enrollment->statusLabel(),
             'status_value' => $enrollment->status->value,
             'status_key' => Str::snake($enrollment->status->name),
-            'status_label' => $enrollment->status->name,
+            'status_label' => $enrollment->statusLabel(),
             'user_id' => $enrollment->user_id,
             'course_id' => $enrollment->course_id,
             'center_id' => $enrollment->center_id,
-            'user' => new UserSummaryResource($this->whenLoaded('user')),
-            'student' => new UserSummaryResource($this->whenLoaded('user')),
+            'reason' => $enrollment->reason,
+            'student' => new StudentSummaryResource($this->whenLoaded('user')),
             'course' => new CourseSummaryResource($this->whenLoaded('course')),
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'enrolled_at' => $enrollment->enrolled_at,
+            'created_at' => $enrollment->created_at,
             'expires_at' => $enrollment->expires_at,
         ];
     }

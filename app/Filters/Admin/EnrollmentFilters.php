@@ -12,6 +12,9 @@ class EnrollmentFilters
         public readonly ?int $centerId,
         public readonly ?int $courseId,
         public readonly ?int $userId,
-        public readonly ?string $status
+        public readonly ?string $search,
+        public readonly ?string $status,
+        public readonly ?string $dateFrom,
+        public readonly ?string $dateTo
     ) {}
 }

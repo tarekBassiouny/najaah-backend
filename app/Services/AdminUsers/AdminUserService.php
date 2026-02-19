@@ -7,10 +7,10 @@ namespace App\Services\AdminUsers;
 use App\Enums\UserStatus;
 use App\Exceptions\DomainException;
 use App\Filters\Admin\AdminUserFilters;
+use App\Jobs\SendAdminPasswordResetEmailJob;
 use App\Models\User;
 use App\Services\AdminUsers\Contracts\AdminUserServiceInterface;
 use App\Services\Audit\AuditLogService;
-use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Centers\CenterScopeService;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
@@ -22,8 +22,7 @@ class AdminUserService implements AdminUserServiceInterface
 {
     public function __construct(
         private readonly AuditLogService $auditLogService,
-        private readonly CenterScopeService $centerScopeService,
-        private readonly AdminAuthServiceInterface $adminAuthService
+        private readonly CenterScopeService $centerScopeService
     ) {}
 
     /**
@@ -99,7 +98,7 @@ class AdminUserService implements AdminUserServiceInterface
         ]);
 
         if ($user->email !== null) {
-            $this->adminAuthService->sendPasswordResetLink($user->email, true);
+            SendAdminPasswordResetEmailJob::dispatch((int) $user->id, true);
         }
 
         return ($user->refresh() ?? $user)->loadMissing(['roles.permissions', 'center']);
