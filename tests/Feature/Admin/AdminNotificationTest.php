@@ -6,8 +6,14 @@ use App\Enums\AdminNotificationType;
 use App\Models\AdminNotification;
 use App\Models\AdminNotificationUserState;
 use App\Models\Center;
+use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\Permission;
+use App\Models\Pivots\CourseVideo;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Video;
+use App\Services\Playback\ExtraViewRequestService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -240,8 +246,178 @@ it('shows center-scoped notifications to center admin', function (): void {
 
     expect($ids)
         ->toContain((int) $centerNotification->id)
-        ->toContain((int) $broadcastNotification->id)
+        ->not->toContain((int) $broadcastNotification->id)
         ->not->toContain((int) $otherCenterNotification->id);
+});
+
+it('shows all shared center notifications to system super admin', function (): void {
+    ['headers' => $headers] = adminNotificationHeaders();
+
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+
+    $centerANotification = AdminNotification::factory()->forCenter($centerA)->create();
+    $centerBNotification = AdminNotification::factory()->forCenter($centerB)->create();
+    $globalNotification = AdminNotification::factory()->create();
+
+    $response = $this->getJson('/api/v1/admin/notifications', $headers);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true);
+
+    $ids = collect((array) $response->json('data'))
+        ->pluck('id')
+        ->map(static fn ($id): int => (int) $id)
+        ->all();
+
+    expect($ids)
+        ->toContain((int) $centerANotification->id)
+        ->toContain((int) $centerBNotification->id)
+        ->toContain((int) $globalNotification->id);
+});
+
+it('scopes center admin notifications to their own center for branded and unbranded centers', function (): void {
+    $role = Role::firstOrCreate(
+        ['slug' => 'super_admin'],
+        [
+            'name' => 'Super Admin',
+            'name_translations' => ['en' => 'Super Admin'],
+            'description_translations' => ['en' => 'Full system administrator'],
+        ]
+    );
+
+    $brandedCenter = Center::factory()->create(['type' => 1]);
+    $unbrandedCenter = Center::factory()->create(['type' => 0]);
+
+    $brandedAdmin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $brandedCenter->id,
+    ]);
+    $brandedAdmin->roles()->syncWithoutDetaching([$role->id]);
+    $brandedAdmin->centers()->syncWithoutDetaching([(int) $brandedCenter->id => ['type' => 'admin']]);
+
+    $unbrandedAdmin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $unbrandedCenter->id,
+    ]);
+    $unbrandedAdmin->roles()->syncWithoutDetaching([$role->id]);
+    $unbrandedAdmin->centers()->syncWithoutDetaching([(int) $unbrandedCenter->id => ['type' => 'admin']]);
+
+    $brandedNotification = AdminNotification::factory()->forCenter($brandedCenter)->create();
+    $unbrandedNotification = AdminNotification::factory()->forCenter($unbrandedCenter)->create();
+    $globalNotification = AdminNotification::factory()->create();
+
+    ['headers' => $brandedHeaders] = adminNotificationHeaders($brandedAdmin);
+    $brandedResponse = $this->getJson('/api/v1/admin/notifications', $brandedHeaders);
+    $brandedResponse->assertOk();
+
+    $brandedIds = collect((array) $brandedResponse->json('data'))
+        ->pluck('id')
+        ->map(static fn ($id): int => (int) $id)
+        ->all();
+
+    expect($brandedIds)
+        ->toContain((int) $brandedNotification->id)
+        ->not->toContain((int) $unbrandedNotification->id)
+        ->not->toContain((int) $globalNotification->id);
+
+    ['headers' => $unbrandedHeaders] = adminNotificationHeaders($unbrandedAdmin);
+    $unbrandedResponse = $this->getJson('/api/v1/admin/notifications', $unbrandedHeaders);
+    $unbrandedResponse->assertOk();
+
+    $unbrandedIds = collect((array) $unbrandedResponse->json('data'))
+        ->pluck('id')
+        ->map(static fn ($id): int => (int) $id)
+        ->all();
+
+    expect($unbrandedIds)
+        ->toContain((int) $unbrandedNotification->id)
+        ->not->toContain((int) $brandedNotification->id)
+        ->not->toContain((int) $globalNotification->id);
+});
+
+it('uses extra view request center scope for centerless student requests', function (): void {
+    $center = Center::factory()->create([
+        'type' => 0,
+        'default_view_limit' => 0,
+    ]);
+
+    $course = Course::factory()->create([
+        'status' => 3,
+        'is_published' => true,
+        'center_id' => $center->id,
+    ]);
+
+    $video = Video::factory()->create([
+        'lifecycle_status' => 2,
+        'encoding_status' => 3,
+    ]);
+
+    CourseVideo::create([
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+    $student->centers()->syncWithoutDetaching([(int) $center->id => ['type' => 'student']]);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    app(ExtraViewRequestService::class)->createForStudent(
+        $student,
+        $center,
+        $course,
+        $video,
+        'Need another attempt'
+    );
+
+    $notification = AdminNotification::query()
+        ->where('type', AdminNotificationType::EXTRA_VIEW_REQUEST)
+        ->latest('id')
+        ->firstOrFail();
+
+    expect($notification->center_id)->toBe((int) $center->id);
+
+    $role = Role::firstOrCreate(
+        ['slug' => 'super_admin'],
+        [
+            'name' => 'Super Admin',
+            'name_translations' => ['en' => 'Super Admin'],
+            'description_translations' => ['en' => 'Full system administrator'],
+        ]
+    );
+
+    $centerAdmin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $center->id,
+    ]);
+    $centerAdmin->roles()->syncWithoutDetaching([$role->id]);
+    $centerAdmin->centers()->syncWithoutDetaching([(int) $center->id => ['type' => 'admin']]);
+
+    ['headers' => $headers] = adminNotificationHeaders($centerAdmin);
+    $response = $this->getJson('/api/v1/admin/notifications', $headers);
+
+    $response->assertOk();
+
+    $ids = collect((array) $response->json('data'))
+        ->pluck('id')
+        ->map(static fn ($id): int => (int) $id)
+        ->all();
+
+    expect($ids)->toContain((int) $notification->id);
 });
 
 it('shows user-targeted notifications to specific admin', function (): void {
@@ -320,4 +496,72 @@ it('returns notification with correct structure', function (): void {
         ->assertJsonPath('data.0.type', AdminNotificationType::DEVICE_CHANGE_REQUEST->value)
         ->assertJsonPath('data.0.type_label', 'Device Change Request')
         ->assertJsonPath('data.0.type_icon', 'smartphone');
+});
+
+it('allows non-super-admin system admin with notification permission to see shared notifications', function (): void {
+    $permission = Permission::firstOrCreate(['name' => 'notification.manage'], [
+        'description' => 'Manage admin notifications',
+    ]);
+    $role = Role::firstOrCreate(
+        ['slug' => 'ops_admin'],
+        [
+            'name' => 'Ops Admin',
+            'name_translations' => ['en' => 'Ops Admin'],
+            'description_translations' => ['en' => 'Operations administrator'],
+        ]
+    );
+    $role->permissions()->syncWithoutDetaching([$permission->id]);
+
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => null,
+    ]);
+    $admin->roles()->syncWithoutDetaching([$role->id]);
+
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+    $centerANotification = AdminNotification::factory()->forCenter($centerA)->create();
+    $centerBNotification = AdminNotification::factory()->forCenter($centerB)->create();
+    $globalNotification = AdminNotification::factory()->create();
+
+    ['headers' => $headers] = adminNotificationHeaders($admin);
+    $response = $this->getJson('/api/v1/admin/notifications', $headers);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true);
+
+    $ids = collect((array) $response->json('data'))
+        ->pluck('id')
+        ->map(static fn ($id): int => (int) $id)
+        ->all();
+
+    expect($ids)
+        ->toContain((int) $centerANotification->id)
+        ->toContain((int) $centerBNotification->id)
+        ->toContain((int) $globalNotification->id);
+});
+
+it('denies notification listing when admin lacks notification permission', function (): void {
+    $role = Role::firstOrCreate(
+        ['slug' => 'readonly_admin'],
+        [
+            'name' => 'Read Only Admin',
+            'name_translations' => ['en' => 'Read Only Admin'],
+            'description_translations' => ['en' => 'No notification permission'],
+        ]
+    );
+
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => null,
+    ]);
+    $admin->roles()->syncWithoutDetaching([$role->id]);
+
+    ['headers' => $headers] = adminNotificationHeaders($admin);
+    $response = $this->getJson('/api/v1/admin/notifications', $headers);
+
+    $response->assertForbidden()
+        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
 });

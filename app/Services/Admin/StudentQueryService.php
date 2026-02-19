@@ -36,19 +36,7 @@ class StudentQueryService
             ->where('is_student', true)
             ->orderByDesc('created_at');
 
-        if ($filters->status !== null) {
-            $query->where('status', $filters->status);
-        }
-
-        if ($filters->search !== null) {
-            $term = $filters->search;
-            $query->where(static function (Builder $builder) use ($term): void {
-                $builder->where('name', 'like', '%'.$term.'%')
-                    ->orWhere('username', 'like', '%'.$term.'%')
-                    ->orWhere('email', 'like', '%'.$term.'%')
-                    ->orWhere('phone', 'like', '%'.$term.'%');
-            });
-        }
+        $this->applyFilters($query, $filters);
 
         $this->applyCenterTypeFilter($query, $filters);
 
@@ -86,19 +74,7 @@ class StudentQueryService
             ->where('center_id', $centerId)
             ->orderByDesc('created_at');
 
-        if ($filters->status !== null) {
-            $query->where('status', $filters->status);
-        }
-
-        if ($filters->search !== null) {
-            $term = $filters->search;
-            $query->where(static function (Builder $builder) use ($term): void {
-                $builder->where('name', 'like', '%'.$term.'%')
-                    ->orWhere('username', 'like', '%'.$term.'%')
-                    ->orWhere('email', 'like', '%'.$term.'%')
-                    ->orWhere('phone', 'like', '%'.$term.'%');
-            });
-        }
+        $this->applyFilters($query, $filters);
 
         $this->applyCenterTypeFilter($query, $filters);
 
@@ -147,5 +123,48 @@ class StudentQueryService
         }
 
         $query->whereNotNull('center_id');
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     */
+    private function applyFilters(Builder $query, StudentFilters $filters): void
+    {
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
+        if ($filters->search !== null) {
+            $term = trim($filters->search);
+            if ($term !== '') {
+                $query->where(static function (Builder $builder) use ($term): void {
+                    $builder->where('name', 'like', '%'.$term.'%')
+                        ->orWhere('username', 'like', '%'.$term.'%')
+                        ->orWhere('email', 'like', '%'.$term.'%')
+                        ->orWhere('phone', 'like', '%'.$term.'%');
+                });
+            }
+        }
+
+        if ($filters->studentName !== null) {
+            $studentName = trim($filters->studentName);
+            if ($studentName !== '') {
+                $query->where('name', 'like', '%'.$studentName.'%');
+            }
+        }
+
+        if ($filters->studentPhone !== null) {
+            $studentPhone = trim($filters->studentPhone);
+            if ($studentPhone !== '') {
+                $query->where('phone', 'like', '%'.$studentPhone.'%');
+            }
+        }
+
+        if ($filters->studentEmail !== null) {
+            $studentEmail = trim($filters->studentEmail);
+            if ($studentEmail !== '') {
+                $query->where('email', 'like', '%'.$studentEmail.'%');
+            }
+        }
     }
 }

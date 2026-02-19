@@ -33,11 +33,13 @@ class RolePermissionSeeder extends Seeder
                 'enrollment.manage',
                 'extra_view.manage',
                 'device_change.manage',
+                'notification.manage',
             ],
             'support_admin' => [
                 'audit.view',
                 'extra_view.manage',
                 'device_change.manage',
+                'notification.manage',
             ],
         ];
 
