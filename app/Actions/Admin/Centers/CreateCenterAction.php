@@ -13,7 +13,6 @@ use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Services\Storage\StoragePathResolver;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use RuntimeException;
 
 class CreateCenterAction
 {
@@ -42,11 +41,8 @@ class CreateCenterAction
             'type' => $type,
             'name' => $data['name'],
             'logo_url' => $this->pathResolver->defaultCenterLogo(),
+            'api_key' => $this->generateApiKey(),
         ];
-
-        if ($type === Center::TYPE_BRANDED) {
-            $centerData['api_key'] = $this->generateApiKey();
-        }
 
         if (array_key_exists('tier', $data)) {
             $centerData['tier'] = $data['tier'];
@@ -70,15 +66,7 @@ class CreateCenterAction
 
     private function generateApiKey(): string
     {
-        for ($attempt = 0; $attempt < 5; $attempt++) {
-            $key = bin2hex(random_bytes(20));
-
-            if (! Center::where('api_key', $key)->exists()) {
-                return $key;
-            }
-        }
-
-        throw new RuntimeException('Failed to generate unique API key.');
+        return Center::generateUniqueApiKey();
     }
 
     /**

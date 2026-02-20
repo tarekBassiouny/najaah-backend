@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RuntimeException;
 
 /**
  * @property int $id
@@ -71,6 +72,15 @@ class Center extends Model
     use HasTranslatableSearch;
     use HasTranslations;
     use SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $center): void {
+            if (! is_string($center->api_key) || trim($center->api_key) === '') {
+                $center->api_key = self::generateUniqueApiKey();
+            }
+        });
+    }
 
     protected $fillable = [
         'slug',
@@ -159,5 +169,18 @@ class Center extends Model
         }
 
         return 'centers/'.$this->id;
+    }
+
+    public static function generateUniqueApiKey(): string
+    {
+        for ($attempt = 0; $attempt < 10; $attempt++) {
+            $key = bin2hex(random_bytes(20));
+
+            if (! self::query()->where('api_key', $key)->exists()) {
+                return $key;
+            }
+        }
+
+        throw new RuntimeException('Failed to generate unique center API key.');
     }
 }

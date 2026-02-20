@@ -102,6 +102,11 @@ it('allows unbranded center creation without branding metadata', function (): vo
     $response = $this->postJson('/api/v1/admin/centers', $payload);
 
     $response->assertCreated();
+    $center = Center::query()->where('slug', 'unbranded')->first();
+
+    expect($center)->not->toBeNull()
+        ->and($center?->api_key)->toBeString()
+        ->and($center?->api_key)->not->toBe('');
 });
 
 it('lists centers with pagination', function (): void {
