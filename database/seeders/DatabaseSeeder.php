@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,36 +17,22 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // --- Core ---
-            CenterSeeder::class,
             RoleSeeder::class,
             PermissionSeeder::class,
             RolePermissionSeeder::class,
             UserSeeder::class,
-            UserDeviceSeeder::class,
-
-            // --- Course Structure ---
-            CategorySeeder::class,
-            CourseSeeder::class,
-            InstructorSeeder::class,
-            SectionSeeder::class,
-            VideoSeeder::class,
-            PdfSeeder::class,
-
-            // --- Learning ---
-            EnrollmentSeeder::class,
-            PlaybackSessionSeeder::class,
-
-            // --- Logs ---
-            AuditLogSeeder::class,
-
-            // --- Settings ---
             SystemSettingSeeder::class,
-            CenterSettingSeeder::class,
-
-            // --- Auth / Tokens ---
-            JwtTokenSeeder::class,
-            OtpCodeSeeder::class,
         ]);
+
+        if ($this->shouldSeedDemoData()) {
+            $this->call([
+                DemoDataSeeder::class,
+            ]);
+        }
+    }
+
+    private function shouldSeedDemoData(): bool
+    {
+        return filter_var((string) env('SEED_DEMO_DATA', 'false'), FILTER_VALIDATE_BOOL) === true;
     }
 }

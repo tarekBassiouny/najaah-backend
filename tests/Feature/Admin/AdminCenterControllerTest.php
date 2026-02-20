@@ -56,6 +56,11 @@ it('creates a center', function (): void {
     ]);
     $owner = User::where('email', 'owner@example.com')->first();
     expect($owner)->not->toBeNull();
+    $centerOwnerRoleId = Role::query()->where('slug', 'center_owner')->value('id');
+    $this->assertDatabaseHas('role_user', [
+        'user_id' => (int) $owner?->id,
+        'role_id' => (int) $centerOwnerRoleId,
+    ]);
     $center = Center::where('slug', 'center-1')->first();
     expect($center?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
     Bus::assertDispatched(SendAdminInvitationEmailJob::class);

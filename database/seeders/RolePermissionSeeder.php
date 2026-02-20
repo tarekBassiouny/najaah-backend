@@ -16,6 +16,8 @@ class RolePermissionSeeder extends Seeder
 
         $assignments = [
             'super_admin' => array_keys($permissions->all()),
+            // Center owner gets full management capabilities, but remains center-scoped by auth guards.
+            'center_owner' => array_keys($permissions->all()),
             'content_admin' => [
                 'course.manage',
                 'course.publish',

@@ -11,7 +11,7 @@ class AuditLogSeeder extends Seeder
     public function run(): void
     {
         User::all()->each(function (User $user) {
-            AuditLog::factory()->count(5)->create([
+            AuditLog::factory()->count(1)->create([
                 'user_id' => $user->id,
             ]);
         });
