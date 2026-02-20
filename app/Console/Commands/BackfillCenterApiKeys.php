@@ -28,12 +28,12 @@ class BackfillCenterApiKeys extends Command
         }
 
         if ((bool) $this->option('dry-run')) {
-            $this->info("Centers missing API keys: {$missingCount}");
+            $this->info('Centers missing API keys: '.$missingCount);
 
             return self::SUCCESS;
         }
 
-        $this->info("Backfilling API keys for {$missingCount} centers...");
+        $this->info(sprintf('Backfilling API keys for %s centers...', $missingCount));
         $updated = 0;
 
         Center::query()
@@ -50,7 +50,7 @@ class BackfillCenterApiKeys extends Command
                 }
             });
 
-        $this->info("Backfilled {$updated} center API keys.");
+        $this->info(sprintf('Backfilled %d center API keys.', $updated));
 
         return self::SUCCESS;
     }
