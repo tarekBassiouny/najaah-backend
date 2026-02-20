@@ -188,6 +188,7 @@ test('profile update validates unique phone', function () {
     User::factory()->create([
         'phone' => '1999000006',
         'is_student' => false,
+        'center_id' => $admin->center_id,
     ]);
 
     $response = $this->patchJson('/api/v1/admin/auth/me', [
@@ -198,6 +199,23 @@ test('profile update validates unique phone', function () {
         ->assertJsonPath('success', false)
         ->assertJsonPath('error.code', 'VALIDATION_ERROR')
         ->assertJsonStructure(['error' => ['details' => ['phone']]]);
+});
+
+test('profile update allows phone used by student', function () {
+    $admin = $this->asAdmin();
+    User::factory()->create([
+        'phone' => '1999000007',
+        'is_student' => true,
+        'center_id' => $admin->center_id,
+    ]);
+
+    $response = $this->patchJson('/api/v1/admin/auth/me', [
+        'phone' => '1999000007',
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.user.phone', '1999000007');
 });
 
 test('unauthenticated request to me fails', function () {

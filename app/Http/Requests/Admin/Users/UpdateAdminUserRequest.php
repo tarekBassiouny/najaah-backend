@@ -25,16 +25,66 @@ class UpdateAdminUserRequest extends FormRequest
     {
         /** @var User|null $target */
         $target = $this->route('user');
+        $resolvedCenterId = $this->resolveCenterId($target);
 
         return [
             'name' => ['sometimes', 'string', 'max:100'],
-            'email' => ['sometimes', 'email', 'max:190', Rule::unique('users', 'email')->ignore($target?->id)],
-            'phone' => ['sometimes', 'string', 'regex:/^[1-9][0-9]{9}$/', Rule::unique('users', 'phone')->ignore($target?->id)],
+            'email' => [
+                'sometimes',
+                'email',
+                'max:190',
+                Rule::unique('users', 'email')
+                    ->ignore($target?->id)
+                    ->where(function ($query): void {
+                        $query->where('is_student', false)
+                            ->whereNull('deleted_at');
+                    }),
+            ],
+            'phone' => [
+                'sometimes',
+                'string',
+                'regex:/^[1-9][0-9]{9}$/',
+                Rule::unique('users', 'phone')
+                    ->ignore($target?->id)
+                    ->where(function ($query) use ($resolvedCenterId): void {
+                        $query->where('is_student', false)
+                            ->whereNull('deleted_at');
+
+                        if ($resolvedCenterId !== null) {
+                            $query->where('center_id', $resolvedCenterId);
+                        } else {
+                            $query->whereNull('center_id');
+                        }
+                    }),
+            ],
             'country_code' => ['sometimes', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
             'password' => ['prohibited'],
             'status' => ['nullable', 'integer', 'in:0,1,2'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
+    }
+
+    private function resolveCenterId(?User $target): ?int
+    {
+        $routeCenter = $this->route('center');
+        if ($routeCenter instanceof Center) {
+            return (int) $routeCenter->id;
+        }
+
+        if (is_numeric($routeCenter)) {
+            return (int) $routeCenter;
+        }
+
+        $centerId = $this->input('center_id');
+        if (is_numeric($centerId)) {
+            return (int) $centerId;
+        }
+
+        if ($target instanceof User && is_numeric($target->center_id)) {
+            return (int) $target->center_id;
+        }
+
+        return null;
     }
 
     protected function prepareForValidation(): void

@@ -21,7 +21,9 @@ class UpdateAdminProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->user('admin')?->id;
+        $user = $this->user('admin');
+        $userId = $user?->id;
+        $centerId = is_numeric($user?->center_id) ? (int) $user->center_id : null;
 
         return [
             'name' => ['sometimes', 'string', 'max:100'],
@@ -29,7 +31,18 @@ class UpdateAdminProfileRequest extends FormRequest
                 'sometimes',
                 'string',
                 'regex:/^[1-9][0-9]{9}$/',
-                Rule::unique('users', 'phone')->ignore($userId),
+                Rule::unique('users', 'phone')
+                    ->ignore($userId)
+                    ->where(function ($query) use ($centerId): void {
+                        $query->where('is_student', false)
+                            ->whereNull('deleted_at');
+
+                        if ($centerId !== null) {
+                            $query->where('center_id', $centerId);
+                        } else {
+                            $query->whereNull('center_id');
+                        }
+                    }),
             ],
             'country_code' => ['sometimes', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
         ];

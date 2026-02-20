@@ -36,6 +36,9 @@ class UpdateStudentRequest extends FormRequest
                 Rule::unique('users', 'email')
                     ->ignore($userId)
                     ->where(function ($query) use ($centerId): void {
+                        $query->where('is_student', true)
+                            ->whereNull('deleted_at');
+
                         if (is_numeric($centerId)) {
                             $query->where('center_id', (int) $centerId);
                         } else {

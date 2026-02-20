@@ -22,15 +22,57 @@ class StoreAdminUserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $resolvedCenterId = $this->resolveCenterId();
+
         return [
             'name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')],
-            'phone' => ['required', 'string', 'regex:/^[1-9][0-9]{9}$/', Rule::unique('users', 'phone')],
+            'email' => [
+                'required',
+                'email',
+                'max:190',
+                Rule::unique('users', 'email')
+                    ->where(function ($query): void {
+                        $query->where('is_student', false)
+                            ->whereNull('deleted_at');
+                    }),
+            ],
+            'phone' => [
+                'required',
+                'string',
+                'regex:/^[1-9][0-9]{9}$/',
+                Rule::unique('users', 'phone')
+                    ->where(function ($query) use ($resolvedCenterId): void {
+                        $query->where('is_student', false)
+                            ->whereNull('deleted_at');
+
+                        if ($resolvedCenterId !== null) {
+                            $query->where('center_id', $resolvedCenterId);
+                        } else {
+                            $query->whereNull('center_id');
+                        }
+                    }),
+            ],
             'country_code' => ['required', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
             'password' => ['prohibited'],
             'status' => ['nullable', 'integer', 'in:0,1,2'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
+    }
+
+    private function resolveCenterId(): ?int
+    {
+        $routeCenter = $this->route('center');
+        if ($routeCenter instanceof Center) {
+            return (int) $routeCenter->id;
+        }
+
+        if (is_numeric($routeCenter)) {
+            return (int) $routeCenter;
+        }
+
+        $centerId = $this->input('center_id');
+
+        return is_numeric($centerId) ? (int) $centerId : null;
     }
 
     protected function prepareForValidation(): void

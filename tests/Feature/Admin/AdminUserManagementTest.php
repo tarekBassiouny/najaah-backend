@@ -101,6 +101,76 @@ it('creates, updates, and deletes admin users', function (): void {
     $delete->assertStatus(204);
 });
 
+it('allows admin and student to share phone in the same center', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create();
+
+    User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'phone' => '1999777001',
+        'email' => 'student.same.phone@example.com',
+    ]);
+
+    $create = $this->postJson('/api/v1/admin/centers/'.$center->id.'/users', [
+        'name' => 'Center Admin Shared Phone',
+        'email' => 'center.admin.shared.phone@example.com',
+        'phone' => '1999777001',
+        'country_code' => '+20',
+    ], $this->adminHeaders());
+
+    $create->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.phone', '1999777001');
+});
+
+it('keeps admin phone unique within admin scope', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create();
+
+    User::factory()->create([
+        'is_student' => false,
+        'center_id' => $center->id,
+        'phone' => '1999777002',
+        'email' => 'existing.center.admin.phone@example.com',
+    ]);
+
+    $response = $this->postJson('/api/v1/admin/centers/'.$center->id.'/users', [
+        'name' => 'Duplicate Phone Admin',
+        'email' => 'duplicate.center.admin.phone@example.com',
+        'phone' => '1999777002',
+        'country_code' => '+20',
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonStructure(['error' => ['details' => ['phone']]]);
+});
+
+it('keeps admin email globally unique across centers', function (): void {
+    $this->asAdmin();
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+
+    User::factory()->create([
+        'is_student' => false,
+        'center_id' => $centerA->id,
+        'email' => 'global.admin.email@example.com',
+        'phone' => '1999777003',
+    ]);
+
+    $response = $this->postJson('/api/v1/admin/centers/'.$centerB->id.'/users', [
+        'name' => 'Duplicate Global Email Admin',
+        'email' => 'global.admin.email@example.com',
+        'phone' => '1999777004',
+        'country_code' => '+20',
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonStructure(['error' => ['details' => ['email']]]);
+});
+
 it('enforces invite-only admin creation by rejecting password field', function (): void {
     $this->asAdmin();
 
@@ -139,6 +209,34 @@ it('rejects password field on system admin update', function (): void {
         $originalPasswordHash,
         (string) User::query()->findOrFail((int) $admin->id)->password
     );
+});
+
+it('allows updating admin phone to a phone used by student in the same center', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create();
+
+    User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'phone' => '1999777005',
+        'email' => 'student.target.phone@example.com',
+    ]);
+
+    $admin = User::factory()->create([
+        'is_student' => false,
+        'center_id' => $center->id,
+        'phone' => '1999777006',
+        'email' => 'admin.update.phone.target@example.com',
+    ]);
+
+    $response = $this->putJson('/api/v1/admin/centers/'.$center->id.'/users/'.$admin->id, [
+        'phone' => '1999777005',
+        'country_code' => '+20',
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.phone', '1999777005');
 });
 
 it('rejects password field on center admin update', function (): void {
