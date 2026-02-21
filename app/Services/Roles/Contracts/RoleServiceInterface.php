@@ -12,31 +12,31 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface RoleServiceInterface
 {
     /** @return LengthAwarePaginator<Role> */
-    public function list(RoleFilters $filters): LengthAwarePaginator;
+    public function list(RoleFilters $filters, ?int $forcedCenterId = null): LengthAwarePaginator;
 
     public function find(int $id): ?Role;
 
     /**
      * @param  array<string, mixed>  $data
      */
-    public function create(array $data, ?User $actor = null): Role;
+    public function create(array $data, ?User $actor = null, ?int $forcedCenterId = null): Role;
 
     /**
      * @param  array<string, mixed>  $data
      */
-    public function update(Role $role, array $data, ?User $actor = null): Role;
+    public function update(Role $role, array $data, ?User $actor = null, ?int $forcedCenterId = null): Role;
 
-    public function delete(Role $role, ?User $actor = null): void;
+    public function delete(Role $role, ?User $actor = null, ?int $forcedCenterId = null): void;
 
     /**
      * @param  array<int, int>  $permissionIds
      */
-    public function syncPermissions(Role $role, array $permissionIds, ?User $actor = null): Role;
+    public function syncPermissions(Role $role, array $permissionIds, ?User $actor = null, ?int $forcedCenterId = null): Role;
 
     /**
      * @param  array<int, int>  $roleIds
      * @param  array<int, int>  $permissionIds
      * @return array{roles: array<int, int>, permission_ids: array<int, int>}
      */
-    public function bulkSyncPermissions(array $roleIds, array $permissionIds, ?User $actor = null): array;
+    public function bulkSyncPermissions(array $roleIds, array $permissionIds, ?User $actor = null, ?int $forcedCenterId = null): array;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Roles;
 
+use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,6 +24,9 @@ class RoleResource extends JsonResource
 
         return [
             'id' => $role->id,
+            'center_id' => $role->center_id,
+            'center' => new CenterSummaryResource($this->whenLoaded('center')),
+            'is_system_role' => $role->center_id === null,
             'name' => $role->translate('name'),
             'slug' => $role->slug,
             'description' => $role->translate('description'),

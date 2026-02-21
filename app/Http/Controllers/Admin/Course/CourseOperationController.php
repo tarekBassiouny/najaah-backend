@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Course;
 
+use App\Actions\Admin\Courses\UploadCourseThumbnailAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Courses\AssignPdfRequest;
 use App\Http\Requests\Admin\Courses\AssignVideoRequest;
 use App\Http\Requests\Admin\Courses\CloneCourseRequest;
+use App\Http\Requests\Admin\Courses\UploadCourseThumbnailRequest;
 use App\Http\Resources\Admin\Courses\CourseResource;
 use App\Models\Center;
 use App\Models\Course;
@@ -148,6 +150,29 @@ class CourseOperationController extends Controller
             'message' => 'Course cloned successfully',
             'data' => new CourseResource($cloned),
         ], 201);
+    }
+
+    /**
+     * Upload a course thumbnail.
+     */
+    public function uploadThumbnail(
+        UploadCourseThumbnailRequest $request,
+        Center $center,
+        Course $course,
+        UploadCourseThumbnailAction $action
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+
+        /** @var \Illuminate\Http\UploadedFile $thumbnail */
+        $thumbnail = $request->file('thumbnail');
+        $updated = $action->execute($course, $thumbnail, $admin);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course thumbnail updated successfully',
+            'data' => new CourseResource($updated),
+        ]);
     }
 
     private function requireAdmin(): User

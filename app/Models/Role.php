@@ -8,16 +8,19 @@ use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\RoleUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
+ * @property int|null $center_id
  * @property string $name
  * @property array<string, string> $name_translations
  * @property string $slug
  * @property array<string,string>|null $description_translations
  * @property bool $is_admin_role
+ * @property-read Center|null $center
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
  */
@@ -30,6 +33,7 @@ class Role extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'center_id',
         'name',
         'name_translations',
         'slug',
@@ -38,6 +42,7 @@ class Role extends Model
     ];
 
     protected $casts = [
+        'center_id' => 'integer',
         'name_translations' => 'array',
         'description_translations' => 'array',
         'is_admin_role' => 'boolean',
@@ -48,6 +53,12 @@ class Role extends Model
         'name',
         'description',
     ];
+
+    /** @return BelongsTo<Center, self> */
+    public function center(): BelongsTo
+    {
+        return $this->belongsTo(Center::class);
+    }
 
     /** @return BelongsToMany<User, self> */
     public function users(): BelongsToMany
