@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Analytics\AnalyticsRequest;
+use App\Http\Requests\Admin\Analytics\CenterAnalyticsRequest;
+use App\Http\Requests\Admin\Analytics\CenterStudentAnalyticsRequest;
 use App\Http\Requests\Admin\Analytics\StudentAnalyticsRequest;
 use App\Http\Resources\Admin\Analytics\AnalyticsCoursesMediaResource;
 use App\Http\Resources\Admin\Analytics\AnalyticsDevicesRequestsResource;
@@ -93,6 +95,104 @@ class AnalyticsController extends Controller
      * Get analytics for a single student.
      */
     public function students(StudentAnalyticsRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        $filters = $request->filters();
+
+        $student = User::query()
+            ->where('is_student', true)
+            ->where('id', $filters->studentId)
+            ->first();
+
+        if (! $student instanceof User) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Student not found.',
+                ],
+            ], 404));
+        }
+
+        $this->centerScopeService->assertAdminSameCenter($admin, $student);
+        if ($filters->centerId !== null && $filters->centerId !== (int) $student->center_id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'CENTER_MISMATCH',
+                    'message' => 'Student does not belong to this center.',
+                ],
+            ], 403));
+        }
+
+        $payload = $this->studentEngagementService->handle($admin, $student, $filters);
+
+        return response()->json([
+            'success' => true,
+            'data' => new AnalyticsStudentEngagementResource($payload),
+        ]);
+    }
+
+    /**
+     * Get center-scoped analytics overview.
+     */
+    public function centerOverview(CenterAnalyticsRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        $payload = $this->overviewService->handle($admin, $request->filters());
+
+        return response()->json([
+            'success' => true,
+            'data' => new AnalyticsOverviewResource($payload),
+        ]);
+    }
+
+    /**
+     * Get center-scoped analytics for course media.
+     */
+    public function centerCoursesMedia(CenterAnalyticsRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        $payload = $this->coursesMediaService->handle($admin, $request->filters());
+
+        return response()->json([
+            'success' => true,
+            'data' => new AnalyticsCoursesMediaResource($payload),
+        ]);
+    }
+
+    /**
+     * Get center-scoped analytics for learner enrollments.
+     */
+    public function centerLearnersEnrollments(CenterAnalyticsRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        $payload = $this->learnersEnrollmentsService->handle($admin, $request->filters());
+
+        return response()->json([
+            'success' => true,
+            'data' => new AnalyticsLearnersEnrollmentsResource($payload),
+        ]);
+    }
+
+    /**
+     * Get center-scoped analytics for device requests.
+     */
+    public function centerDevicesRequests(CenterAnalyticsRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        $payload = $this->devicesRequestsService->handle($admin, $request->filters());
+
+        return response()->json([
+            'success' => true,
+            'data' => new AnalyticsDevicesRequestsResource($payload),
+        ]);
+    }
+
+    /**
+     * Get center-scoped analytics for a single student.
+     */
+    public function centerStudents(CenterStudentAnalyticsRequest $request): JsonResponse
     {
         $admin = $this->requireAdmin();
         $filters = $request->filters();

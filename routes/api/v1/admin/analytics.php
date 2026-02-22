@@ -10,3 +10,11 @@ Route::middleware(['require.permission:audit.view', 'scope.system'])->group(func
     Route::get('/analytics/devices-requests', [AnalyticsController::class, 'devicesRequests']);
     Route::get('/analytics/students', [AnalyticsController::class, 'students']);
 });
+
+Route::middleware(['require.permission:audit.view', 'scope.center'])->group(function (): void {
+    Route::get('/centers/{center}/analytics/overview', [AnalyticsController::class, 'centerOverview'])->whereNumber('center');
+    Route::get('/centers/{center}/analytics/courses-media', [AnalyticsController::class, 'centerCoursesMedia'])->whereNumber('center');
+    Route::get('/centers/{center}/analytics/learners-enrollments', [AnalyticsController::class, 'centerLearnersEnrollments'])->whereNumber('center');
+    Route::get('/centers/{center}/analytics/devices-requests', [AnalyticsController::class, 'centerDevicesRequests'])->whereNumber('center');
+    Route::get('/centers/{center}/analytics/students', [AnalyticsController::class, 'centerStudents'])->whereNumber('center');
+});

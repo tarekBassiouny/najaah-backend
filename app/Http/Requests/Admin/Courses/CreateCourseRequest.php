@@ -26,6 +26,12 @@ class CreateCourseRequest extends FormRequest
                 'created_by' => $this->user()->id,
             ]);
         }
+
+        if ($this->has('instructor_id') && ! $this->has('primary_instructor_id')) {
+            $this->merge([
+                'primary_instructor_id' => $this->input('instructor_id'),
+            ]);
+        }
     }
 
     /**
@@ -47,6 +53,9 @@ class CreateCourseRequest extends FormRequest
             'metadata' => ['nullable', 'array'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
+            'instructor_id' => ['nullable', 'integer', 'exists:instructors,id'],
+            'primary_instructor_id' => ['sometimes', 'integer', 'exists:instructors,id'],
+            'thumbnail_url' => ['nullable', 'string', 'url', 'max:2048'],
         ];
     }
 
@@ -95,6 +104,14 @@ class CreateCourseRequest extends FormRequest
             'metadata' => [
                 'description' => 'Optional metadata array.',
                 'example' => ['key' => 'value'],
+            ],
+            'instructor_id' => [
+                'description' => 'Primary instructor ID for the course.',
+                'example' => 5,
+            ],
+            'thumbnail_url' => [
+                'description' => 'URL of the course thumbnail image.',
+                'example' => 'https://example.com/thumbnails/course-1.jpg',
             ],
         ];
     }

@@ -27,7 +27,8 @@ class AdminUserResource extends JsonResource
         $scopeCenterId = is_numeric($user->center_id) ? (int) $user->center_id : null;
         $scopeType = $scopeCenterId !== null ? 'center' : 'system';
         $isSystemSuperAdmin = $user->hasRole('super_admin') && $scopeCenterId === null;
-        $isCenterSuperAdmin = $user->hasRole('super_admin') && $scopeCenterId !== null;
+        $isCenterSuperAdmin = ($user->hasRole('super_admin') || $user->hasRole('center_owner'))
+            && $scopeCenterId !== null;
         $rolesWithPermissions = null;
 
         if ($user->relationLoaded('roles')) {

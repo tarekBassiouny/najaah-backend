@@ -16,6 +16,7 @@ Route::middleware('require.permission:course.manage')->group(function (): void {
         Route::delete('/centers/{center}/courses/{course}/videos/{video}', [CourseOperationController::class, 'removeVideo'])->whereNumber('center');
         Route::post('/centers/{center}/courses/{course}/pdfs', [CourseOperationController::class, 'assignPdf'])->whereNumber('center');
         Route::delete('/centers/{center}/courses/{course}/pdfs/{pdf}', [CourseOperationController::class, 'removePdf'])->whereNumber('center');
+        Route::post('/centers/{center}/courses/{course}/thumbnail', [CourseOperationController::class, 'uploadThumbnail'])->whereNumber('center');
     });
 });
 

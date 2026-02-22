@@ -34,11 +34,19 @@ class RoleService implements RoleServiceInterface
     /**
      * @return LengthAwarePaginator<Role>
      */
-    public function list(RoleFilters $filters): LengthAwarePaginator
+    public function list(RoleFilters $filters, ?int $forcedCenterId = null): LengthAwarePaginator
     {
         $query = Role::query()
             ->where('is_admin_role', true)
-            ->with('permissions');
+            ->with(['permissions', 'center']);
+
+        if ($forcedCenterId !== null) {
+            $query->where('center_id', $forcedCenterId);
+        } elseif ($filters->centerId !== null) {
+            $query->where('center_id', $filters->centerId);
+        } else {
+            $query->whereNull('center_id');
+        }
 
         if ($filters->search !== null) {
             $term = '%'.strtolower($filters->search).'%';
@@ -60,36 +68,42 @@ class RoleService implements RoleServiceInterface
 
     public function find(int $id): ?Role
     {
-        return Role::with('permissions')->find($id);
+        return Role::with(['permissions', 'center'])->find($id);
     }
 
     /**
      * @param  array<string, mixed>  $data
      */
-    public function create(array $data, ?User $actor = null): Role
+    public function create(array $data, ?User $actor = null, ?int $forcedCenterId = null): Role
     {
-        $this->assertSystemAdminScope($actor);
+        $this->assertRoleManagementScope($actor, $forcedCenterId);
         $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS);
         $data = $this->prepareRoleData($data);
+        $data['center_id'] = $forcedCenterId;
 
         $role = Role::create($data);
 
-        $this->auditLogService->log($actor, $role, AuditActions::ROLE_CREATED);
+        $this->auditLogService->log($actor, $role, AuditActions::ROLE_CREATED, [
+            'center_id' => $forcedCenterId,
+        ]);
 
-        return $role;
+        return $role->fresh(['permissions', 'center']) ?? $role;
     }
 
     /**
      * @param  array<string, mixed>  $data
      */
-    public function update(Role $role, array $data, ?User $actor = null): Role
+    public function update(Role $role, array $data, ?User $actor = null, ?int $forcedCenterId = null): Role
     {
-        $this->assertSystemAdminScope($actor);
+        $this->assertRoleManagementScope($actor, $forcedCenterId);
+        $this->assertRoleScope($role, $forcedCenterId);
+
         $data = $this->normalizeTranslations($data, self::TRANSLATION_FIELDS, [
             'name_translations' => $role->name_translations ?? [],
             'description_translations' => $role->description_translations ?? [],
         ]);
         $data = $this->prepareRoleData($data, $role);
+        unset($data['center_id']);
 
         $role->update($data);
 
@@ -97,12 +111,14 @@ class RoleService implements RoleServiceInterface
             'updated_fields' => array_keys($data),
         ]);
 
-        return $role->fresh(['permissions']) ?? $role;
+        return $role->fresh(['permissions', 'center']) ?? $role;
     }
 
-    public function delete(Role $role, ?User $actor = null): void
+    public function delete(Role $role, ?User $actor = null, ?int $forcedCenterId = null): void
     {
-        $this->assertSystemAdminScope($actor);
+        $this->assertRoleManagementScope($actor, $forcedCenterId);
+        $this->assertRoleScope($role, $forcedCenterId);
+
         $role->delete();
 
         $this->auditLogService->log($actor, $role, AuditActions::ROLE_DELETED);
@@ -111,16 +127,18 @@ class RoleService implements RoleServiceInterface
     /**
      * @param  array<int, int>  $permissionIds
      */
-    public function syncPermissions(Role $role, array $permissionIds, ?User $actor = null): Role
+    public function syncPermissions(Role $role, array $permissionIds, ?User $actor = null, ?int $forcedCenterId = null): Role
     {
-        $this->assertSystemAdminScope($actor);
+        $this->assertRoleManagementScope($actor, $forcedCenterId);
+        $this->assertRoleScope($role, $forcedCenterId);
+
         $role->permissions()->sync($permissionIds);
 
         $this->auditLogService->log($actor, $role, AuditActions::ROLE_PERMISSIONS_SYNCED, [
             'permission_ids' => $permissionIds,
         ]);
 
-        return $role->fresh(['permissions']) ?? $role;
+        return $role->fresh(['permissions', 'center']) ?? $role;
     }
 
     /**
@@ -128,12 +146,19 @@ class RoleService implements RoleServiceInterface
      * @param  array<int, int>  $permissionIds
      * @return array{roles: array<int, int>, permission_ids: array<int, int>}
      */
-    public function bulkSyncPermissions(array $roleIds, array $permissionIds, ?User $actor = null): array
+    public function bulkSyncPermissions(array $roleIds, array $permissionIds, ?User $actor = null, ?int $forcedCenterId = null): array
     {
-        $this->assertSystemAdminScope($actor);
+        $this->assertRoleManagementScope($actor, $forcedCenterId);
 
         $uniqueRoleIds = array_values(array_unique(array_map('intval', $roleIds)));
-        $roles = Role::query()->whereIn('id', $uniqueRoleIds)->get();
+        $roles = Role::query()
+            ->whereIn('id', $uniqueRoleIds)
+            ->when(
+                $forcedCenterId === null,
+                static fn ($query) => $query->whereNull('center_id'),
+                static fn ($query) => $query->where('center_id', $forcedCenterId)
+            )
+            ->get();
 
         if (count($uniqueRoleIds) !== $roles->count()) {
             throw new DomainException('One or more roles were not found.', ErrorCodes::NOT_FOUND, 404);
@@ -176,6 +201,38 @@ class RoleService implements RoleServiceInterface
     {
         if (! $actor instanceof User || ! $this->centerScopeService->isSystemSuperAdmin($actor)) {
             throw new DomainException('System scope access is required.', ErrorCodes::FORBIDDEN, 403);
+        }
+    }
+
+    private function assertRoleManagementScope(?User $actor, ?int $forcedCenterId): void
+    {
+        if ($forcedCenterId === null) {
+            $this->assertSystemAdminScope($actor);
+
+            return;
+        }
+
+        if (! $actor instanceof User) {
+            throw new DomainException('Authentication required.', ErrorCodes::UNAUTHORIZED, 401);
+        }
+
+        if ($this->centerScopeService->isSystemSuperAdmin($actor)) {
+            return;
+        }
+
+        if (! $this->centerScopeService->isCenterScopedSuperAdmin($actor)) {
+            throw new DomainException('Center super admin scope is required.', ErrorCodes::FORBIDDEN, 403);
+        }
+
+        $this->centerScopeService->assertAdminCenterId($actor, $forcedCenterId);
+    }
+
+    private function assertRoleScope(Role $role, ?int $forcedCenterId): void
+    {
+        $roleCenterId = is_numeric($role->center_id) ? (int) $role->center_id : null;
+
+        if ($roleCenterId !== $forcedCenterId) {
+            throw new DomainException('Role not found.', ErrorCodes::NOT_FOUND, 404);
         }
     }
 }

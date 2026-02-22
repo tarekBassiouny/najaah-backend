@@ -74,6 +74,8 @@ final class AuditActions
 
     public const COURSE_SECTIONS_REORDERED = 'course_sections_reordered';
 
+    public const COURSE_THUMBNAIL_UPDATED = 'course_thumbnail_updated';
+
     public const DEVICE_CHANGE_REQUEST_APPROVED = 'device_change_request_approved';
 
     public const DEVICE_CHANGE_REQUEST_COMPLETED_VIA_LOGIN = 'device_change_request_completed_via_login';
