@@ -15,7 +15,7 @@ interface CenterScopeServiceInterface
     public function isSystemSuperAdmin(User $user): bool;
 
     /**
-     * Check if the user is a center-scoped super admin (has center_id).
+     * Check if the user has center-scoped super-admin privileges (has center_id).
      */
     public function isCenterScopedSuperAdmin(User $user): bool;
 

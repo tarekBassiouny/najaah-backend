@@ -33,9 +33,7 @@ Route::middleware(['require.permission:admin.manage', 'scope.center'])->group(fu
     Route::delete('/centers/{center}/users/{user}', [AdminUserController::class, 'centerDestroy'])->whereNumber('center')->whereNumber('user');
     Route::put('/centers/{center}/users/{user}/roles', [AdminUserController::class, 'centerSyncRoles'])
         ->whereNumber('center')
-        ->whereNumber('user')
-        ->middleware('require.role:super_admin');
+        ->whereNumber('user');
     Route::post('/centers/{center}/users/roles/bulk', [AdminUserController::class, 'centerBulkSyncRoles'])
-        ->whereNumber('center')
-        ->middleware('require.role:super_admin');
+        ->whereNumber('center');
 });

@@ -21,6 +21,7 @@ class ListRolesRequest extends AdminListRequest
     public function rules(): array
     {
         return array_merge($this->listRules(), [
+            'center_id' => ['sometimes', 'integer', 'exists:centers,id'],
             'search' => ['sometimes', 'string', 'max:100'],
         ]);
     }
@@ -33,6 +34,7 @@ class ListRolesRequest extends AdminListRequest
         return new RoleFilters(
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
+            centerId: FilterInput::intOrNull($data, 'center_id'),
             search: FilterInput::stringOrNull($data, 'search')
         );
     }
@@ -54,6 +56,10 @@ class ListRolesRequest extends AdminListRequest
             'search' => [
                 'description' => 'Optional search term applied to role slug or name.',
                 'example' => 'support',
+            ],
+            'center_id' => [
+                'description' => 'Optional center ID filter (system scope only).',
+                'example' => '12',
             ],
         ];
     }

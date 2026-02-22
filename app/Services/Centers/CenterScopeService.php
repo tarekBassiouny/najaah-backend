@@ -18,7 +18,8 @@ class CenterScopeService implements CenterScopeServiceInterface
 
     public function isCenterScopedSuperAdmin(User $user): bool
     {
-        return $user->hasRole('super_admin') && is_numeric($user->center_id);
+        return ($user->hasRole('super_admin') || $user->hasRole('center_owner'))
+            && is_numeric($user->center_id);
     }
 
     public function resolveAdminCenterId(User $user): ?int
