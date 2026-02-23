@@ -220,8 +220,12 @@ class RoleService implements RoleServiceInterface
             return;
         }
 
-        if (! $this->centerScopeService->isCenterScopedSuperAdmin($actor)) {
-            throw new DomainException('Center super admin scope is required.', ErrorCodes::FORBIDDEN, 403);
+        // Allow center-scoped super admins or admins with role.manage permission
+        $canManageRoles = $this->centerScopeService->isCenterScopedSuperAdmin($actor)
+            || $actor->hasPermission('role.manage');
+
+        if (! $canManageRoles) {
+            throw new DomainException('Role management permission is required.', ErrorCodes::FORBIDDEN, 403);
         }
 
         $this->centerScopeService->assertAdminCenterId($actor, $forcedCenterId);

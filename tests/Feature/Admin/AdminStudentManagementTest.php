@@ -39,7 +39,9 @@ it('denies student access without permission', function (): void {
 it('allows super admin to create and delete students', function (): void {
     $this->asAdmin();
 
-    $center = Center::factory()->create();
+    // Use branded center to test immediate user_centers association
+    // (unbranded centers only get association on enrollment)
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Branded->value]);
 
     $create = $this->postJson('/api/v1/admin/students', [
         'name' => 'Student One',

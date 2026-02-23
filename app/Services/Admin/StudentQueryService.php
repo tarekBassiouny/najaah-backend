@@ -42,12 +42,14 @@ class StudentQueryService
 
         if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
-                $query->where('center_id', $filters->centerId);
+                // Use user_centers pivot for center-specific queries
+                $this->applyCenterAssociationFilter($query, $filters->centerId);
             }
         } else {
             $centerId = $this->centerScopeService->resolveAdminCenterId($admin);
             $this->centerScopeService->assertAdminCenterId($admin, $centerId);
-            $query->where('center_id', (int) $centerId);
+            // Use user_centers pivot for center-specific queries
+            $this->applyCenterAssociationFilter($query, (int) $centerId);
         }
 
         return $query;
@@ -71,8 +73,10 @@ class StudentQueryService
                 },
             ])
             ->where('is_student', true)
-            ->where('center_id', $centerId)
             ->orderByDesc('created_at');
+
+        // Use user_centers pivot to filter students associated with this center
+        $this->applyCenterAssociationFilter($query, $centerId);
 
         $this->applyFilters($query, $filters);
 
@@ -105,6 +109,24 @@ class StudentQueryService
             'page',
             $filters->page
         );
+    }
+
+    /**
+     * Filter students by center association via user_centers pivot.
+     *
+     * Students appear in a center's list only if they have an entry in user_centers,
+     * which is created either:
+     * - When a branded center adds a student (via StudentService::create)
+     * - When any student enrolls in a course (via EnrollmentObserver)
+     *
+     * @param  Builder<User>  $query
+     */
+    private function applyCenterAssociationFilter(Builder $query, int $centerId): void
+    {
+        $query->whereHas('centers', static function ($centerQuery) use ($centerId): void {
+            $centerQuery->where('centers.id', $centerId)
+                ->where('user_centers.type', 'student');
+        });
     }
 
     /**

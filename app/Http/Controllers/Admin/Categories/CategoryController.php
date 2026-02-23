@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin\Categories;
 
 use App\Http\Controllers\Concerns\AdminAuthenticates;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Categories\BulkDeleteCategoriesRequest;
+use App\Http\Requests\Admin\Categories\BulkUpdateCategoryStatusRequest;
 use App\Http\Requests\Admin\Categories\ListCategoriesRequest;
 use App\Http\Requests\Admin\Categories\StoreCategoryRequest;
 use App\Http\Requests\Admin\Categories\UpdateCategoryRequest;
@@ -135,6 +137,123 @@ class CategoryController extends Controller
             'success' => true,
             'data' => null,
         ], 204);
+    }
+
+    /**
+     * Bulk update category status.
+     */
+    public function bulkUpdateStatus(BulkUpdateCategoryStatusRequest $request, Center $center): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        $this->centerScopeService->assertAdminCenterId($admin, (int) $center->id);
+
+        /** @var array{is_active: bool, category_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['category_ids'])));
+
+        $categories = Category::query()
+            ->where('center_id', (int) $center->id)
+            ->whereIn('id', $requestedIds)
+            ->get()
+            ->keyBy('id');
+
+        $updated = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($requestedIds as $categoryId) {
+            $category = $categories->get($categoryId);
+
+            if (! $category instanceof Category) {
+                $failed[] = [
+                    'category_id' => $categoryId,
+                    'reason' => 'Category not found.',
+                ];
+
+                continue;
+            }
+
+            if ($category->is_active === $data['is_active']) {
+                $skipped[] = $categoryId;
+
+                continue;
+            }
+
+            $category->update(['is_active' => $data['is_active']]);
+            $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_UPDATED, [
+                'is_active' => $data['is_active'],
+            ]);
+            $updated[] = $category;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk category status update processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'updated' => count($updated),
+                    'skipped' => count($skipped),
+                    'failed' => count($failed),
+                ],
+                'updated' => CategoryResource::collection($updated),
+                'skipped' => $skipped,
+                'failed' => $failed,
+            ],
+        ]);
+    }
+
+    /**
+     * Bulk delete categories.
+     */
+    public function bulkDestroy(BulkDeleteCategoriesRequest $request, Center $center): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        $this->centerScopeService->assertAdminCenterId($admin, (int) $center->id);
+
+        /** @var array{category_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['category_ids'])));
+
+        $categories = Category::query()
+            ->where('center_id', (int) $center->id)
+            ->whereIn('id', $requestedIds)
+            ->get()
+            ->keyBy('id');
+
+        $deleted = [];
+        $failed = [];
+
+        foreach ($requestedIds as $categoryId) {
+            $category = $categories->get($categoryId);
+
+            if (! $category instanceof Category) {
+                $failed[] = [
+                    'category_id' => $categoryId,
+                    'reason' => 'Category not found.',
+                ];
+
+                continue;
+            }
+
+            $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_DELETED);
+            $category->delete();
+            $deleted[] = $categoryId;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk category delete processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'deleted' => count($deleted),
+                    'failed' => count($failed),
+                ],
+                'deleted' => $deleted,
+                'failed' => $failed,
+            ],
+        ]);
     }
 
     private function assertCategoryBelongsToCenter(Center $center, Category $category): void
