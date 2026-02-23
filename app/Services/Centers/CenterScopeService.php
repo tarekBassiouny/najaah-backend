@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Centers;
 
 use App\Exceptions\CenterMismatchException;
+use App\Models\Center;
 use App\Models\User;
 use App\Services\Centers\Contracts\CenterScopeServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -47,7 +48,11 @@ class CenterScopeService implements CenterScopeServiceInterface
             return;
         }
 
-        $modelCenterId = $model->getAttribute('center_id');
+        // For Center models, use the id directly; for other models, use center_id
+        $modelCenterId = $model instanceof Center
+            ? $model->getAttribute('id')
+            : $model->getAttribute('center_id');
+
         if (! is_numeric($modelCenterId)) {
             $this->deny();
         }
