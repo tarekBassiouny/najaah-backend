@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Enums\DeviceChangeRequestStatus;
 use App\Enums\EnrollmentStatus;
+use App\Enums\UserDeviceStatus;
 use App\Enums\UserStatus;
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\Course;
+use App\Models\DeviceChangeRequest;
 use App\Models\Enrollment;
 use App\Models\Permission;
 use App\Models\PlaybackSession;
@@ -56,6 +59,10 @@ it('returns student profile with courses and videos', function (): void {
 
     $device = UserDevice::factory()->create([
         'user_id' => $student->id,
+        'status' => UserDeviceStatus::Active->value,
+        'model' => 'Samsung Galaxy S24',
+        'device_id' => 'CTR-4-STD-8',
+        'last_used_at' => now()->subHour(),
     ]);
 
     Enrollment::factory()->create([
@@ -64,6 +71,17 @@ it('returns student profile with courses and videos', function (): void {
         'center_id' => $center->id,
         'status' => EnrollmentStatus::Active->value,
         'enrolled_at' => now()->subDay(),
+    ]);
+
+    // Create device change requests (approved)
+    DeviceChangeRequest::factory()->create([
+        'user_id' => $student->id,
+        'center_id' => $center->id,
+        'new_model' => 'iPhone 14 Pro',
+        'new_device_id' => 'IOS-7F3A-91C2',
+        'status' => DeviceChangeRequestStatus::Approved->value,
+        'reason' => 'Previous phone replaced',
+        'decided_at' => now()->subDays(3),
     ]);
 
     // Create playback sessions
@@ -107,6 +125,21 @@ it('returns student profile with courses and videos', function (): void {
                 'country_code',
                 'status',
                 'status_label',
+                'last_activity_at',
+                'active_device' => [
+                    'model',
+                    'device_id',
+                ],
+                'total_enrollments',
+                'device_changes_count',
+                'device_change_log' => [
+                    '*' => [
+                        'device_name',
+                        'device_id',
+                        'changed_at',
+                        'reason',
+                    ],
+                ],
                 'center' => [
                     'id',
                     'name',
@@ -118,10 +151,12 @@ it('returns student profile with courses and videos', function (): void {
                         'expires_at',
                         'status',
                         'status_label',
+                        'progress_percentage',
                         'course' => [
                             'id',
                             'title',
                             'thumbnail_url',
+                            'video_count',
                             'videos' => [
                                 '*' => [
                                     'id',
@@ -136,6 +171,17 @@ it('returns student profile with courses and videos', function (): void {
                 ],
             ],
         ]);
+
+    // Check new stats card fields
+    expect($response->json('data.active_device.model'))->toBe('Samsung Galaxy S24');
+    expect($response->json('data.active_device.device_id'))->toBe('CTR-4-STD-8');
+    expect($response->json('data.total_enrollments'))->toBe(1);
+    expect($response->json('data.device_changes_count'))->toBe(1);
+    expect($response->json('data.device_change_log.0.device_name'))->toBe('iPhone 14 Pro');
+
+    // Check enrollment progress and video count
+    expect((float) $response->json('data.enrollments.0.progress_percentage'))->toBe(90.0);
+    expect($response->json('data.enrollments.0.course.video_count'))->toBe(1);
 
     // Check video watch data
     $videoData = $response->json('data.enrollments.0.course.videos.0');
