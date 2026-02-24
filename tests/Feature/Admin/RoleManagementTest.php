@@ -228,7 +228,9 @@ it('deletes a role', function (): void {
 
     $response = $this->deleteJson("/api/v1/admin/roles/{$role->id}", [], $this->adminHeaders());
 
-    $response->assertStatus(204);
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
 
     $this->assertSoftDeleted('roles', ['id' => $role->id]);
 });

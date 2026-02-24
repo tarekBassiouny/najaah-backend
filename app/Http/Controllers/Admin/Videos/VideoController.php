@@ -110,7 +110,7 @@ class VideoController extends Controller
         return response()->json([
             'success' => true,
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     private function assertVideoBelongsToCenter(Center $center, Video $video): void
