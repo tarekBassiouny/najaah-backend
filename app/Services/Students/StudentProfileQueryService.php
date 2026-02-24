@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Students;
 
+use App\Enums\DeviceChangeRequestStatus;
+use App\Enums\UserDeviceStatus;
 use App\Exceptions\CenterMismatchException;
 use App\Models\User;
 
@@ -14,6 +16,15 @@ class StudentProfileQueryService
         $student->load([
             'center',
             'studentSetting',
+            'devices' => function ($query): void {
+                $query->where('status', UserDeviceStatus::Active->value)
+                    ->orderByDesc('last_used_at')
+                    ->limit(1);
+            },
+            'deviceChangeRequests' => function ($query): void {
+                $query->where('status', DeviceChangeRequestStatus::Approved->value)
+                    ->orderByDesc('decided_at');
+            },
             'enrollments' => function ($query): void {
                 $query->with([
                     'course' => function ($query): void {
@@ -33,7 +44,7 @@ class StudentProfileQueryService
                 ]);
             },
             'playbackSessions' => function ($query): void {
-                $query->select('id', 'user_id', 'video_id', 'course_id', 'progress_percent', 'is_full_play')
+                $query->select('id', 'user_id', 'video_id', 'course_id', 'progress_percent', 'is_full_play', 'updated_at')
                     ->notDeleted();
             },
         ]);

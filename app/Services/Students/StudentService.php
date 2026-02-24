@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Students;
 
-use App\Enums\CenterType;
 use App\Enums\UserStatus;
 use App\Models\Center;
 use App\Models\User;
@@ -41,15 +40,15 @@ class StudentService
             'status' => UserStatus::Active,
         ]);
 
-        // For branded centers, immediately associate student with center.
-        // For unbranded centers, association is created via EnrollmentObserver
-        // when the student enrolls in a course, so they only appear in the
-        // center's student list after having an enrollment.
+        // When admin creates a student for any center (branded or unbranded),
+        // associate them immediately so they appear in the center's student list.
+        // Note: For self-registered students (mobile app), center association is
+        // created via EnrollmentObserver when they enroll in a course.
         if (isset($data['center_id']) && is_numeric($data['center_id'])) {
             $centerId = (int) $data['center_id'];
             $center = Center::find($centerId);
 
-            if ($center !== null && $center->type === CenterType::Branded) {
+            if ($center !== null) {
                 $user->centers()->syncWithoutDetaching([
                     $centerId => ['type' => 'student'],
                 ]);
