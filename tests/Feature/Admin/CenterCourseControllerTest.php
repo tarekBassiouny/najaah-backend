@@ -108,7 +108,9 @@ it('soft deletes course in center', function (): void {
 
     $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [], $this->adminHeaders());
 
-    $response->assertNoContent();
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
     $this->assertSoftDeleted('courses', ['id' => $course->id]);
 });
 

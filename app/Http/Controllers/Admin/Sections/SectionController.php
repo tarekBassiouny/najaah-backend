@@ -42,6 +42,7 @@ class SectionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Sections retrieved successfully',
             'data' => new SectionCollection($sections),
         ]);
     }
@@ -63,6 +64,7 @@ class SectionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section created successfully',
             'data' => new SectionResource($section->load(['videos', 'pdfs'])),
         ]);
     }
@@ -83,6 +85,7 @@ class SectionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section retrieved successfully',
             'data' => $found !== null ? new SectionResource($found) : null,
         ]);
     }
@@ -105,6 +108,7 @@ class SectionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section updated successfully',
             'data' => new SectionResource($updated),
         ]);
     }
@@ -124,8 +128,9 @@ class SectionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section deleted successfully',
             'data' => null,
-        ], 204);
+        ]);
     }
 
     /**
@@ -144,6 +149,7 @@ class SectionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section restored successfully',
             'data' => new SectionResource($restored),
         ]);
     }
@@ -176,6 +182,7 @@ class SectionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Sections reordered successfully',
             'data' => null,
         ]);
     }
@@ -196,6 +203,7 @@ class SectionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section visibility updated successfully',
             'data' => new SectionResource($section->fresh(['videos', 'pdfs'])),
         ]);
     }

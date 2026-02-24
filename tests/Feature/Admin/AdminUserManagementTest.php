@@ -98,7 +98,9 @@ it('creates, updates, and deletes admin users', function (): void {
 
     $delete = $this->deleteJson("/api/v1/admin/users/{$adminId}", [], $this->adminHeaders());
 
-    $delete->assertStatus(204);
+    $delete->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
 });
 
 it('allows admin and student to share phone in the same center', function (): void {
@@ -548,7 +550,9 @@ it('supports center-scoped admin CRUD via center routes', function (): void {
         ->assertJsonPath('success', true);
 
     $delete = $this->deleteJson('/api/v1/admin/centers/'.$center->id.'/users/'.$adminId, [], $headers);
-    $delete->assertStatus(204);
+    $delete->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
 });
 
 it('blocks center-scoped admin CRUD on other center route', function (): void {

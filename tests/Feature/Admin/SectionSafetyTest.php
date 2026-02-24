@@ -92,7 +92,9 @@ it('restores section attachments', function (): void {
         [],
         $this->adminHeaders()
     );
-    $deleteResponse->assertNoContent();
+    $deleteResponse->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('message', 'Section deleted successfully');
 
     $restoreResponse = $this->postJson(
         "/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/{$section->id}/restore",

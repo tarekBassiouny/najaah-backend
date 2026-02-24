@@ -43,6 +43,7 @@ class SectionWorkflowController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section created successfully',
             'data' => new SectionResource($section->load(['videos', 'pdfs'])),
         ], 201);
     }
@@ -75,6 +76,7 @@ class SectionWorkflowController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section updated successfully',
             'data' => new SectionResource($updated),
         ]);
     }
@@ -94,8 +96,9 @@ class SectionWorkflowController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section deleted successfully',
             'data' => null,
-        ], 204);
+        ]);
     }
 
     /**
@@ -113,6 +116,7 @@ class SectionWorkflowController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section published successfully',
             'data' => new SectionResource($published),
         ]);
     }
@@ -132,6 +136,7 @@ class SectionWorkflowController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section unpublished successfully',
             'data' => new SectionResource($unpublished),
         ]);
     }

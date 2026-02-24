@@ -383,7 +383,7 @@ class CenterController extends Controller
             'success' => true,
             'message' => 'Center deleted successfully',
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     /**

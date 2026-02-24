@@ -283,7 +283,9 @@ it('allows admin to delete enrollment', function (): void {
 
     $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/enrollments/{$enrollment->id}", [], $this->adminHeaders());
 
-    $response->assertNoContent();
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
     $this->assertSoftDeleted('enrollments', ['id' => $enrollment->id]);
 });
 

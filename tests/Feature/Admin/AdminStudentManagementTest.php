@@ -71,7 +71,9 @@ it('allows super admin to create and delete students', function (): void {
 
     $delete = $this->deleteJson("/api/v1/admin/students/{$studentId}", [], $this->adminHeaders());
 
-    $delete->assertStatus(204);
+    $delete->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
     $this->assertSoftDeleted('users', ['id' => $studentId]);
 });
 

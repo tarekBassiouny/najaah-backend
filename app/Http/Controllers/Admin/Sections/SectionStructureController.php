@@ -43,6 +43,7 @@ class SectionStructureController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section videos retrieved successfully',
             'data' => SectionVideoResource::collection($videos),
         ]);
     }
@@ -74,6 +75,7 @@ class SectionStructureController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section video retrieved successfully',
             'data' => new SectionVideoResource($video),
         ]);
     }
@@ -96,6 +98,7 @@ class SectionStructureController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Video attached to section successfully',
             'data' => null,
         ], 201);
     }
@@ -122,6 +125,7 @@ class SectionStructureController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Video detached from section successfully',
             'data' => null,
         ]);
     }
@@ -142,6 +146,7 @@ class SectionStructureController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section PDFs retrieved successfully',
             'data' => SectionPdfResource::collection($pdfs),
         ]);
     }
@@ -173,6 +178,7 @@ class SectionStructureController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Section PDF retrieved successfully',
             'data' => new SectionPdfResource($pdf),
         ]);
     }
@@ -195,6 +201,7 @@ class SectionStructureController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'PDF attached to section successfully',
             'data' => null,
         ], 201);
     }
@@ -221,6 +228,7 @@ class SectionStructureController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'PDF detached from section successfully',
             'data' => null,
         ]);
     }

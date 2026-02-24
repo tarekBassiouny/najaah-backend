@@ -98,7 +98,9 @@ it('deletes a system setting', function (): void {
 
     $response = $this->deleteJson("/api/v1/admin/settings/{$setting->id}", [], $this->adminHeaders());
 
-    $response->assertStatus(204);
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
     $this->assertSoftDeleted('system_settings', ['id' => $setting->id]);
 });
 

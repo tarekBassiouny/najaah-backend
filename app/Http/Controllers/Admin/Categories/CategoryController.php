@@ -136,7 +136,7 @@ class CategoryController extends Controller
         return response()->json([
             'success' => true,
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     /**

@@ -199,7 +199,9 @@ it('deletes a notification', function (): void {
 
     $response = $this->deleteJson("/api/v1/admin/notifications/{$notification->id}", [], $headers);
 
-    $response->assertNoContent();
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
 
     $this->assertSoftDeleted('admin_notification_user_states', [
         'admin_notification_id' => (int) $notification->id,

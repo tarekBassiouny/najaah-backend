@@ -51,7 +51,9 @@ it('audits category lifecycle actions', function (): void {
     ]);
 
     $deleteResponse = $this->deleteJson("/api/v1/admin/centers/{$center->id}/categories/{$category->id}", [], $this->adminHeaders());
-    $deleteResponse->assertNoContent();
+    $deleteResponse->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
 
     $this->assertDatabaseHas('audit_logs', [
         'user_id' => $admin->id,
@@ -98,7 +100,9 @@ it('audits student lifecycle actions', function (): void {
     ]);
 
     $deleteResponse = $this->deleteJson("/api/v1/admin/students/{$studentId}", [], $this->adminHeaders());
-    $deleteResponse->assertNoContent();
+    $deleteResponse->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
 
     $this->assertDatabaseHas('audit_logs', [
         'user_id' => $admin->id,

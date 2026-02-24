@@ -45,6 +45,17 @@ systemPrompt: |
   - Preserve compatibility by default: keep existing IDs only if required, and add readable fields alongside them
   - Ensure related display data is eager loaded to prevent N+1 queries
 
+  #### Translation & Localization Policy (Mandatory)
+  For all resources under `app/Http/Resources/**`, enforce consistent locale behavior:
+  - Use locale-aware model translation access (`translate('field')`) for user-facing localized strings.
+  - Do not hardcode locale lookups in resources (forbidden: `['en']`, `['ar']` fallback chains).
+  - Respect global locale resolution from middleware (`X-Locale` -> `Accept-Language` -> app default/fallback).
+  - Keep response contracts consistent by surface:
+    - Mobile resources: return localized display fields only.
+    - Admin summary/list resources: return localized display fields only unless full translation maps are explicitly needed.
+    - Admin detail/edit resources: return localized display fields and include raw `*_translations` maps when required by edit forms.
+  - Preserve backward compatibility unless the task explicitly approves contract changes.
+
   ### @najaah-quality
   **Use for:** Tests, PHPStan, Pint, coverage, factories, quality checks
 
@@ -63,10 +74,11 @@ systemPrompt: |
   5. Work module-by-module in sidebar order; do not jump ahead unless requested.
 
   ### Scope Model (Critical)
-  - System scope routes are under `/api/v1/admin/...` and commonly require `scope.system_admin`.
-  - Center scope routes are under `/api/v1/admin/centers/{center}/...` and require `scope.center_route`.
+  - System scope routes are under `/api/v1/admin/...` and commonly require `scope.system`.
+  - Center scope routes are under `/api/v1/admin/centers/{center}/...` and require `scope.center`.
   - System super admin: `super_admin` role with `center_id = null`.
   - Center-scoped admin: admin tied to a specific `center_id`; can only access that center.
+  - For section APIs, center context comes from route path only (`{center}`), not from request body/query.
   - Center type enum: `0 = unbranded`, `1 = branded`.
   - Survey scope enum: `1 = system`, `2 = center`.
 
@@ -103,7 +115,34 @@ systemPrompt: |
      - Filters on list: `slug`, `type`, `tier`, `is_featured`, `onboarding_status`, `search`, `created_from`, `created_to`, `page`, `per_page`
      - `type` supports branded/unbranded filtering (`1`/`0`).
 
-  4. **Surveys (CRUD)**
+  4. **Sections (Center-Course Nested CRUD)**
+     - Primary APIs:
+       - `GET /api/v1/admin/centers/{center}/courses/{course}/sections`
+       - `POST /api/v1/admin/centers/{center}/courses/{course}/sections`
+       - `PUT /api/v1/admin/centers/{center}/courses/{course}/sections/reorder`
+       - `GET /api/v1/admin/centers/{center}/courses/{course}/sections/{section}`
+       - `PUT /api/v1/admin/centers/{center}/courses/{course}/sections/{section}`
+       - `DELETE /api/v1/admin/centers/{center}/courses/{course}/sections/{section}`
+       - `POST /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/restore`
+       - `PATCH /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/visibility`
+       - `POST /api/v1/admin/centers/{center}/courses/{course}/sections/structure`
+       - `PUT /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/structure`
+       - `DELETE /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/structure`
+     - Section attachment APIs:
+       - `GET /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/videos`
+       - `POST /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/videos`
+       - `DELETE /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/videos/{video}`
+       - `GET /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/pdfs`
+       - `POST /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/pdfs`
+       - `DELETE /api/v1/admin/centers/{center}/courses/{course}/sections/{section}/pdfs/{pdf}`
+     - Scope and permission:
+       - Middleware: `scope.center` + `require.permission:section.manage`
+       - Accessible by system admin and center admin under center-scoped rules.
+     - Frontend contract:
+       - Always pass `center` and `course` in route path.
+       - Do not pass `center_id` in body or query for section endpoints.
+
+  5. **Surveys (CRUD)**
      - System scope (Najaah app):
        - `/api/v1/admin/surveys...` endpoints
      - Center scope:
@@ -120,7 +159,7 @@ systemPrompt: |
        - scope enforced by route
      - System survey targeting supports only Najaah app students (`center_id = null`).
 
-  5. **Agents**
+  6. **Agents**
      - Primary APIs:
        - `GET /api/v1/admin/agents/available`
        - `GET /api/v1/admin/agents/executions`
@@ -130,7 +169,7 @@ systemPrompt: |
        - `POST /api/v1/admin/agents/enrollment/bulk`
      - Execution requires `center_id` and optional `context`.
 
-  6. **Roles & Permissions**
+  7. **Roles & Permissions**
      - Roles:
        - `GET /api/v1/admin/roles`
        - `GET /api/v1/admin/roles/{role}`
@@ -142,7 +181,7 @@ systemPrompt: |
        - `GET /api/v1/admin/permissions`
      - Role writes are system-scope admin only.
 
-  7. **Admins (CRUD + Center Assignment)**
+  8. **Admins (CRUD + Center Assignment)**
      - System scope:
        - `GET/POST/PUT/DELETE /api/v1/admin/users...`
        - Create flow is invite-only:
@@ -189,7 +228,7 @@ systemPrompt: |
        - `POST /api/v1/admin/auth/password/reset`
          - Token consumption endpoint to set new password
 
-  8. **Students (CRUD)**
+  9. **Students (CRUD)**
      - System scope:
        - `GET/POST/PUT/DELETE /api/v1/admin/students...`
        - `GET /api/v1/admin/students/{user}/profile`
@@ -200,7 +239,7 @@ systemPrompt: |
        - `POST /api/v1/admin/centers/{center}/students/bulk-status`
      - List filters: `center_id`, `status`, `search`, `page`, `per_page`
 
-  9. **Student Requests (Enrollments, Extra Views, Device Changes)**
+  10. **Student Requests (Enrollments, Extra Views, Device Changes)**
      - Enrollments
        - System scope:
          - `GET /api/v1/admin/enrollments`
@@ -257,14 +296,14 @@ systemPrompt: |
        - List filters: `center_id` (system), `status`, `user_id`, `request_source`, `decided_by`, `current_device_id`, `new_device_id`, `date_from`, `date_to`, `page`, `per_page`
        - Bulk responses: `counts` + `approved/rejected/pre_approved` + `skipped` + `failed`
 
-  10. **Settings (Current State)**
+  11. **Settings (Current State)**
      - Implemented APIs:
        - `GET /api/v1/admin/centers/{center}/settings`
        - `PATCH /api/v1/admin/centers/{center}/settings`
        - `GET /api/v1/admin/settings/preview`
      - Important gap: platform-level settings CRUD endpoints are not implemented yet; only center settings read/update and system preview are available.
 
-  11. **Audit Log**
+  12. **Audit Log**
       - Primary APIs:
         - `GET /api/v1/admin/audit-logs`
         - `GET /api/v1/admin/centers/{center}/audit-logs`
@@ -618,6 +657,19 @@ systemPrompt: |
   4. Ensure controller/service query eager loads required relations
   5. Validate response shape with feature tests (or add/update tests)
   6. Confirm backward compatibility requirements before finalizing
+
+  ## Translation & Localization Checklist (Enforced)
+
+  Before completing any resource/API phase, verify all items:
+
+  - [ ] No hardcoded language-key access in resources (no `['en']` / `['ar']` selection logic).
+  - [ ] User-facing localized fields use `translate('...')` or equivalent locale-aware resolver.
+  - [ ] Resource output shape follows contract by surface:
+    - Mobile: localized only
+    - Admin summary/list: localized only (default)
+    - Admin detail/edit: localized + `*_translations` (when edit UI needs it)
+  - [ ] Locale is driven by request headers and middleware defaults, not by resource-level custom logic.
+  - [ ] Tests cover at least one non-default locale path and fallback behavior for changed resources.
 
   ---
 

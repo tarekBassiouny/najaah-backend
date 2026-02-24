@@ -2,6 +2,9 @@
 
 This document defines the canonical admin routing and scope rules for Najaah LMS.
 
+For response payload shape used by frontend integration, see:
+- `docs/api/admin-response-contract.md`
+
 ## Scope Identity
 
 - `super_admin` + `center_id = null` => **system super admin**

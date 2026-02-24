@@ -9,6 +9,7 @@ use App\Http\Middleware\EnsureSystemScope;
 use App\Http\Middleware\EnsureUnbrandedStudent;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
+use App\Http\Middleware\NormalizeAdminApiResponse;
 use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\RequirePermission;
 use App\Http\Middleware\RequireRole;
@@ -38,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Admin (JWT) - canonical /api/v1/admin with backward-compatible /admin alias
             Route::prefix('api/v1/admin')
-                ->middleware(['api'])
+                ->middleware(['api', 'normalize.admin.api'])
                 ->group(function (): void {
                     require __DIR__.'/../routes/api/v1/admin/auth.php';
 
@@ -100,6 +101,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'require.role' => RequireRole::class,
             'scope.system' => EnsureSystemScope::class,
             'scope.center' => EnsureCenterScope::class,
+            'normalize.admin.api' => NormalizeAdminApiResponse::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
