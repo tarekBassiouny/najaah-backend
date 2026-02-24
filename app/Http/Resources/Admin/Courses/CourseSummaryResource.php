@@ -33,6 +33,7 @@ class CourseSummaryResource extends JsonResource
             'status' => $course->status->value,
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
+            'is_published' => (bool) $course->is_published,
             'published_at' => $course->publish_at,
         ];
     }

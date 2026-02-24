@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin\Sections;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Sections\ListSectionsRequest;
 use App\Http\Requests\Admin\Sections\ReorderSectionRequest;
 use App\Http\Requests\Admin\Sections\StoreSectionRequest;
 use App\Http\Requests\Admin\Sections\UpdateSectionRequest;
@@ -17,6 +18,7 @@ use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseStructureServiceInterface;
 use App\Services\Sections\Contracts\SectionServiceInterface;
+use App\Services\Sections\SectionQueryService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
@@ -25,25 +27,34 @@ class SectionController extends Controller
     public function __construct(
         private readonly SectionServiceInterface $sectionService,
         private readonly CourseStructureServiceInterface $courseStructureService,
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly SectionQueryService $sectionQueryService
     ) {}
 
     /**
      * List sections.
      */
     public function index(
+        ListSectionsRequest $request,
         Center $center,
         Course $course
     ): JsonResponse {
         $admin = $this->requireAdmin();
         $this->assertCourseBelongsToCenter($center, $course);
         $this->centerScopeService->assertAdminSameCenter($admin, $course);
-        $sections = $this->sectionService->listForCourse((int) $course->id, $admin);
+        $filters = $request->filters();
+        $paginator = $this->sectionQueryService->paginateForCourse((int) $course->id, $filters);
 
         return response()->json([
             'success' => true,
             'message' => 'Sections retrieved successfully',
-            'data' => new SectionCollection($sections),
+            'data' => new SectionCollection($paginator->items()),
+            'meta' => [
+                'page' => $paginator->currentPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
+            ],
         ]);
     }
 

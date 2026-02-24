@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @mixin Enrollment
@@ -40,6 +41,18 @@ class StudentEnrollmentResource extends JsonResource
         /** @var Enrollment $enrollment */
         $enrollment = $this->resource;
         $course = $enrollment->course;
+
+        if ($course === null) {
+            return [
+                'id' => $enrollment->id,
+                'enrolled_at' => $enrollment->enrolled_at->toISOString(),
+                'expires_at' => $enrollment->expires_at?->toISOString(),
+                'status' => $enrollment->status->value,
+                'status_label' => $enrollment->statusLabel(),
+                'progress_percentage' => 0.0,
+                'course' => null,
+            ];
+        }
 
         // Collect all videos from all sections
         $videos = $course->sections->flatMap(fn ($section) => $section->videos);
@@ -75,8 +88,16 @@ class StudentEnrollmentResource extends JsonResource
             'progress_percentage' => $progressPercentage,
             'course' => [
                 'id' => $course->id,
-                'title' => $course->title,
+                'title' => $course->translate('title'),
+                'title_translations' => $course->title_translations,
+                'description' => $course->translate('description'),
+                'description_translations' => $course->description_translations,
+                'thumbnail' => $course->thumbnail_url,
                 'thumbnail_url' => $course->thumbnail_url,
+                'status' => $course->status->value,
+                'status_key' => Str::snake($course->status->name),
+                'status_label' => $course->status->name,
+                'is_published' => (bool) $course->is_published,
                 'video_count' => $videoCount,
                 'videos' => $videoResources,
             ],

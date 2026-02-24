@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin\Sections;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Sections\BulkUpdateSectionPublishRequest;
 use App\Http\Requests\Admin\Sections\CreateSectionWithStructureRequest;
 use App\Http\Requests\Admin\Sections\UpdateSectionWithStructureRequest;
 use App\Http\Resources\Admin\Sections\SectionResource;
@@ -15,6 +16,7 @@ use App\Models\User;
 use App\Services\Sections\Contracts\SectionWorkflowServiceInterface;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
 class SectionWorkflowController extends Controller
 {
@@ -141,6 +143,28 @@ class SectionWorkflowController extends Controller
         ]);
     }
 
+    /**
+     * Publish sections in bulk.
+     */
+    public function bulkPublish(
+        BulkUpdateSectionPublishRequest $request,
+        Center $center,
+        Course $course
+    ): JsonResponse {
+        return $this->bulkUpdatePublishState($request, $center, $course, true);
+    }
+
+    /**
+     * Unpublish sections in bulk.
+     */
+    public function bulkUnpublish(
+        BulkUpdateSectionPublishRequest $request,
+        Center $center,
+        Course $course
+    ): JsonResponse {
+        return $this->bulkUpdatePublishState($request, $center, $course, false);
+    }
+
     private function assertCourseBelongsToCenter(Center $center, Course $course): void
     {
         if ((int) $course->center_id !== (int) $center->id) {
@@ -181,5 +205,73 @@ class SectionWorkflowController extends Controller
                 'message' => 'Section not found.',
             ],
         ], 404));
+    }
+
+    private function bulkUpdatePublishState(
+        BulkUpdateSectionPublishRequest $request,
+        Center $center,
+        Course $course,
+        bool $targetPublished
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+
+        /** @var array{section_ids: array<int, int>} $data */
+        $data = $request->validated();
+        $requestedIds = array_values(array_unique(array_map('intval', $data['section_ids'])));
+
+        /** @var Collection<int, Section> $sections */
+        $sections = Section::query()
+            ->where('course_id', (int) $course->id)
+            ->whereIn('id', $requestedIds)
+            ->get()
+            ->keyBy('id');
+
+        $updated = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($requestedIds as $sectionId) {
+            $section = $sections->get($sectionId);
+
+            if (! $section instanceof Section) {
+                $failed[] = [
+                    'section_id' => $sectionId,
+                    'reason' => 'Section not found.',
+                ];
+
+                continue;
+            }
+
+            if ((bool) $section->visible === $targetPublished) {
+                $skipped[] = $sectionId;
+
+                continue;
+            }
+
+            $updated[] = $targetPublished
+                ? $this->workflowService->publish($admin, $section)
+                : $this->workflowService->unpublish($admin, $section);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $targetPublished
+                ? 'Bulk section publish processed'
+                : 'Bulk section unpublish processed',
+            'data' => [
+                'counts' => [
+                    'total' => count($requestedIds),
+                    'updated' => count($updated),
+                    'skipped' => count($skipped),
+                    'failed' => count($failed),
+                ],
+                'updated' => SectionResource::collection(collect($updated)->map(
+                    static fn (Section $section): Section => $section->load(['videos', 'pdfs'])
+                )),
+                'skipped' => $skipped,
+                'failed' => $failed,
+            ],
+        ]);
     }
 }
