@@ -43,16 +43,28 @@ class StudentEnrollmentResource extends JsonResource
 
         // Collect all videos from all sections
         $videos = $course->sections->flatMap(fn ($section) => $section->videos);
+        $videoCount = $videos->count();
 
-        // Build video resources with context
-        $videoResources = $videos->map(function ($video) use ($course): \App\Http\Resources\Admin\StudentCourseVideoResource {
+        // Build video resources with context and collect progress data
+        $videoProgressData = [];
+        $videoResources = $videos->map(function ($video) use ($course, &$videoProgressData): \App\Http\Resources\Admin\StudentCourseVideoResource {
             $resource = new StudentCourseVideoResource($video);
             if ($this->student !== null && $this->playbackSessions !== null) {
                 $resource->setContext($this->student, $course, $this->playbackSessions);
+
+                // Get progress for this video to calculate enrollment progress
+                $videoSessions = $this->playbackSessions->where('video_id', $video->id);
+                $latestSession = $videoSessions->sortByDesc('id')->first();
+                $videoProgressData[] = $latestSession?->progress_percent ?? 0;
             }
 
             return $resource;
         });
+
+        // Calculate enrollment progress as average of video progress
+        $progressPercentage = $videoCount > 0 && ! empty($videoProgressData)
+            ? round(array_sum($videoProgressData) / count($videoProgressData), 1)
+            : 0.0;
 
         return [
             'id' => $enrollment->id,
@@ -60,10 +72,12 @@ class StudentEnrollmentResource extends JsonResource
             'expires_at' => $enrollment->expires_at?->toISOString(),
             'status' => $enrollment->status->value,
             'status_label' => $enrollment->statusLabel(),
+            'progress_percentage' => $progressPercentage,
             'course' => [
                 'id' => $course->id,
                 'title' => $course->title,
                 'thumbnail_url' => $course->thumbnail_url,
+                'video_count' => $videoCount,
                 'videos' => $videoResources,
             ],
         ];
