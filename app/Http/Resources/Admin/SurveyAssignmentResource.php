@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin;
 
 use App\Enums\SurveyAssignableType;
+use App\Models\Center;
+use App\Models\Course;
 use App\Models\SurveyAssignment;
+use App\Models\User;
+use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -46,10 +50,10 @@ class SurveyAssignmentResource extends JsonResource
         }
 
         $name = match ($assignment->assignable_type) {
-            SurveyAssignableType::Center => $model->name ?? null,
-            SurveyAssignableType::Course => $model->title_translations['en'] ?? $model->title_translations['ar'] ?? null,
-            SurveyAssignableType::Video => $model->title_translations['en'] ?? $model->title_translations['ar'] ?? null,
-            SurveyAssignableType::User, SurveyAssignableType::All => $model->name ?? $model->email ?? null,
+            SurveyAssignableType::Center => $model instanceof Center ? $model->translate('name') : null,
+            SurveyAssignableType::Course => $model instanceof Course ? $model->translate('title') : null,
+            SurveyAssignableType::Video => $model instanceof Video ? $model->translate('title') : null,
+            SurveyAssignableType::User, SurveyAssignableType::All => $model instanceof User ? ($model->name ?? $model->email) : null,
         };
 
         return ['name' => $name];

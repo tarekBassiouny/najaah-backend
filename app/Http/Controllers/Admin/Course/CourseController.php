@@ -163,7 +163,7 @@ class CourseController extends Controller
             'success' => true,
             'message' => 'Course deleted successfully',
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     private function assertCourseBelongsToCenter(Center $center, Course $course): void

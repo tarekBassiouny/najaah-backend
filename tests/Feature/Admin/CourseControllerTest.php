@@ -190,7 +190,11 @@ it('adds section', function (): void {
 
     $response->assertOk()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('data.title', 'Section 1');
+        ->assertJsonPath('data.title', 'Section 1')
+        ->assertJsonPath('data.title_translations.en', 'Section 1')
+        ->assertJsonPath('data.title_translations.ar', 'القسم 1')
+        ->assertJsonPath('data.description_translations.en', 'Description')
+        ->assertJsonPath('data.description_translations.ar', 'الوصف');
     $section = Section::where('course_id', $course->id)->latest('id')->first();
     expect($section)->not->toBeNull();
 });

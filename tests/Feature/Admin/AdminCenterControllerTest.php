@@ -441,7 +441,9 @@ it('allows system admin with center.manage to manage centers without super_admin
 
     $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}", [], $headers);
 
-    $response->assertNoContent();
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
     $this->assertSoftDeleted('centers', ['id' => $center->id]);
 });
 
@@ -565,7 +567,9 @@ it('soft deletes and restores a center', function (): void {
     $center = Center::factory()->create();
 
     $delete = $this->deleteJson("/api/v1/admin/centers/{$center->id}");
-    $delete->assertNoContent();
+    $delete->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
     $this->assertSoftDeleted('centers', ['id' => $center->id]);
 
     $restore = $this->postJson("/api/v1/admin/centers/{$center->id}/restore");

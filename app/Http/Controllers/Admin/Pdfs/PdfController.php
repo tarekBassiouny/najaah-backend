@@ -109,7 +109,7 @@ class PdfController extends Controller
         return response()->json([
             'success' => true,
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     private function assertPdfBelongsToCenter(Center $center, Pdf $pdf): void

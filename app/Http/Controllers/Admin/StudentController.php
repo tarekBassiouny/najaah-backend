@@ -370,7 +370,7 @@ class StudentController extends Controller
         return response()->json([
             'success' => true,
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     /**
@@ -398,7 +398,7 @@ class StudentController extends Controller
         return response()->json([
             'success' => true,
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     private function assertStudentBelongsToCenter(Center $center, User $user): void

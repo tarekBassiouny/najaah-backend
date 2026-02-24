@@ -10,5 +10,6 @@ it('uses jwt.admin for admin section routes', function (): void {
     $middleware = $route->gatherMiddleware();
 
     expect($middleware)->toContain('jwt.admin')
+        ->and($middleware)->toContain('normalize.admin.api')
         ->and($middleware)->not->toContain('auth:sanctum');
 });

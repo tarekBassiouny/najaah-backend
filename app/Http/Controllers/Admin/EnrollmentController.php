@@ -293,7 +293,7 @@ class EnrollmentController extends Controller
             'success' => true,
             'message' => 'Enrollment removed successfully',
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     /**
@@ -310,7 +310,7 @@ class EnrollmentController extends Controller
             'success' => true,
             'message' => 'Enrollment removed successfully',
             'data' => null,
-        ], 204);
+        ], 200);
     }
 
     private function requireAdmin(): User
