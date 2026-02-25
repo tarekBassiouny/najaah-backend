@@ -67,7 +67,7 @@ class AdminNotificationDispatcher
                 '%s has requested %d extra view(s) for "%s".',
                 $student->name,
                 1,
-                $video->title,
+                $video->translate('title') ?: 'Untitled Video',
             ),
             data: [
                 'entity_type' => 'extra_view_request',
@@ -76,7 +76,7 @@ class AdminNotificationDispatcher
                 'student_id' => $student->id,
                 'student_name' => $student->name,
                 'video_id' => $video->id,
-                'video_title' => $video->title,
+                'video_title' => $video->translate('title'),
                 'requested_views' => 1,
             ],
             userId: null,
@@ -98,7 +98,7 @@ class AdminNotificationDispatcher
             body: sprintf(
                 '%s has submitted a response to "%s".',
                 $student->name,
-                $survey->title
+                $survey->translate('title') ?: 'Untitled Survey'
             ),
             data: [
                 'entity_type' => 'survey_response',
@@ -107,7 +107,7 @@ class AdminNotificationDispatcher
                 'student_id' => $student->id,
                 'student_name' => $student->name,
                 'survey_id' => $survey->id,
-                'survey_title' => $survey->title,
+                'survey_title' => $survey->translate('title'),
             ],
             userId: null,
             centerId: $centerId
@@ -120,6 +120,7 @@ class AdminNotificationDispatcher
         $student = $enrollment->user;
         /** @var Course $course */
         $course = $enrollment->course;
+        $courseTitle = $course->translate('title');
         $centerId = $course->center_id;
 
         return $this->notificationService->create(
@@ -128,7 +129,7 @@ class AdminNotificationDispatcher
             body: sprintf(
                 '%s has enrolled in "%s".',
                 $student->name,
-                $course->title
+                $courseTitle ?: 'Untitled Course'
             ),
             data: [
                 'entity_type' => 'enrollment',
@@ -137,7 +138,7 @@ class AdminNotificationDispatcher
                 'student_id' => $student->id,
                 'student_name' => $student->name,
                 'course_id' => $course->id,
-                'course_title' => $course->title,
+                'course_title' => $courseTitle,
             ],
             userId: null,
             centerId: $centerId
@@ -150,6 +151,7 @@ class AdminNotificationDispatcher
         $student = $enrollment->user;
         /** @var Course $course */
         $course = $enrollment->course;
+        $courseTitle = $course->translate('title');
         $centerId = $course->center_id;
 
         return $this->notificationService->create(
@@ -158,7 +160,7 @@ class AdminNotificationDispatcher
             body: sprintf(
                 '%s has requested enrollment in "%s".',
                 $student->name,
-                $course->title
+                $courseTitle ?: 'Untitled Course'
             ),
             data: [
                 'entity_type' => 'enrollment_request',
@@ -167,7 +169,7 @@ class AdminNotificationDispatcher
                 'student_id' => $student->id,
                 'student_name' => $student->name,
                 'course_id' => $course->id,
-                'course_title' => $course->title,
+                'course_title' => $courseTitle,
             ],
             userId: null,
             centerId: $centerId

@@ -9,6 +9,7 @@ use App\Http\Resources\Admin\Summary\CategorySummaryResource;
 use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Http\Resources\Admin\Summary\InstructorSummaryResource;
 use App\Models\Course;
+use App\Services\Courses\CourseThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -25,6 +26,7 @@ class CourseResource extends JsonResource
     {
         /** @var Course $course */
         $course = $this->resource;
+        $thumbnailUrlResolver = app(CourseThumbnailUrlResolver::class);
 
         return [
             'id' => $course->id,
@@ -34,11 +36,12 @@ class CourseResource extends JsonResource
             'description_translations' => $course->description_translations,
             'difficulty' => $course->difficulty_level ?? null,
             'language' => $course->language,
-            'thumbnail' => $course->thumbnail_url ?? null,
+            'thumbnail' => $thumbnailUrlResolver->resolve($course->thumbnail_url),
             'price' => $course->price ?? null,
             'status' => $course->status->value,
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
+            'is_published' => (bool) $course->is_published,
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'category' => new CategorySummaryResource($this->whenLoaded('category')),
             'primary_instructor' => new InstructorSummaryResource($this->whenLoaded('primaryInstructor')),

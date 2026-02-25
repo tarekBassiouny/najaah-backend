@@ -23,3 +23,7 @@ Route::middleware('require.permission:course.manage')->group(function (): void {
 Route::post('/centers/{center}/courses/{course}/publish', [CourseOperationController::class, 'publish'])
     ->middleware(['require.permission:course.publish', 'scope.center'])
     ->whereNumber('center');
+
+Route::post('/centers/{center}/courses/{course}/unpublish', [CourseOperationController::class, 'unpublish'])
+    ->middleware(['require.permission:course.publish', 'scope.center'])
+    ->whereNumber('center');

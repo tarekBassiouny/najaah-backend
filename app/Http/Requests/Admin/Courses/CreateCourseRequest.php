@@ -55,7 +55,7 @@ class CreateCourseRequest extends FormRequest
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
             'instructor_id' => ['nullable', 'integer', 'exists:instructors,id'],
             'primary_instructor_id' => ['sometimes', 'integer', 'exists:instructors,id'],
-            'thumbnail_url' => ['nullable', 'string', 'url', 'max:2048'],
+            'thumbnail' => ['sometimes', 'image', 'max:5120'],
         ];
     }
 
@@ -109,9 +109,9 @@ class CreateCourseRequest extends FormRequest
                 'description' => 'Primary instructor ID for the course.',
                 'example' => 5,
             ],
-            'thumbnail_url' => [
-                'description' => 'URL of the course thumbnail image.',
-                'example' => 'https://example.com/thumbnails/course-1.jpg',
+            'thumbnail' => [
+                'description' => 'Course thumbnail image file (multipart/form-data).',
+                'example' => null,
             ],
         ];
     }

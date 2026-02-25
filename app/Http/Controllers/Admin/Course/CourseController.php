@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Course;
 
+use App\Actions\Admin\Courses\UploadCourseThumbnailAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Courses\CreateCourseRequest;
 use App\Http\Requests\Admin\Courses\ListCoursesRequest;
@@ -80,7 +81,8 @@ class CourseController extends Controller
     public function centerStore(
         CreateCourseRequest $request,
         Center $center,
-        CourseServiceInterface $courseService
+        CourseServiceInterface $courseService,
+        UploadCourseThumbnailAction $uploadThumbnailAction
     ): JsonResponse {
         $admin = $this->requireAdmin();
         $this->centerScopeService->assertAdminCenterId($admin, (int) $center->id);
@@ -90,6 +92,12 @@ class CourseController extends Controller
         $data['center_id'] = (int) $center->id;
 
         $course = $courseService->create($data, $admin);
+
+        if ($request->hasFile('thumbnail')) {
+            /** @var \Illuminate\Http\UploadedFile $thumbnail */
+            $thumbnail = $request->file('thumbnail');
+            $course = $uploadThumbnailAction->execute($course, $thumbnail, $admin);
+        }
 
         return response()->json([
             'success' => true,
