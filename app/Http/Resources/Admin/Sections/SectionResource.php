@@ -30,10 +30,34 @@ class SectionResource extends JsonResource
             'description' => $section->translate('description'),
             'description_translations' => $section->description_translations,
             'sort_order' => $section->order_index,
+            'visible' => $section->visible,
+            'is_published' => $section->visible,
+            'videos_count' => $this->resolveRelationCount('videos'),
+            'pdfs_count' => $this->resolveRelationCount('pdfs'),
             'videos' => SectionVideoResource::collection($this->whenLoaded('videos')),
             'pdfs' => SectionPdfResource::collection($this->whenLoaded('pdfs')),
             'created_at' => $section->created_at,
             'updated_at' => $section->updated_at,
         ];
+    }
+
+    private function resolveRelationCount(string $relation): int
+    {
+        /** @var Section $section */
+        $section = $this->resource;
+
+        $countAttribute = $relation.'_count';
+        if (isset($section->{$countAttribute}) && is_numeric($section->{$countAttribute})) {
+            return (int) $section->{$countAttribute};
+        }
+
+        if ($section->relationLoaded($relation)) {
+            /** @var \Illuminate\Support\Collection<int, mixed> $related */
+            $related = $section->{$relation};
+
+            return $related->count();
+        }
+
+        return 0;
     }
 }

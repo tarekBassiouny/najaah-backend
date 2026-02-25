@@ -36,4 +36,6 @@ Route::middleware(['require.permission:section.manage', 'scope.center'])
 
         Route::post('/{section}/publish', [SectionWorkflowController::class, 'publish'])->whereNumber('center');
         Route::post('/{section}/unpublish', [SectionWorkflowController::class, 'unpublish'])->whereNumber('center');
+        Route::post('/bulk-publish', [SectionWorkflowController::class, 'bulkPublish'])->whereNumber('center');
+        Route::post('/bulk-unpublish', [SectionWorkflowController::class, 'bulkUnpublish'])->whereNumber('center');
     });

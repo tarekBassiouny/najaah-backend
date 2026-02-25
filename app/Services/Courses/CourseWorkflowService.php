@@ -156,6 +156,25 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
         return $fresh ?? $course;
     }
 
+    public function unpublishCourse(Course $course, User $actor): Course
+    {
+        $this->centerScopeService->assertAdminSameCenter($actor, $course);
+
+        $course->status = CourseStatus::Draft;
+        $course->is_published = false;
+        $course->publish_at = null;
+        $course->save();
+
+        $this->auditLogService->logByType($actor, Course::class, (int) $course->id, AuditActions::COURSE_UNPUBLISHED, [
+            'center_id' => $course->center_id,
+            'course_id' => $course->id,
+        ]);
+
+        $fresh = $course->fresh(['sections', 'videos', 'pdfs']);
+
+        return $fresh ?? $course;
+    }
+
     /** @param array<string, mixed> $options */
     public function cloneCourse(Course $course, User $actor, array $options = []): Course
     {

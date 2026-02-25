@@ -125,6 +125,25 @@ class CourseOperationController extends Controller
     }
 
     /**
+     * Unpublish a course.
+     */
+    public function unpublish(
+        Center $center,
+        Course $course,
+        CourseWorkflowServiceInterface $courseWorkflowService
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+        $unpublished = $courseWorkflowService->unpublishCourse($course, $admin);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course unpublished successfully',
+            'data' => new CourseResource($unpublished),
+        ]);
+    }
+
+    /**
      * Clone a course.
      */
     public function cloneCourse(

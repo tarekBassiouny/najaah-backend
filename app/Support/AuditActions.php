@@ -54,6 +54,8 @@ final class AuditActions
 
     public const COURSE_PUBLISHED = 'course_published';
 
+    public const COURSE_UNPUBLISHED = 'course_unpublished';
+
     public const COURSE_CLONED = 'course_cloned';
 
     public const COURSE_UPDATED = 'course_updated';

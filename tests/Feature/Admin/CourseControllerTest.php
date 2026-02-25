@@ -339,6 +339,29 @@ it('publishes course', function (): void {
     $response->assertOk()->assertJsonPath('success', true);
 });
 
+it('unpublishes course', function (): void {
+    $center = Center::factory()->create();
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 1,
+        'is_published' => true,
+        'publish_at' => now()->subHour(),
+    ]);
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/unpublish", [], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('message', 'Course unpublished successfully')
+        ->assertJsonPath('data.is_published', false);
+
+    $this->assertDatabaseHas('courses', [
+        'id' => $course->id,
+        'status' => 0,
+        'is_published' => 0,
+    ]);
+});
+
 it('clones course', function (): void {
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);

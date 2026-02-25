@@ -181,6 +181,8 @@ it('returns student profile with courses and videos', function (): void {
 
     // Check enrollment progress and video count
     expect((float) $response->json('data.enrollments.0.progress_percentage'))->toBe(90.0);
+    expect($response->json('data.enrollments.0.course.title'))->toBe($course->translate('title'));
+    expect($response->json('data.enrollments.0.course.is_published'))->toBe((bool) $course->is_published);
     expect($response->json('data.enrollments.0.course.video_count'))->toBe(1);
 
     // Check video watch data

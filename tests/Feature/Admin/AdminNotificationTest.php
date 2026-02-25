@@ -13,6 +13,7 @@ use App\Models\Pivots\CourseVideo;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\AdminNotifications\AdminNotificationDispatcher;
 use App\Services\Playback\ExtraViewRequestService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -498,6 +499,37 @@ it('returns notification with correct structure', function (): void {
         ->assertJsonPath('data.0.type', AdminNotificationType::DEVICE_CHANGE_REQUEST->value)
         ->assertJsonPath('data.0.type_label', 'Device Change Request')
         ->assertJsonPath('data.0.type_icon', 'smartphone');
+});
+
+it('uses translated course title in enrollment notifications', function (): void {
+    ['headers' => $headers] = adminNotificationHeaders();
+
+    $center = Center::factory()->create();
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'title_translations' => [
+            'en' => 'Physics Basics',
+            'ar' => 'أساسيات الفيزياء',
+        ],
+    ]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $enrollment = Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+    ])->loadMissing(['user', 'course']);
+
+    app(AdminNotificationDispatcher::class)->dispatchNewEnrollment($enrollment);
+
+    $response = $this->getJson('/api/v1/admin/notifications', $headers);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.0.data.course_id', $course->id)
+        ->assertJsonPath('data.0.data.course_title', 'Physics Basics');
 });
 
 it('allows non-super-admin system admin with notification permission to see shared notifications', function (): void {
