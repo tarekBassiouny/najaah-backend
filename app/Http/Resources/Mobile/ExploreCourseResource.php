@@ -6,6 +6,7 @@ namespace App\Http\Resources\Mobile;
 
 use App\Http\Resources\CategoryResource;
 use App\Models\Course;
+use App\Services\Courses\CourseThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -22,6 +23,7 @@ class ExploreCourseResource extends JsonResource
     {
         /** @var Course $course */
         $course = $this->resource;
+        $thumbnailUrlResolver = app(CourseThumbnailUrlResolver::class);
 
         return [
             'id' => $course->id,
@@ -31,7 +33,7 @@ class ExploreCourseResource extends JsonResource
             'language' => $course->language,
             'is_featured' => $course->is_featured,
             'is_enrolled' => (bool) ($course->is_enrolled ?? false),
-            'thumbnail' => $course->thumbnail_url ?? null,
+            'thumbnail' => $thumbnailUrlResolver->resolve($course->thumbnail_url),
             'status' => $course->status->value,
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,

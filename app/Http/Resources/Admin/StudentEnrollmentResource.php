@@ -7,6 +7,7 @@ namespace App\Http\Resources\Admin;
 use App\Models\Enrollment;
 use App\Models\PlaybackSession;
 use App\Models\User;
+use App\Services\Courses\CourseThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -41,6 +42,7 @@ class StudentEnrollmentResource extends JsonResource
         /** @var Enrollment $enrollment */
         $enrollment = $this->resource;
         $course = $enrollment->course;
+        $thumbnailUrlResolver = app(CourseThumbnailUrlResolver::class);
 
         if ($course === null) {
             return [
@@ -92,8 +94,8 @@ class StudentEnrollmentResource extends JsonResource
                 'title_translations' => $course->title_translations,
                 'description' => $course->translate('description'),
                 'description_translations' => $course->description_translations,
-                'thumbnail' => $course->thumbnail_url,
-                'thumbnail_url' => $course->thumbnail_url,
+                'thumbnail' => $thumbnailUrlResolver->resolve($course->thumbnail_url),
+                'thumbnail_url' => $thumbnailUrlResolver->resolve($course->thumbnail_url),
                 'status' => $course->status->value,
                 'status_key' => Str::snake($course->status->name),
                 'status_label' => $course->status->name,
