@@ -306,6 +306,47 @@ it('allows center admin to view their students profile', function (): void {
         ->assertJsonPath('data.id', $student->id);
 });
 
+it('allows center admin to view unbranded student profile when linked by user_centers', function (): void {
+    $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
+        'description' => 'Permission: student.manage',
+    ]);
+    $role = Role::factory()->create(['slug' => 'student_admin']);
+    $role->permissions()->sync([$permission->id]);
+
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Unbranded->value]);
+
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $center->id,
+    ]);
+    $admin->roles()->sync([$role->id]);
+    $admin->centers()->sync([$center->id => ['type' => 'admin']]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+        'phone' => '19990000114',
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $token = (string) Auth::guard('admin')->attempt([
+        'email' => $admin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/students/{$student->id}/profile", [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.id', $student->id);
+});
+
 it('denies center admin from viewing students in another center', function (): void {
     $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
         'description' => 'Permission: student.manage',

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\StudentProfileResource;
 use App\Models\Center;
+use App\Models\Pivots\UserCenter;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Students\StudentProfileQueryService;
@@ -41,7 +42,7 @@ class StudentProfileController extends Controller
      */
     public function centerShow(Request $request, Center $center, User $user): JsonResponse
     {
-        if ((int) $user->center_id !== (int) $center->id) {
+        if (! $this->studentBelongsToCenter($user, $center)) {
             throw new HttpResponseException(response()->json([
                 'success' => false,
                 'error' => [
@@ -77,19 +78,24 @@ class StudentProfileController extends Controller
             ], 401);
         }
 
-        $this->centerScopeService->assertAdminSameCenter($admin, $user);
-        if ($center instanceof Center && (int) $user->center_id !== (int) $center->id) {
-            throw new HttpResponseException(response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'NOT_FOUND',
-                    'message' => 'Student not found.',
-                ],
-            ], 404));
+        if ($center instanceof Center) {
+            $this->centerScopeService->assertAdminSameCenter($admin, $center);
+
+            if (! $this->studentBelongsToCenter($user, $center)) {
+                throw new HttpResponseException(response()->json([
+                    'success' => false,
+                    'error' => [
+                        'code' => 'NOT_FOUND',
+                        'message' => 'Student not found.',
+                    ],
+                ], 404));
+            }
+        } else {
+            $this->centerScopeService->assertAdminSameCenter($admin, $user);
         }
 
         $resolvedCenterId = $request->attributes->get('resolved_center_id');
-        if (is_numeric($resolvedCenterId)) {
+        if (is_numeric($resolvedCenterId) && ! ($center instanceof Center)) {
             $this->studentProfileQueryService->assertMatchesResolvedCenterScope(
                 $user,
                 (int) $resolvedCenterId
@@ -135,5 +141,14 @@ class StudentProfileController extends Controller
     public static function invalidateCache(int $userId): void
     {
         Cache::forget('student_profile:'.$userId);
+    }
+
+    private function studentBelongsToCenter(User $student, Center $center): bool
+    {
+        return UserCenter::query()
+            ->where('user_id', (int) $student->id)
+            ->where('center_id', (int) $center->id)
+            ->where('type', 'student')
+            ->exists();
     }
 }

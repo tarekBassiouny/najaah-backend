@@ -36,10 +36,16 @@ interface CenterServiceInterface
     /**
      * @return LengthAwarePaginator<Center>
      */
-    public function listUnbranded(CenterFilters $filters): LengthAwarePaginator;
+    public function listUnbranded(User $student, CenterFilters $filters): LengthAwarePaginator;
 
     /**
      * @return array{center: Center, courses: LengthAwarePaginator<Course>}
      */
-    public function showWithCourses(User $student, Center $center, int $perPage = 15): array;
+    public function showWithCourses(
+        User $student,
+        Center $center,
+        int $perPage = 15,
+        ?int $categoryId = null,
+        ?bool $isFeatured = null
+    ): array;
 }

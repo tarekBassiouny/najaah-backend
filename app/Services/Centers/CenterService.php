@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\DB;
 
 class CenterService implements CenterServiceInterface
 {
+    private const CENTER_LIST_COURSE_LIMIT = 5;
+
     public function __construct(private readonly AuditLogService $auditLogService) {}
 
     /**
@@ -159,7 +161,7 @@ class CenterService implements CenterServiceInterface
     /**
      * @return LengthAwarePaginator<Center>
      */
-    public function listUnbranded(CenterFilters $filters): LengthAwarePaginator
+    public function listUnbranded(User $student, CenterFilters $filters): LengthAwarePaginator
     {
         $query = Center::query()
             ->with('setting')
@@ -179,12 +181,16 @@ class CenterService implements CenterServiceInterface
             $query->where('is_featured', $filters->isFeatured);
         }
 
-        return $query->paginate(
+        $paginator = $query->paginate(
             $filters->perPage,
             ['*'],
             'page',
             $filters->page
         );
+
+        $this->attachCenterListCourses($student, $paginator);
+
+        return $paginator;
     }
 
     /**
@@ -267,11 +273,16 @@ class CenterService implements CenterServiceInterface
     /**
      * @return array{center: Center, courses: LengthAwarePaginator<Course>}
      */
-    public function showWithCourses(User $student, Center $center, int $perPage = 15): array
-    {
+    public function showWithCourses(
+        User $student,
+        Center $center,
+        int $perPage = 15,
+        ?int $categoryId = null,
+        ?bool $isFeatured = null
+    ): array {
         $center->loadMissing('setting');
 
-        $courses = $this->unbrandedCourseQuery($student, $center)
+        $courses = $this->unbrandedCourseQuery($student, $center, $categoryId, $isFeatured)
             ->paginate($perPage);
 
         return [
@@ -283,17 +294,44 @@ class CenterService implements CenterServiceInterface
     /**
      * @return Builder<Course>
      */
-    private function unbrandedCourseQuery(User $student, Center $center): Builder
-    {
+    private function unbrandedCourseQuery(
+        User $student,
+        Center $center,
+        ?int $categoryId = null,
+        ?bool $isFeatured = null
+    ): Builder {
         if ($center->type !== CenterType::Unbranded || $center->status !== Center::STATUS_ACTIVE) {
             $this->notFound();
         }
 
-        return Course::query()
+        $query = $this->unbrandedVisibleCourseQuery($student)
             ->where('center_id', $center->id)
-            ->published()
             ->with(['center', 'category', 'instructors'])
-            ->withEnrollmentMeta($student)
+            ->orderByDesc('created_at');
+
+        if ($categoryId !== null) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($isFeatured !== null) {
+            $query->where('is_featured', $isFeatured);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @return Builder<Course>
+     */
+    private function unbrandedVisibleCourseQuery(User $student, bool $includeEnrollmentMeta = true): Builder
+    {
+        $query = Course::query()
+            ->published()
+            ->whereHas('center', function ($query): void {
+                $query
+                    ->where('type', CenterType::Unbranded->value)
+                    ->where('status', Center::STATUS_ACTIVE->value);
+            })
             ->whereDoesntHave('videos', function ($query): void {
                 $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
                     ->orWhere('lifecycle_status', '!=', VideoLifecycleStatus::Ready->value)
@@ -303,8 +341,76 @@ class CenterService implements CenterServiceInterface
                                 $query->where('upload_status', '!=', VideoUploadStatus::Ready->value);
                             });
                     });
-            })
-            ->orderByDesc('created_at');
+            });
+
+        if ($includeEnrollmentMeta) {
+            $query->withEnrollmentMeta($student);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param  LengthAwarePaginator<Center>  $paginator
+     */
+    private function attachCenterListCourses(User $student, LengthAwarePaginator $paginator): void
+    {
+        $centers = collect($paginator->items());
+        if ($centers->isEmpty()) {
+            return;
+        }
+
+        $centerIds = $centers
+            ->pluck('id')
+            ->map(static fn (mixed $id): int => (int) $id)
+            ->values();
+
+        $courseCounts = $this->unbrandedVisibleCourseQuery($student, false)
+            ->whereIn('center_id', $centerIds->all())
+            ->select('center_id')
+            ->selectRaw('center_id, COUNT(*) as total_courses')
+            ->groupBy('center_id')
+            ->pluck('total_courses', 'center_id');
+
+        $limitedCourseIds = DB::query()
+            ->fromSub(
+                $this->unbrandedVisibleCourseQuery($student, false)
+                    ->whereIn('center_id', $centerIds->all())
+                    ->selectRaw(
+                        'id, center_id, ROW_NUMBER() OVER (PARTITION BY center_id ORDER BY created_at DESC, id DESC) as row_num'
+                    ),
+                'ranked_courses'
+            )
+            ->where('row_num', '<=', self::CENTER_LIST_COURSE_LIMIT)
+            ->pluck('id')
+            ->map(static fn (mixed $id): int => (int) $id)
+            ->values();
+
+        $coursesByCenter = Course::query()
+            ->withEnrollmentMeta($student)
+            ->with(['category'])
+            ->whereIn('id', $limitedCourseIds->all())
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->get()
+            ->groupBy('center_id');
+
+        foreach ($centers as $center) {
+            if (! $center instanceof Center) {
+                continue;
+            }
+
+            $previewCourses = $coursesByCenter->get($center->id, collect())->values();
+            $totalCourses = (int) ($courseCounts[$center->id] ?? 0);
+            $returnedCourses = $previewCourses->count();
+
+            $center->setRelation('coursesPreview', $previewCourses);
+            $center->setAttribute('courses_meta', [
+                'total_courses' => $totalCourses,
+                'returned_courses' => $returnedCourses,
+                'has_more_courses' => $totalCourses > $returnedCourses,
+            ]);
+        }
     }
 
     /**

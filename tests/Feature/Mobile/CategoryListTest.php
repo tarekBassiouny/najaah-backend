@@ -112,3 +112,47 @@ it('paginates categories list', function (): void {
         ->assertJsonPath('meta.page', 2)
         ->assertJsonPath('meta.per_page', 1);
 });
+
+it('lists categories for a specific center endpoint', function (): void {
+    $centerA = Center::factory()->create(['type' => 0]);
+    $centerB = Center::factory()->create(['type' => 0]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $categoryA = Category::factory()->create([
+        'center_id' => $centerA->id,
+        'title_translations' => ['en' => 'Center A Category'],
+    ]);
+    Category::factory()->create([
+        'center_id' => $centerB->id,
+        'title_translations' => ['en' => 'Center B Category'],
+    ]);
+    Category::factory()->create([
+        'center_id' => null,
+        'title_translations' => ['en' => 'Global Category'],
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/centers/'.$centerA->id.'/categories');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $categoryA->id);
+});
+
+it('returns not found for branded center categories endpoint', function (): void {
+    $center = Center::factory()->create(['type' => 1]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/centers/'.$center->id.'/categories');
+    $response->assertStatus(404);
+});
