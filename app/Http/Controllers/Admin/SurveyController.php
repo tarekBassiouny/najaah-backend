@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\CenterType;
 use App\Enums\SurveyScopeType;
 use App\Filters\Admin\SurveyFilters;
 use App\Http\Controllers\Controller;
@@ -70,6 +71,7 @@ class SurveyController extends Controller
     public function centerIndex(ListSurveysRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin($request);
+        $this->assertBrandedCenter($center);
         $requestFilters = $request->filters();
         $filters = new SurveyFilters(
             page: $requestFilters->page,
@@ -118,6 +120,7 @@ class SurveyController extends Controller
     public function centerTargetStudents(ListSurveyTargetStudentsRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin($request);
+        $this->assertBrandedCenter($center);
         $filters = $request->filters();
 
         $paginator = $this->targetStudentService->paginate(
@@ -163,6 +166,7 @@ class SurveyController extends Controller
     public function centerStore(StoreSurveyRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin($request);
+        $this->assertBrandedCenter($center);
         /** @var array<string, mixed> $data */
         $data = $request->validated();
         $data['scope_type'] = SurveyScopeType::Center->value;
@@ -379,6 +383,7 @@ class SurveyController extends Controller
         Center $center
     ): JsonResponse {
         $admin = $this->requireAdmin($request);
+        $this->assertBrandedCenter($center);
         /** @var array{is_active: bool, survey_ids: array<int, int>} $data */
         $data = $request->validated();
         $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
@@ -509,6 +514,7 @@ class SurveyController extends Controller
     public function centerBulkClose(BulkCloseSurveysRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin($request);
+        $this->assertBrandedCenter($center);
         /** @var array{survey_ids: array<int, int>} $data */
         $data = $request->validated();
         $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
@@ -639,6 +645,7 @@ class SurveyController extends Controller
     public function centerBulkDestroy(BulkDeleteSurveysRequest $request, Center $center): JsonResponse
     {
         $admin = $this->requireAdmin($request);
+        $this->assertBrandedCenter($center);
         /** @var array{survey_ids: array<int, int>} $data */
         $data = $request->validated();
         $requestedIds = array_values(array_unique(array_map('intval', $data['survey_ids'])));
@@ -879,6 +886,8 @@ class SurveyController extends Controller
 
     private function assertCenterSurvey(Center $center, Survey $survey): void
     {
+        $this->assertBrandedCenter($center);
+
         if (
             $survey->scope_type !== SurveyScopeType::Center
             || ! is_numeric($survey->center_id)
@@ -1003,5 +1012,12 @@ class SurveyController extends Controller
                 'message' => $message !== '' ? $message : 'Validation failed.',
             ],
         ], 422));
+    }
+
+    private function assertBrandedCenter(Center $center): void
+    {
+        if ($center->type !== CenterType::Branded) {
+            $this->invalidAssignment('Center surveys are allowed only for branded centers.');
+        }
     }
 }

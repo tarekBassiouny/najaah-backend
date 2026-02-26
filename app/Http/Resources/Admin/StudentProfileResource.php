@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin;
 
 use App\Enums\UserStatus;
+use App\Http\Resources\Mobile\DeviceResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -56,10 +57,7 @@ class StudentProfileResource extends JsonResource
 
             // Stats card fields
             'last_activity_at' => $lastActivityAt,
-            'active_device' => $activeDevice !== null ? [
-                'model' => $activeDevice->model,
-                'device_id' => $activeDevice->device_id,
-            ] : null,
+            'active_device' => $activeDevice !== null ? new DeviceResource($activeDevice) : null,
             'total_enrollments' => $student->enrollments->count(),
             'device_changes_count' => $deviceChangeRequests->count(),
 

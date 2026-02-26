@@ -116,7 +116,7 @@ class StudentQueryService
      *
      * Students appear in a center's list only if they have an entry in user_centers,
      * which is created either:
-     * - When a branded center adds a student (via StudentService::create)
+     * - When an admin adds a student through center scope (via StudentService::createForCenter)
      * - When any student enrolls in a course (via EnrollmentObserver)
      *
      * @param  Builder<User>  $query

@@ -29,6 +29,8 @@ class DeviceResource extends JsonResource
         return [
             'id' => $device->id,
             'device_id' => $device->device_id,
+            'device_name' => $device->device_name,
+            'device_type' => $device->device_type,
             'model' => $device->model,
             'os_version' => $device->os_version,
             'status' => $status?->value ?? $device->status,

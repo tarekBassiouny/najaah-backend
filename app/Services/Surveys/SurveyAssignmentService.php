@@ -201,51 +201,29 @@ class SurveyAssignmentService implements SurveyAssignmentServiceInterface
      */
     public function assignAll(Survey $survey): int
     {
-        $query = User::query()->where('is_student', true);
+        // Canonical representation: one "all" row per survey.
+        // Student eligibility is resolved dynamically at read-time by survey scope.
+        $existing = SurveyAssignment::withTrashed()
+            ->where('survey_id', $survey->id)
+            ->where('assignable_type', SurveyAssignableType::All)
+            ->where('assignable_id', 0)
+            ->first();
 
-        if ($survey->isCenterScoped()) {
-            // CENTER scoped: only students in this center
-            $query->where('center_id', $survey->center_id);
-        } else {
-            // SYSTEM scoped: students without center only
-            $query->whereNull('center_id');
-        }
+        if ($existing instanceof SurveyAssignment) {
+            if ($existing->trashed()) {
+                $existing->restore();
+            }
 
-        $studentIds = $query->pluck('id');
-
-        if ($studentIds->isEmpty()) {
             return 0;
         }
 
-        $now = now();
-        $assignments = [];
+        SurveyAssignment::create([
+            'survey_id' => $survey->id,
+            'assignable_type' => SurveyAssignableType::All,
+            'assignable_id' => 0,
+        ]);
 
-        foreach ($studentIds as $studentId) {
-            // Check if assignment already exists
-            $existing = SurveyAssignment::where('survey_id', $survey->id)
-                ->where('assignable_type', SurveyAssignableType::All)
-                ->where('assignable_id', $studentId)
-                ->exists();
-
-            if (! $existing) {
-                $assignments[] = [
-                    'survey_id' => $survey->id,
-                    'assignable_type' => SurveyAssignableType::All,
-                    'assignable_id' => $studentId,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-            }
-        }
-
-        if (! empty($assignments)) {
-            // Chunk insert to avoid memory issues with large datasets
-            foreach (array_chunk($assignments, 500) as $chunk) {
-                SurveyAssignment::insert($chunk);
-            }
-        }
-
-        return count($assignments);
+        return 1;
     }
 
     public function removeAssignment(Survey $survey, SurveyAssignableType $type, int $id, User $actor): void

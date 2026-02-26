@@ -62,7 +62,10 @@ test('returns current student on /auth/me', function (): void {
     $response->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.id', $user->id)
-        ->assertJsonPath('data.center.id', $user->center_id);
+        ->assertJsonPath('data.center.id', $user->center_id)
+        ->assertJsonPath('data.device.device_id', $device->device_id)
+        ->assertJsonPath('data.device.device_name', $device->device_name)
+        ->assertJsonPath('data.device.device_type', $device->device_type);
 });
 
 test('returns detailed current student profile on /auth/me/profile', function (): void {

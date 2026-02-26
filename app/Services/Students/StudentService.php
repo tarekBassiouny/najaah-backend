@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Students;
 
+use App\Enums\CenterType;
 use App\Enums\UserStatus;
 use App\Models\Center;
+use App\Models\Pivots\UserCenter;
 use App\Models\User;
 use App\Services\Access\StudentAccessService;
 use App\Services\Audit\AuditLogService;
@@ -40,19 +42,8 @@ class StudentService
             'status' => UserStatus::Active,
         ]);
 
-        // When admin creates a student for any center (branded or unbranded),
-        // associate them immediately so they appear in the center's student list.
-        // Note: For self-registered students (mobile app), center association is
-        // created via EnrollmentObserver when they enroll in a course.
         if (isset($data['center_id']) && is_numeric($data['center_id'])) {
-            $centerId = (int) $data['center_id'];
-            $center = Center::find($centerId);
-
-            if ($center !== null) {
-                $user->centers()->syncWithoutDetaching([
-                    $centerId => ['type' => 'student'],
-                ]);
-            }
+            $this->attachStudentToCenter($user, (int) $data['center_id']);
         }
 
         $user = $user->refresh() ?? $user;
@@ -62,6 +53,41 @@ class StudentService
         $this->auditLogService->log($actor, $user, AuditActions::STUDENT_CREATED);
 
         return $user;
+    }
+
+    /**
+     * Create or attach a student for center-scoped admin flows.
+     *
+     * Branded center:
+     * - Create student with center_id = center.id
+     *
+     * Unbranded center:
+     * - If system student exists (center_id = null), attach center relation only
+     * - Else create system student (center_id = null), then attach relation
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function createForCenter(Center $center, array $data, ?User $actor = null): User
+    {
+        if ($center->type === CenterType::Branded) {
+            $data['center_id'] = (int) $center->id;
+
+            return $this->create($data, $actor);
+        }
+
+        $existingSystemStudent = $this->findExistingSystemStudent($data);
+
+        if ($existingSystemStudent instanceof User) {
+            $this->attachStudentToCenter($existingSystemStudent, (int) $center->id);
+
+            return $existingSystemStudent->refresh() ?? $existingSystemStudent;
+        }
+
+        $data['center_id'] = null;
+        $created = $this->create($data, $actor);
+        $this->attachStudentToCenter($created, (int) $center->id);
+
+        return $created->refresh() ?? $created;
     }
 
     /**
@@ -189,5 +215,54 @@ class StudentService
 
         $this->auditLogService->log($actor, $user, AuditActions::STUDENT_DELETED);
         $user->delete();
+    }
+
+    private function attachStudentToCenter(User $student, int $centerId): void
+    {
+        $center = Center::query()->find($centerId);
+
+        if (! $center instanceof Center) {
+            return;
+        }
+
+        $existing = UserCenter::withTrashed()
+            ->where('user_id', (int) $student->id)
+            ->where('center_id', $centerId)
+            ->where('type', 'student')
+            ->first();
+
+        if ($existing !== null) {
+            if ($existing->trashed()) {
+                $existing->restore();
+            }
+
+            return;
+        }
+
+        UserCenter::create([
+            'user_id' => (int) $student->id,
+            'center_id' => $centerId,
+            'type' => 'student',
+        ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function findExistingSystemStudent(array $data): ?User
+    {
+        $phone = (string) ($data['phone'] ?? '');
+        $countryCode = (string) ($data['country_code'] ?? '');
+
+        if ($phone === '' || $countryCode === '') {
+            return null;
+        }
+
+        return User::query()
+            ->where('is_student', true)
+            ->whereNull('center_id')
+            ->where('phone', $phone)
+            ->where('country_code', $countryCode)
+            ->first();
     }
 }
