@@ -50,7 +50,7 @@ it('lists surveys with assignments and submitted users count', function (): void
         'assignable_id' => $assignedStudent->id,
     ]);
 
-    $responseCenter = Center::factory()->create();
+    $responseCenter = Center::factory()->create(['type' => CenterType::Branded]);
     $studentA = User::factory()->create([
         'is_student' => true,
         'center_id' => $responseCenter->id,
@@ -84,7 +84,7 @@ it('lists surveys with assignments and submitted users count', function (): void
 
 it('super admin sees system surveys on system endpoint', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     Survey::factory()->system()->count(2)->create();
     Survey::factory()->center($center)->count(3)->create();
 
@@ -97,7 +97,7 @@ it('super admin sees system surveys on system endpoint', function (): void {
 
 it('super admin can filter surveys by scope type', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     Survey::factory()->system()->count(2)->create();
     Survey::factory()->center($center)->count(3)->create();
 
@@ -154,10 +154,9 @@ it('creates a system survey with questions', function (): void {
 it('creates a system survey with all assignment and resolves assignment names', function (): void {
     $this->asAdmin();
 
-    $eligibleStudent = User::factory()->create([
+    User::factory()->create([
         'is_student' => true,
         'center_id' => null,
-        'name' => 'Eligible Student',
     ]);
 
     $unbrandedCenter = Center::factory()->create(['type' => CenterType::Unbranded]);
@@ -193,13 +192,13 @@ it('creates a system survey with all assignment and resolves assignment names', 
         ->assertJsonPath('success', true)
         ->assertJsonCount(1, 'data.assignments')
         ->assertJsonPath('data.assignments.0.type', SurveyAssignableType::All->value)
-        ->assertJsonPath('data.assignments.0.assignable_id', $eligibleStudent->id)
-        ->assertJsonPath('data.assignments.0.assignable_name', $eligibleStudent->name);
+        ->assertJsonPath('data.assignments.0.assignable_id', 0)
+        ->assertJsonPath('data.assignments.0.assignable_name', 'All Students');
 });
 
 it('creates a center survey when assignment id is a numeric string', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create(['center_id' => $center->id]);
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys", [
@@ -228,6 +227,41 @@ it('creates a center survey when assignment id is a numeric string', function ()
         'assignable_type' => SurveyAssignableType::Course->value,
         'assignable_id' => $course->id,
     ]);
+});
+
+it('rejects creating center survey for unbranded center', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create(['type' => CenterType::Unbranded]);
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys", [
+        'title_translations' => ['en' => 'Unbranded center survey', 'ar' => 'استبيان مركز غير مخصص'],
+        'type' => SurveyType::Feedback->value,
+        'is_active' => true,
+        'questions' => [
+            [
+                'question_translations' => ['en' => 'How satisfied are you?', 'ar' => 'ما مدى رضاك؟'],
+                'type' => SurveyQuestionType::Rating->value,
+                'is_required' => true,
+            ],
+        ],
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.message', 'Center surveys are allowed only for branded centers.');
+});
+
+it('rejects listing center surveys for unbranded center', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create(['type' => CenterType::Unbranded]);
+
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/surveys", $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.message', 'Center surveys are allowed only for branded centers.');
 });
 
 it('creates a survey with far future schedule dates', function (): void {
@@ -427,7 +461,7 @@ it('updates system survey status via dedicated endpoint', function (): void {
 
 it('updates center survey status via dedicated endpoint', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create([
         'is_active' => false,
     ]);
@@ -452,7 +486,7 @@ it('bulk updates system survey statuses', function (): void {
 
     $toUpdate = Survey::factory()->system()->create(['is_active' => true]);
     $alreadyTargetStatus = Survey::factory()->system()->create(['is_active' => false]);
-    $centerSurvey = Survey::factory()->center(Center::factory()->create())->create(['is_active' => true]);
+    $centerSurvey = Survey::factory()->center(Center::factory()->create(['type' => CenterType::Branded]))->create(['is_active' => true]);
 
     $response = $this->postJson('/api/v1/admin/surveys/bulk-status', [
         'is_active' => false,
@@ -479,8 +513,8 @@ it('bulk updates system survey statuses', function (): void {
 
 it('bulk updates center survey statuses', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
-    $otherCenter = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $otherCenter = Center::factory()->create(['type' => CenterType::Branded]);
 
     $toUpdate = Survey::factory()->center($center)->create(['is_active' => true]);
     $alreadyTargetStatus = Survey::factory()->center($center)->create(['is_active' => false]);
@@ -516,7 +550,7 @@ it('bulk closes system surveys', function (): void {
 
     $toClose = Survey::factory()->system()->create(['is_active' => true]);
     $alreadyClosed = Survey::factory()->system()->create(['is_active' => false]);
-    $centerSurvey = Survey::factory()->center(Center::factory()->create())->create(['is_active' => true]);
+    $centerSurvey = Survey::factory()->center(Center::factory()->create(['type' => CenterType::Branded]))->create(['is_active' => true]);
 
     $response = $this->postJson('/api/v1/admin/surveys/bulk-close', [
         'survey_ids' => [
@@ -542,8 +576,8 @@ it('bulk closes system surveys', function (): void {
 
 it('bulk closes center surveys', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
-    $otherCenter = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $otherCenter = Center::factory()->create(['type' => CenterType::Branded]);
 
     $toClose = Survey::factory()->center($center)->create(['is_active' => true]);
     $alreadyClosed = Survey::factory()->center($center)->create(['is_active' => false]);
@@ -575,7 +609,7 @@ it('bulk closes center surveys', function (): void {
 
 it('bulk deletes system surveys with safety checks', function (): void {
     $this->asAdmin();
-    $responseCenter = Center::factory()->create();
+    $responseCenter = Center::factory()->create(['type' => CenterType::Branded]);
     $responseStudent = User::factory()->create([
         'is_student' => true,
         'center_id' => $responseCenter->id,
@@ -584,7 +618,7 @@ it('bulk deletes system surveys with safety checks', function (): void {
     $deletable = Survey::factory()->system()->create(['is_active' => false]);
     $active = Survey::factory()->system()->create(['is_active' => true]);
     $withResponses = Survey::factory()->system()->create(['is_active' => false]);
-    $centerSurvey = Survey::factory()->center(Center::factory()->create())->create(['is_active' => false]);
+    $centerSurvey = Survey::factory()->center(Center::factory()->create(['type' => CenterType::Branded]))->create(['is_active' => false]);
 
     SurveyResponse::factory()->create([
         'survey_id' => $withResponses->id,
@@ -618,8 +652,8 @@ it('bulk deletes system surveys with safety checks', function (): void {
 
 it('bulk deletes center surveys with safety checks', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
-    $otherCenter = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $otherCenter = Center::factory()->create(['type' => CenterType::Branded]);
     $responseStudent = User::factory()->create([
         'is_student' => true,
         'center_id' => $center->id,
@@ -760,7 +794,7 @@ it('rejects deleting an active survey', function (): void {
 it('rejects deleting a survey with responses', function (): void {
     $this->asAdmin();
 
-    $responseCenter = Center::factory()->create();
+    $responseCenter = Center::factory()->create(['type' => CenterType::Branded]);
     $responseStudent = User::factory()->create([
         'is_student' => true,
         'center_id' => $responseCenter->id,
@@ -791,7 +825,7 @@ it('rejects deleting a survey with responses', function (): void {
 
 it('deletes a center survey', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create([
         'is_active' => false,
     ]);
@@ -804,7 +838,7 @@ it('deletes a center survey', function (): void {
 
 it('rejects deleting an active center survey', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create([
         'is_active' => true,
     ]);
@@ -824,7 +858,7 @@ it('rejects deleting an active center survey', function (): void {
 
 it('rejects deleting a center survey with responses', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $student = User::factory()->create([
         'is_student' => true,
         'center_id' => $center->id,
@@ -1047,8 +1081,8 @@ it('filters system surveys by title search', function (): void {
 
 it('filters center surveys by title search', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
-    $otherCenter = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $otherCenter = Center::factory()->create(['type' => CenterType::Branded]);
 
     $matchingSurvey = Survey::factory()->center($center)->create([
         'title_translations' => [

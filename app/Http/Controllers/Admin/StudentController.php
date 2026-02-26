@@ -142,9 +142,7 @@ class StudentController extends Controller
         $admin = $request->user();
         /** @var array<string, mixed> $data */
         $data = $request->validated();
-        $data['center_id'] = (int) $center->id;
-
-        $student = $this->studentService->create($data, $admin instanceof User ? $admin : null);
+        $student = $this->studentService->createForCenter($center, $data, $admin instanceof User ? $admin : null);
 
         return response()->json([
             'success' => true,

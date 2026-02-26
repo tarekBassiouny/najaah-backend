@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $user_id
  * @property string $device_id
+ * @property string|null $device_name
+ * @property string|null $device_type
  * @property string $model
  * @property string $os_version
  * @property int $status
@@ -41,6 +43,8 @@ class UserDevice extends Model
     protected $fillable = [
         'user_id',
         'device_id',
+        'device_name',
+        'device_type',
         'model',
         'os_version',
         'status',

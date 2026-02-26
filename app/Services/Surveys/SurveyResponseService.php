@@ -39,13 +39,28 @@ class SurveyResponseService implements SurveyResponseServiceInterface
             ->with(['questions.options', 'assignments'])
             ->available();
 
-        if (! is_numeric($centerId)) {
-            $query->where('scope_type', SurveyScopeType::System);
-        } elseif (! $center instanceof Center) {
+        if (is_numeric($centerId) && ! $center instanceof Center) {
             return collect();
+        }
+
+        if (is_numeric($centerId)) {
+            $query->where(function ($builder) use ($centerId): void {
+                $builder
+                    ->where('scope_type', SurveyScopeType::System)
+                    ->orWhere(function ($centerBuilder) use ($centerId): void {
+                        $centerBuilder
+                            ->where('scope_type', SurveyScopeType::Center)
+                            ->where('center_id', $centerId);
+                    });
+            });
         } else {
-            $query->where('scope_type', SurveyScopeType::Center)
-                ->where('center_id', $centerId);
+            // For Najaah-app students (center_id = null), include both:
+            // - System surveys
+            // - Center surveys (eligibility resolved by assignment/scope checks).
+            $query->whereIn('scope_type', [
+                SurveyScopeType::System,
+                SurveyScopeType::Center,
+            ]);
         }
 
         $surveys = $query->get();
@@ -69,10 +84,14 @@ class SurveyResponseService implements SurveyResponseServiceInterface
         }
 
         return DB::transaction(function () use ($survey, $student, $answers): SurveyResponse {
+            $responseCenterId = $survey->scope_type === SurveyScopeType::Center
+                ? $survey->center_id
+                : null;
+
             $response = SurveyResponse::create([
                 'survey_id' => $survey->id,
                 'user_id' => $student->id,
-                'center_id' => $student->center_id,
+                'center_id' => $responseCenterId,
                 'submitted_at' => now(),
             ]);
 
@@ -134,7 +153,9 @@ class SurveyResponseService implements SurveyResponseServiceInterface
             ->where('user_id', $student->id);
 
         if ($survey->scope_type === SurveyScopeType::Center) {
-            $query->where('center_id', $student->center_id);
+            $query->where('center_id', $survey->center_id);
+        } else {
+            $query->whereNull('center_id');
         }
 
         return $query->exists();
@@ -146,7 +167,7 @@ class SurveyResponseService implements SurveyResponseServiceInterface
             if (is_numeric($student->center_id)) {
                 return false;
             }
-        } elseif (! is_numeric($student->center_id) || $survey->center_id !== (int) $student->center_id) {
+        } elseif (! $this->studentBelongsToSurveyCenter($student, $survey)) {
             return false;
         }
 
@@ -157,7 +178,7 @@ class SurveyResponseService implements SurveyResponseServiceInterface
         }
 
         foreach ($survey->assignments as $assignment) {
-            if ($this->isStudentAssigned($student, $assignment->assignable_type, $assignment->assignable_id)) {
+            if ($this->isStudentAssigned($survey, $student, $assignment->assignable_type, $assignment->assignable_id)) {
                 return true;
             }
         }
@@ -192,17 +213,47 @@ class SurveyResponseService implements SurveyResponseServiceInterface
         }
     }
 
-    private function isStudentAssigned(User $student, SurveyAssignableType $type, int $id): bool
+    private function isStudentAssigned(Survey $survey, User $student, SurveyAssignableType $type, int $id): bool
     {
         return match ($type) {
-            SurveyAssignableType::Center => $student->center_id === $id,
+            SurveyAssignableType::Center => $this->studentBelongsToCenter($student, $id),
             SurveyAssignableType::Course => $student->enrollments()
                 ->where('course_id', $id)
                 ->exists(),
             SurveyAssignableType::Video => $this->hasStudentFullyPlayedVideo($student, $id),
             SurveyAssignableType::User => $student->id === $id,
-            SurveyAssignableType::All => $student->id === $id,
+            SurveyAssignableType::All => $this->matchesAllAssignmentScope($survey, $student),
         };
+    }
+
+    private function matchesAllAssignmentScope(Survey $survey, User $student): bool
+    {
+        if ($survey->scope_type === SurveyScopeType::System) {
+            return ! is_numeric($student->center_id);
+        }
+
+        return $this->studentBelongsToSurveyCenter($student, $survey);
+    }
+
+    private function studentBelongsToSurveyCenter(User $student, Survey $survey): bool
+    {
+        if (! is_numeric($survey->center_id)) {
+            return false;
+        }
+
+        return $this->studentBelongsToCenter($student, (int) $survey->center_id);
+    }
+
+    private function studentBelongsToCenter(User $student, int $centerId): bool
+    {
+        if (is_numeric($student->center_id) && (int) $student->center_id === $centerId) {
+            return true;
+        }
+
+        return $student->centers()
+            ->where('centers.id', $centerId)
+            ->wherePivot('type', 'student')
+            ->exists();
     }
 
     private function hasStudentFullyPlayedVideo(User $student, int $videoId): bool

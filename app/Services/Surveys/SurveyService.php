@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Surveys;
 
+use App\Enums\CenterType;
 use App\Enums\SurveyQuestionType;
 use App\Enums\SurveyScopeType;
 use App\Filters\Admin\SurveyFilters;
+use App\Models\Center;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
 use App\Models\SurveyQuestionOption;
@@ -118,6 +120,12 @@ class SurveyService implements SurveyServiceInterface
             } else {
                 $centerId = $data['center_id'] ?? $this->centerScopeService->resolveAdminCenterId($actor);
                 $this->centerScopeService->assertAdminCenterId($actor, $centerId);
+
+                $center = Center::query()->find($centerId);
+                if (! $center instanceof Center || $center->type !== CenterType::Branded) {
+                    throw new \InvalidArgumentException('Center surveys are allowed only for branded centers.');
+                }
+
                 $data['center_id'] = $centerId;
             }
 

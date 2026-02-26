@@ -16,6 +16,7 @@ it('binds first device as active', function (): void {
 
     $device = $service->register($student, 'device-1', [
         'device_name' => 'iPhone',
+        'device_type' => 'iPhone 14 Pro',
         'device_os' => 'iOS',
     ]);
 
@@ -23,6 +24,9 @@ it('binds first device as active', function (): void {
     $this->assertDatabaseHas('user_devices', [
         'user_id' => $student->id,
         'device_id' => 'device-1',
+        'device_name' => 'iPhone',
+        'device_type' => 'iPhone 14 Pro',
+        'model' => 'iPhone 14 Pro',
         'status' => UserDevice::STATUS_ACTIVE,
     ]);
 });
@@ -33,16 +37,21 @@ it('allows repeat login from same device', function (): void {
 
     $first = $service->register($student, 'device-1', [
         'device_name' => 'iPhone',
+        'device_type' => 'iPhone 14',
         'device_os' => 'iOS',
     ]);
 
     $second = $service->register($student, 'device-1', [
         'device_name' => 'iPhone Pro',
+        'device_type' => 'iPhone 16 Pro',
         'device_os' => 'iOS 18',
     ]);
 
     expect($second->id)->toBe($first->id);
-    expect($second->status)->toBe(UserDevice::STATUS_ACTIVE);
+    expect($second->status)->toBe(UserDevice::STATUS_ACTIVE)
+        ->and($second->device_name)->toBe('iPhone Pro')
+        ->and($second->device_type)->toBe('iPhone 16 Pro')
+        ->and($second->model)->toBe('iPhone 16 Pro');
 });
 
 it('blocks login from a different device when one is active', function (): void {

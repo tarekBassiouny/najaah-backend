@@ -302,6 +302,56 @@ it('lists video-assigned center survey only after full play', function (): void 
         ->assertJsonPath('data.0.id', $survey->id);
 });
 
+it('lists center survey assigned to all for branded center students', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $this->asApiUser($student);
+
+    $survey = Survey::factory()->center($center)->active()->create();
+    SurveyAssignment::create([
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::All,
+        'assignable_id' => 0,
+    ]);
+
+    $response = $this->apiGet('/api/v1/surveys/assigned');
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $survey->id);
+});
+
+it('lists center survey assigned to all for students created after assignment', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $newStudent = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $this->asApiUser($newStudent);
+
+    $survey = Survey::factory()->center($center)->active()->create();
+    SurveyAssignment::create([
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::All,
+        'assignable_id' => 0,
+    ]);
+
+    $response = $this->apiGet('/api/v1/surveys/assigned');
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $survey->id);
+});
+
 it('does not list surveys already submitted even when multiple submissions are enabled', function (): void {
     $center = Center::factory()->create([
         'type' => CenterType::Unbranded,

@@ -82,8 +82,8 @@ it('rejects center scope type on system target students route', function (): voi
 it('lists only selected center students for center survey targeting', function (): void {
     $this->asAdmin();
 
-    $centerA = Center::factory()->create();
-    $centerB = Center::factory()->create();
+    $centerA = Center::factory()->create(['type' => \App\Enums\CenterType::Branded->value]);
+    $centerB = Center::factory()->create(['type' => \App\Enums\CenterType::Branded->value]);
 
     $studentA = User::factory()->create([
         'is_student' => true,
@@ -158,8 +158,8 @@ it('allows center admin to list only own center target students for center scope
     $role = Role::factory()->create(['slug' => 'center_admin']);
     $role->permissions()->sync([$permission->id]);
 
-    $center = Center::factory()->create();
-    $otherCenter = Center::factory()->create();
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Branded->value]);
+    $otherCenter = Center::factory()->create(['type' => \App\Enums\CenterType::Branded->value]);
 
     $ownStudent = User::factory()->create([
         'is_student' => true,

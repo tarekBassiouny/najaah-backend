@@ -18,6 +18,8 @@ class UserDeviceFactory extends Factory
         return [
             'user_id' => User::factory(),
             'device_id' => (string) Str::uuid(),
+            'device_name' => 'device-name',
+            'device_type' => 'device-type',
             'model' => 'device-model',
             'os_version' => 'os-version',
             'status' => UserDevice::STATUS_ACTIVE,

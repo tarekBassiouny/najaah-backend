@@ -154,6 +154,9 @@ test('verify otp issues tokens', function (): void {
         'otp' => '123456',
         'token' => 'token123',
         'device_uuid' => $device->device_id,
+        'device_name' => 'iPhone',
+        'device_type' => 'iPhone 15 Pro',
+        'device_os' => 'iOS 18',
     ], [
         'X-Api-Key' => 'system-key',
     ]);
@@ -163,6 +166,9 @@ test('verify otp issues tokens', function (): void {
         'data',
         'token' => ['access_token', 'refresh_token', 'expires_in'],
     ]);
+    $response->assertJsonPath('data.device.device_id', $device->device_id);
+    $response->assertJsonPath('data.device.device_name', 'iPhone');
+    $response->assertJsonPath('data.device.device_type', 'iPhone 15 Pro');
 
     $user->refresh();
     expect($user->last_login_at)->not->toBeNull();
@@ -312,12 +318,18 @@ test('verify binds new user to center when using center api key', function (): v
     ]);
 
     $response->assertOk()
-        ->assertJsonPath('data.center.id', $center->id);
+        ->assertJsonPath('data.center.id', $center->id)
+        ->assertJsonPath('data.device.device_id', 'device-center');
 
     $this->assertDatabaseHas('users', [
         'phone' => '7778889999',
         'country_code' => '+20',
         'center_id' => $center->id,
+    ]);
+    $this->assertDatabaseHas('user_devices', [
+        'device_id' => 'device-center',
+        'device_name' => null,
+        'device_type' => null,
     ]);
 });
 

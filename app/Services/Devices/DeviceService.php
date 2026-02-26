@@ -28,18 +28,33 @@ class DeviceService implements DeviceServiceInterface
     public function register(User $user, string $uuid, array $meta): UserDevice
     {
         return DB::transaction(function () use ($user, $uuid, $meta): UserDevice {
-            $model = $meta['device_type'] ?? $meta['device_name'] ?? 'Unknown';
+            $deviceName = isset($meta['device_name']) ? trim((string) $meta['device_name']) : null;
+            $deviceType = isset($meta['device_type']) ? trim((string) $meta['device_type']) : null;
+            $deviceName = $deviceName !== '' ? $deviceName : null;
+            $deviceType = $deviceType !== '' ? $deviceType : null;
+            $model = $deviceType ?? $deviceName ?? 'Unknown';
             $osVersion = $meta['device_os'] ?? 'unknown';
 
             // Check for pre-approved device change request first
             $preApprovedDevice = $this->handlePreApprovedRequest($user, $uuid, $model, $osVersion);
             if ($preApprovedDevice !== null) {
+                $preApprovedDevice->update([
+                    'device_name' => $deviceName,
+                    'device_type' => $deviceType,
+                ]);
+
                 return $preApprovedDevice;
             }
 
             // Try reinstall detection first
             $reinstallDevice = $this->handleReinstall($user, $uuid, $model, $osVersion);
             if ($reinstallDevice !== null) {
+                $reinstallDevice->update([
+                    'device_name' => $deviceName,
+                    'device_type' => $deviceType,
+                    'model' => $model,
+                ]);
+
                 return $reinstallDevice;
             }
 
@@ -64,6 +79,8 @@ class DeviceService implements DeviceServiceInterface
                 $device = UserDevice::create([
                     'user_id' => $user->id,
                     'device_id' => $uuid,
+                    'device_name' => $deviceName,
+                    'device_type' => $deviceType,
                     'model' => $model,
                     'os_version' => $osVersion,
                     'status' => UserDeviceStatus::Active,
@@ -72,6 +89,8 @@ class DeviceService implements DeviceServiceInterface
                 ]);
             } else {
                 $device->update([
+                    'device_name' => $deviceName,
+                    'device_type' => $deviceType,
                     'model' => $model,
                     'os_version' => $osVersion,
                     'status' => UserDeviceStatus::Active,
