@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -96,5 +97,23 @@ class Pdf extends Model
             ->withPivot(['section_id', 'video_id', 'order_index', 'visible', 'created_at', 'updated_at', 'deleted_at'])
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
+    }
+
+    /** @return BelongsToMany<Section, self> */
+    public function sections(): BelongsToMany
+    {
+        return $this->belongsToMany(Section::class, 'course_pdf')
+            ->using(CoursePdf::class)
+            ->withPivot(['course_id', 'video_id', 'order_index', 'visible', 'created_at', 'updated_at', 'deleted_at'])
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at')
+            ->wherePivotNotNull('section_id');
+    }
+
+    /** @return HasMany<CoursePdf, self> */
+    public function coursePdfs(): HasMany
+    {
+        return $this->hasMany(CoursePdf::class, 'pdf_id')
+            ->whereNull('deleted_at');
     }
 }

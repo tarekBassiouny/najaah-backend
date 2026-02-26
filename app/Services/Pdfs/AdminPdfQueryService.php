@@ -28,7 +28,8 @@ class AdminPdfQueryService implements AdminPdfQueryServiceInterface
 
         $query = Pdf::query()
             ->where('center_id', $center->id)
-            ->with(['creator'])
+            ->with(['creator', 'uploadSession'])
+            ->withCount(['courses', 'sections'])
             ->orderByDesc('created_at');
 
         $query = $this->applyFilters($query, $filters);

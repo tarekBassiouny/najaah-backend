@@ -38,6 +38,20 @@ class PdfResource extends JsonResource
             'file_size_kb' => $pdf->file_size_kb,
             'creator' => new UserSummaryResource($this->whenLoaded('creator')),
             'created_at' => $pdf->created_at,
+            'upload_status' => $this->when(
+                $this->relationLoaded('uploadSession'),
+                fn () => $pdf->uploadSession?->upload_status?->value
+            ),
+            'upload_status_label' => $this->when(
+                $this->relationLoaded('uploadSession'),
+                fn () => $pdf->uploadSession?->upload_status?->label()
+            ),
+            'courses_count' => $this->whenCounted('courses'),
+            'sections_count' => $this->whenCounted('sections'),
+            'can_delete' => $this->when(
+                $request->routeIs('*.index') && isset($pdf->courses_count),
+                fn () => ($pdf->courses_count ?? 0) === 0
+            ),
         ];
     }
 }

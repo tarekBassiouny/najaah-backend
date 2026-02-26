@@ -655,3 +655,59 @@ it('deletes branded student from center route', function (): void {
 
     $this->assertSoftDeleted('users', ['id' => $student->id]);
 });
+
+it('bulk updates unbranded center students by pivot association', function (): void {
+    $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
+        'description' => 'Permission: student.manage',
+    ]);
+    $role = Role::factory()->create(['slug' => 'student_admin']);
+    $role->permissions()->sync([$permission->id]);
+
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Unbranded->value]);
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $center->id,
+    ]);
+    $admin->roles()->sync([$role->id]);
+    $admin->centers()->sync([$center->id => ['type' => 'admin']]);
+
+    $linkedStudent = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+        'status' => 1,
+        'phone' => '19990000073',
+    ]);
+    $linkedStudent->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $notLinkedStudent = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+        'status' => 1,
+        'phone' => '19990000074',
+    ]);
+
+    $token = (string) Auth::guard('admin')->attempt([
+        'email' => $admin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/students/bulk-status", [
+        'status' => 0,
+        'student_ids' => [$linkedStudent->id, $notLinkedStudent->id],
+    ], [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.counts.total', 2)
+        ->assertJsonPath('data.counts.updated', 1)
+        ->assertJsonPath('data.counts.failed', 1);
+
+    expect((int) $linkedStudent->fresh()->status)->toBe(0);
+    expect((int) $notLinkedStudent->fresh()->status)->toBe(1);
+});

@@ -7,6 +7,10 @@ namespace App\Http\Controllers\Admin\Sections;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Sections\AttachPdfToSectionRequest;
 use App\Http\Requests\Admin\Sections\AttachVideoToSectionRequest;
+use App\Http\Requests\Admin\Sections\BulkAttachPdfsToSectionRequest;
+use App\Http\Requests\Admin\Sections\BulkAttachVideosToSectionRequest;
+use App\Http\Requests\Admin\Sections\BulkDetachPdfsFromSectionRequest;
+use App\Http\Requests\Admin\Sections\BulkDetachVideosFromSectionRequest;
 use App\Http\Requests\Admin\Sections\DetachPdfFromSectionRequest;
 use App\Http\Requests\Admin\Sections\DetachVideoFromSectionRequest;
 use App\Http\Resources\Admin\Sections\SectionPdfResource;
@@ -20,6 +24,7 @@ use App\Models\Video;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Throwable;
 
 class SectionStructureController extends Controller
 {
@@ -230,6 +235,238 @@ class SectionStructureController extends Controller
             'success' => true,
             'message' => 'PDF detached from section successfully',
             'data' => null,
+        ]);
+    }
+
+    /**
+     * Bulk attach PDFs to a section.
+     */
+    public function bulkAttachPdfs(
+        Center $center,
+        Course $course,
+        Section $section,
+        BulkAttachPdfsToSectionRequest $request
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->assertSectionBelongsToCourse($course, $section);
+
+        /** @var array<int, int> $pdfIds */
+        $pdfIds = $request->input('pdf_ids', []);
+
+        $attached = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($pdfIds as $pdfId) {
+            try {
+                $pdf = Pdf::find($pdfId);
+                if ($pdf === null) {
+                    $failed[] = ['id' => $pdfId, 'reason' => 'PDF not found'];
+
+                    continue;
+                }
+
+                if ($section->pdfs()->whereKey($pdfId)->exists()) {
+                    $skipped[] = ['id' => $pdfId, 'reason' => 'Already attached'];
+
+                    continue;
+                }
+
+                $this->structureService->attachPdf($section, $pdf, $admin);
+                $attached[] = $pdfId;
+            } catch (Throwable $e) {
+                $failed[] = ['id' => $pdfId, 'reason' => $e->getMessage()];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => sprintf('%d PDF(s) attached successfully', count($attached)),
+            'data' => [
+                'attached' => count($attached),
+                'skipped' => count($skipped),
+                'failed' => count($failed),
+                'details' => [
+                    'attached_ids' => $attached,
+                    'skipped' => $skipped,
+                    'failed' => $failed,
+                ],
+            ],
+        ], 201);
+    }
+
+    /**
+     * Bulk detach PDFs from a section.
+     */
+    public function bulkDetachPdfs(
+        Center $center,
+        Course $course,
+        Section $section,
+        BulkDetachPdfsFromSectionRequest $request
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->assertSectionBelongsToCourse($course, $section);
+
+        /** @var array<int, int> $pdfIds */
+        $pdfIds = $request->input('pdf_ids', []);
+
+        $detached = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($pdfIds as $pdfId) {
+            try {
+                $pdf = Pdf::find($pdfId);
+                if ($pdf === null) {
+                    $failed[] = ['id' => $pdfId, 'reason' => 'PDF not found'];
+
+                    continue;
+                }
+
+                if (! $section->pdfs()->whereKey($pdfId)->exists()) {
+                    $skipped[] = ['id' => $pdfId, 'reason' => 'Not attached'];
+
+                    continue;
+                }
+
+                $this->structureService->detachPdf($section, $pdf, $admin);
+                $detached[] = $pdfId;
+            } catch (Throwable $e) {
+                $failed[] = ['id' => $pdfId, 'reason' => $e->getMessage()];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => sprintf('%d PDF(s) detached successfully', count($detached)),
+            'data' => [
+                'detached' => count($detached),
+                'skipped' => count($skipped),
+                'failed' => count($failed),
+                'details' => [
+                    'detached_ids' => $detached,
+                    'skipped' => $skipped,
+                    'failed' => $failed,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Bulk attach videos to a section.
+     */
+    public function bulkAttachVideos(
+        Center $center,
+        Course $course,
+        Section $section,
+        BulkAttachVideosToSectionRequest $request
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->assertSectionBelongsToCourse($course, $section);
+
+        /** @var array<int, int> $videoIds */
+        $videoIds = $request->input('video_ids', []);
+
+        $attached = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($videoIds as $videoId) {
+            try {
+                $video = Video::find($videoId);
+                if ($video === null) {
+                    $failed[] = ['id' => $videoId, 'reason' => 'Video not found'];
+
+                    continue;
+                }
+
+                if ($section->videos()->whereKey($videoId)->exists()) {
+                    $skipped[] = ['id' => $videoId, 'reason' => 'Already attached'];
+
+                    continue;
+                }
+
+                $this->structureService->attachVideo($section, $video, $admin);
+                $attached[] = $videoId;
+            } catch (Throwable $e) {
+                $failed[] = ['id' => $videoId, 'reason' => $e->getMessage()];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => sprintf('%d video(s) attached successfully', count($attached)),
+            'data' => [
+                'attached' => count($attached),
+                'skipped' => count($skipped),
+                'failed' => count($failed),
+                'details' => [
+                    'attached_ids' => $attached,
+                    'skipped' => $skipped,
+                    'failed' => $failed,
+                ],
+            ],
+        ], 201);
+    }
+
+    /**
+     * Bulk detach videos from a section.
+     */
+    public function bulkDetachVideos(
+        Center $center,
+        Course $course,
+        Section $section,
+        BulkDetachVideosFromSectionRequest $request
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
+        $this->assertSectionBelongsToCourse($course, $section);
+
+        /** @var array<int, int> $videoIds */
+        $videoIds = $request->input('video_ids', []);
+
+        $detached = [];
+        $skipped = [];
+        $failed = [];
+
+        foreach ($videoIds as $videoId) {
+            try {
+                $video = Video::find($videoId);
+                if ($video === null) {
+                    $failed[] = ['id' => $videoId, 'reason' => 'Video not found'];
+
+                    continue;
+                }
+
+                if (! $section->videos()->whereKey($videoId)->exists()) {
+                    $skipped[] = ['id' => $videoId, 'reason' => 'Not attached'];
+
+                    continue;
+                }
+
+                $this->structureService->detachVideo($section, $video, $admin);
+                $detached[] = $videoId;
+            } catch (Throwable $e) {
+                $failed[] = ['id' => $videoId, 'reason' => $e->getMessage()];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => sprintf('%d video(s) detached successfully', count($detached)),
+            'data' => [
+                'detached' => count($detached),
+                'skipped' => count($skipped),
+                'failed' => count($failed),
+                'details' => [
+                    'detached_ids' => $detached,
+                    'skipped' => $skipped,
+                    'failed' => $failed,
+                ],
+            ],
         ]);
     }
 

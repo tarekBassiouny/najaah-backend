@@ -301,22 +301,12 @@ class StudentController extends Controller
         /** @var array{status:int,student_ids:array<int,int>} $data */
         $data = $request->validated();
         $requestedIds = array_values(array_unique(array_map('intval', $data['student_ids'])));
-        $allowedIds = User::query()
-            ->where('is_student', true)
-            ->where('center_id', (int) $center->id)
-            ->whereIn('id', $requestedIds)
-            ->pluck('id')
-            ->map(static fn ($id): int => (int) $id)
-            ->all();
-        $rejectedIds = array_values(array_diff($requestedIds, $allowedIds));
-
-        $result = $this->studentService->bulkUpdateStatus($admin, (int) $data['status'], $allowedIds);
-        foreach ($rejectedIds as $rejectedId) {
-            $result['failed'][] = [
-                'student_id' => $rejectedId,
-                'reason' => 'Student not found.',
-            ];
-        }
+        $result = $this->studentService->bulkUpdateStatusForCenter(
+            $admin,
+            $center,
+            (int) $data['status'],
+            $requestedIds
+        );
 
         return response()->json([
             'success' => true,
