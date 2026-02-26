@@ -78,7 +78,7 @@ it('prevents assigning system survey to course in branded center', function (): 
 
 it('assigns center survey to course within same center', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
 
@@ -98,7 +98,7 @@ it('assigns center survey to course within same center', function (): void {
 
 it('rejects section assignment type', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create();
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
@@ -114,8 +114,8 @@ it('rejects section assignment type', function (): void {
 
 it('prevents cross-center assignment', function (): void {
     $this->asAdmin();
-    $center1 = Center::factory()->create();
-    $center2 = Center::factory()->create();
+    $center1 = Center::factory()->create(['type' => CenterType::Branded]);
+    $center2 = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center1)->create();
     $course = Course::factory()->create(['center_id' => $center2->id]);
 
@@ -136,7 +136,7 @@ it('prevents cross-center assignment', function (): void {
 
 it('assigns multiple entities at once', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create();
     $course1 = Course::factory()->create(['center_id' => $center->id]);
     $course2 = Course::factory()->create(['center_id' => $center->id]);
@@ -154,7 +154,7 @@ it('assigns multiple entities at once', function (): void {
 
 it('prevents duplicate assignments', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
 
@@ -190,7 +190,7 @@ it('rejects assignment to non-existent entity', function (): void {
 
 it('rejects assigning center-scoped survey by center type', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create();
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
@@ -211,8 +211,8 @@ it('rejects assigning center-scoped survey by center type', function (): void {
 
 it('rejects assigning center survey to a different center', function (): void {
     $this->asAdmin();
-    $center1 = Center::factory()->create();
-    $center2 = Center::factory()->create();
+    $center1 = Center::factory()->create(['type' => CenterType::Branded]);
+    $center2 = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center1)->create();
 
     $response = $this->postJson("/api/v1/admin/centers/{$center1->id}/surveys/{$survey->id}/assign", [
@@ -264,7 +264,7 @@ it('returns warning when assigned course already has an active survey', function
 
 it('assigns center survey to multiple specific students', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create();
     $studentA = User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
     $studentB = User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
@@ -293,7 +293,7 @@ it('assigns center survey to multiple specific students', function (): void {
 
 it('rejects assigning survey directly to non-student user', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create();
     $adminLikeUser = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
 
@@ -315,8 +315,8 @@ it('rejects assigning survey directly to non-student user', function (): void {
 
 it('rejects assigning center survey to student from different center', function (): void {
     $this->asAdmin();
-    $centerA = Center::factory()->create();
-    $centerB = Center::factory()->create();
+    $centerA = Center::factory()->create(['type' => CenterType::Branded]);
+    $centerB = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($centerA)->create();
     $student = User::factory()->create(['is_student' => true, 'center_id' => $centerB->id]);
 
@@ -387,11 +387,11 @@ it('rejects assigning system survey to student with center', function (): void {
 
 it('supports all assignment in center assign endpoint without id', function (): void {
     $this->asAdmin();
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $survey = Survey::factory()->center($center)->create();
     User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
     User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
-    User::factory()->create(['is_student' => true, 'center_id' => Center::factory()->create()->id]);
+    User::factory()->create(['is_student' => true, 'center_id' => Center::factory()->create(['type' => CenterType::Branded])->id]);
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
@@ -400,17 +400,22 @@ it('supports all assignment in center assign endpoint without id', function (): 
     ], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
-    expect(SurveyAssignment::where('survey_id', $survey->id)->count())->toBe(2);
+    expect(SurveyAssignment::where('survey_id', $survey->id)->count())->toBe(1);
+    $this->assertDatabaseHas('survey_assignments', [
+        'survey_id' => $survey->id,
+        'assignable_type' => SurveyAssignableType::All->value,
+        'assignable_id' => 0,
+    ]);
 });
 
 it('supports all assignment in system assign endpoint and targets only students without center', function (): void {
     $this->asAdmin();
     $survey = Survey::factory()->system()->create();
-    $nullCenterA = User::factory()->create(['is_student' => true, 'center_id' => null]);
-    $nullCenterB = User::factory()->create(['is_student' => true, 'center_id' => null]);
-    $centerStudent = User::factory()->create([
+    User::factory()->create(['is_student' => true, 'center_id' => null]);
+    User::factory()->create(['is_student' => true, 'center_id' => null]);
+    User::factory()->create([
         'is_student' => true,
-        'center_id' => Center::factory()->create()->id,
+        'center_id' => Center::factory()->create(['type' => CenterType::Branded])->id,
     ]);
 
     $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
@@ -424,16 +429,25 @@ it('supports all assignment in system assign endpoint and targets only students 
     $this->assertDatabaseHas('survey_assignments', [
         'survey_id' => $survey->id,
         'assignable_type' => SurveyAssignableType::All->value,
-        'assignable_id' => $nullCenterA->id,
+        'assignable_id' => 0,
     ]);
-    $this->assertDatabaseHas('survey_assignments', [
-        'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::All->value,
-        'assignable_id' => $nullCenterB->id,
-    ]);
-    $this->assertDatabaseMissing('survey_assignments', [
-        'survey_id' => $survey->id,
-        'assignable_type' => SurveyAssignableType::All->value,
-        'assignable_id' => $centerStudent->id,
-    ]);
+    expect(SurveyAssignment::where('survey_id', $survey->id)->count())->toBe(1);
+});
+
+it('rejects assigning center survey for unbranded center', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create(['type' => CenterType::Unbranded]);
+    $survey = Survey::factory()->center($center)->create();
+    $student = User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
+        'assignments' => [
+            ['type' => SurveyAssignableType::User->value, 'id' => $student->id],
+        ],
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.message', 'Center surveys are allowed only for branded centers.');
 });
