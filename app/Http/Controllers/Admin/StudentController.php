@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\Students\StoreStudentRequest;
 use App\Http\Requests\Admin\Students\UpdateStudentRequest;
 use App\Http\Resources\Admin\Users\StudentResource;
 use App\Models\Center;
+use App\Models\Pivots\UserCenter;
 use App\Models\User;
 use App\Services\Admin\StudentQueryService;
 use App\Services\Analytics\AnalyticsStudentListSummaryService;
@@ -391,7 +392,7 @@ class StudentController extends Controller
             ], 401);
         }
 
-        $this->studentService->delete($user, $admin);
+        $this->studentService->deleteFromCenter($user, $center, $admin);
 
         return response()->json([
             'success' => true,
@@ -401,7 +402,13 @@ class StudentController extends Controller
 
     private function assertStudentBelongsToCenter(Center $center, User $user): void
     {
-        if ((int) $user->center_id !== (int) $center->id) {
+        $belongsToCenter = UserCenter::query()
+            ->where('user_id', (int) $user->id)
+            ->where('center_id', (int) $center->id)
+            ->where('type', 'student')
+            ->exists();
+
+        if (! $belongsToCenter) {
             throw new HttpResponseException(response()->json([
                 'success' => false,
                 'error' => [

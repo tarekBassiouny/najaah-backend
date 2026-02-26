@@ -563,3 +563,95 @@ it('allows updating inactive students', function (): void {
         ->assertJsonPath('data.name', 'Reactivated Student')
         ->assertJsonPath('data.status', \App\Enums\UserStatus::Active->value);
 });
+
+it('detaches unbranded student from center route without deleting user record', function (): void {
+    $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
+        'description' => 'Permission: student.manage',
+    ]);
+    $role = Role::factory()->create(['slug' => 'student_admin']);
+    $role->permissions()->sync([$permission->id]);
+
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Unbranded->value]);
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $center->id,
+    ]);
+    $admin->roles()->sync([$role->id]);
+    $admin->centers()->sync([$center->id => ['type' => 'admin']]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+        'phone' => '19990000071',
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $token = (string) Auth::guard('admin')->attempt([
+        'email' => $admin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/students/{$student->id}", [], [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
+
+    $this->assertDatabaseHas('users', [
+        'id' => $student->id,
+        'deleted_at' => null,
+    ]);
+    $this->assertSoftDeleted('user_centers', [
+        'user_id' => $student->id,
+        'center_id' => $center->id,
+        'type' => 'student',
+    ]);
+});
+
+it('deletes branded student from center route', function (): void {
+    $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
+        'description' => 'Permission: student.manage',
+    ]);
+    $role = Role::factory()->create(['slug' => 'student_admin']);
+    $role->permissions()->sync([$permission->id]);
+
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Branded->value]);
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $center->id,
+    ]);
+    $admin->roles()->sync([$role->id]);
+    $admin->centers()->sync([$center->id => ['type' => 'admin']]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'phone' => '19990000072',
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $token = (string) Auth::guard('admin')->attempt([
+        'email' => $admin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/students/{$student->id}", [], [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data', null);
+
+    $this->assertSoftDeleted('users', ['id' => $student->id]);
+});

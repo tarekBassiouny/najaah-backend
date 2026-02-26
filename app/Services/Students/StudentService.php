@@ -217,6 +217,44 @@ class StudentService
         $user->delete();
     }
 
+    public function deleteFromCenter(User $student, Center $center, ?User $actor = null): void
+    {
+        if (! $student->is_student) {
+            throw new \App\Exceptions\DomainException(
+                'User is not a student.',
+                ErrorCodes::NOT_STUDENT,
+                422
+            );
+        }
+
+        if ($actor instanceof User) {
+            $this->centerScopeService->assertAdminCenterId($actor, (int) $center->id);
+        }
+
+        $association = UserCenter::query()
+            ->where('user_id', (int) $student->id)
+            ->where('center_id', (int) $center->id)
+            ->where('type', 'student')
+            ->first();
+
+        if (! $association instanceof UserCenter) {
+            throw new \App\Exceptions\NotFoundException('Student not found.', 404);
+        }
+
+        if (is_numeric($student->center_id) && (int) $student->center_id === (int) $center->id) {
+            $this->auditLogService->log($actor, $student, AuditActions::STUDENT_DELETED);
+            $student->delete();
+
+            return;
+        }
+
+        $association->delete();
+
+        $this->auditLogService->log($actor, $student, AuditActions::STUDENT_UPDATED, [
+            'detached_center_id' => (int) $center->id,
+        ]);
+    }
+
     private function attachStudentToCenter(User $student, int $centerId): void
     {
         $center = Center::query()->find($centerId);

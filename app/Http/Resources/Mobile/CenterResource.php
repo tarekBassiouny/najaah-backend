@@ -30,6 +30,11 @@ class CenterResource extends JsonResource
             'description' => $center->translate('description'),
             'logo_url' => $center->logo_url,
             'theme' => $center->setting?->settings['theme'] ?? null,
+            'courses' => CenterListCourseResource::collection($this->whenLoaded('coursesPreview')),
+            'courses_meta' => $this->when(
+                $center->offsetExists('courses_meta'),
+                fn (): mixed => $center->getAttribute('courses_meta')
+            ),
         ];
     }
 }
