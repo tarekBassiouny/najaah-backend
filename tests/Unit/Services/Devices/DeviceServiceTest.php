@@ -18,10 +18,14 @@ test('register creates new device', function (): void {
     $service = app(DeviceService::class);
     $device = $service->register($user, 'device-123', [
         'device_name' => 'iPhone',
+        'device_type' => 'iPhone 14',
         'device_os' => 'iOS',
     ]);
 
-    expect($device)->toBeInstanceOf(UserDevice::class);
+    expect($device)->toBeInstanceOf(UserDevice::class)
+        ->and($device->device_name)->toBe('iPhone')
+        ->and($device->device_type)->toBe('iPhone 14')
+        ->and($device->model)->toBe('iPhone 14');
 });
 
 test('register updates existing device', function (): void {
@@ -39,10 +43,14 @@ test('register updates existing device', function (): void {
     $service = app(DeviceService::class);
     $device = $service->register($user, 'device-123', [
         'device_name' => 'New Name',
+        'device_type' => 'New Type',
         'device_os' => 'NewOS',
     ]);
 
-    expect($device->is($existing))->toBeTrue();
+    expect($device->is($existing))->toBeTrue()
+        ->and($device->device_name)->toBe('New Name')
+        ->and($device->device_type)->toBe('New Type')
+        ->and($device->model)->toBe('New Type');
 });
 
 test('handleReinstall detects same device with different uuid', function (): void {

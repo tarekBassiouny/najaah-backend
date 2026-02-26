@@ -43,6 +43,10 @@ class SurveyAssignmentResource extends JsonResource
      */
     private function getAssignableData(SurveyAssignment $assignment): array
     {
+        if ($assignment->assignable_type === SurveyAssignableType::All) {
+            return ['name' => SurveyAssignableType::All->label()];
+        }
+
         $model = $assignment->assignable_model;
 
         if ($model === null) {
@@ -53,7 +57,7 @@ class SurveyAssignmentResource extends JsonResource
             SurveyAssignableType::Center => $model instanceof Center ? $model->translate('name') : null,
             SurveyAssignableType::Course => $model instanceof Course ? $model->translate('title') : null,
             SurveyAssignableType::Video => $model instanceof Video ? $model->translate('title') : null,
-            SurveyAssignableType::User, SurveyAssignableType::All => $model instanceof User ? ($model->name ?? $model->email) : null,
+            SurveyAssignableType::User => $model instanceof User ? ($model->name ?? $model->email) : null,
         };
 
         return ['name' => $name];

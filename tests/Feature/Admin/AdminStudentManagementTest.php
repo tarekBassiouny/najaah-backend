@@ -39,8 +39,7 @@ it('denies student access without permission', function (): void {
 it('allows super admin to create and delete students', function (): void {
     $this->asAdmin();
 
-    // Use branded center to test immediate user_centers association
-    // (unbranded centers only get association on enrollment)
+    // Use branded center to test immediate user_centers association.
     $center = Center::factory()->create(['type' => \App\Enums\CenterType::Branded->value]);
 
     $create = $this->postJson('/api/v1/admin/students', [
@@ -75,6 +74,104 @@ it('allows super admin to create and delete students', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data', null);
     $this->assertSoftDeleted('users', ['id' => $studentId]);
+});
+
+it('attaches existing system student to unbranded center without creating duplicate user', function (): void {
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Unbranded->value]);
+    $this->asCenterAdmin($center);
+    $student = User::factory()->create([
+        'name' => 'Existing System Student',
+        'is_student' => true,
+        'center_id' => null,
+        'phone' => '1225291901',
+        'country_code' => '+20',
+        'email' => 'existing.system.student@example.com',
+    ]);
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/students", [
+        'name' => 'Should Not Duplicate',
+        'email' => 'new.email@example.com',
+        'phone' => '1225291901',
+        'country_code' => '+20',
+    ], $this->adminHeaders());
+
+    $response->assertCreated()
+        ->assertJsonPath('data.id', $student->id)
+        ->assertJsonPath('data.center_id', null);
+
+    expect(User::query()
+        ->where('is_student', true)
+        ->where('phone', '1225291901')
+        ->where('country_code', '+20')
+        ->count())->toBe(1);
+
+    $this->assertDatabaseHas('user_centers', [
+        'user_id' => $student->id,
+        'center_id' => $center->id,
+        'type' => 'student',
+    ]);
+});
+
+it('creates system student then attaches to unbranded center when student does not exist', function (): void {
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Unbranded->value]);
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/students", [
+        'name' => 'New System Student',
+        'email' => 'new.system.student@example.com',
+        'phone' => '1225291902',
+        'country_code' => '+20',
+    ], $this->adminHeaders());
+
+    $response->assertCreated()
+        ->assertJsonPath('data.name', 'New System Student')
+        ->assertJsonPath('data.center_id', null);
+
+    $studentId = (int) $response->json('data.id');
+
+    $this->assertDatabaseHas('users', [
+        'id' => $studentId,
+        'is_student' => true,
+        'center_id' => null,
+        'phone' => '1225291902',
+    ]);
+
+    $this->assertDatabaseHas('user_centers', [
+        'user_id' => $studentId,
+        'center_id' => $center->id,
+        'type' => 'student',
+    ]);
+});
+
+it('creates center-bound student for branded center route', function (): void {
+    $center = Center::factory()->create(['type' => \App\Enums\CenterType::Branded->value]);
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/students", [
+        'name' => 'Branded Center Student',
+        'email' => 'branded.center.student@example.com',
+        'phone' => '1225291903',
+        'country_code' => '+20',
+    ], $this->adminHeaders());
+
+    $response->assertCreated()
+        ->assertJsonPath('data.name', 'Branded Center Student')
+        ->assertJsonPath('data.center_id', $center->id);
+
+    $studentId = (int) $response->json('data.id');
+
+    $this->assertDatabaseHas('users', [
+        'id' => $studentId,
+        'is_student' => true,
+        'center_id' => $center->id,
+        'phone' => '1225291903',
+    ]);
+
+    $this->assertDatabaseHas('user_centers', [
+        'user_id' => $studentId,
+        'center_id' => $center->id,
+        'type' => 'student',
+    ]);
 });
 
 it('validates student phone as base number and country code format', function (): void {

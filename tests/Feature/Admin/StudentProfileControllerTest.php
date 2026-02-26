@@ -60,6 +60,8 @@ it('returns student profile with courses and videos', function (): void {
     $device = UserDevice::factory()->create([
         'user_id' => $student->id,
         'status' => UserDeviceStatus::Active->value,
+        'device_name' => 'Galaxy Phone',
+        'device_type' => 'Android',
         'model' => 'Samsung Galaxy S24',
         'device_id' => 'CTR-4-STD-8',
         'last_used_at' => now()->subHour(),
@@ -127,7 +129,16 @@ it('returns student profile with courses and videos', function (): void {
                 'status_label',
                 'last_activity_at',
                 'active_device' => [
+                    'id',
+                    'device_name',
+                    'device_type',
                     'model',
+                    'os_version',
+                    'status',
+                    'status_key',
+                    'status_label',
+                    'approved_at',
+                    'last_used_at',
                     'device_id',
                 ],
                 'total_enrollments',
@@ -175,6 +186,8 @@ it('returns student profile with courses and videos', function (): void {
     // Check new stats card fields
     expect($response->json('data.active_device.model'))->toBe('Samsung Galaxy S24');
     expect($response->json('data.active_device.device_id'))->toBe('CTR-4-STD-8');
+    expect($response->json('data.active_device.device_name'))->toBe('Galaxy Phone');
+    expect($response->json('data.active_device.device_type'))->toBe('Android');
     expect($response->json('data.total_enrollments'))->toBe(1);
     expect($response->json('data.device_changes_count'))->toBe(1);
     expect($response->json('data.device_change_log.0.device_name'))->toBe('iPhone 14 Pro');
