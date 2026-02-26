@@ -77,6 +77,7 @@ Route::middleware('jwt.mobile')->group(function (): void {
     Route::middleware('ensure.unbranded.student')->group(function (): void {
         Route::get('/centers', [CentersController::class, 'index']);
         Route::get('/centers/{center}', [CentersController::class, 'show']);
+        Route::get('/centers/{center}/categories', [CategoryController::class, 'centerIndex']);
     });
 
     /*

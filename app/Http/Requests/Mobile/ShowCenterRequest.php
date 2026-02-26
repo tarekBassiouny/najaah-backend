@@ -19,6 +19,8 @@ class ShowCenterRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'is_featured' => ['sometimes', 'boolean'],
+            'category_id' => ['sometimes', 'integer'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
         ];
@@ -34,6 +36,26 @@ class ShowCenterRequest extends FormRequest
         return (int) ($this->validated('page') ?? 1);
     }
 
+    public function isFeatured(): ?bool
+    {
+        $value = $this->validated('is_featured');
+        if ($value === null) {
+            return null;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    }
+
+    public function categoryId(): ?int
+    {
+        $value = $this->validated('category_id');
+        if (! is_numeric($value)) {
+            return null;
+        }
+
+        return (int) $value;
+    }
+
     /**
      * @return array<string, array<string, string>>
      */
@@ -47,6 +69,14 @@ class ShowCenterRequest extends FormRequest
             'page' => [
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
+            ],
+            'is_featured' => [
+                'description' => 'Filter center courses by featured status.',
+                'example' => '1',
+            ],
+            'category_id' => [
+                'description' => 'Filter center courses by category ID.',
+                'example' => '3',
             ],
         ];
     }

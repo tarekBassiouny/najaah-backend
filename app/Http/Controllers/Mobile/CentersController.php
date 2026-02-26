@@ -10,6 +10,7 @@ use App\Http\Requests\Mobile\ShowCenterRequest;
 use App\Http\Resources\Mobile\CenterResource;
 use App\Http\Resources\Mobile\ExploreCourseResource;
 use App\Models\Center;
+use App\Models\User;
 use App\Services\Centers\CenterService;
 use Illuminate\Http\JsonResponse;
 
@@ -19,8 +20,19 @@ class CentersController extends Controller
 
     public function index(ListCentersRequest $request): JsonResponse
     {
+        $student = $request->user();
+        if (! $student instanceof User || $student->is_student === false) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Only students can access centers.',
+                ],
+            ], 403);
+        }
+
         $filters = $request->filters();
-        $paginator = $this->centerService->listUnbranded($filters);
+        $paginator = $this->centerService->listUnbranded($student, $filters);
 
         return response()->json([
             'success' => true,
@@ -36,8 +48,23 @@ class CentersController extends Controller
     public function show(ShowCenterRequest $request, Center $center): JsonResponse
     {
         $student = $request->user();
+        if (! $student instanceof User || $student->is_student === false) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Only students can access centers.',
+                ],
+            ], 403);
+        }
 
-        $result = $this->centerService->showWithCourses($student, $center, $request->perPage());
+        $result = $this->centerService->showWithCourses(
+            $student,
+            $center,
+            $request->perPage(),
+            $request->categoryId(),
+            $request->isFeatured()
+        );
         $courses = $result['courses'];
 
         return response()->json([
