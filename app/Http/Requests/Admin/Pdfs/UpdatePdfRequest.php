@@ -25,6 +25,8 @@ class UpdatePdfRequest extends FormRequest
             'description_translations' => ['sometimes', 'nullable', 'array'],
             'description_translations.en' => ['nullable', 'string'],
             'description_translations.ar' => ['nullable', 'string'],
+            'tags' => ['sometimes', 'array'],
+            'tags.*' => ['string', 'max:255'],
             'center_id' => ['prohibited'],
             'source_id' => ['prohibited'],
             'source_url' => ['prohibited'],
@@ -57,6 +59,10 @@ class UpdatePdfRequest extends FormRequest
             'description_translations' => [
                 'description' => 'PDF description translations object.',
                 'example' => ['en' => 'Updated description', 'ar' => 'الوصف المحدث'],
+            ],
+            'tags' => [
+                'description' => 'Optional tags array.',
+                'example' => ['notes', 'updated'],
             ],
         ];
     }

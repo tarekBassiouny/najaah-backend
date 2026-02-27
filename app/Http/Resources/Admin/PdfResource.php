@@ -30,6 +30,7 @@ class PdfResource extends JsonResource
             'title_translations' => $pdf->title_translations,
             'description' => $pdf->translate('description'),
             'description_translations' => $pdf->description_translations,
+            'tags' => $pdf->tags,
             'source_type' => $pdf->source_type,
             'source_provider' => $pdf->source_provider,
             'source_id' => $pdf->source_id,
@@ -38,6 +39,7 @@ class PdfResource extends JsonResource
             'file_size_kb' => $pdf->file_size_kb,
             'creator' => new UserSummaryResource($this->whenLoaded('creator')),
             'created_at' => $pdf->created_at,
+            'updated_at' => $pdf->updated_at,
             'upload_status' => $this->when(
                 $this->relationLoaded('uploadSession'),
                 fn () => $pdf->uploadSession?->upload_status?->value

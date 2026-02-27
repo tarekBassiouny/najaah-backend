@@ -25,6 +25,8 @@ class StorePdfRequest extends FormRequest
             'description_translations' => ['nullable', 'array'],
             'description_translations.en' => ['nullable', 'string'],
             'description_translations.ar' => ['nullable', 'string'],
+            'tags' => ['sometimes', 'array'],
+            'tags.*' => ['string', 'max:255'],
             'upload_session_id' => ['sometimes', 'integer', 'exists:pdf_upload_sessions,id'],
             'source_id' => ['required_without:upload_session_id', 'string', 'max:2048'],
             'source_url' => ['sometimes', 'nullable', 'string', 'max:2048'],
@@ -54,6 +56,10 @@ class StorePdfRequest extends FormRequest
             'description_translations' => [
                 'description' => 'PDF description translations object.',
                 'example' => ['en' => 'Downloadable notes.', 'ar' => 'ملاحظات قابلة للتنزيل.'],
+            ],
+            'tags' => [
+                'description' => 'Optional tags array.',
+                'example' => ['notes', 'module-1'],
             ],
             'upload_session_id' => [
                 'description' => 'Upload session ID used to finalize the PDF.',

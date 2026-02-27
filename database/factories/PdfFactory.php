@@ -30,6 +30,9 @@ class PdfFactory extends Factory
                 'en' => 'PDF description',
                 'ar' => 'وصف الملف',
             ],
+            'tags' => [
+                'type' => 'notes',
+            ],
 
             'source_type' => MediaSourceType::Upload,
             'source_provider' => 's3',

@@ -46,18 +46,23 @@ it('creates pdf from upload session', function (): void {
         [
             'title_translations' => ['en' => 'Doc', 'ar' => 'مستند'],
             'description_translations' => ['en' => 'Sample', 'ar' => 'نموذج'],
+            'tags' => ['notes', 'starter'],
             'upload_session_id' => $session->id,
         ],
         $this->adminHeaders()
     );
 
-    $response->assertCreated()->assertJsonPath('data.title', 'Doc');
+    $response->assertCreated()
+        ->assertJsonPath('data.title', 'Doc')
+        ->assertJsonPath('data.tags.0', 'notes')
+        ->assertJsonPath('data.tags.1', 'starter');
 
     $pdf = Pdf::first();
     expect($pdf)->not->toBeNull()
         ->and($pdf?->source_type)->toBe(MediaSourceType::Upload)
         ->and($pdf?->source_provider)->toBe('spaces')
-        ->and($pdf?->source_id)->toBe($session->object_key);
+        ->and($pdf?->source_id)->toBe($session->object_key)
+        ->and($pdf?->tags)->toBe(['notes', 'starter']);
 });
 
 it('fails finalize when uploaded object is missing', function (): void {

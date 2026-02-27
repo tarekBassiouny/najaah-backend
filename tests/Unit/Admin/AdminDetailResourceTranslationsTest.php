@@ -79,6 +79,7 @@ it('returns localized and raw translations for pdf resource', function (): void 
             'en' => 'PDF description',
             'ar' => 'وصف الملف',
         ],
+        'tags' => ['notes', 'handout'],
     ]);
 
     $payload = (new PdfResource($pdf))
@@ -89,5 +90,6 @@ it('returns localized and raw translations for pdf resource', function (): void 
         ->and(data_get($payload, 'title_translations.ar'))->toBe('الملف الأول')
         ->and($payload['description'])->toBe('وصف الملف')
         ->and(data_get($payload, 'description_translations.en'))->toBe('PDF description')
-        ->and(data_get($payload, 'description_translations.ar'))->toBe('وصف الملف');
+        ->and(data_get($payload, 'description_translations.ar'))->toBe('وصف الملف')
+        ->and($payload['tags'])->toBe(['notes', 'handout']);
 });
