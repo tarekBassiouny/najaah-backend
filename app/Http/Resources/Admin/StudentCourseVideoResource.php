@@ -66,9 +66,13 @@ class StudentCourseVideoResource extends JsonResource
         return [
             'id' => $video->id,
             'title' => $video->title,
+            'tags' => $video->tags,
+            'duration_seconds' => $video->duration_seconds,
+            'thumbnail_url' => $video->thumbnail_url,
             'watch_count' => $watchCount,
             'watch_limit' => $watchLimit,
             'watch_progress_percentage' => (float) $progressPercent,
+            'updated_at' => $video->updated_at,
         ];
     }
 }

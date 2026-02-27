@@ -6,6 +6,6 @@ namespace App\Enums;
 
 enum MediaSourceType: int
 {
-    case Unknown = 0;
+    case Url = 0;
     case Upload = 1;
 }

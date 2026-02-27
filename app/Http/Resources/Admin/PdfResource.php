@@ -50,7 +50,7 @@ class PdfResource extends JsonResource
             'sections_count' => $this->whenCounted('sections'),
             'can_delete' => $this->when(
                 $request->routeIs('*.index') && isset($pdf->courses_count),
-                fn () => ($pdf->courses_count ?? 0) === 0
+                fn (): bool => ($pdf->courses_count ?? 0) === 0
             ),
         ];
     }

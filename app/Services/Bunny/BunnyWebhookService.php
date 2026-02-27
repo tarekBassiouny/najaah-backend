@@ -6,6 +6,7 @@ namespace App\Services\Bunny;
 
 use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
+use App\Jobs\FetchBunnyVideoMetadataJob;
 use App\Models\BunnyWebhookLog;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
@@ -133,6 +134,18 @@ class BunnyWebhookService
             foreach ($videos as $video) {
                 $this->applyVideoState($video, $mappedStatus);
             }
+
+            if ($mappedStatus === VideoUploadStatus::Ready && $videos->isNotEmpty()) {
+                FetchBunnyVideoMetadataJob::dispatch($videoGuid, $libraryId, (int) $session->center_id);
+
+                Log::channel('domain')->info('bunny_thumbnail_job_dispatched', [
+                    'video_guid' => $videoGuid,
+                    'library_id' => $libraryId,
+                    'center_id' => $session->center_id,
+                    'videos_count' => $videos->count(),
+                    'queue' => (string) config('bunny.metadata_queue', 'bunny'),
+                ]);
+            }
         } catch (\Throwable) {
             // Swallow all exceptions to keep webhook endpoint idempotent and stable
         }
@@ -193,6 +206,7 @@ class BunnyWebhookService
         $video->lifecycle_status = $status === VideoUploadStatus::Ready
             ? VideoLifecycleStatus::Ready
             : VideoLifecycleStatus::Processing;
+
         $video->save();
     }
 

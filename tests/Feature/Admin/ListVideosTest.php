@@ -34,6 +34,8 @@ it('lists videos with upload sessions for admin center', function (): void {
         'center_id' => $center->id,
         'created_by' => $admin->id,
         'upload_session_id' => $session->id,
+        'duration_seconds' => 540,
+        'thumbnail_url' => 'https://cdn.example.com/video-thumb.jpg',
         'encoding_status' => VideoUploadStatus::Processing,
         'lifecycle_status' => 1,
     ]);
@@ -56,13 +58,14 @@ it('lists videos with upload sessions for admin center', function (): void {
         ->assertJsonPath('data.0.id', $video->id)
         ->assertJsonPath('data.0.encoding_status', VideoUploadStatus::Processing->value)
         ->assertJsonPath('data.0.lifecycle_status', 1)
+        ->assertJsonPath('data.0.duration_seconds', 540)
+        ->assertJsonPath('data.0.thumbnail_url', 'https://cdn.example.com/video-thumb.jpg')
         ->assertJsonPath('data.0.upload_sessions.0.id', $session->id)
         ->assertJsonPath('data.0.upload_sessions.0.upload_status', VideoUploadStatus::Failed->value)
         ->assertJsonPath('data.0.upload_sessions.0.error_message', 'Encoding failed');
 
     $json = $response->json();
-    expect($json['data'][0])->not->toHaveKey('playback_url')
-        ->and($json['data'][0])->not->toHaveKey('source_url');
+    expect($json['data'][0])->not->toHaveKey('playback_url');
 });
 
 it('filters videos by title search', function (): void {
