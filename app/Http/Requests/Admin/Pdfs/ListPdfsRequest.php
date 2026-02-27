@@ -7,7 +7,6 @@ namespace App\Http\Requests\Admin\Pdfs;
 use App\Filters\Admin\PdfFilters;
 use App\Http\Requests\Admin\AdminListRequest;
 use App\Support\Filters\FilterInput;
-use Illuminate\Validation\Rule;
 
 class ListPdfsRequest extends AdminListRequest
 {
@@ -25,8 +24,8 @@ class ListPdfsRequest extends AdminListRequest
             'course_id' => ['sometimes', 'integer'],
             'search' => ['sometimes', 'string'],
             'q' => ['sometimes', 'string'],
-            'status' => ['sometimes', 'string', Rule::in(['0', '1', '2', '3', 'pending', 'uploading', 'ready', 'failed'])],
-            'source_type' => ['sometimes', 'string', Rule::in(['0', '1', 'url', 'upload'])],
+            'status' => ['sometimes', 'string', 'in:0,1,2,3,pending,uploading,ready,failed'],
+            'source_type' => ['sometimes', 'string', 'in:0,1,url,upload'],
             'source_provider' => ['sometimes', 'string', 'max:50'],
             'created_from' => ['sometimes', 'date'],
             'created_to' => ['sometimes', 'date'],
