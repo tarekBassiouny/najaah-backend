@@ -172,3 +172,118 @@ it('requires admin authentication', function (): void {
 
     $response->assertStatus(401);
 });
+
+it('filters videos by status, source type, and source provider', function (): void {
+    $center = Center::factory()->create();
+    $admin = $this->asCenterAdmin($center);
+
+    $match = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'title_translations' => ['en' => 'Matched video'],
+        'encoding_status' => VideoUploadStatus::Ready,
+        'source_type' => 1,
+        'source_provider' => 'bunny',
+    ]);
+
+    Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'title_translations' => ['en' => 'Wrong status'],
+        'encoding_status' => VideoUploadStatus::Processing,
+        'source_type' => 1,
+        'source_provider' => 'bunny',
+    ]);
+
+    Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'title_translations' => ['en' => 'Wrong type'],
+        'encoding_status' => VideoUploadStatus::Ready,
+        'source_type' => 0,
+        'source_provider' => 'youtube',
+    ]);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/videos?status=ready&source_type=upload&source_provider=bunny",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $match->id);
+});
+
+it('filters videos by created_at date range', function (): void {
+    $center = Center::factory()->create();
+    $admin = $this->asCenterAdmin($center);
+
+    $old = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'title_translations' => ['en' => 'Old video'],
+        'created_at' => '2026-01-10 10:00:00',
+    ]);
+
+    $new = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'title_translations' => ['en' => 'New video'],
+        'created_at' => '2026-02-20 10:00:00',
+    ]);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/videos?created_from=2026-02-01&created_to=2026-02-28",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $new->id);
+
+    expect((int) $old->id)->not->toBe((int) $new->id);
+});
+
+it('supports unified q search across title and tags', function (): void {
+    $center = Center::factory()->create();
+    $admin = $this->asCenterAdmin($center);
+
+    $titleMatch = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'title_translations' => ['en' => 'Physics Intro'],
+        'tags' => ['science', 'beginner'],
+    ]);
+
+    $tagsMatch = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'title_translations' => ['en' => 'General Lesson'],
+        'tags' => ['algebra', 'math'],
+    ]);
+
+    Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'title_translations' => ['en' => 'History'],
+        'tags' => ['culture'],
+    ]);
+
+    $titleResponse = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/videos?q=Physics",
+        $this->adminHeaders()
+    );
+
+    $titleResponse->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $titleMatch->id);
+
+    $tagsResponse = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/videos?q=math",
+        $this->adminHeaders()
+    );
+
+    $tagsResponse->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $tagsMatch->id);
+});

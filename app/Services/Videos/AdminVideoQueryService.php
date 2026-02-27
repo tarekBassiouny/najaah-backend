@@ -94,7 +94,35 @@ class AdminVideoQueryService implements AdminVideoQueryServiceInterface
             });
         }
 
-        if ($filters->search !== null) {
+        if ($filters->status !== null) {
+            $query->where('encoding_status', $filters->status);
+        }
+
+        if ($filters->sourceType !== null) {
+            $query->where('source_type', $filters->sourceType);
+        }
+
+        if ($filters->sourceProvider !== null) {
+            $query->where('source_provider', strtolower($filters->sourceProvider));
+        }
+
+        if ($filters->createdFrom !== null) {
+            $query->whereDate('created_at', '>=', $filters->createdFrom);
+        }
+
+        if ($filters->createdTo !== null) {
+            $query->whereDate('created_at', '<=', $filters->createdTo);
+        }
+
+        if ($filters->query !== null) {
+            $search = $filters->query;
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->whereTranslationLike(['title'], $search, ['en', 'ar'])
+                    ->orWhereJsonContains('tags', $search);
+            });
+        }
+
+        if ($filters->query === null && $filters->search !== null) {
             $query->whereTranslationLike(
                 ['title'],
                 $filters->search,
