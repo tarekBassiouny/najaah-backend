@@ -333,6 +333,75 @@ test('verify binds new user to center when using center api key', function (): v
     ]);
 });
 
+test('verify reuses existing branded student when otp user_id is null', function (): void {
+    $center = Center::factory()->create(['api_key' => 'center-key-dup']);
+    $student = User::factory()->create([
+        'phone' => '1225291842',
+        'country_code' => '+2',
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => null,
+        'phone' => '1225291842',
+        'country_code' => '+2',
+        'otp_code' => '123456',
+        'otp_token' => 'token-existing-branded',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-existing-branded',
+        'device_uuid' => 'device-existing-branded',
+    ], [
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.id', $student->id);
+
+    expect(User::query()
+        ->where('is_student', true)
+        ->where('center_id', $center->id)
+        ->where('phone', '1225291842')
+        ->count())->toBe(1);
+});
+
+test('verify reuses existing unbranded student when otp user_id is null', function (): void {
+    $student = User::factory()->create([
+        'phone' => '1555555555',
+        'country_code' => '+2',
+        'is_student' => true,
+        'center_id' => null,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => null,
+        'phone' => '1555555555',
+        'country_code' => '+2',
+        'otp_code' => '123456',
+        'otp_token' => 'token-existing-unbranded',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-existing-unbranded',
+        'device_uuid' => 'device-existing-unbranded',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.id', $student->id);
+
+    expect(User::query()
+        ->where('is_student', true)
+        ->whereNull('center_id')
+        ->where('phone', '1555555555')
+        ->count())->toBe(1);
+});
+
 test('verify issues tokens using login action', function (): void {
     /** @var User $user */
     $user = User::factory()->create();

@@ -28,7 +28,8 @@ class AdminPdfQueryService implements AdminPdfQueryServiceInterface
 
         $query = Pdf::query()
             ->where('center_id', $center->id)
-            ->with(['creator'])
+            ->with(['creator', 'uploadSession'])
+            ->withCount(['courses', 'sections'])
             ->orderByDesc('created_at');
 
         $query = $this->applyFilters($query, $filters);
@@ -54,12 +55,46 @@ class AdminPdfQueryService implements AdminPdfQueryServiceInterface
             });
         }
 
-        if ($filters->search !== null) {
-            $query->whereTranslationLike(
-                ['title'],
-                $filters->search,
-                ['en', 'ar']
-            );
+        if ($filters->status !== null) {
+            $status = $filters->status;
+            $query->whereHas('uploadSession', static function (Builder $builder) use ($status): void {
+                $builder->where('upload_status', $status);
+            });
+        }
+
+        if ($filters->sourceType !== null) {
+            $query->where('source_type', $filters->sourceType);
+        }
+
+        if ($filters->sourceProvider !== null) {
+            $query->where('source_provider', strtolower($filters->sourceProvider));
+        }
+
+        if ($filters->createdFrom !== null) {
+            $query->whereDate('created_at', '>=', $filters->createdFrom);
+        }
+
+        if ($filters->createdTo !== null) {
+            $query->whereDate('created_at', '<=', $filters->createdTo);
+        }
+
+        if ($filters->query !== null) {
+            $search = '%'.$filters->query.'%';
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('title_translations->en', 'like', $search)
+                    ->orWhere('title_translations->ar', 'like', $search)
+                    ->orWhere('description_translations->en', 'like', $search)
+                    ->orWhere('description_translations->ar', 'like', $search)
+                    ->orWhere('source_id', 'like', $search);
+            });
+        }
+
+        if ($filters->query === null && $filters->search !== null) {
+            $search = '%'.$filters->search.'%';
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('title_translations->en', 'like', $search)
+                    ->orWhere('title_translations->ar', 'like', $search);
+            });
         }
 
         return $query;

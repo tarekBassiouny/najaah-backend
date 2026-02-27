@@ -15,4 +15,6 @@ return [
     ],
     'embed_key' => env('BUNNY_EMBED_KEY'),
     'embed_token_ttl' => env('BUNNY_EMBED_TOKEN_TTL', 240),
+    'thumbnail_base_url' => env('BUNNY_THUMBNAIL_BASE_URL'),
+    'metadata_queue' => env('BUNNY_METADATA_QUEUE', 'bunny'),
 ];

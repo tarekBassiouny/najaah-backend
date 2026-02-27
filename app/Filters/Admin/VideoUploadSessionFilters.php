@@ -10,6 +10,7 @@ class VideoUploadSessionFilters
         public readonly int $page,
         public readonly int $perPage,
         public readonly ?int $status,
-        public readonly ?int $centerId
+        public readonly ?int $centerId,
+        public readonly ?string $statusKey = null
     ) {}
 }

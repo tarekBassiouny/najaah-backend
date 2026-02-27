@@ -35,16 +35,34 @@ class VideoService implements VideoServiceInterface
         RejectNonScalarInput::validate($data, ['title', 'description']);
 
         $payload = $data;
-        $payload['title_translations'] = $data['title'] ?? '';
-        $payload['description_translations'] = $data['description'] ?? null;
-        unset($payload['title'], $payload['description']);
+        if (array_key_exists('title', $payload)) {
+            $payload['title_translations'] = $payload['title'];
+            unset($payload['title']);
+        }
+
+        if (array_key_exists('description', $payload)) {
+            $payload['description_translations'] = $payload['description'];
+            unset($payload['description']);
+        }
+
+        $sourceType = $this->resolveSourceType($payload);
 
         $payload['center_id'] = $center->id;
         $payload['created_by'] = $admin->id;
-        $payload['source_type'] = $payload['source_type'] ?? MediaSourceType::Upload;
-        $payload['source_provider'] = $payload['source_provider'] ?? 'bunny';
-        $payload['encoding_status'] = VideoUploadStatus::Pending;
-        $payload['lifecycle_status'] = VideoLifecycleStatus::Pending;
+        $payload['source_type'] = $sourceType;
+
+        if ($sourceType === MediaSourceType::Url) {
+            $payload['source_provider'] = $this->resolveUrlProvider($payload);
+            $payload['encoding_status'] = VideoUploadStatus::Ready;
+            $payload['lifecycle_status'] = VideoLifecycleStatus::Ready;
+            $payload['upload_session_id'] = null;
+            $payload['source_id'] = null;
+        } else {
+            $payload['source_provider'] = $payload['source_provider'] ?? 'bunny';
+            $payload['encoding_status'] = VideoUploadStatus::Pending;
+            $payload['lifecycle_status'] = VideoLifecycleStatus::Pending;
+            $payload['source_url'] = null;
+        }
 
         $video = Video::create($payload);
 
@@ -83,6 +101,53 @@ class VideoService implements VideoServiceInterface
         ]);
 
         return $video->fresh(['uploadSession', 'creator']) ?? $video;
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function resolveSourceType(array $payload): MediaSourceType
+    {
+        $input = $payload['source_type'] ?? null;
+
+        if ($input instanceof MediaSourceType) {
+            return $input;
+        }
+
+        if (is_string($input)) {
+            return strtolower($input) === 'url'
+                ? MediaSourceType::Url
+                : MediaSourceType::Upload;
+        }
+
+        return isset($payload['source_url']) && is_string($payload['source_url']) && $payload['source_url'] !== ''
+            ? MediaSourceType::Url
+            : MediaSourceType::Upload;
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function resolveUrlProvider(array $payload): string
+    {
+        if (isset($payload['source_provider']) && is_string($payload['source_provider']) && trim($payload['source_provider']) !== '') {
+            return strtolower(trim($payload['source_provider']));
+        }
+
+        $sourceUrl = isset($payload['source_url']) && is_string($payload['source_url'])
+            ? strtolower($payload['source_url'])
+            : '';
+
+        if ($sourceUrl === '') {
+            return 'custom';
+        }
+
+        return match (true) {
+            str_contains($sourceUrl, 'youtube.com'), str_contains($sourceUrl, 'youtu.be') => 'youtube',
+            str_contains($sourceUrl, 'vimeo.com') => 'vimeo',
+            str_contains($sourceUrl, 'zoom.us') => 'zoom',
+            default => 'custom',
+        };
     }
 
     public function delete(Video $video, User $admin): void

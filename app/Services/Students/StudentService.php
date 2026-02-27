@@ -199,6 +199,67 @@ class StudentService
         return $results;
     }
 
+    /**
+     * @param  array<int, int|string>  $studentIds
+     * @return array{
+     *   updated: array<int, User>,
+     *   skipped: array<int, int|string>,
+     *   failed: array<int, array{student_id: int|string, reason: string}>
+     * }
+     */
+    public function bulkUpdateStatusForCenter(User $admin, Center $center, int $status, array $studentIds): array
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, (int) $center->id);
+
+        $uniqueIds = array_values(array_unique(array_map('intval', $studentIds)));
+        $students = User::query()
+            ->where('is_student', true)
+            ->whereIn('id', $uniqueIds)
+            ->whereHas('centers', function ($query) use ($center): void {
+                $query->where('centers.id', (int) $center->id)
+                    ->where('user_centers.type', 'student');
+            })
+            ->get()
+            ->keyBy('id');
+
+        $results = [
+            'updated' => [],
+            'skipped' => [],
+            'failed' => [],
+        ];
+
+        foreach ($uniqueIds as $studentId) {
+            $student = $students->get($studentId);
+
+            if (! $student instanceof User) {
+                $results['failed'][] = [
+                    'student_id' => $studentId,
+                    'reason' => 'Student not found.',
+                ];
+
+                continue;
+            }
+
+            if ((int) $student->status === $status) {
+                $results['skipped'][] = $studentId;
+
+                continue;
+            }
+
+            $student->update(['status' => $status]);
+
+            $statusEnum = UserStatus::tryFrom($status);
+            $this->auditLogService->log($admin, $student, AuditActions::STUDENT_UPDATED, [
+                'status' => $status,
+                'status_label' => $statusEnum?->name,
+            ]);
+
+            $results['updated'][] = $student->refresh() ?? $student;
+        }
+
+        return $results;
+    }
+
     public function delete(User $user, ?User $actor = null): void
     {
         if (! $user->is_student) {

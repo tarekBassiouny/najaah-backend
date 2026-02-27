@@ -19,8 +19,8 @@ class UserSeeder extends Seeder
             throw new RuntimeException('Role "super_admin" is required before running UserSeeder.');
         }
 
-        $email = (string) env('SEED_ADMIN_EMAIL', 'admin@najaah.me');
-        $password = (string) env('SEED_ADMIN_PASSWORD', 'bBE^2u}MnizV');
+        $email = (string) env('SEED_ADMIN_EMAIL', 'admin@example.com');
+        $password = (string) env('SEED_ADMIN_PASSWORD', 'admin123');
         $phone = (string) env('SEED_ADMIN_PHONE', '1999000000');
         $countryCode = (string) env('SEED_ADMIN_COUNTRY_CODE', '+20');
 

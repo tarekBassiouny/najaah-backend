@@ -8,6 +8,7 @@ use App\Http\Controllers\Concerns\AdminAuthenticates;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Pdfs\FinalizePdfUploadSessionRequest;
 use App\Http\Requests\Admin\Pdfs\StorePdfUploadSessionRequest;
+use App\Http\Resources\Admin\PdfResource;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
@@ -84,6 +85,7 @@ class PdfUploadSessionController extends Controller
         );
 
         $pdfId = isset($data['pdf_id']) && is_numeric($data['pdf_id']) ? (int) $data['pdf_id'] : null;
+        $pdf = null;
 
         if ($pdfId !== null) {
             $pdf = Pdf::findOrFail($pdfId);
@@ -106,18 +108,23 @@ class PdfUploadSessionController extends Controller
                 'file_extension' => $session->file_extension,
                 'file_size_kb' => $session->file_size_kb,
             ]);
+            $pdf->refresh();
         } else {
             $payload = $data;
             $payload['upload_session_id'] = $session->id;
-            $this->pdfService->create($center, $admin, $payload);
+            $pdf = $this->pdfService->create($center, $admin, $payload);
         }
+
+        $pdf->load(['creator', 'center']);
 
         return response()->json([
             'success' => true,
+            'message' => 'PDF uploaded successfully.',
             'data' => [
                 'upload_session_id' => $session->id,
                 'upload_status' => $session->upload_status,
                 'error_message' => $session->error_message,
+                'pdf' => new PdfResource($pdf),
             ],
         ]);
     }

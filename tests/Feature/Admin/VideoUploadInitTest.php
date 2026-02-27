@@ -57,7 +57,7 @@ it('creates bunny video and returns upload url', function (): void {
     ], $this->adminHeaders());
 
     $response->assertCreated()
-        ->assertJsonPath('data.upload_session_id', fn ($id) => is_int($id) || is_numeric($id))
+        ->assertJsonPath('data.id', fn ($id) => is_int($id) || is_numeric($id))
         ->assertJsonPath('data.provider', 'bunny')
         ->assertJsonPath('data.remote_id', fn ($id) => is_string($id) && $id !== '')
         ->assertJsonPath('data.upload_endpoint', 'https://video.bunnycdn.com/tusupload')

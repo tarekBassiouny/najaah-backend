@@ -30,6 +30,12 @@ class AdminVideoResource extends JsonResource
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'title' => $video->translate('title'),
             'description' => $video->translate('description'),
+            'tags' => $video->tags,
+            'duration_seconds' => $video->duration_seconds,
+            'thumbnail_url' => $video->thumbnail_url,
+            'source_type' => $video->source_type,
+            'source_provider' => $video->source_provider,
+            'source_url' => $video->source_url,
             'encoding_status' => $video->encoding_status->value,
             'encoding_status_key' => Str::snake($video->encoding_status->name),
             'encoding_status_label' => $video->encoding_status->name,
@@ -48,9 +54,11 @@ class AdminVideoResource extends JsonResource
                     'upload_status_label' => $uploadSession->upload_status->name,
                     'error_message' => $uploadSession->error_message,
                     'created_at' => $uploadSession->created_at,
+                    'updated_at' => $uploadSession->updated_at,
                 ]];
             }, []),
             'created_at' => $video->created_at,
+            'updated_at' => $video->updated_at,
         ];
     }
 }
