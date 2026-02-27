@@ -28,12 +28,14 @@ it('creates pdf from a ready upload session', function (): void {
     $pdf = $service->create($center, $admin, [
         'title_translations' => ['en' => 'PDF Lesson'],
         'description_translations' => ['en' => 'Intro'],
+        'tags' => ['notes', 'intro'],
         'upload_session_id' => $session->id,
     ]);
 
     expect((int) $pdf->center_id)->toBe($center->id);
     expect((int) $pdf->upload_session_id)->toBe($session->id);
     expect($pdf->source_id)->toBe($session->object_key);
+    expect($pdf->tags)->toBe(['notes', 'intro']);
 });
 
 it('updates and deletes pdf', function (): void {
@@ -47,8 +49,10 @@ it('updates and deletes pdf', function (): void {
     $service = app(PdfService::class);
     $updated = $service->update($pdf, $admin, [
         'title_translations' => ['en' => 'Updated Title'],
+        'tags' => ['updated', 'handout'],
     ]);
     expect(data_get($updated->title_translations, 'en'))->toBe('Updated Title');
+    expect($updated->tags)->toBe(['updated', 'handout']);
 
     $service->delete($updated, $admin);
     expect($updated->fresh()?->deleted_at)->not()->toBeNull();

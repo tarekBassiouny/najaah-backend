@@ -242,14 +242,8 @@ test('execute creates student when otp has no user', function (): void {
         'otp_token' => 'token-123',
     ]);
 
-    $newUser = User::factory()->create([
-        'is_student' => true,
-        'center_id' => null,
-        'phone' => '1000000000',
-        'country_code' => '+2',
-    ]);
-
-    $device = UserDevice::factory()->make(['user_id' => $newUser->id]);
+    $createdUser = null;
+    $device = UserDevice::factory()->make();
 
     $otpService = \Mockery::mock(OtpServiceInterface::class);
     $otpService->shouldReceive('verify')
@@ -265,18 +259,32 @@ test('execute creates student when otp has no user', function (): void {
                 && $payload['country_code'] === '+2'
                 && $payload['center_id'] === null;
         }))
-        ->andReturn($newUser);
+        ->andReturnUsing(function (array $payload) use (&$createdUser): User {
+            $createdUser = User::factory()->create([
+                'is_student' => true,
+                'center_id' => null,
+                'phone' => (string) $payload['phone'],
+                'country_code' => (string) $payload['country_code'],
+            ]);
+
+            return $createdUser;
+        });
 
     $deviceService = \Mockery::mock(DeviceServiceInterface::class);
     $deviceService->shouldReceive('register')
         ->once()
-        ->with($newUser, 'device-1', \Mockery::type('array'))
+        ->with(\Mockery::on(
+            fn ($user): bool => $user instanceof User && $user->phone === '1000000000'
+        ), 'device-1', \Mockery::type('array'))
         ->andReturn($device);
 
     $jwtService = \Mockery::mock(JwtServiceInterface::class);
     $jwtService->shouldReceive('create')
         ->once()
-        ->with($newUser, $device)
+        ->with(
+            \Mockery::on(fn ($user): bool => $user instanceof User && $user->phone === '1000000000'),
+            \Mockery::on(fn ($arg): bool => $arg instanceof UserDevice)
+        )
         ->andReturn([
             'access_token' => 'access',
             'refresh_token' => 'refresh',
@@ -285,7 +293,11 @@ test('execute creates student when otp has no user', function (): void {
     $auditLogService = \Mockery::mock(AuditLogService::class);
     $auditLogService->shouldReceive('log')
         ->once()
-        ->with($newUser, $newUser, \Mockery::type('string'));
+        ->with(
+            \Mockery::on(fn ($user): bool => $user instanceof User && $user->phone === '1000000000'),
+            \Mockery::on(fn ($subject): bool => $subject instanceof User && $subject->phone === '1000000000'),
+            \Mockery::type('string')
+        );
 
     $action = new LoginAction(
         $otpService,
@@ -302,6 +314,7 @@ test('execute creates student when otp has no user', function (): void {
     ]);
 
     $otpCode->refresh();
-    expect($otpCode->user_id)->toBe($newUser->id);
+    expect($createdUser)->toBeInstanceOf(User::class);
     expect($result)->not()->toBeNull();
+    expect($otpCode->user_id)->toBe($result['user']->id);
 });

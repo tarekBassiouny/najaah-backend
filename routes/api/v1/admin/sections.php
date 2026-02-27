@@ -32,7 +32,12 @@ Route::middleware(['require.permission:section.manage', 'scope.center'])
         Route::get('/{section}/pdfs', [SectionStructureController::class, 'pdfs'])->whereNumber('center');
         Route::get('/{section}/pdfs/{pdf}', [SectionStructureController::class, 'showPdf'])->whereNumber('center');
         Route::post('/{section}/pdfs', [SectionStructureController::class, 'attachPdf'])->whereNumber('center');
+        Route::post('/{section}/pdfs/bulk-attach', [SectionStructureController::class, 'bulkAttachPdfs'])->whereNumber('center');
+        Route::post('/{section}/pdfs/bulk-detach', [SectionStructureController::class, 'bulkDetachPdfs'])->whereNumber('center');
         Route::delete('/{section}/pdfs/{pdf}', [SectionStructureController::class, 'detachPdf'])->whereNumber('center');
+
+        Route::post('/{section}/videos/bulk-attach', [SectionStructureController::class, 'bulkAttachVideos'])->whereNumber('center');
+        Route::post('/{section}/videos/bulk-detach', [SectionStructureController::class, 'bulkDetachVideos'])->whereNumber('center');
 
         Route::post('/{section}/publish', [SectionWorkflowController::class, 'publish'])->whereNumber('center');
         Route::post('/{section}/unpublish', [SectionWorkflowController::class, 'unpublish'])->whereNumber('center');

@@ -341,7 +341,7 @@
                 document.getElementById('sessionInfo').classList.remove('hidden');
                 document.getElementById('sessionData').textContent = JSON.stringify(uploadSession, null, 2);
 
-                log('success', `Upload session created: ${uploadSession.upload_session_id}`);
+                log('success', `Upload session created: ${uploadSession.id}`);
                 log('info', `TUS Endpoint: ${uploadSession.upload_endpoint}`);
                 log('info', `Video GUID: ${uploadSession.remote_id}`);
                 log('info', `Expires: ${uploadSession.expires_at}`);

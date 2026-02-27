@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $center_id
  * @property array<string, string> $title_translations
  * @property array<string, string>|null $description_translations
+ * @property array<string, mixed>|null $tags
  * @property int $source_type
  * @property string $source_provider
  * @property string|null $source_id
@@ -43,6 +45,7 @@ class Pdf extends Model
         'center_id',
         'title_translations',
         'description_translations',
+        'tags',
         'source_type',
         'source_provider',
         'source_id',
@@ -58,6 +61,7 @@ class Pdf extends Model
         'center_id' => 'integer',
         'title_translations' => 'array',
         'description_translations' => 'array',
+        'tags' => 'array',
         'file_size_kb' => 'integer',
         'source_type' => MediaSourceType::class,
         'is_demo' => 'boolean',
@@ -96,5 +100,23 @@ class Pdf extends Model
             ->withPivot(['section_id', 'video_id', 'order_index', 'visible', 'created_at', 'updated_at', 'deleted_at'])
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
+    }
+
+    /** @return BelongsToMany<Section, self> */
+    public function sections(): BelongsToMany
+    {
+        return $this->belongsToMany(Section::class, 'course_pdf')
+            ->using(CoursePdf::class)
+            ->withPivot(['course_id', 'video_id', 'order_index', 'visible', 'created_at', 'updated_at', 'deleted_at'])
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at')
+            ->wherePivotNotNull('section_id');
+    }
+
+    /** @return HasMany<CoursePdf, self> */
+    public function coursePdfs(): HasMany
+    {
+        return $this->hasMany(CoursePdf::class, 'pdf_id')
+            ->whereNull('deleted_at');
     }
 }

@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
+use App\Jobs\FetchBunnyVideoMetadataJob;
 use App\Models\BunnyWebhookLog;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 
 uses(RefreshDatabase::class)->group('webhooks');
 
 it('updates upload session and video to ready', function (): void {
+    Queue::fake();
+
     $session = VideoUploadSession::factory()->create([
         'bunny_upload_id' => 'video-123',
         'library_id' => 123,
@@ -44,6 +48,11 @@ it('updates upload session and video to ready', function (): void {
     expect($session->library_id)->toBe(123);
     expect($video->encoding_status)->toBe(VideoUploadStatus::Ready);
     expect($video->lifecycle_status)->toBe(VideoLifecycleStatus::Ready);
+    Queue::assertPushed(FetchBunnyVideoMetadataJob::class, function (FetchBunnyVideoMetadataJob $job) use ($session): bool {
+        return $job->videoGuid === 'video-123'
+            && $job->libraryId === 123
+            && $job->centerId === (int) $session->center_id;
+    });
 
     $this->assertDatabaseHas('bunny_webhook_logs', [
         'video_guid' => 'video-123',
@@ -173,4 +182,38 @@ it('logs status but does not mutate for ignored codes', function (): void {
     ]);
 
     expect(BunnyWebhookLog::count())->toBe(1);
+});
+
+it('dispatches thumbnail metadata job when webhook is ready', function (): void {
+    Queue::fake();
+
+    config(['bunny.thumbnail_base_url' => 'https://stream-cdn.example.com']);
+
+    $session = VideoUploadSession::factory()->create([
+        'bunny_upload_id' => 'thumb-1',
+        'library_id' => 88,
+        'upload_status' => VideoUploadStatus::Processing,
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $session->center_id,
+        'upload_session_id' => $session->id,
+        'library_id' => 88,
+        'source_id' => 'thumb-1',
+        'thumbnail_url' => null,
+        'encoding_status' => VideoUploadStatus::Processing,
+        'lifecycle_status' => 1,
+    ]);
+
+    $this->postJson('/webhooks/bunny', [
+        'Status' => 3,
+        'VideoGuid' => 'thumb-1',
+        'VideoLibraryId' => 88,
+    ])->assertOk();
+
+    Queue::assertPushed(FetchBunnyVideoMetadataJob::class, function (FetchBunnyVideoMetadataJob $job) use ($session): bool {
+        return $job->videoGuid === 'thumb-1'
+            && $job->libraryId === 88
+            && $job->centerId === (int) $session->center_id;
+    });
 });

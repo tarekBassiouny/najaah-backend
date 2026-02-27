@@ -14,7 +14,9 @@ use App\Models\Center;
 use App\Models\Pdf;
 use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
 use App\Services\Pdfs\Contracts\PdfServiceInterface;
+use App\Services\Storage\Contracts\StorageServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PdfController extends Controller
 {
@@ -22,7 +24,8 @@ class PdfController extends Controller
 
     public function __construct(
         private readonly PdfServiceInterface $pdfService,
-        private readonly AdminPdfQueryServiceInterface $queryService
+        private readonly AdminPdfQueryServiceInterface $queryService,
+        private readonly StorageServiceInterface $storageService
     ) {}
 
     /**
@@ -110,6 +113,44 @@ class PdfController extends Controller
             'success' => true,
             'data' => null,
         ], 200);
+    }
+
+    /**
+     * Get a signed URL for admin PDF preview/download.
+     */
+    public function signedUrl(Request $request, Center $center, Pdf $pdf): JsonResponse
+    {
+        $this->requireAdmin();
+        $this->assertPdfBelongsToCenter($center, $pdf);
+
+        $sourceId = $pdf->source_id;
+        if ($sourceId === null || $sourceId === '') {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'PDF_NO_SOURCE',
+                    'message' => 'PDF file not available.',
+                ],
+            ], 400);
+        }
+
+        $disposition = $request->query('disposition', 'inline');
+        $ttl = (int) config('pdf.download_url_ttl', 900);
+
+        $url = $this->storageService->temporaryUrl($sourceId, $ttl);
+
+        $expiresAt = now()->addSeconds($ttl);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Signed URL generated successfully.',
+            'data' => [
+                'url' => $url,
+                'disposition' => $disposition,
+                'expires_at' => $expiresAt->toIso8601String(),
+                'expires_in' => $ttl,
+            ],
+        ]);
     }
 
     private function assertPdfBelongsToCenter(Center $center, Pdf $pdf): void

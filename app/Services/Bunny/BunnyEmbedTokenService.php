@@ -11,13 +11,8 @@ class BunnyEmbedTokenService
     /**
      * @return array{token:string,expires:int}
      */
-    public function generate(
-        string $videoUuid,
-        User $student,
-        int $centerId,
-        int $enrollmentId,
-        int $ttlSeconds = 600
-    ): array {
+    public function generateForVideo(string $videoUuid, int $ttlSeconds = 600): array
+    {
         $secret = config('bunny.embed_key');
         if (! is_string($secret) || $secret === '') {
             throw new \RuntimeException('Missing Bunny embed key.');
@@ -30,5 +25,18 @@ class BunnyEmbedTokenService
             'token' => $token,
             'expires' => $expiresAt,
         ];
+    }
+
+    /**
+     * @return array{token:string,expires:int}
+     */
+    public function generate(
+        string $videoUuid,
+        User $student,
+        int $centerId,
+        int $enrollmentId,
+        int $ttlSeconds = 600
+    ): array {
+        return $this->generateForVideo($videoUuid, $ttlSeconds);
     }
 }

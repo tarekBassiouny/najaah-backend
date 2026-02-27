@@ -45,6 +45,7 @@ it('shows course aggregate with metadata only', function (): void {
         'library_id' => 55,
         'source_id' => 'video-uuid',
         'duration_seconds' => 120,
+        'thumbnail_url' => 'https://cdn.example.com/thumb-1.jpg',
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'upload_session_id' => $readySession->id,
@@ -85,6 +86,8 @@ it('shows course aggregate with metadata only', function (): void {
         ->assertJsonPath('data.sections.0.id', $section->id)
         ->assertJsonPath('data.videos.0.id', $video->id)
         ->assertJsonPath('data.videos.0.duration', 120)
+        ->assertJsonPath('data.videos.0.duration_seconds', 120)
+        ->assertJsonPath('data.videos.0.thumbnail_url', 'https://cdn.example.com/thumb-1.jpg')
         ->assertJsonPath('data.videos.0.is_locked', false)
         ->assertJsonPath('data.pdfs.0.is_locked', false);
 

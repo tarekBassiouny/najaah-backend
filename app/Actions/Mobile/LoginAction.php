@@ -12,6 +12,7 @@ use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Students\StudentService;
 use App\Support\AuditActions;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 class LoginAction
 {
@@ -45,12 +46,11 @@ class LoginAction
         $user = $otp->user;
 
         if (! $user instanceof User) {
-            $user = $this->studentService->create([
-                'name' => 'Student',
-                'phone' => $otp->phone,
-                'country_code' => $otp->country_code,
-                'center_id' => $centerId,
-            ]);
+            $user = $this->resolveOrCreateStudent(
+                (string) $otp->phone,
+                (string) $otp->country_code,
+                $centerId
+            );
 
             $otp->user_id = $user->id;
             $otp->save();
@@ -90,5 +90,48 @@ class LoginAction
             'user' => $user,
             'token' => $token,
         ];
+    }
+
+    private function resolveOrCreateStudent(string $phone, string $countryCode, ?int $centerId): User
+    {
+        $existing = $this->findScopedStudent($phone, $centerId);
+        if ($existing instanceof User) {
+            if ($existing->country_code === null || $existing->country_code === '') {
+                $existing->forceFill(['country_code' => $countryCode])->save();
+            }
+
+            return $existing;
+        }
+
+        try {
+            return $this->studentService->create([
+                'name' => 'Student',
+                'phone' => $phone,
+                'country_code' => $countryCode,
+                'center_id' => $centerId,
+            ]);
+        } catch (UniqueConstraintViolationException) {
+            $resolved = $this->findScopedStudent($phone, $centerId);
+            if ($resolved instanceof User) {
+                return $resolved;
+            }
+
+            throw new \RuntimeException('Student could not be resolved after unique constraint violation.');
+        }
+    }
+
+    private function findScopedStudent(string $phone, ?int $centerId): ?User
+    {
+        $query = User::query()
+            ->where('is_student', true)
+            ->where('phone', $phone);
+
+        if (is_numeric($centerId)) {
+            $query->where('center_id', $centerId);
+        } else {
+            $query->whereNull('center_id');
+        }
+
+        return $query->first();
     }
 }

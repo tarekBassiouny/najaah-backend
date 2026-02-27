@@ -13,6 +13,7 @@ use App\Http\Resources\Admin\Videos\AdminVideoResource;
 use App\Http\Resources\Admin\Videos\VideoResource;
 use App\Models\Center;
 use App\Models\Video;
+use App\Services\Videos\AdminVideoPreviewService;
 use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
 use App\Services\Videos\Contracts\VideoServiceInterface;
 use Illuminate\Http\JsonResponse;
@@ -23,7 +24,8 @@ class VideoController extends Controller
 
     public function __construct(
         private readonly VideoServiceInterface $videoService,
-        private readonly AdminVideoQueryServiceInterface $queryService
+        private readonly AdminVideoQueryServiceInterface $queryService,
+        private readonly AdminVideoPreviewService $previewService
     ) {}
 
     /**
@@ -111,6 +113,22 @@ class VideoController extends Controller
             'success' => true,
             'data' => null,
         ], 200);
+    }
+
+    /**
+     * Generate a signed preview URL for a video.
+     */
+    public function preview(Center $center, Video $video): JsonResponse
+    {
+        $admin = $this->requireAdmin();
+        $this->assertVideoBelongsToCenter($center, $video);
+
+        $payload = $this->previewService->generate($admin, $center, $video);
+
+        return response()->json([
+            'success' => true,
+            'data' => $payload,
+        ]);
     }
 
     private function assertVideoBelongsToCenter(Center $center, Video $video): void
