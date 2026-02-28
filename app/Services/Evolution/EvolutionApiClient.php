@@ -59,7 +59,7 @@ class EvolutionApiClient
         }
 
         return $request
-            ->post("/message/sendText/{$instanceName}", $payload)
+            ->post('/message/sendText/'.$instanceName, $payload)
             ->throw()
             ->json();
     }
@@ -70,7 +70,7 @@ class EvolutionApiClient
     public function findWebhook(string $instanceName): array
     {
         return $this->request()
-            ->get("/webhook/find/{$instanceName}")
+            ->get('/webhook/find/'.$instanceName)
             ->throw()
             ->json();
     }
@@ -82,7 +82,7 @@ class EvolutionApiClient
     public function setWebhook(string $instanceName, array $payload): array
     {
         return $this->request()
-            ->post("/webhook/set/{$instanceName}", [
+            ->post('/webhook/set/'.$instanceName, [
                 'webhook' => $payload,
             ])
             ->throw()
