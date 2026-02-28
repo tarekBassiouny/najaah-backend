@@ -29,6 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         then: function (): void {
+            Route::middleware('api')
+                ->group(function (): void {
+                    require __DIR__.'/../routes/api/webhooks.php';
+                });
+
             // Mobile API (JWT)
             Route::prefix('api/v1')
                 ->middleware('api')

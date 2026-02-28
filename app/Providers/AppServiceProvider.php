@@ -13,6 +13,7 @@ use App\Services\Auth\Contracts\OtpSenderInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
+use App\Services\Auth\Senders\EvolutionOtpSender;
 use App\Services\Auth\Senders\WhatsAppOtpSender;
 use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
@@ -107,7 +108,6 @@ class AppServiceProvider extends ServiceProvider
             AdminNotificationServiceInterface::class => AdminNotificationService::class,
             AdminUserServiceInterface::class => AdminUserService::class,
             OtpServiceInterface::class => OtpService::class,
-            OtpSenderInterface::class => WhatsAppOtpSender::class,
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
             DeviceChangeServiceInterface::class => DeviceChangeService::class,
@@ -145,6 +145,16 @@ class AppServiceProvider extends ServiceProvider
         foreach ($bindings as $abstract => $implementation) {
             $this->app->bind($abstract, $implementation);
         }
+
+        $this->app->bind(OtpSenderInterface::class, function (Application $app): OtpSenderInterface {
+            $sender = (string) $app['config']->get('otp.sender', 'whatsapp');
+
+            return match ($sender) {
+                'evolution' => $app->make(EvolutionOtpSender::class),
+                'whatsapp' => $app->make(WhatsAppOtpSender::class),
+                default => throw new RuntimeException(sprintf('Unsupported OTP sender [%s].', $sender)),
+            };
+        });
 
         $this->app->singleton(ViewLimitService::class);
         $this->app->singleton(ViewLimitServiceInterface::class, ViewLimitService::class);
