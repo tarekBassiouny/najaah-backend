@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class EvolutionWebhookLog extends Model
 {
+    /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory<self>> */
     use HasFactory;
 
     protected $fillable = [

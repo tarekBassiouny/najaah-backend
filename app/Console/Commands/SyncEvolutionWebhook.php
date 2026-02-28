@@ -56,10 +56,18 @@ class SyncEvolutionWebhook extends Command
             $instanceName
         ));
 
-        $this->line(json_encode([
+        $output = json_encode([
             'set' => $response,
             'current' => $current,
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+        if ($output === false) {
+            $this->error('Failed to encode webhook sync response.');
+
+            return self::FAILURE;
+        }
+
+        $this->line($output);
 
         return self::SUCCESS;
     }
