@@ -10,7 +10,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class)->group('centers', 'admin');
 
@@ -215,11 +214,9 @@ it('rejects numeric tier on update', function (): void {
     $response->assertStatus(422);
 });
 
-it('defaults logo path on create when missing', function (): void {
+it('returns null logo on create when no logo was uploaded', function (): void {
     Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
-    Storage::fake();
-    Storage::put('centers/defaults/logo.png', 'logo');
 
     $payload = [
         'slug' => 'default-logo',
@@ -231,13 +228,9 @@ it('defaults logo path on create when missing', function (): void {
         ],
     ];
 
-    $response = $this->postJson('/api/v1/admin/centers', $payload);
-
-    $response->assertCreated();
-    $logoUrl = (string) $response->json('data.center.logo_url');
-    expect($logoUrl)
-        ->not->toBe('centers/defaults/logo.png')
-        ->toContain('centers/defaults/logo.png');
+    $this->postJson('/api/v1/admin/centers', $payload)
+        ->assertCreated()
+        ->assertJsonPath('data.center.logo_url', null);
 });
 
 it('does not expose api key in center create response', function (): void {

@@ -10,7 +10,6 @@ use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Centers\Contracts\CenterServiceInterface;
-use App\Services\Storage\StoragePathResolver;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -19,8 +18,7 @@ class CreateCenterAction
     private const OWNER_ROLE_SLUG = 'center_owner';
 
     public function __construct(
-        private readonly CenterServiceInterface $centerService,
-        private readonly StoragePathResolver $pathResolver
+        private readonly CenterServiceInterface $centerService
     ) {}
 
     /**
@@ -40,7 +38,6 @@ class CreateCenterAction
             'slug' => $data['slug'],
             'type' => $type,
             'name' => $data['name'],
-            'logo_url' => $this->pathResolver->defaultCenterLogo(),
             'api_key' => $this->generateApiKey(),
         ];
 
