@@ -11,11 +11,6 @@ class StoragePathResolver
         return $this->centerScoped($centerId, 'branding/logo/'.$filename);
     }
 
-    public function defaultCenterLogo(): string
-    {
-        return 'centers/defaults/logo.png';
-    }
-
     public function userAvatar(int $centerId, int $userId, string $filename): string
     {
         return $this->centerScoped($centerId, sprintf('users/%d/avatar/%s', $userId, $filename));
