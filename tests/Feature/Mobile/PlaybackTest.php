@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\MediaSourceType;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
@@ -38,7 +39,9 @@ test('it creates playback session when views remain', function (): void {
         ->assertJsonPath('data.session_id', fn ($value) => is_int($value) && $value > 0)
         ->assertJsonPath('data.embed_url', fn ($value) => is_string($value) && str_contains($value, 'iframe.mediadelivery.net'))
         ->assertJsonPath('data.session_expires_in', fn ($value) => is_int($value) && $value > 0)
-        ->assertJsonPath('data.session_expires_at', fn ($value) => is_string($value) && ! empty($value));
+        ->assertJsonPath('data.session_expires_at', fn ($value) => is_string($value) && ! empty($value))
+        ->assertJsonPath('data.source_type', MediaSourceType::Upload->value)
+        ->assertJsonPath('data.source_provider', 'bunny');
 
     // Verify embed URL contains expected components
     $embedUrl = $response->json('data.embed_url');
@@ -51,6 +54,8 @@ test('it creates playback session when views remain', function (): void {
         'video_id' => $video->id,
         'course_id' => $course->id,
     ]);
+
+    $response->assertJsonPath('data.source_url', 'https://example.com/video.mp4');
 
     $session = PlaybackSession::where('user_id', $student->id)->where('video_id', $video->id)->first();
     expect($session)->not->toBeNull();
@@ -203,6 +208,40 @@ test('it extends session expiry on progress update', function (): void {
     expect($session?->expires_at?->timestamp)->toBe($expectedExpiry);
 
     Carbon::setTestNow();
+});
+
+test('it reopens auto closed session when update progress arrives late', function (): void {
+    Carbon::setTestNow('2024-01-01 00:00:00');
+
+    [$student, $center, $course, $video] = buildPlaybackContext();
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+    $sessionId = (int) $response->json('data.session_id');
+
+    $session = PlaybackSession::query()->find($sessionId);
+    expect($session)->not->toBeNull();
+
+    $session->update([
+        'ended_at' => Carbon::now()->subMinutes(5),
+        'auto_closed' => true,
+        'close_reason' => 'timeout',
+        'expires_at' => Carbon::now()->subMinutes(5),
+    ]);
+
+    Carbon::setTestNow('2024-01-01 00:10:00');
+
+    $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/playback_progress", [
+        'session_id' => $sessionId,
+        'percentage' => 20,
+    ])->assertOk()->assertJsonPath('success', true);
+
+    $session->refresh();
+    expect($session->ended_at)->toBeNull()
+        ->and($session->auto_closed)->toBeFalse()
+        ->and($session->close_reason)->toBeNull()
+        ->and($session->expires_at?->gt(Carbon::now()))->toBeTrue();
 });
 
 test('it rejects invalid playback session', function (): void {
@@ -488,3 +527,22 @@ function buildPlaybackContext(array $centerOverrides = []): array
 
     return [$student, $center, $course, $video];
 }
+
+test('it returns url metadata for non-bunny videos', function (): void {
+    [$student, $center, $course, $video] = buildPlaybackContext();
+    $video->update([
+        'source_type' => MediaSourceType::Url,
+        'source_provider' => 'youtube',
+        'source_url' => 'https://www.youtube.com/watch?v=abc',
+        'upload_session_id' => null,
+    ]);
+    $this->asApiUser($student);
+    $this->enrollStudent($student, $course, Enrollment::STATUS_ACTIVE);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
+
+    $response->assertOk()
+        ->assertJsonPath('data.source_type', MediaSourceType::Url->value)
+        ->assertJsonPath('data.source_provider', 'youtube')
+        ->assertJsonPath('data.source_url', 'https://www.youtube.com/watch?v=abc');
+});

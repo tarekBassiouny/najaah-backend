@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
+use App\Enums\MediaSourceType;
 use App\Exceptions\DomainException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\PlaybackSession;
 use App\Models\User;
+use App\Models\UserDevice;
 use App\Models\Video;
 use App\Services\Access\EnrollmentAccessService;
 use App\Services\Bunny\BunnyEmbedTokenService;
@@ -31,15 +33,19 @@ class PlaybackService implements PlaybackServiceInterface
 
     /**
      * @return array{
-     *   library_id:string,
-     *   video_uuid:string,
+     *   source_type:int,
+     *   source_provider:string,
+     *   source_url:string|null,
+     *   source_id:string|null,
+     *   library_id:string|null,
+     *   video_uuid:string|null,
+     *   embed_token:string|null,
+     *   embed_token_expires_at:string|null,
+     *   embed_token_expires:int|null,
      *   session_id:int,
-     *   embed_token:string,
-     *   embed_token_expires_at:string,
-     *   embed_token_expires:int,
      *   session_expires_at:string,
      *   session_expires_in:int,
-     *   embed_url:string,
+     *   embed_url:string|null,
      *   is_locked:bool,
      *   remaining_views:int|null,
      *   view_limit:int|null
@@ -50,17 +56,51 @@ class PlaybackService implements PlaybackServiceInterface
         $this->authorizationService->assertCanStartPlayback($student, $center, $course, $video);
         $device = $this->authorizationService->getActiveDevice();
 
+        $enrollmentId = $this->resolveEnrollmentId($student, $course);
+
+        if ($video->source_type === MediaSourceType::Url) {
+            $sourceUrl = $video->source_url;
+            if (! is_string($sourceUrl) || $sourceUrl === '') {
+                $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
+            }
+
+            $session = $this->createPlaybackSession($student, $video, $course, $device, $enrollmentId);
+            $sessionExpiresAt = $session->expires_at;
+            $sessionExpiresIn = $sessionExpiresAt !== null
+                ? max(0, (int) $sessionExpiresAt->timestamp - (int) now()->timestamp)
+                : 0;
+
+            return [
+                'source_type' => $video->source_type->value,
+                'source_provider' => $video->source_provider,
+                'source_url' => $sourceUrl,
+                'source_id' => $video->source_id,
+                'library_id' => $video->library_id !== null ? (string) $video->library_id : null,
+                'video_uuid' => $video->source_id,
+                'embed_token' => null,
+                'embed_token_expires_at' => null,
+                'embed_token_expires' => null,
+                'session_id' => $session->id,
+                'session_expires_at' => $sessionExpiresAt?->toIso8601String() ?? '',
+                'session_expires_in' => $sessionExpiresIn,
+                'embed_url' => null,
+                'is_locked' => $this->viewLimitService->isLocked($student, $video, $course),
+                'remaining_views' => $this->viewLimitService->getRemainingViews($student, $video, $course),
+                'view_limit' => $this->viewLimitService->getEffectiveLimit($student, $video, $course),
+            ];
+        }
+
         $videoUuid = $video->source_id;
         if (! is_string($videoUuid) || $videoUuid === '') {
             $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
 
+        /** @var string $videoUuid */
         $libraryId = config('bunny.api.library_id');
         if (! is_numeric($libraryId)) {
             $this->deny(ErrorCodes::VIDEO_NOT_READY, 'Video is not ready for playback.', 422);
         }
 
-        $enrollmentId = $this->resolveEnrollmentId($student, $course);
         $embedTokenTtl = $this->resolveEmbedTokenTtl();
         $embedTokenData = $this->embedTokenService->generate(
             $videoUuid,
@@ -72,7 +112,57 @@ class PlaybackService implements PlaybackServiceInterface
         $embedTokenExpires = (int) $embedTokenData['expires'];
         $embedTokenExpiresAt = Carbon::createFromTimestamp($embedTokenExpires);
 
-        $session = DB::transaction(function () use ($student, $video, $course, $enrollmentId, $device, $embedTokenData, $embedTokenExpiresAt): PlaybackSession {
+        $session = $this->createPlaybackSession($student, $video, $course, $device, $enrollmentId, $embedTokenData, $embedTokenExpiresAt);
+
+        $embedUrl = $this->buildEmbedUrl(
+            (string) $libraryId,
+            $videoUuid,
+            $embedTokenData['token'],
+            $embedTokenExpires
+        );
+
+        $remainingViews = $this->viewLimitService->getRemainingViews($student, $video, $course);
+        $viewLimit = $this->viewLimitService->getEffectiveLimit($student, $video, $course);
+        $isLocked = $this->viewLimitService->isLocked($student, $video, $course);
+
+        $sessionExpiresAt = $session->expires_at;
+        $sessionExpiresIn = $sessionExpiresAt !== null
+            ? max(0, (int) $sessionExpiresAt->timestamp - (int) now()->timestamp)
+            : 0;
+
+        return [
+            'library_id' => (string) $libraryId,
+            'video_uuid' => $videoUuid,
+            'session_id' => $session->id,
+            'embed_token' => $embedTokenData['token'],
+            'embed_token_expires_at' => $session->embed_token_expires_at?->toIso8601String() ?? '',
+            'embed_token_expires' => $embedTokenExpires,
+            'session_expires_at' => $sessionExpiresAt?->toIso8601String() ?? '',
+            'session_expires_in' => $sessionExpiresIn,
+            'embed_url' => $embedUrl,
+            'is_locked' => $isLocked,
+            'remaining_views' => $remainingViews,
+            'view_limit' => $viewLimit,
+            'source_type' => $video->source_type->value,
+            'source_provider' => $video->source_provider,
+            'source_url' => $video->source_url,
+            'source_id' => $video->source_id,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $embedTokenData
+     */
+    private function createPlaybackSession(
+        User $student,
+        Video $video,
+        Course $course,
+        UserDevice $device,
+        int $enrollmentId,
+        ?array $embedTokenData = null,
+        ?\DateTimeInterface $embedTokenExpiresAt = null
+    ): PlaybackSession {
+        return DB::transaction(function () use ($student, $video, $course, $device, $enrollmentId, $embedTokenData, $embedTokenExpiresAt): PlaybackSession {
             $now = now();
 
             PlaybackSession::query()
@@ -104,7 +194,7 @@ class PlaybackService implements PlaybackServiceInterface
                 'course_id' => $course->id,
                 'enrollment_id' => $enrollmentId,
                 'device_id' => $device->id,
-                'embed_token' => $embedTokenData['token'],
+                'embed_token' => $embedTokenData['token'] ?? null,
                 'embed_token_expires_at' => $embedTokenExpiresAt,
                 'started_at' => $now,
                 'expires_at' => $now->copy()->addSeconds((int) config('playback.session_ttl')),
@@ -113,37 +203,6 @@ class PlaybackService implements PlaybackServiceInterface
                 'is_full_play' => false,
             ]);
         });
-
-        $embedUrl = $this->buildEmbedUrl(
-            (string) $libraryId,
-            $videoUuid,
-            $embedTokenData['token'],
-            $embedTokenExpires
-        );
-
-        $remainingViews = $this->viewLimitService->getRemainingViews($student, $video, $course);
-        $viewLimit = $this->viewLimitService->getEffectiveLimit($student, $video, $course);
-        $isLocked = $this->viewLimitService->isLocked($student, $video, $course);
-
-        $sessionExpiresAt = $session->expires_at;
-        $sessionExpiresIn = $sessionExpiresAt !== null
-            ? max(0, (int) $sessionExpiresAt->timestamp - (int) now()->timestamp)
-            : 0;
-
-        return [
-            'library_id' => (string) $libraryId,
-            'video_uuid' => $videoUuid,
-            'session_id' => $session->id,
-            'embed_token' => $embedTokenData['token'],
-            'embed_token_expires_at' => $session->embed_token_expires_at?->toIso8601String() ?? '',
-            'embed_token_expires' => $embedTokenExpires,
-            'session_expires_at' => $sessionExpiresAt?->toIso8601String() ?? '',
-            'session_expires_in' => $sessionExpiresIn,
-            'embed_url' => $embedUrl,
-            'is_locked' => $isLocked,
-            'remaining_views' => $remainingViews,
-            'view_limit' => $viewLimit,
-        ];
     }
 
     /**
@@ -225,24 +284,11 @@ class PlaybackService implements PlaybackServiceInterface
         }
 
         if ($session->ended_at !== null) {
-            return [
-                'progress' => $session->progress_percent,
-                'is_full_play' => $session->is_full_play,
-                'is_locked' => $session->is_locked,
-                'remaining_views' => null,
-                'view_limit' => null,
-            ];
-        }
-
-        $expiresAt = $session->expires_at;
-        if ($expiresAt === null || $expiresAt->lte(now())) {
-            return [
-                'progress' => $session->progress_percent,
-                'is_full_play' => $session->is_full_play,
-                'is_locked' => $session->is_locked,
-                'remaining_views' => null,
-                'view_limit' => null,
-            ];
+            if ($session->auto_closed) {
+                $this->reopenSession($session);
+            } else {
+                return $this->buildProgressPayload($session, $student, false);
+            }
         }
 
         if ($percentage <= $session->progress_percent) {
@@ -253,13 +299,7 @@ class PlaybackService implements PlaybackServiceInterface
 
             $session->refresh();
 
-            return [
-                'progress' => $session->progress_percent,
-                'is_full_play' => $session->is_full_play,
-                'is_locked' => $session->is_locked,
-                'remaining_views' => $this->viewLimitService->getRemainingViews($student, $session->video, $session->course),
-                'view_limit' => $this->viewLimitService->getEffectiveLimit($student, $session->video, $session->course),
-            ];
+            return $this->buildProgressPayload($session, $student);
         }
 
         $threshold = (int) config('playback.full_play_threshold', 80);
@@ -285,13 +325,7 @@ class PlaybackService implements PlaybackServiceInterface
 
         $session->refresh();
 
-        return [
-            'progress' => $session->progress_percent,
-            'is_full_play' => $session->is_full_play,
-            'is_locked' => $session->is_locked,
-            'remaining_views' => $this->viewLimitService->getRemainingViews($student, $session->video, $session->course),
-            'view_limit' => $this->viewLimitService->getEffectiveLimit($student, $session->video, $session->course),
-        ];
+        return $this->buildProgressPayload($session, $student);
     }
 
     /**
@@ -354,8 +388,33 @@ class PlaybackService implements PlaybackServiceInterface
     }
 
     /**
-     * @return never
+     * @return array{progress:int,is_full_play:bool,is_locked:bool,remaining_views:int|null,view_limit:int|null}
      */
+    private function buildProgressPayload(PlaybackSession $session, User $student, bool $includeViews = true): array
+    {
+        return [
+            'progress' => $session->progress_percent,
+            'is_full_play' => $session->is_full_play,
+            'is_locked' => $session->is_locked,
+            'remaining_views' => $includeViews ? $this->viewLimitService->getRemainingViews($student, $session->video, $session->course) : null,
+            'view_limit' => $includeViews ? $this->viewLimitService->getEffectiveLimit($student, $session->video, $session->course) : null,
+        ];
+    }
+
+    private function reopenSession(PlaybackSession $session): void
+    {
+        $ttl = (int) config('playback.session_ttl');
+        $session->update([
+            'watch_duration' => $session->watch_duration ?? 0,
+            'close_reason' => null,
+            'ended_at' => null,
+            'auto_closed' => false,
+            'expires_at' => now()->addSeconds($ttl),
+            'last_activity_at' => now(),
+        ]);
+        $session->refresh();
+    }
+
     private function deny(string $code, string $message, int $status): void
     {
         throw new DomainException($message, $code, $status);

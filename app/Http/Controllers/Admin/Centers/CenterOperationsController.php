@@ -15,15 +15,20 @@ use App\Http\Resources\Admin\Centers\CenterResource;
 use App\Http\Resources\Admin\Centers\CenterSettingResource;
 use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\User;
+use App\Services\Branding\CenterLogoUrlResolver;
 use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
+use App\Services\Settings\PolicySettingsService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class CenterOperationsController extends Controller
 {
     public function __construct(
-        private readonly CenterSettingsServiceInterface $centerSettingsService
+        private readonly CenterSettingsServiceInterface $centerSettingsService,
+        private readonly PolicySettingsService $policySettingsService,
+        private readonly CenterLogoUrlResolver $logoUrlResolver
     ) {}
 
     /**
@@ -161,11 +166,16 @@ class CenterOperationsController extends Controller
     {
         $admin = $this->requireAdmin();
         $setting = $this->centerSettingsService->get($admin, $center);
+        $center->loadMissing('setting');
+        $payload = $this->buildSettingsPayload($center, $setting);
 
         return response()->json([
             'success' => true,
             'message' => 'Center settings retrieved successfully',
-            'data' => new CenterSettingResource($setting),
+            'data' => array_merge($payload, [
+                'system_defaults' => $this->policySettingsService->systemDefaults(),
+                'catalog' => $this->policySettingsService->catalog(),
+            ]),
         ]);
     }
 
@@ -178,11 +188,16 @@ class CenterOperationsController extends Controller
         /** @var array<string, mixed> $settings */
         $settings = $request->validated('settings');
         $setting = $this->centerSettingsService->update($admin, $center, $settings);
+        $center->refresh()->loadMissing('setting');
+        $payload = $this->buildSettingsPayload($center, $setting);
 
         return response()->json([
             'success' => true,
             'message' => 'Center settings updated successfully',
-            'data' => new CenterSettingResource($setting),
+            'data' => array_merge($payload, [
+                'system_defaults' => $this->policySettingsService->systemDefaults(),
+                'catalog' => $this->policySettingsService->catalog(),
+            ]),
         ]);
     }
 
@@ -210,5 +225,38 @@ class CenterOperationsController extends Controller
     private function uniqueCenterIds(array $centerIds): array
     {
         return array_values(array_unique(array_map('intval', $centerIds)));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildSettingsPayload(Center $center, CenterSetting $setting): array
+    {
+        $payload = (new CenterSettingResource($setting))->resolve();
+        $payload['settings'] = $this->resolveBranding($payload['settings']);
+
+        $resolved = $this->policySettingsService->resolveCenterPolicy($center);
+        $resolved['branding'] = $this->resolveBranding($resolved['branding'] ?? []);
+        $payload['resolved_settings'] = $resolved;
+
+        return $payload;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function resolveBranding(array $data): array
+    {
+        if (! isset($data['branding']) || ! is_array($data['branding'])) {
+            return $data;
+        }
+
+        $logo = $data['branding']['logo_url'] ?? null;
+        if (is_string($logo) && $logo !== '') {
+            $data['branding']['logo_url'] = $this->logoUrlResolver->resolve($logo);
+        }
+
+        return $data;
     }
 }

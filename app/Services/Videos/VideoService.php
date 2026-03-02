@@ -57,6 +57,7 @@ class VideoService implements VideoServiceInterface
             $payload['lifecycle_status'] = VideoLifecycleStatus::Ready;
             $payload['upload_session_id'] = null;
             $payload['source_id'] = null;
+            $payload['thumbnail_url'] = $payload['thumbnail_url'] ?? null;
         } else {
             $payload['source_provider'] = $payload['source_provider'] ?? 'bunny';
             $payload['encoding_status'] = VideoUploadStatus::Pending;

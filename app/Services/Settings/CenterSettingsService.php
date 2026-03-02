@@ -17,7 +17,8 @@ class CenterSettingsService implements CenterSettingsServiceInterface
 {
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly PolicySettingsService $policySettingsService
     ) {}
 
     /** @param array<string, mixed> $settings */
@@ -33,7 +34,7 @@ class CenterSettingsService implements CenterSettingsServiceInterface
                 $existing->restore();
             }
 
-            $currentSettings = $existing?->settings ?? [];
+            $currentSettings = $existing?->settings ?? $this->policySettingsService->centerDefaults($center);
             $mergedSettings = $this->mergeSettings($currentSettings, $settings);
 
             /** @var CenterSetting $setting */
@@ -41,6 +42,8 @@ class CenterSettingsService implements CenterSettingsServiceInterface
                 ['center_id' => $center->id],
                 ['settings' => $mergedSettings],
             );
+
+            $this->syncCenterColumns($center, $mergedSettings);
 
             $fresh = $setting->fresh() ?? $setting;
 
@@ -61,8 +64,16 @@ class CenterSettingsService implements CenterSettingsServiceInterface
         $setting = $center->setting()->firstOrCreate([
             'center_id' => $center->id,
         ], [
-            'settings' => [],
+            'settings' => $this->policySettingsService->centerDefaults($center),
         ]);
+
+        $currentSettings = is_array($setting->settings) ? $setting->settings : [];
+        $mergedDefaults = $this->mergeSettings($this->policySettingsService->centerDefaults($center), $currentSettings);
+
+        if ($mergedDefaults !== $currentSettings) {
+            $setting->settings = $mergedDefaults;
+            $setting->save();
+        }
 
         if ($setting->wasRecentlyCreated) {
             $this->auditLogService->log($actor, $setting, AuditActions::CENTER_SETTINGS_CREATED, [
@@ -94,5 +105,22 @@ class CenterSettingsService implements CenterSettingsServiceInterface
         }
 
         return $merged;
+    }
+
+    /**
+     * @param  array<string, mixed>  $settings
+     */
+    private function syncCenterColumns(Center $center, array $settings): void
+    {
+        $branding = is_array($settings['branding'] ?? null) ? $settings['branding'] : [];
+
+        $center->forceFill([
+            'default_view_limit' => (int) ($settings['default_view_limit'] ?? $center->default_view_limit),
+            'allow_extra_view_requests' => (bool) ($settings['allow_extra_view_requests'] ?? $center->allow_extra_view_requests),
+            'pdf_download_permission' => (bool) ($settings['pdf_download_permission'] ?? $center->pdf_download_permission),
+            'device_limit' => (int) ($settings['device_limit'] ?? $center->device_limit),
+            'logo_url' => array_key_exists('logo_url', $branding) ? $branding['logo_url'] : $center->logo_url,
+            'primary_color' => array_key_exists('primary_color', $branding) ? $branding['primary_color'] : $center->primary_color,
+        ])->save();
     }
 }

@@ -23,5 +23,23 @@ class SystemSettingSeeder extends Seeder
             'value' => ['email' => 'support@example.com'],
             'is_public' => true,
         ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'timezone',
+            'value' => ['timezone' => 'UTC'],
+            'is_public' => true,
+        ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'require_device_approval',
+            'value' => ['enabled' => false],
+            'is_public' => true,
+        ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'attendance_required',
+            'value' => ['enabled' => false],
+            'is_public' => true,
+        ]);
     }
 }
