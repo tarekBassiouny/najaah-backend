@@ -27,6 +27,7 @@ class UpdateVideoRequest extends FormRequest
             'description_translations.ar' => ['nullable', 'string'],
             'tags' => ['sometimes', 'array'],
             'tags.*' => ['string', 'max:255'],
+            'thumbnail_url' => ['sometimes', 'nullable', 'url', 'max:2048'],
             'center_id' => ['prohibited'],
             'encoding_status' => ['prohibited'],
             'lifecycle_status' => ['prohibited'],
@@ -38,8 +39,7 @@ class UpdateVideoRequest extends FormRequest
             'source_provider' => ['prohibited'],
             'library_id' => ['prohibited'],
             'original_filename' => ['prohibited'],
-            'duration_seconds' => ['prohibited'],
-            'thumbnail_url' => ['prohibited'],
+            'duration_seconds' => ['sometimes', 'nullable', 'integer', 'min:0'],
             'thumbnail_urls' => ['prohibited'],
         ];
     }
@@ -69,6 +69,14 @@ class UpdateVideoRequest extends FormRequest
             'tags' => [
                 'description' => 'Optional tags array.',
                 'example' => ['topic' => 'intro'],
+            ],
+            'thumbnail_url' => [
+                'description' => 'Optional thumbnail URL for URL-based sources.',
+                'example' => 'https://img.youtube.com/vi/dQw4w9WgXcQ/default.jpg',
+            ],
+            'duration_seconds' => [
+                'description' => 'Optional duration override in seconds (use for URL sources).',
+                'example' => 300,
             ],
         ];
     }

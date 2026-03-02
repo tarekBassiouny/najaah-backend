@@ -114,12 +114,8 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
             $this->deny(ErrorCodes::UNAUTHORIZED, 'Session does not belong to the user.', 403);
         }
 
-        if ($session->ended_at !== null) {
+        if ($session->ended_at !== null && ! $session->auto_closed) {
             $this->deny(ErrorCodes::SESSION_ENDED, 'Playback session has ended.', 409);
-        }
-
-        if ($session->expires_at !== null && $session->expires_at->lte(now())) {
-            $this->deny(ErrorCodes::SESSION_EXPIRED, 'Playback session has expired.', 409);
         }
 
         $this->videoAccessService->assertReadyForPlayback($video);

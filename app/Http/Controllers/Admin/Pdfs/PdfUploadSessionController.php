@@ -99,7 +99,7 @@ class PdfUploadSessionController extends Controller
                 ]);
             }
 
-            $pdf->update([
+            $payload = [
                 'upload_session_id' => $session->id,
                 'source_type' => 1,
                 'source_provider' => 'spaces',
@@ -107,7 +107,13 @@ class PdfUploadSessionController extends Controller
                 'source_url' => null,
                 'file_extension' => $session->file_extension,
                 'file_size_kb' => $session->file_size_kb,
-            ]);
+            ];
+
+            if (array_key_exists('tags', $data)) {
+                $payload['tags'] = $data['tags'];
+            }
+
+            $pdf->update($payload);
             $pdf->refresh();
         } else {
             $payload = $data;

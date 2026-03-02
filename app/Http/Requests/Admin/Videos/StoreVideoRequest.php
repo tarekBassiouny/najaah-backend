@@ -22,6 +22,8 @@ class StoreVideoRequest extends FormRequest
             'source_type' => ['sometimes', 'string', 'in:upload,url'],
             'source_provider' => ['sometimes', 'nullable', 'string', 'max:50'],
             'source_url' => ['required_if:source_type,url', 'nullable', 'url', 'max:2048'],
+            'thumbnail_url' => ['sometimes', 'nullable', 'url', 'max:2048'],
+            'duration_seconds' => ['sometimes', 'nullable', 'integer', 'min:0'],
             'title_translations' => ['required', 'array', 'min:1'],
             'title_translations.en' => ['required', 'string', 'max:255'],
             'title_translations.ar' => ['nullable', 'string', 'max:255'],
@@ -70,6 +72,14 @@ class StoreVideoRequest extends FormRequest
             'tags' => [
                 'description' => 'Optional tags array.',
                 'example' => ['module' => 'intro'],
+            ],
+            'thumbnail_url' => [
+                'description' => 'Optional thumbnail URL for the video source.',
+                'example' => 'https://img.youtube.com/vi/dQw4w9WgXcQ/default.jpg',
+            ],
+            'duration_seconds' => [
+                'description' => 'Optional duration in seconds for URL-based sources.',
+                'example' => 300,
             ],
         ];
     }
