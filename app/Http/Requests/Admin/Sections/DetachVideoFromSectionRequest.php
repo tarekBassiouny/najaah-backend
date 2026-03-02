@@ -18,9 +18,7 @@ class DetachVideoFromSectionRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'video_id' => ['required', 'integer', 'exists:videos,id'],
-        ];
+        return [];
     }
 
     /**
@@ -29,10 +27,6 @@ class DetachVideoFromSectionRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
-            'video_id' => [
-                'description' => 'Video ID to detach from the section.',
-                'example' => 10,
-            ],
         ];
     }
 }

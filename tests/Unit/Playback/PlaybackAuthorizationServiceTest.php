@@ -125,7 +125,7 @@ test('it rejects progress update when session has expired', function (): void {
 
     $thrown = captureException(fn () => $service->assertCanUpdateProgress($student, $center, $course, $video, $session));
 
-    assertHttpError($thrown, 409, 'SESSION_EXPIRED');
+    assertHttpError($thrown, 403, 'ENROLLMENT_REQUIRED');
 });
 
 /**

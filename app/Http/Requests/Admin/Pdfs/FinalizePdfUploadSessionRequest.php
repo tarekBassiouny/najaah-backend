@@ -26,6 +26,8 @@ class FinalizePdfUploadSessionRequest extends FormRequest
             'description_translations' => ['nullable', 'array'],
             'description_translations.en' => ['nullable', 'string'],
             'description_translations.ar' => ['nullable', 'string'],
+            'tags' => ['sometimes', 'array'],
+            'tags.*' => ['string'],
             'error_message' => ['sometimes', 'nullable', 'string', 'max:2000'],
         ];
     }

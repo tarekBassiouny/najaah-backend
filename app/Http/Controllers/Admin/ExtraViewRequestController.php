@@ -19,6 +19,7 @@ use App\Http\Resources\Admin\ExtraViews\ExtraViewRequestResource;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\ExtraViewRequest;
+use App\Models\Pivots\UserCenter;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Admin\ExtraViewRequestQueryService;
@@ -597,7 +598,13 @@ class ExtraViewRequestController extends Controller
     {
         $this->assertStudentUser($student);
 
-        if ((int) $student->center_id !== $centerId) {
+        $belongsToCenter = UserCenter::query()
+            ->where('user_id', (int) $student->id)
+            ->where('center_id', $centerId)
+            ->where('type', 'student')
+            ->exists();
+
+        if (! $belongsToCenter) {
             throw new HttpResponseException(response()->json([
                 'success' => false,
                 'error' => [
