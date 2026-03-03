@@ -56,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/courses.php';
                         require __DIR__.'/../routes/api/v1/admin/sections.php';
                         require __DIR__.'/../routes/api/v1/admin/videos.php';
+                        require __DIR__.'/../routes/api/v1/admin/playback-sessions.php';
                         require __DIR__.'/../routes/api/v1/admin/instructors.php';
                         require __DIR__.'/../routes/api/v1/admin/categories.php';
                         require __DIR__.'/../routes/api/v1/admin/pdfs.php';
