@@ -16,6 +16,7 @@ use App\Models\SurveyResponse;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
+use Illuminate\Support\Facades\Log;
 
 class AdminNotificationDispatcher
 {
@@ -37,14 +38,23 @@ class AdminNotificationDispatcher
                 $student->name ?? 'A student',
                 $request->new_model !== '' ? $request->new_model : 'a new device'
             ),
-            data: [
-                'entity_type' => 'device_change_request',
-                'entity_id' => $request->id,
-                'action_url' => '/admin/device-requests/'.$request->id,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'device_model' => $request->new_model,
-            ],
+            data: array_merge(
+                $this->basePayload(
+                    entityType: 'device_change_request',
+                    entityId: $request->id,
+                    centerId: $centerId
+                ),
+                [
+                    'action_url' => $this->centerListPath(
+                        $this->ensureCenter($centerId, 'device change request'),
+                        '/student-requests/device-change',
+                        ['request_id' => (string) $request->id]
+                    ),
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'device_model' => $request->new_model,
+                ]
+            ),
             userId: null,
             centerId: $centerId
         );
@@ -69,16 +79,25 @@ class AdminNotificationDispatcher
                 1,
                 $video->translate('title') ?: 'Untitled Video',
             ),
-            data: [
-                'entity_type' => 'extra_view_request',
-                'entity_id' => $request->id,
-                'action_url' => '/admin/extra-view-requests/'.$request->id,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'video_id' => $video->id,
-                'video_title' => $video->translate('title'),
-                'requested_views' => 1,
-            ],
+            data: array_merge(
+                $this->basePayload(
+                    entityType: 'extra_view_request',
+                    entityId: $request->id,
+                    centerId: $centerId
+                ),
+                [
+                    'action_url' => $this->centerListPath(
+                        $this->ensureCenter($centerId, 'extra view request'),
+                        '/student-requests/extra-view',
+                        ['request_id' => (string) $request->id]
+                    ),
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'video_id' => $video->id,
+                    'video_title' => $video->translate('title'),
+                    'requested_views' => 1,
+                ],
+            ),
             userId: null,
             centerId: $centerId
         );
@@ -100,15 +119,29 @@ class AdminNotificationDispatcher
                 $student->name,
                 $survey->translate('title') ?: 'Untitled Survey'
             ),
-            data: [
-                'entity_type' => 'survey_response',
-                'entity_id' => $response->id,
-                'action_url' => '/admin/surveys/'.$survey->id.'/responses/'.$response->id,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'survey_id' => $survey->id,
-                'survey_title' => $survey->translate('title'),
-            ],
+            data: array_merge(
+                $this->basePayload(
+                    entityType: 'survey_response',
+                    entityId: $response->id,
+                    centerId: $centerId
+                ),
+                [
+                    'action_url' => $centerId !== null
+                        ? $this->centerDetailPath(
+                            $centerId,
+                            sprintf('/surveys/%d/responses/%d', $survey->id, $response->id)
+                        )
+                        : $this->withQuery('/surveys', [
+                            'open_results_survey_id' => (string) $survey->id,
+                            'focus_tab' => 'responses',
+                            'response_id' => (string) $response->id,
+                        ]),
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'survey_id' => $survey->id,
+                    'survey_title' => $survey->translate('title'),
+                ]
+            ),
             userId: null,
             centerId: $centerId
         );
@@ -131,15 +164,24 @@ class AdminNotificationDispatcher
                 $student->name,
                 $courseTitle ?: 'Untitled Course'
             ),
-            data: [
-                'entity_type' => 'enrollment',
-                'entity_id' => $enrollment->id,
-                'action_url' => '/admin/enrollments/'.$enrollment->id,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'course_id' => $course->id,
-                'course_title' => $courseTitle,
-            ],
+            data: array_merge(
+                $this->basePayload(
+                    entityType: 'enrollment',
+                    entityId: $enrollment->id,
+                    centerId: $centerId
+                ),
+                [
+                    'action_url' => $this->centerListPath(
+                        $this->ensureCenter($centerId, 'enrollment'),
+                        '/student-requests/enrollments',
+                        ['enrollment_id' => (string) $enrollment->id]
+                    ),
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'course_id' => $course->id,
+                    'course_title' => $courseTitle,
+                ],
+            ),
             userId: null,
             centerId: $centerId
         );
@@ -162,15 +204,24 @@ class AdminNotificationDispatcher
                 $student->name,
                 $courseTitle ?: 'Untitled Course'
             ),
-            data: [
-                'entity_type' => 'enrollment_request',
-                'entity_id' => $enrollment->id,
-                'action_url' => '/admin/enrollments/'.$enrollment->id,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'course_id' => $course->id,
-                'course_title' => $courseTitle,
-            ],
+            data: array_merge(
+                $this->basePayload(
+                    entityType: 'enrollment_request',
+                    entityId: $enrollment->id,
+                    centerId: $centerId
+                ),
+                [
+                    'action_url' => $this->centerListPath(
+                        $this->ensureCenter($centerId, 'enrollment request'),
+                        '/student-requests/enrollments',
+                        ['enrollment_request_id' => (string) $enrollment->id]
+                    ),
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'course_id' => $course->id,
+                    'course_title' => $courseTitle,
+                ],
+            ),
             userId: null,
             centerId: $centerId
         );
@@ -185,12 +236,20 @@ class AdminNotificationDispatcher
                 'Center "%s" has been successfully onboarded.',
                 $center->name ?? 'A center'
             ),
-            data: [
-                'entity_type' => 'center',
-                'entity_id' => $center->id,
-                'action_url' => '/admin/centers/'.$center->id,
-                'center_name' => $center->name,
-            ],
+            data: array_merge(
+                $this->basePayload(
+                    entityType: 'center',
+                    entityId: $center->id,
+                    centerId: $center->id
+                ),
+                [
+                    'action_url' => $this->centerDetailPath(
+                        $center->id,
+                        '/centers/'.$center->id
+                    ),
+                    'center_name' => $center->name,
+                ],
+            ),
             userId: null,
             centerId: null
         );
@@ -214,5 +273,70 @@ class AdminNotificationDispatcher
             userId: $userId,
             centerId: $centerId
         );
+    }
+
+    /**
+     * @return array<string, int|string|bool>
+     */
+    private function basePayload(string $entityType, int $entityId, ?int $centerId): array
+    {
+        return [
+            'entity_type' => $entityType,
+            'entity_id' => $entityId,
+            'center_id' => $centerId,
+            'is_actionable' => $centerId !== null,
+            'fallback_url' => $centerId !== null
+                ? sprintf('/centers/%d/notifications', $centerId)
+                : '/notifications',
+        ];
+    }
+
+    private function ensureCenter(?int $centerId, string $context): int
+    {
+        if (is_numeric($centerId)) {
+            return $centerId;
+        }
+
+        Log::warning('Admin notification missing center context', [
+            'context' => $context,
+            'center_id' => $centerId,
+        ]);
+
+        return 0;
+    }
+
+    /**
+     * @param  array<string, string>  $query
+     */
+    private function centerListPath(int $centerId, string $relative, array $query = []): string
+    {
+        $path = sprintf('/centers/%d%s', $centerId, $relative);
+
+        if (empty($query)) {
+            return $path;
+        }
+
+        return $this->withQuery($path, $query);
+    }
+
+    private function centerDetailPath(int $centerId, string $relative): string
+    {
+        return sprintf('/centers/%d%s', $centerId, $relative);
+    }
+
+    /**
+     * @param  array<string, string>  $query
+     */
+    private function withQuery(string $path, array $query): string
+    {
+        $params = array_filter($query, fn (?string $value): bool => $value !== null && $value !== '');
+
+        if (empty($params)) {
+            return $path;
+        }
+
+        $search = http_build_query($params);
+
+        return sprintf('%s?%s', $path, $search);
     }
 }
