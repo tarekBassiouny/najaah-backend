@@ -65,6 +65,27 @@ class EvolutionApiClient
     }
 
     /**
+     * @param  array<string, mixed>  $payload
+     * @return array<string, mixed>
+     */
+    public function sendMedia(string $instanceName, array $payload): array
+    {
+        $request = $this->request();
+        $instanceToken = (string) config('evolution.otp_instance_token', '');
+
+        if ($instanceToken !== '') {
+            $request = $request->replaceHeaders([
+                'apikey' => $instanceToken,
+            ]);
+        }
+
+        return $request
+            ->post('/message/sendMedia/'.$instanceName, $payload)
+            ->throw()
+            ->json();
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function findWebhook(string $instanceName): array

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -25,6 +26,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read User $user
  * @property-read Course $course
  * @property-read Center $center
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessRequest> $videoAccessRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
  */
 #[ObservedBy(EnrollmentObserver::class)]
 class Enrollment extends Model
@@ -99,6 +103,24 @@ class Enrollment extends Model
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class)->withTrashed();
+    }
+
+    /** @return HasMany<VideoAccessRequest, self> */
+    public function videoAccessRequests(): HasMany
+    {
+        return $this->hasMany(VideoAccessRequest::class);
+    }
+
+    /** @return HasMany<VideoAccessCode, self> */
+    public function videoAccessCodes(): HasMany
+    {
+        return $this->hasMany(VideoAccessCode::class);
+    }
+
+    /** @return HasMany<VideoAccess, self> */
+    public function videoAccesses(): HasMany
+    {
+        return $this->hasMany(VideoAccess::class);
     }
 
     /**

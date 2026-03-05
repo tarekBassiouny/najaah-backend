@@ -108,6 +108,12 @@ final class AuditActions
 
     public const EXTRA_VIEW_REQUEST_REJECTED = 'extra_view_request_rejected';
 
+    public const VIDEO_ACCESS_REQUEST_APPROVED = 'video_access_request_approved';
+
+    public const VIDEO_ACCESS_REQUEST_CREATED = 'video_access_request_created';
+
+    public const VIDEO_ACCESS_REQUEST_REJECTED = 'video_access_request_rejected';
+
     public const PDF_CREATED = 'pdf_created';
 
     public const PDF_DELETED = 'pdf_deleted';

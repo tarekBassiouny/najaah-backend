@@ -73,6 +73,14 @@ use App\Services\Surveys\Contracts\SurveyServiceInterface;
 use App\Services\Surveys\SurveyAssignmentService;
 use App\Services\Surveys\SurveyResponseService;
 use App\Services\Surveys\SurveyService;
+use App\Services\VideoAccess\BulkWhatsAppService;
+use App\Services\VideoAccess\Contracts\BulkWhatsAppServiceInterface;
+use App\Services\VideoAccess\Contracts\VideoApprovalCodeServiceInterface;
+use App\Services\VideoAccess\Contracts\VideoApprovalRequestServiceInterface;
+use App\Services\VideoAccess\Contracts\VideoApprovalServiceInterface;
+use App\Services\VideoAccess\VideoApprovalCodeService;
+use App\Services\VideoAccess\VideoApprovalRequestService;
+use App\Services\VideoAccess\VideoApprovalService;
 use App\Services\Videos\AdminVideoQueryService;
 use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
 use App\Services\Videos\Contracts\VideoServiceInterface;
@@ -134,6 +142,10 @@ class AppServiceProvider extends ServiceProvider
             AdminVideoQueryServiceInterface::class => AdminVideoQueryService::class,
             PlaybackServiceInterface::class => PlaybackService::class,
             PlaybackAuthorizationServiceInterface::class => PlaybackAuthorizationService::class,
+            VideoApprovalServiceInterface::class => VideoApprovalService::class,
+            VideoApprovalRequestServiceInterface::class => VideoApprovalRequestService::class,
+            VideoApprovalCodeServiceInterface::class => VideoApprovalCodeService::class,
+            BulkWhatsAppServiceInterface::class => BulkWhatsAppService::class,
             RoleServiceInterface::class => RoleService::class,
             PermissionServiceInterface::class => PermissionService::class,
             StudentNotificationServiceInterface::class => StudentNotificationService::class,

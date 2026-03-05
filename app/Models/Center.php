@@ -39,6 +39,10 @@ use RuntimeException;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessRequest> $videoAccessRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, BulkWhatsAppJob> $bulkWhatsAppJobs
  * @property-read CenterSetting|null $setting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoUploadSession> $videoUploadSessions
  */
@@ -148,6 +152,30 @@ class Center extends Model
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    /** @return HasMany<VideoAccessRequest, self> */
+    public function videoAccessRequests(): HasMany
+    {
+        return $this->hasMany(VideoAccessRequest::class);
+    }
+
+    /** @return HasMany<VideoAccessCode, self> */
+    public function videoAccessCodes(): HasMany
+    {
+        return $this->hasMany(VideoAccessCode::class);
+    }
+
+    /** @return HasMany<VideoAccess, self> */
+    public function videoAccesses(): HasMany
+    {
+        return $this->hasMany(VideoAccess::class);
+    }
+
+    /** @return HasMany<BulkWhatsAppJob, self> */
+    public function bulkWhatsAppJobs(): HasMany
+    {
+        return $this->hasMany(BulkWhatsAppJob::class);
     }
 
     /** @return HasOne<CenterSetting, self> */

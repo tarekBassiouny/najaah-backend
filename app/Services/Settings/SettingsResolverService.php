@@ -20,8 +20,11 @@ class SettingsResolverService implements SettingsResolverServiceInterface
     private array $allowedKeys = [
         'view_limit',
         'allow_extra_view_requests',
+        'requires_video_approval',
+        'video_code_expiry_days',
         'pdf_download_permission',
         'device_limit',
+        'whatsapp_bulk_settings',
         'branding',
     ];
 
@@ -116,8 +119,17 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         }
 
         $defaults['allow_extra_view_requests'] = $center->allow_extra_view_requests;
+        $defaults['requires_video_approval'] = false;
+        $defaults['video_code_expiry_days'] = null;
         $defaults['pdf_download_permission'] = $center->pdf_download_permission;
         $defaults['device_limit'] = $center->device_limit;
+        $defaults['whatsapp_bulk_settings'] = [
+            'delay_seconds' => 3,
+            'batch_size' => 50,
+            'batch_pause_seconds' => 60,
+            'max_retries' => 2,
+            'max_failures_before_pause' => 10,
+        ];
 
         $branding = array_filter([
             'logo_url' => $center->logo_url,
@@ -182,6 +194,10 @@ class SettingsResolverService implements SettingsResolverServiceInterface
             }
 
             if ($key === 'branding' && ! is_array($value)) {
+                continue;
+            }
+
+            if ($key === 'whatsapp_bulk_settings' && ! is_array($value)) {
                 continue;
             }
 

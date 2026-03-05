@@ -45,6 +45,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
  * @property-read VideoSetting|null $setting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PlaybackSession> $playbackSessions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessRequest> $videoAccessRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
  */
 class Video extends Model
 {
@@ -140,6 +143,24 @@ class Video extends Model
     public function playbackSessions(): HasMany
     {
         return $this->hasMany(PlaybackSession::class);
+    }
+
+    /** @return HasMany<VideoAccessRequest, self> */
+    public function videoAccessRequests(): HasMany
+    {
+        return $this->hasMany(VideoAccessRequest::class);
+    }
+
+    /** @return HasMany<VideoAccessCode, self> */
+    public function videoAccessCodes(): HasMany
+    {
+        return $this->hasMany(VideoAccessCode::class);
+    }
+
+    /** @return HasMany<VideoAccess, self> */
+    public function videoAccesses(): HasMany
+    {
+        return $this->hasMany(VideoAccess::class);
     }
 
     /**

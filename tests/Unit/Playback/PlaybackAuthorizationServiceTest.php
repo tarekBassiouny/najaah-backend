@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 use App\Exceptions\DomainException;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\UserDevice;
@@ -72,6 +74,35 @@ test('it rejects playback when video is not ready', function (): void {
     $thrown = captureException(fn () => $service->assertCanStartPlayback($student, $center, $course, $video));
 
     assertHttpError($thrown, 422, 'VIDEO_NOT_READY');
+});
+
+test('it rejects playback when video approval is required and code was not redeemed', function (): void {
+    [$student, $center, $course, $video] = buildAuthorizationPlaybackContext();
+
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'default_view_limit' => 2,
+            'allow_extra_view_requests' => true,
+            'requires_video_approval' => true,
+            'video_code_expiry_days' => 30,
+            'pdf_download_permission' => false,
+            'device_limit' => 1,
+        ],
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $service = app(PlaybackAuthorizationService::class);
+
+    $thrown = captureException(fn () => $service->assertCanStartPlayback($student, $center, $course, $video));
+
+    assertHttpError($thrown, 403, 'VIDEO_ACCESS_DENIED');
 });
 
 test('it rejects progress update when session is owned by another student', function (): void {
