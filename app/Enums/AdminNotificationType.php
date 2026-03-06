@@ -12,6 +12,7 @@ enum AdminNotificationType: int
     case SURVEY_RESPONSE = 4;
     case NEW_ENROLLMENT = 5;
     case CENTER_ONBOARDING = 6;
+    case VIDEO_ACCESS_REQUEST = 7;
 
     public function label(): string
     {
@@ -22,6 +23,7 @@ enum AdminNotificationType: int
             self::SURVEY_RESPONSE => 'Survey Response',
             self::NEW_ENROLLMENT => 'New Enrollment',
             self::CENTER_ONBOARDING => 'Center Onboarding',
+            self::VIDEO_ACCESS_REQUEST => 'Video Access Request',
         };
     }
 
@@ -34,6 +36,7 @@ enum AdminNotificationType: int
             self::SURVEY_RESPONSE => 'clipboard-check',
             self::NEW_ENROLLMENT => 'user-plus',
             self::CENTER_ONBOARDING => 'building',
+            self::VIDEO_ACCESS_REQUEST => 'play-circle',
         };
     }
 
@@ -49,6 +52,7 @@ enum AdminNotificationType: int
             self::SURVEY_RESPONSE => ['en' => 'Survey Response', 'ar' => 'رد على الاستبيان'],
             self::NEW_ENROLLMENT => ['en' => 'New Enrollment', 'ar' => 'تسجيل جديد'],
             self::CENTER_ONBOARDING => ['en' => 'Center Onboarding', 'ar' => 'انضمام مركز'],
+            self::VIDEO_ACCESS_REQUEST => ['en' => 'Video Access Request', 'ar' => 'طلب الوصول للفيديو'],
         };
     }
 }

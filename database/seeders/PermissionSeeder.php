@@ -34,6 +34,7 @@ class PermissionSeeder extends Seeder
             'notification.manage' => 'Manage admin notifications',
             'device_change.manage' => 'Manage device change requests',
             'extra_view.manage' => 'Manage extra view requests',
+            'video_access.manage' => 'Manage video access approvals and codes',
             'instructor.manage' => 'Manage instructors',
             'agent.execute' => 'Run automated agents',
             'agent.content_publishing' => 'Execute content publishing agents',

@@ -6,6 +6,7 @@ namespace App\Http\Resources\Admin\Sections;
 
 use App\Models\Pivots\CourseVideo;
 use App\Models\Video;
+use App\Services\Videos\VideoThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,11 +24,7 @@ class SectionVideoResource extends JsonResource
         $video = $this->resource;
         /** @var CourseVideo|null $pivot */
         $pivot = $video->pivot instanceof CourseVideo ? $video->pivot : null;
-
-        $thumbnail = $video->thumbnail_url;
-        if ($thumbnail === null && is_array($video->thumbnail_urls)) {
-            $thumbnail = $video->thumbnail_urls['default'] ?? array_values($video->thumbnail_urls)[0] ?? null;
-        }
+        $thumbnail = app(VideoThumbnailUrlResolver::class)->resolve($video->effectiveThumbnailPath());
 
         return [
             'id' => $pivot?->id ?? $video->id,

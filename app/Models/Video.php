@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property VideoUploadStatus $encoding_status
  * @property int $views_count
  * @property string|null $thumbnail_url
+ * @property string|null $custom_thumbnail_url
  * @property array<string, string>|null $thumbnail_urls
  * @property-read User $creator
  * @property-read Center $center
@@ -45,6 +46,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
  * @property-read VideoSetting|null $setting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PlaybackSession> $playbackSessions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessRequest> $videoAccessRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
  */
 class Video extends Model
 {
@@ -77,6 +81,7 @@ class Video extends Model
         'encoding_status',
         'is_demo',
         'thumbnail_url',
+        'custom_thumbnail_url',
         'thumbnail_urls',
         'views_count',
     ];
@@ -140,6 +145,52 @@ class Video extends Model
     public function playbackSessions(): HasMany
     {
         return $this->hasMany(PlaybackSession::class);
+    }
+
+    /** @return HasMany<VideoAccessRequest, self> */
+    public function videoAccessRequests(): HasMany
+    {
+        return $this->hasMany(VideoAccessRequest::class);
+    }
+
+    /** @return HasMany<VideoAccessCode, self> */
+    public function videoAccessCodes(): HasMany
+    {
+        return $this->hasMany(VideoAccessCode::class);
+    }
+
+    /** @return HasMany<VideoAccess, self> */
+    public function videoAccesses(): HasMany
+    {
+        return $this->hasMany(VideoAccess::class);
+    }
+
+    public function effectiveThumbnailPath(): ?string
+    {
+        if (is_string($this->custom_thumbnail_url) && $this->custom_thumbnail_url !== '') {
+            return $this->custom_thumbnail_url;
+        }
+
+        if (is_string($this->thumbnail_url) && $this->thumbnail_url !== '') {
+            return $this->thumbnail_url;
+        }
+
+        if (! is_array($this->thumbnail_urls)) {
+            return null;
+        }
+
+        $default = $this->thumbnail_urls['default'] ?? null;
+        if (is_string($default) && $default !== '') {
+            return $default;
+        }
+
+        foreach ($this->thumbnail_urls as $candidate) {
+            if (is_string($candidate) && $candidate !== '') {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 
     /**

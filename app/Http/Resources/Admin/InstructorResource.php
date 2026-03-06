@@ -8,7 +8,7 @@ use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Http\Resources\Admin\Summary\CourseSummaryResource;
 use App\Http\Resources\Admin\Summary\UserSummaryResource;
 use App\Models\Instructor;
-use App\Services\Storage\Contracts\StorageServiceInterface;
+use App\Services\Instructors\InstructorAvatarUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,11 +24,7 @@ class InstructorResource extends JsonResource
     {
         /** @var Instructor $instructor */
         $instructor = $this->resource;
-        $avatarUrl = $instructor->avatar_url;
-
-        if (is_string($avatarUrl) && $avatarUrl !== '' && ! str_starts_with($avatarUrl, 'http')) {
-            $avatarUrl = app(StorageServiceInterface::class)->url($avatarUrl);
-        }
+        $avatarUrl = app(InstructorAvatarUrlResolver::class)->resolve($instructor->avatar_url);
 
         return [
             'id' => $instructor->id,

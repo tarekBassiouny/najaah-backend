@@ -19,6 +19,7 @@ use App\Services\Access\EnrollmentAccessService;
 use App\Services\Access\StudentAccessService;
 use App\Services\Access\VideoAccessService;
 use App\Services\Playback\Contracts\PlaybackAuthorizationServiceInterface;
+use App\Services\VideoAccess\Contracts\VideoApprovalServiceInterface;
 use App\Support\ErrorCodes;
 
 class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterface
@@ -30,7 +31,8 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         private readonly StudentAccessService $studentAccessService,
         private readonly CourseAccessService $courseAccessService,
         private readonly EnrollmentAccessService $enrollmentAccessService,
-        private readonly VideoAccessService $videoAccessService
+        private readonly VideoAccessService $videoAccessService,
+        private readonly VideoApprovalServiceInterface $videoApprovalService
     ) {}
 
     public function assertCanStartPlayback(User $student, Center $center, Course $course, Video $video): void
@@ -58,6 +60,7 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
 
         $this->videoAccessService->assertReadyForPlayback($video);
         $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
+        $this->videoApprovalService->assertApprovalAccess($student, $center, $course, $video);
 
         $override = $pivot->pivot?->view_limit_override;
         $this->viewLimitService->assertWithinLimit($student, $video, $course, $override);

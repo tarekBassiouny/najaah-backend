@@ -57,7 +57,39 @@ it('filters instructors by course', function (): void {
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.name', 'Course A Instructor');
+        ->assertJsonPath('data.0.name', 'Course A Instructor')
+        ->assertJsonPath('data.0.courses.0.id', $courseA->id);
+});
+
+it('returns assigned courses in instructor list', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create();
+
+    $courseA = Course::factory()->create([
+        'center_id' => $center->id,
+        'title_translations' => ['en' => 'Biology'],
+    ]);
+    $courseB = Course::factory()->create([
+        'center_id' => $center->id,
+        'title_translations' => ['en' => 'Chemistry'],
+    ]);
+
+    $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
+        'name_translations' => ['en' => 'Assigned Instructor'],
+    ]);
+
+    $courseA->instructors()->attach($instructor->id, ['role' => 'primary']);
+    $courseB->instructors()->attach($instructor->id, ['role' => 'assistant']);
+
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/instructors", $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.0.name', 'Assigned Instructor')
+        ->assertJsonPath('data.0.courses.0.id', fn ($id) => in_array((int) $id, [$courseA->id, $courseB->id], true))
+        ->assertJsonPath('data.0.courses.1.id', fn ($id) => in_array((int) $id, [$courseA->id, $courseB->id], true))
+        ->assertJsonPath('data.0.courses.0.title', fn ($title) => is_string($title) && $title !== '')
+        ->assertJsonPath('data.0.courses.1.title', fn ($title) => is_string($title) && $title !== '');
 });
 
 it('allows super admin to filter instructors by center', function (): void {

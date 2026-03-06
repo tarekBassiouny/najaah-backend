@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\Courses;
 
 use App\Services\Storage\Contracts\StorageServiceInterface;
-use Illuminate\Support\Facades\Log;
 
 class CourseThumbnailUrlResolver
 {
@@ -19,12 +18,6 @@ class CourseThumbnailUrlResolver
 
         if ($this->isAbsoluteUrl($path)) {
             return $path;
-        }
-
-        if (! $this->storageService->exists($path)) {
-            Log::warning('Course thumbnail path missing on storage.', ['path' => $path]);
-
-            return null;
         }
 
         $visibility = (string) config(

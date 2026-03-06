@@ -8,6 +8,7 @@ use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Http\Resources\Admin\Summary\UserSummaryResource;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
+use App\Services\Videos\VideoThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -24,6 +25,8 @@ class AdminVideoResource extends JsonResource
     {
         /** @var Video $video */
         $video = $this->resource;
+        $thumbnailResolver = app(VideoThumbnailUrlResolver::class);
+        $thumbnailUrl = $thumbnailResolver->resolve($video->effectiveThumbnailPath());
 
         return [
             'id' => $video->id,
@@ -32,7 +35,8 @@ class AdminVideoResource extends JsonResource
             'description' => $video->translate('description'),
             'tags' => $video->tags,
             'duration_seconds' => $video->duration_seconds,
-            'thumbnail_url' => $video->thumbnail_url,
+            'thumbnail_url' => $thumbnailUrl,
+            'has_custom_thumbnail' => $video->custom_thumbnail_url !== null && $video->custom_thumbnail_url !== '',
             'source_type' => $video->source_type,
             'source_provider' => $video->source_provider,
             'source_url' => $video->source_url,

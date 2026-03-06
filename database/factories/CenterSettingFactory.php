@@ -19,7 +19,16 @@ class CenterSettingFactory extends Factory
             'settings' => [
                 'default_view_limit' => 2,
                 'allow_extra_view_requests' => true,
+                'requires_video_approval' => false,
+                'video_code_expiry_days' => null,
                 'pdf_download_permission' => false,
+                'whatsapp_bulk_settings' => [
+                    'delay_seconds' => 3,
+                    'batch_size' => 50,
+                    'batch_pause_seconds' => 60,
+                    'max_retries' => 2,
+                    'max_failures_before_pause' => 10,
+                ],
             ],
         ];
     }

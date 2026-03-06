@@ -26,6 +26,11 @@ class StoragePathResolver
         return $this->centerScoped($centerId, sprintf('courses/%d/thumbnail/%s', $courseId, $filename));
     }
 
+    public function videoThumbnail(int $centerId, int $videoId, string $filename): string
+    {
+        return $this->centerScoped($centerId, sprintf('videos/%d/thumbnail/%s', $videoId, $filename));
+    }
+
     public function pdf(int $centerId, string $filename): string
     {
         return $this->centerScoped($centerId, 'pdfs/'.$filename);

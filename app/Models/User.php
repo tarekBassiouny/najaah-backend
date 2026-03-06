@@ -42,6 +42,10 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property-read StudentSetting|null $studentSetting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, AuditLog> $auditLogs
  * @property-read \Illuminate\Database\Eloquent\Collection<int, ExtraViewRequest> $extraViewRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessRequest> $videoAccessRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, BulkWhatsAppJob> $bulkWhatsAppJobs
  * @property-read \Illuminate\Database\Eloquent\Collection<int, DeviceChangeRequest> $deviceChangeRequests
  *
  * @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\UserFactory>
@@ -186,6 +190,30 @@ class User extends Authenticatable implements JWTSubject
     public function extraViewRequests(): HasMany
     {
         return $this->hasMany(ExtraViewRequest::class);
+    }
+
+    /** @return HasMany<VideoAccessRequest, self> */
+    public function videoAccessRequests(): HasMany
+    {
+        return $this->hasMany(VideoAccessRequest::class);
+    }
+
+    /** @return HasMany<VideoAccessCode, self> */
+    public function videoAccessCodes(): HasMany
+    {
+        return $this->hasMany(VideoAccessCode::class);
+    }
+
+    /** @return HasMany<VideoAccess, self> */
+    public function videoAccesses(): HasMany
+    {
+        return $this->hasMany(VideoAccess::class);
+    }
+
+    /** @return HasMany<BulkWhatsAppJob, self> */
+    public function bulkWhatsAppJobs(): HasMany
+    {
+        return $this->hasMany(BulkWhatsAppJob::class, 'created_by');
     }
 
     /** @return HasMany<DeviceChangeRequest, self> */

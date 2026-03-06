@@ -108,6 +108,12 @@ final class AuditActions
 
     public const EXTRA_VIEW_REQUEST_REJECTED = 'extra_view_request_rejected';
 
+    public const VIDEO_ACCESS_REQUEST_APPROVED = 'video_access_request_approved';
+
+    public const VIDEO_ACCESS_REQUEST_CREATED = 'video_access_request_created';
+
+    public const VIDEO_ACCESS_REQUEST_REJECTED = 'video_access_request_rejected';
+
     public const PDF_CREATED = 'pdf_created';
 
     public const PDF_DELETED = 'pdf_deleted';
@@ -142,6 +148,8 @@ final class AuditActions
 
     public const INSTRUCTOR_UPDATED = 'instructor_updated';
 
+    public const INSTRUCTOR_AVATAR_UPDATED = 'instructor_avatar_updated';
+
     public const INSTRUCTOR_DELETED = 'instructor_deleted';
 
     public const SECTION_CREATED = 'section_created';
@@ -173,6 +181,10 @@ final class AuditActions
     public const VIDEO_UPLOAD_SESSION_CREATED = 'video_upload_session_created';
 
     public const VIDEO_UPLOAD_SESSION_TRANSITIONED = 'video_upload_session_transitioned';
+
+    public const VIDEO_THUMBNAIL_UPDATED = 'video_thumbnail_updated';
+
+    public const VIDEO_THUMBNAIL_CLEARED = 'video_thumbnail_cleared';
 
     public const SURVEY_CREATED = 'survey_created';
 

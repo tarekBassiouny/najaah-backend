@@ -5,7 +5,9 @@ declare(strict_types=1);
 use App\Models\Center;
 use App\Models\Instructor;
 use App\Models\User;
+use App\Services\Instructors\InstructorAvatarUrlResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\Helpers\ApiTestHelper;
 
 uses(RefreshDatabase::class, ApiTestHelper::class)->group('mobile', 'instructors');
@@ -113,4 +115,34 @@ it('paginates instructor list', function (): void {
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('meta.page', 2)
         ->assertJsonPath('meta.per_page', 1);
+});
+
+it('resolves stored avatar path into a frontend-usable url', function (): void {
+    Storage::fake('local');
+    config()->set('filesystems.default', 'local');
+    config()->set('filesystems.disks.local.url', 'https://storage.test');
+
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $avatarPath = "centers/{$center->id}/instructors/avatars/instructor-avatar.jpg";
+    Storage::disk('local')->put($avatarPath, 'avatar');
+
+    $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
+        'avatar_url' => $avatarPath,
+    ]);
+
+    $this->asApiUser($student);
+    $expectedAvatarUrl = app(InstructorAvatarUrlResolver::class)->resolve($avatarPath);
+
+    $response = $this->apiGet('/api/v1/instructors');
+
+    $response->assertOk()
+        ->assertJsonPath('data.0.id', $instructor->id)
+        ->assertJsonPath('data.0.avatar_url', $expectedAvatarUrl);
 });
