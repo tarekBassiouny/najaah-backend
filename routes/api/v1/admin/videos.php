@@ -10,6 +10,8 @@ Route::middleware(['require.permission:video.manage', 'scope.center'])->group(fu
     Route::get('/centers/{center}/videos/{video}', [VideoController::class, 'show'])->whereNumber(['center', 'video']);
     Route::put('/centers/{center}/videos/{video}', [VideoController::class, 'update'])->whereNumber(['center', 'video']);
     Route::delete('/centers/{center}/videos/{video}', [VideoController::class, 'destroy'])->whereNumber(['center', 'video']);
+    Route::post('/centers/{center}/videos/{video}/thumbnail', [VideoController::class, 'uploadThumbnail'])->whereNumber(['center', 'video']);
+    Route::delete('/centers/{center}/videos/{video}/thumbnail', [VideoController::class, 'clearThumbnail'])->whereNumber(['center', 'video']);
     Route::post('/centers/{center}/videos/{video}/preview', [VideoController::class, 'preview'])->whereNumber(['center', 'video']);
 });
 

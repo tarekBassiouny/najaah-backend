@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin\Summary;
 
 use App\Models\Video;
+use App\Services\Videos\VideoThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,11 +24,7 @@ class VideoSummaryResource extends JsonResource
     {
         /** @var Video $video */
         $video = $this->resource;
-
-        $thumbnail = $video->thumbnail_url;
-        if ($thumbnail === null && is_array($video->thumbnail_urls)) {
-            $thumbnail = $video->thumbnail_urls['default'] ?? array_values($video->thumbnail_urls)[0] ?? null;
-        }
+        $thumbnail = app(VideoThumbnailUrlResolver::class)->resolve($video->effectiveThumbnailPath());
 
         return [
             'id' => $video->id,

@@ -15,6 +15,7 @@ use App\Models\Survey;
 use App\Models\SurveyResponse;
 use App\Models\User;
 use App\Models\Video;
+use App\Models\VideoAccessRequest;
 use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
 use Illuminate\Support\Facades\Log;
 
@@ -97,6 +98,49 @@ class AdminNotificationDispatcher
                     'video_title' => $video->translate('title'),
                     'requested_views' => 1,
                 ],
+            ),
+            userId: null,
+            centerId: $centerId
+        );
+    }
+
+    public function dispatchVideoAccessRequest(VideoAccessRequest $request): AdminNotification
+    {
+        /** @var User $student */
+        $student = $request->user;
+        /** @var Video $video */
+        $video = $request->video;
+        $centerId = is_numeric($request->center_id)
+            ? (int) $request->center_id
+            : (is_numeric($request->course->center_id) ? (int) $request->course->center_id : null);
+
+        return $this->notificationService->create(
+            type: AdminNotificationType::VIDEO_ACCESS_REQUEST,
+            title: 'New Video Access Request',
+            body: sprintf(
+                '%s requested access to \"%s\".',
+                $student->name,
+                $video->translate('title') ?: 'Untitled Video',
+            ),
+            data: array_merge(
+                $this->basePayload(
+                    entityType: 'video_access_request',
+                    entityId: $request->id,
+                    centerId: $centerId
+                ),
+                [
+                    'action_url' => $this->centerListPath(
+                        $this->ensureCenter($centerId, 'video access request'),
+                        '/student-requests/video-access',
+                        ['request_id' => (string) $request->id]
+                    ),
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'video_id' => $video->id,
+                    'video_title' => $video->translate('title'),
+                    'course_id' => $request->course_id,
+                    'reason' => $request->reason,
+                ]
             ),
             userId: null,
             centerId: $centerId

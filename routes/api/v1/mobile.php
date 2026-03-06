@@ -16,6 +16,8 @@ use App\Http\Controllers\Mobile\PdfController;
 use App\Http\Controllers\Mobile\PlaybackController;
 use App\Http\Controllers\Mobile\SearchController;
 use App\Http\Controllers\Mobile\SurveyController;
+use App\Http\Controllers\Mobile\VideoAccessCodeController;
+use App\Http\Controllers\Mobile\VideoAccessRequestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -143,6 +145,21 @@ Route::middleware('jwt.mobile')->group(function (): void {
         '/centers/{center}/courses/{course}/videos/{video}/extra-view',
         [ExtraViewRequestController::class, 'store']
     );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Video Access Approval
+    |--------------------------------------------------------------------------
+    */
+    Route::post(
+        '/centers/{center}/courses/{course}/videos/{video}/access-request',
+        [VideoAccessRequestController::class, 'store']
+    );
+    Route::get(
+        '/centers/{center}/courses/{course}/videos/{video}/access-status',
+        [VideoAccessRequestController::class, 'status']
+    );
+    Route::post('/video-access-codes/redeem', [VideoAccessCodeController::class, 'redeem']);
 
     /*
     |--------------------------------------------------------------------------

@@ -23,13 +23,13 @@ class InstructorQueryService
     public function build(User $admin, InstructorFilters $filters): Builder
     {
         $query = Instructor::query()
-            ->with(['center', 'creator'])
+            ->with(['center', 'creator', 'courses'])
             ->orderByDesc('created_at');
 
         if ($filters->courseId !== null) {
             $courseId = $filters->courseId;
             $query->whereHas('courses', static function (Builder $builder) use ($courseId): void {
-                $builder->where('courses.id', $courseId);
+                $builder->whereKey($courseId);
             });
         }
 
@@ -62,14 +62,16 @@ class InstructorQueryService
         $this->centerScopeService->assertAdminCenterId($admin, $centerId);
 
         $query = Instructor::query()
-            ->with(['center', 'creator'])
+            ->with(['center', 'creator', 'courses'])
             ->where('center_id', $centerId)
             ->orderByDesc('created_at');
 
         if ($filters->courseId !== null) {
             $courseId = $filters->courseId;
-            $query->whereHas('courses', static function (Builder $builder) use ($courseId): void {
-                $builder->where('courses.id', $courseId);
+            $query->whereHas('courses', static function (Builder $builder) use ($courseId, $centerId): void {
+                $builder
+                    ->whereKey($courseId)
+                    ->where('courses.center_id', $centerId);
             });
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Center;
 use App\Models\Instructor;
+use App\Services\Instructors\InstructorAvatarUrlResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
@@ -86,4 +87,132 @@ it('updates instructor bio and metadata', function (): void {
         ->assertJsonPath('data.name', 'New Name')
         ->assertJsonPath('data.bio', 'New Bio')
         ->assertJsonPath('data.metadata.specialization', 'Math');
+});
+
+it('replaces previous avatar when updating instructor profile', function (): void {
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
+    $oldPath = "centers/{$center->id}/instructors/avatars/old-profile-avatar.jpg";
+    Storage::disk('local')->put($oldPath, 'old-avatar');
+
+    /** @var Instructor $instructor */
+    $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'avatar_url' => $oldPath,
+        'name_translations' => ['en' => 'Old Name'],
+    ]);
+
+    $avatar = UploadedFile::fake()->image('profile-avatar.jpg');
+
+    $response = $this->put(
+        "/api/v1/admin/centers/{$center->id}/instructors/{$instructor->id}",
+        [
+            'name_translations' => ['en' => 'Updated Name'],
+            'avatar' => $avatar,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('data.name', 'Updated Name');
+
+    $avatarUrl = (string) $response->json('data.avatar_url');
+    expect($avatarUrl)->not->toBe('');
+    $parsedPath = parse_url($avatarUrl, PHP_URL_PATH) ?? '';
+    $path = ltrim($parsedPath, '/');
+    if (str_starts_with($path, 'storage/')) {
+        $path = substr($path, strlen('storage/'));
+    }
+    Storage::disk('local')->assertExists($path);
+    Storage::disk('local')->assertMissing($oldPath);
+});
+
+it('resolves stored avatar path into frontend-usable url in admin resource', function (): void {
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
+
+    $avatarPath = "centers/{$center->id}/instructors/avatars/existing-avatar.jpg";
+    Storage::disk('local')->put($avatarPath, 'avatar');
+
+    /** @var Instructor $instructor */
+    $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'avatar_url' => $avatarPath,
+    ]);
+
+    $expectedAvatarUrl = app(InstructorAvatarUrlResolver::class)->resolve($avatarPath);
+
+    $response = $this->get(
+        "/api/v1/admin/centers/{$center->id}/instructors/{$instructor->id}",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('data.id', $instructor->id)
+        ->assertJsonPath('data.avatar_url', $expectedAvatarUrl);
+});
+
+it('uploads instructor avatar via dedicated endpoint', function (): void {
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
+    $oldPath = "centers/{$center->id}/instructors/avatars/old-avatar.jpg";
+    Storage::disk('local')->put($oldPath, 'old-avatar');
+
+    /** @var Instructor $instructor */
+    $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'avatar_url' => $oldPath,
+    ]);
+
+    $avatar = UploadedFile::fake()->image('new-avatar.jpg');
+
+    $response = $this->post(
+        "/api/v1/admin/centers/{$center->id}/instructors/{$instructor->id}/avatar",
+        ['avatar' => $avatar],
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('message', 'Instructor avatar updated successfully')
+        ->assertJsonPath('data.id', $instructor->id);
+
+    $avatarUrl = (string) $response->json('data.avatar_url');
+    expect($avatarUrl)->not->toBe('');
+    $parsedPath = parse_url($avatarUrl, PHP_URL_PATH) ?? '';
+    $path = ltrim($parsedPath, '/');
+    if (str_starts_with($path, 'storage/')) {
+        $path = substr($path, strlen('storage/'));
+    }
+    Storage::disk('local')->assertExists($path);
+    Storage::disk('local')->assertMissing($oldPath);
+});
+
+it('rejects oversized avatar on dedicated upload endpoint', function (): void {
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
+    $center = Center::factory()->create();
+
+    /** @var Instructor $instructor */
+    $instructor = Instructor::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $oversized = UploadedFile::fake()->image('oversized-avatar.jpg')->size(6000);
+
+    $response = $this->post(
+        "/api/v1/admin/centers/{$center->id}/instructors/{$instructor->id}/avatar",
+        ['avatar' => $oversized],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
 });

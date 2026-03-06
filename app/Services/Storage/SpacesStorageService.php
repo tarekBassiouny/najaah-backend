@@ -97,6 +97,11 @@ class SpacesStorageService implements StorageServiceInterface
         return $this->disk->exists($path);
     }
 
+    public function delete(string $path): void
+    {
+        $this->disk->delete($path);
+    }
+
     public function url(string $path): string
     {
         return $this->disk->url($path);

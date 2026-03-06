@@ -6,6 +6,7 @@ namespace App\Http\Resources\Admin\Videos;
 
 use App\Models\Video;
 use App\Models\VideoUploadSession;
+use App\Services\Videos\VideoThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -24,6 +25,7 @@ class VideoUploadSessionStatusResource extends JsonResource
         $session = $this->resource;
         /** @var Video|null $video */
         $video = $session->videos->sortByDesc('id')->first();
+        $thumbnailResolver = app(VideoThumbnailUrlResolver::class);
         /** @var \DateTimeInterface|null $expiresAt */
         $expiresAt = $session->expires_at;
 
@@ -41,7 +43,7 @@ class VideoUploadSessionStatusResource extends JsonResource
                 'id' => $video->id,
                 'tags' => $video->tags,
                 'duration_seconds' => $video->duration_seconds,
-                'thumbnail_url' => $video->thumbnail_url,
+                'thumbnail_url' => $thumbnailResolver->resolve($video->effectiveThumbnailPath()),
                 'encoding_status_key' => Str::snake($video->encoding_status->name),
                 'lifecycle_status_key' => Str::snake($video->lifecycle_status->name),
                 'updated_at' => $video->updated_at,

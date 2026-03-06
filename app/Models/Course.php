@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array<string, mixed>|null $tags
  * @property CourseStatus $status
  * @property bool $is_published
+ * @property bool|null $requires_video_approval
  * @property string|null $thumbnail_url
  * @property int|null $duration_minutes
  * @property bool $is_featured
@@ -52,6 +53,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Pdf> $pdfs
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Instructor> $instructors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessRequest> $videoAccessRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
  */
 class Course extends Model
 {
@@ -83,6 +87,7 @@ class Course extends Model
         'tags',
         'status',
         'is_published',
+        'requires_video_approval',
         'duration_minutes',
         'is_featured',
         'is_demo',
@@ -97,6 +102,7 @@ class Course extends Model
         'college_translations' => 'array',
         'tags' => 'array',
         'is_published' => 'boolean',
+        'requires_video_approval' => 'boolean',
         'is_featured' => 'boolean',
         'is_demo' => 'boolean',
         'duration_minutes' => 'integer',
@@ -191,6 +197,24 @@ class Course extends Model
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    /** @return HasMany<VideoAccessRequest, self> */
+    public function videoAccessRequests(): HasMany
+    {
+        return $this->hasMany(VideoAccessRequest::class);
+    }
+
+    /** @return HasMany<VideoAccessCode, self> */
+    public function videoAccessCodes(): HasMany
+    {
+        return $this->hasMany(VideoAccessCode::class);
+    }
+
+    /** @return HasMany<VideoAccess, self> */
+    public function videoAccesses(): HasMany
+    {
+        return $this->hasMany(VideoAccess::class);
     }
 
     /**

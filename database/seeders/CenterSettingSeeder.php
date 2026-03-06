@@ -16,8 +16,17 @@ class CenterSettingSeeder extends Seeder
                 'settings' => [
                     'default_view_limit' => 2,
                     'allow_extra_view_requests' => true,
+                    'requires_video_approval' => false,
+                    'video_code_expiry_days' => null,
                     'pdf_download_permission' => false,
                     'device_limit' => 1,
+                    'whatsapp_bulk_settings' => [
+                        'delay_seconds' => 3,
+                        'batch_size' => 50,
+                        'batch_pause_seconds' => 60,
+                        'max_retries' => 2,
+                        'max_failures_before_pause' => 10,
+                    ],
                     'branding' => [
                         'logo_url' => $center->logo_url,
                         'primary_color' => $center->primary_color,

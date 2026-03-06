@@ -48,6 +48,7 @@ trait AdminTestHelper
             'audit.view',
             'device_change.manage',
             'extra_view.manage',
+            'video_access.manage',
             'instructor.manage',
             'student.manage',
             'survey.manage',

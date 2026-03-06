@@ -97,15 +97,27 @@ class InstructorService implements InstructorServiceInterface
 
         if ($avatar instanceof UploadedFile) {
             $centerId = $this->resolveCenterId($data, $instructor);
+            $previousPath = $instructor instanceof Instructor && is_string($instructor->avatar_url)
+                ? $instructor->avatar_url
+                : null;
             $path = $this->pathResolver->instructorAvatar($centerId, $avatar->hashName());
             $storedPath = $this->storageService->upload($path, $avatar);
 
             $data['avatar_url'] = $storedPath;
+
+            if ($previousPath !== null && $previousPath !== '' && $previousPath !== $storedPath && ! $this->isAbsoluteUrl($previousPath)) {
+                $this->storageService->delete($previousPath);
+            }
         }
 
         unset($data['avatar']);
 
         return $data;
+    }
+
+    private function isAbsoluteUrl(string $path): bool
+    {
+        return str_starts_with($path, 'http://') || str_starts_with($path, 'https://');
     }
 
     /**

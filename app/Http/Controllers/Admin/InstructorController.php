@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\Instructors\UploadInstructorAvatarAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Instructors\ListInstructorsRequest;
 use App\Http\Requests\Admin\Instructors\StoreInstructorRequest;
 use App\Http\Requests\Admin\Instructors\UpdateInstructorRequest;
+use App\Http\Requests\Admin\Instructors\UploadInstructorAvatarRequest;
 use App\Http\Resources\Admin\InstructorResource;
 use App\Models\Center;
 use App\Models\Instructor;
@@ -156,6 +158,41 @@ class InstructorController extends Controller
             'success' => true,
             'message' => 'Instructor deleted successfully',
             'data' => null,
+        ]);
+    }
+
+    /**
+     * Upload an instructor avatar.
+     */
+    public function uploadAvatar(
+        UploadInstructorAvatarRequest $request,
+        Center $center,
+        Instructor $instructor,
+        UploadInstructorAvatarAction $action
+    ): JsonResponse {
+        /** @var User|null $admin */
+        $admin = $request->user();
+
+        if (! $admin instanceof User) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 401);
+        }
+
+        $this->assertInstructorBelongsToCenter($center, $instructor);
+
+        /** @var \Illuminate\Http\UploadedFile $avatar */
+        $avatar = $request->file('avatar');
+        $updated = $action->execute($instructor, $avatar, $admin);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Instructor avatar updated successfully',
+            'data' => new InstructorResource($updated),
         ]);
     }
 
