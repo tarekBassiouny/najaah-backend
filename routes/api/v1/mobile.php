@@ -47,6 +47,7 @@ Route::middleware('jwt.mobile')->group(function (): void {
     Route::get('/auth/me', [MeController::class, 'profile']);
     Route::get('/auth/me/profile', [MeController::class, 'profileDetails']);
     Route::post('/auth/me', [MeController::class, 'updateProfile']);
+    Route::patch('/auth/me/education', [MeController::class, 'updateEducation']);
     Route::post('/auth/logout', [MeController::class, 'logout']);
 
     /*

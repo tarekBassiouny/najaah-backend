@@ -43,6 +43,9 @@ use RuntimeException;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
  * @property-read \Illuminate\Database\Eloquent\Collection<int, BulkWhatsAppJob> $bulkWhatsAppJobs
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Grade> $grades
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, School> $schools
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, College> $colleges
  * @property-read CenterSetting|null $setting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoUploadSession> $videoUploadSessions
  */
@@ -176,6 +179,24 @@ class Center extends Model
     public function bulkWhatsAppJobs(): HasMany
     {
         return $this->hasMany(BulkWhatsAppJob::class);
+    }
+
+    /** @return HasMany<Grade, self> */
+    public function grades(): HasMany
+    {
+        return $this->hasMany(Grade::class);
+    }
+
+    /** @return HasMany<School, self> */
+    public function schools(): HasMany
+    {
+        return $this->hasMany(School::class);
+    }
+
+    /** @return HasMany<College, self> */
+    public function colleges(): HasMany
+    {
+        return $this->hasMany(College::class);
     }
 
     /** @return HasOne<CenterSetting, self> */

@@ -1,0 +1,179 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\Education;
+
+use App\Actions\Concerns\NormalizesTranslations;
+use App\Exceptions\DomainException;
+use App\Models\College;
+use App\Models\User;
+use App\Services\Centers\CenterScopeService;
+use App\Services\Education\Contracts\CollegeServiceInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+
+class CollegeService implements CollegeServiceInterface
+{
+    use NormalizesTranslations;
+
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService
+    ) {}
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<College>
+     */
+    public function paginateForCenter(User $admin, int $centerId, array $filters): LengthAwarePaginator
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+
+        $query = College::query()
+            ->forCenter($centerId)
+            ->withCount('students')
+            ->orderBy('name_translations->en')
+            ->orderBy('id');
+
+        if (array_key_exists('is_active', $filters) && $filters['is_active'] !== null && $filters['is_active'] !== '') {
+            $query->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOL));
+        }
+
+        if (isset($filters['search']) && is_string($filters['search']) && trim($filters['search']) !== '') {
+            $query->whereTranslationLike(['name'], trim($filters['search']), ['en', 'ar']);
+        }
+
+        $perPage = (int) ($filters['per_page'] ?? 15);
+        $page = (int) ($filters['page'] ?? 1);
+
+        return $query->paginate($perPage, ['*'], 'page', $page);
+    }
+
+    public function lookupForCenter(User $admin, int $centerId, array $filters, bool $activeOnly = false): Collection
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+
+        $query = College::query()
+            ->forCenter($centerId)
+            ->orderBy('name_translations->en')
+            ->orderBy('id');
+
+        if ($activeOnly) {
+            $query->active();
+        }
+
+        if (array_key_exists('is_active', $filters) && $filters['is_active'] !== null && $filters['is_active'] !== '') {
+            $query->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOL));
+        }
+
+        if (isset($filters['search']) && is_string($filters['search']) && trim($filters['search']) !== '') {
+            $query->whereTranslationLike(['name'], trim($filters['search']), ['en', 'ar']);
+        }
+
+        /** @var Collection<int, College> $result */
+        $result = $query->get();
+
+        return $result;
+    }
+
+    public function createForCenter(User $admin, int $centerId, array $data): College
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+
+        $payload = $this->normalizePayload($data, $centerId);
+
+        return College::create($payload);
+    }
+
+    public function updateForCenter(User $admin, int $centerId, College $college, array $data): College
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+        $this->assertCenterMatch($college, $centerId);
+
+        $payload = $this->normalizePayload($data, $centerId, $college);
+
+        $college->update($payload);
+
+        return $college->refresh() ?? $college;
+    }
+
+    public function deleteForCenter(User $admin, int $centerId, College $college): void
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+        $this->assertCenterMatch($college, $centerId);
+
+        if ($college->students()->exists()) {
+            throw new DomainException('Cannot delete college with assigned students.', 'COLLEGE_HAS_STUDENTS', 422);
+        }
+
+        $college->delete();
+    }
+
+    public function existsAndActive(int $collegeId, int $centerId): bool
+    {
+        return College::query()
+            ->where('id', $collegeId)
+            ->where('center_id', $centerId)
+            ->where('is_active', true)
+            ->exists();
+    }
+
+    private function assertCenterMatch(College $college, int $centerId): void
+    {
+        if ((int) $college->center_id !== $centerId) {
+            throw new DomainException('College not found.', 'COLLEGE_NOT_FOUND', 404);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function normalizePayload(array $data, int $centerId, ?College $college = null): array
+    {
+        $payload = $this->normalizeTranslations(
+            $data,
+            ['name_translations'],
+            ['name_translations' => $college?->name_translations ?? []]
+        );
+
+        $nameTranslations = $payload['name_translations'] ?? [];
+        $name = is_array($nameTranslations)
+            ? ((string) ($nameTranslations['en'] ?? reset($nameTranslations) ?: 'college'))
+            : 'college';
+        $slugBase = (string) ($payload['slug'] ?? Str::slug($name));
+
+        $payload['center_id'] = $centerId;
+        $payload['slug'] = $this->uniqueSlug($centerId, $slugBase, $college?->id);
+        $payload['is_active'] = array_key_exists('is_active', $payload) ? (bool) $payload['is_active'] : true;
+
+        if (array_key_exists('type', $payload) && $payload['type'] !== null) {
+            $payload['type'] = (int) $payload['type'];
+        }
+
+        if (array_key_exists('address', $payload) && $payload['address'] !== null) {
+            $payload['address'] = (string) $payload['address'];
+        }
+
+        return $payload;
+    }
+
+    private function uniqueSlug(int $centerId, string $slugBase, ?int $ignoreId = null): string
+    {
+        $base = trim($slugBase) !== '' ? Str::slug($slugBase) : 'college';
+        $slug = $base;
+        $counter = 2;
+
+        while (College::query()
+            ->where('center_id', $centerId)
+            ->where('slug', $slug)
+            ->when($ignoreId !== null, static fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->exists()) {
+            $slug = $base.'-'.$counter;
+            $counter++;
+        }
+
+        return $slug;
+    }
+}

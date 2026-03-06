@@ -25,7 +25,7 @@ class StudentQueryService
     public function build(User $admin, StudentFilters $filters): Builder
     {
         $query = User::query()
-            ->with('center')
+            ->with(['center', 'grade', 'school', 'college'])
             ->with([
                 'devices' => static function ($relation): void {
                     $relation
@@ -64,7 +64,7 @@ class StudentQueryService
         $this->centerScopeService->assertAdminCenterId($admin, $centerId);
 
         $query = User::query()
-            ->with('center')
+            ->with(['center', 'grade', 'school', 'college'])
             ->with([
                 'devices' => static function ($relation): void {
                     $relation
@@ -193,6 +193,24 @@ class StudentQueryService
             if ($studentEmail !== '') {
                 $query->where('email', 'like', '%'.$studentEmail.'%');
             }
+        }
+
+        if ($filters->gradeId !== null) {
+            $query->where('grade_id', $filters->gradeId);
+        }
+
+        if ($filters->schoolId !== null) {
+            $query->where('school_id', $filters->schoolId);
+        }
+
+        if ($filters->collegeId !== null) {
+            $query->where('college_id', $filters->collegeId);
+        }
+
+        if ($filters->stage !== null) {
+            $query->whereHas('grade', static function (Builder $gradeQuery) use ($filters): void {
+                $gradeQuery->where('stage', $filters->stage);
+            });
         }
     }
 

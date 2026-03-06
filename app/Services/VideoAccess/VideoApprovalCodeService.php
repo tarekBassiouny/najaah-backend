@@ -271,10 +271,13 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
 
         try {
             if ($format === WhatsAppCodeFormat::QrCode) {
+                $qrCodeDataUrl = $this->getQrCodeDataUrl($code);
+                $qrCodeBase64 = preg_replace('/^data:image\/[^;]+;base64,/', '', $qrCodeDataUrl) ?? $qrCodeDataUrl;
+
                 $this->evolutionApiClient->sendMedia($instanceName, [
                     'number' => $normalizedDestination,
                     'mediatype' => 'image',
-                    'media' => $this->getQrCodeDataUrl($code),
+                    'media' => $qrCodeBase64,
                     'caption' => sprintf(
                         "Your access code for '%s': %s",
                         $video->translate('title') ?: 'Video',
@@ -511,6 +514,8 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
         $normalized = strtolower($message);
 
         return str_contains($normalized, 'onwha')
+            || str_contains($normalized, 'cannot read properties of undefined')
+            || str_contains($normalized, 'undefined (reading')
             || str_contains($normalized, 'log out instance')
             || str_contains($normalized, 'unauthorized');
     }

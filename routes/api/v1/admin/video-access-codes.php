@@ -3,6 +3,13 @@
 use App\Http\Controllers\Admin\VideoAccessCodeController;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware(['require.permission:video_access.manage', 'scope.system'])->group(function (): void {
+    Route::post('/students/{student}/video-access-codes', [VideoAccessCodeController::class, 'systemGenerateForStudent'])
+        ->whereNumber('student');
+
+    Route::post('/video-access-codes/bulk', [VideoAccessCodeController::class, 'systemBulkGenerate']);
+});
+
 Route::middleware(['require.permission:video_access.manage', 'scope.center'])->group(function (): void {
     Route::get('/centers/{center}/video-access-codes', [VideoAccessCodeController::class, 'centerIndex'])
         ->whereNumber('center');

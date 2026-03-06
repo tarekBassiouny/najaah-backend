@@ -15,6 +15,10 @@ class StudentFilters
         public readonly ?string $studentName,
         public readonly ?string $studentPhone,
         public readonly ?string $studentEmail,
+        public readonly ?int $gradeId = null,
+        public readonly ?int $schoolId = null,
+        public readonly ?int $collegeId = null,
+        public readonly ?int $stage = null,
         public readonly ?int $centerType = null
     ) {}
 }

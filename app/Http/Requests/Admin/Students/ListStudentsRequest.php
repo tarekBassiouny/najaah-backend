@@ -30,6 +30,10 @@ class ListStudentsRequest extends AdminListRequest
             'student_name' => ['sometimes', 'string', 'max:255'],
             'student_phone' => ['sometimes', 'string', 'max:30'],
             'student_email' => ['sometimes', 'string', 'max:255'],
+            'grade_id' => ['sometimes', 'integer'],
+            'school_id' => ['sometimes', 'integer'],
+            'college_id' => ['sometimes', 'integer'],
+            'stage' => ['sometimes', 'integer', 'in:0,1,2,3,4'],
         ]);
     }
 
@@ -75,6 +79,22 @@ class ListStudentsRequest extends AdminListRequest
                 'description' => 'Search by student email (partial match).',
                 'example' => 'student@example.com',
             ],
+            'grade_id' => [
+                'description' => 'Filter by grade ID.',
+                'example' => '5',
+            ],
+            'school_id' => [
+                'description' => 'Filter by school ID.',
+                'example' => '12',
+            ],
+            'college_id' => [
+                'description' => 'Filter by college ID.',
+                'example' => '3',
+            ],
+            'stage' => [
+                'description' => 'Filter by grade stage (0..4).',
+                'example' => '2',
+            ],
         ];
     }
 
@@ -100,6 +120,10 @@ class ListStudentsRequest extends AdminListRequest
             studentName: FilterInput::stringOrNull($data, 'student_name'),
             studentPhone: FilterInput::stringOrNull($data, 'student_phone'),
             studentEmail: FilterInput::stringOrNull($data, 'student_email'),
+            gradeId: FilterInput::intOrNull($data, 'grade_id'),
+            schoolId: FilterInput::intOrNull($data, 'school_id'),
+            collegeId: FilterInput::intOrNull($data, 'college_id'),
+            stage: FilterInput::intOrNull($data, 'stage'),
             centerType: $this->resolveType($data)
         );
     }

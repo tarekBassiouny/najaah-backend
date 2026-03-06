@@ -39,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->middleware('api')
                 ->group(function (): void {
                     require __DIR__.'/../routes/api/v1/mobile.php';
+                    require __DIR__.'/../routes/api/v1/mobile/education.php';
                     require __DIR__.'/../routes/api/v1/resolve.php';
                 });
 
@@ -74,6 +75,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/roles.php';
                         require __DIR__.'/../routes/api/v1/admin/admin-users.php';
                         require __DIR__.'/../routes/api/v1/admin/students.php';
+                        require __DIR__.'/../routes/api/v1/admin/education.php';
                         require __DIR__.'/../routes/api/v1/admin/surveys.php';
                         require __DIR__.'/../routes/api/v1/admin/notifications.php';
                     });

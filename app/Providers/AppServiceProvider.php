@@ -29,6 +29,12 @@ use App\Services\Devices\Contracts\DeviceChangeServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Devices\DeviceChangeService;
 use App\Services\Devices\DeviceService;
+use App\Services\Education\CollegeService;
+use App\Services\Education\Contracts\CollegeServiceInterface;
+use App\Services\Education\Contracts\GradeServiceInterface;
+use App\Services\Education\Contracts\SchoolServiceInterface;
+use App\Services\Education\GradeService;
+use App\Services\Education\SchoolService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
@@ -119,6 +125,9 @@ class AppServiceProvider extends ServiceProvider
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
             DeviceChangeServiceInterface::class => DeviceChangeService::class,
+            GradeServiceInterface::class => GradeService::class,
+            SchoolServiceInterface::class => SchoolService::class,
+            CollegeServiceInterface::class => CollegeService::class,
             DashboardServiceInterface::class => DashboardService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,
             InstructorServiceInterface::class => InstructorService::class,

@@ -46,6 +46,18 @@ class StudentResource extends JsonResource
             'status_key' => $status !== null ? Str::snake($status->name) : null,
             'status_label' => $status?->name,
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
+            'grade' => $this->when(
+                $user->relationLoaded('grade') && $user->grade !== null,
+                fn (): array => ['id' => $user->grade->id, 'name' => $user->grade->translate('name')]
+            ),
+            'school' => $this->when(
+                $user->relationLoaded('school') && $user->school !== null,
+                fn (): array => ['id' => $user->school->id, 'name' => $user->school->translate('name')]
+            ),
+            'college' => $this->when(
+                $user->relationLoaded('college') && $user->college !== null,
+                fn (): array => ['id' => $user->college->id, 'name' => $user->college->translate('name')]
+            ),
             'device' => $activeDevice instanceof UserDevice
                 ? new DeviceResource($activeDevice)
                 : null,
