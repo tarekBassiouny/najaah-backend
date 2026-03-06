@@ -15,6 +15,9 @@ class StudentProfileQueryService
     {
         $student->load([
             'center',
+            'grade',
+            'school',
+            'college',
             'studentSetting',
             'devices' => function ($query): void {
                 $query->where('status', UserDeviceStatus::Active->value)

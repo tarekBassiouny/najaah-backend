@@ -22,6 +22,14 @@ class CenterSettingFactory extends Factory
                 'requires_video_approval' => false,
                 'video_code_expiry_days' => null,
                 'pdf_download_permission' => false,
+                'education_profile' => [
+                    'enable_grade' => true,
+                    'enable_school' => true,
+                    'enable_college' => true,
+                    'require_grade' => false,
+                    'require_school' => false,
+                    'require_college' => false,
+                ],
                 'whatsapp_bulk_settings' => [
                     'delay_seconds' => 3,
                     'batch_size' => 50,

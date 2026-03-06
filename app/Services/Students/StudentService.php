@@ -6,6 +6,7 @@ namespace App\Services\Students;
 
 use App\Enums\CenterType;
 use App\Enums\UserStatus;
+use App\Http\Controllers\Admin\StudentProfileController;
 use App\Models\Center;
 use App\Models\Pivots\UserCenter;
 use App\Models\User;
@@ -314,6 +315,32 @@ class StudentService
         $this->auditLogService->log($actor, $student, AuditActions::STUDENT_UPDATED, [
             'detached_center_id' => (int) $center->id,
         ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function updateEducation(User $student, array $data): User
+    {
+        if (! $student->is_student) {
+            throw new \App\Exceptions\DomainException(
+                'User is not a student.',
+                ErrorCodes::NOT_STUDENT,
+                422
+            );
+        }
+
+        $payload = [];
+        foreach (['grade_id', 'school_id', 'college_id'] as $field) {
+            if (array_key_exists($field, $data)) {
+                $payload[$field] = $data[$field];
+            }
+        }
+
+        $student->update($payload);
+        StudentProfileController::invalidateCache((int) $student->id);
+
+        return $student->refresh() ?? $student;
     }
 
     private function attachStudentToCenter(User $student, int $centerId): void

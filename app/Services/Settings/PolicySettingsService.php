@@ -50,6 +50,19 @@ class PolicySettingsService
                 'fallback' => 'centers.logo_url,centers.primary_color',
                 'default' => [],
             ],
+            'education_profile' => [
+                'scope' => 'center',
+                'type' => 'object',
+                'storage' => 'center_settings.settings.education_profile',
+                'default' => [
+                    'enable_grade' => true,
+                    'enable_school' => true,
+                    'enable_college' => true,
+                    'require_grade' => false,
+                    'require_school' => false,
+                    'require_college' => false,
+                ],
+            ],
             'timezone' => [
                 'scope' => 'system',
                 'type' => 'string',
@@ -93,6 +106,14 @@ class PolicySettingsService
             'pdf_download_permission' => $center->pdf_download_permission,
             'device_limit' => $center->device_limit,
             'branding' => $branding,
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+                'require_grade' => false,
+                'require_school' => false,
+                'require_college' => false,
+            ],
         ];
     }
 

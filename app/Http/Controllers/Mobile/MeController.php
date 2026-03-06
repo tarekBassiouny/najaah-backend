@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Mobile;
 
 use App\Enums\UserDeviceStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mobile\Education\UpdateEducationRequest;
 use App\Http\Requests\Mobile\UpdateProfileRequest;
 use App\Http\Resources\Admin\StudentProfileResource;
 use App\Http\Resources\Mobile\StudentUserResource;
@@ -84,6 +85,36 @@ class MeController extends Controller
         return response()->json([
             'success' => true,
             'data' => new StudentUserResource($updated),
+        ]);
+    }
+
+    public function updateEducation(UpdateEducationRequest $request): JsonResponse
+    {
+        $user = request()->user();
+        if (! $user instanceof User) {
+            return $this->deny();
+        }
+
+        $updated = $this->studentService->updateEducation($user, $request->validated());
+        $updated->loadMissing(['grade', 'school', 'college']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Educational profile updated successfully.',
+            'data' => [
+                'grade' => $updated->grade ? [
+                    'id' => $updated->grade->id,
+                    'name' => $updated->grade->translate('name'),
+                ] : null,
+                'school' => $updated->school ? [
+                    'id' => $updated->school->id,
+                    'name' => $updated->school->translate('name'),
+                ] : null,
+                'college' => $updated->college ? [
+                    'id' => $updated->college->id,
+                    'name' => $updated->college->translate('name'),
+                ] : null,
+            ],
         ]);
     }
 

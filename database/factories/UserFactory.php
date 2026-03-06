@@ -17,6 +17,9 @@ class UserFactory extends Factory
     {
         return [
             'center_id' => Center::factory(),
+            'grade_id' => null,
+            'school_id' => null,
+            'college_id' => null,
             'name' => 'Test User',
             'username' => 'user'.uniqid(),
             'phone' => $this->faker->unique()->numerify('1#########'),
