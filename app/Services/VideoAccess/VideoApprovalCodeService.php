@@ -514,6 +514,8 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
         $normalized = strtolower($message);
 
         return str_contains($normalized, 'onwha')
+            || str_contains($normalized, 'cannot read properties of undefined')
+            || str_contains($normalized, 'undefined (reading')
             || str_contains($normalized, 'log out instance')
             || str_contains($normalized, 'unauthorized');
     }

@@ -54,6 +54,53 @@ class VideoAccessCodeController extends Controller
         return $this->listResponse($paginator);
     }
 
+    public function systemGenerateForStudent(
+        GenerateVideoAccessCodeRequest $request,
+        User $student
+    ): JsonResponse {
+        $admin = $this->requireAdmin($request);
+
+        /** @var array{video_id:int,course_id:int,send_whatsapp?:bool,whatsapp_format?:string} $data */
+        $data = $request->validated();
+
+        /** @var Course $course */
+        $course = Course::query()->findOrFail((int) $data['course_id']);
+        $this->assertStudentBelongsToCenter($student, (int) $course->center_id);
+
+        $video = $this->resolveVideo((int) $data['video_id']);
+        $this->courseAccessService->assertVideoInCourse($course, $video);
+        $enrollment = $this->resolveEnrollment($student, $course);
+
+        $code = $this->codeService->generate($admin, $student, $video, $course, $enrollment);
+
+        $whatsAppSent = false;
+        $whatsAppError = null;
+
+        if ((bool) ($data['send_whatsapp'] ?? false)) {
+            try {
+                $this->codeService->sendViaWhatsApp(
+                    $code,
+                    $this->parseFormat($data['whatsapp_format'] ?? null) ?? WhatsAppCodeFormat::TextCode
+                );
+                $whatsAppSent = true;
+            } catch (\Throwable $throwable) {
+                $whatsAppError = $throwable->getMessage();
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Code generated successfully',
+            'data' => array_merge(
+                (new VideoAccessCodeResource($code->loadMissing(['user', 'video', 'course', 'request', 'generator', 'revoker'])))->resolve(),
+                [
+                    'whatsapp_sent' => $whatsAppSent,
+                    'whatsapp_error' => $whatsAppError,
+                ]
+            ),
+        ], 201);
+    }
+
     public function centerGenerateForStudent(
         GenerateVideoAccessCodeRequest $request,
         Center $center,
@@ -98,6 +145,91 @@ class VideoAccessCodeController extends Controller
                 ]
             ),
         ], 201);
+    }
+
+    public function systemBulkGenerate(BulkGenerateVideoAccessCodesRequest $request): JsonResponse
+    {
+        $admin = $this->requireAdmin($request);
+
+        /** @var array{student_ids:array<int,int>,video_id:int,course_id:int,send_whatsapp?:bool,whatsapp_format?:string} $data */
+        $data = $request->validated();
+
+        /** @var Course $course */
+        $course = Course::query()->findOrFail((int) $data['course_id']);
+        $video = $this->resolveVideo((int) $data['video_id']);
+        $this->courseAccessService->assertVideoInCourse($course, $video);
+
+        $uniqueStudentIds = array_values(array_unique(array_map('intval', $data['student_ids'])));
+
+        $students = User::query()
+            ->whereIn('id', $uniqueStudentIds)
+            ->where('is_student', true)
+            ->get()
+            ->keyBy('id');
+
+        $generated = [];
+        $failed = [];
+        $whatsAppSent = 0;
+        $whatsAppFailed = 0;
+
+        $sendWhatsApp = (bool) ($data['send_whatsapp'] ?? false);
+        $format = $this->parseFormat($data['whatsapp_format'] ?? null) ?? WhatsAppCodeFormat::TextCode;
+
+        foreach ($uniqueStudentIds as $studentId) {
+            /** @var User|null $student */
+            $student = $students->get($studentId);
+
+            if (! $student instanceof User || ! $student->belongsToCenter((int) $course->center_id)) {
+                $failed[] = [
+                    'student_id' => $studentId,
+                    'reason' => 'Student not found.',
+                ];
+
+                continue;
+            }
+
+            try {
+                $enrollment = $this->resolveEnrollment($student, $course);
+                $code = $this->codeService->generate($admin, $student, $video, $course, $enrollment);
+
+                $codeData = (new VideoAccessCodeResource($code->loadMissing(['user', 'video', 'course', 'request', 'generator', 'revoker'])))->resolve();
+
+                if ($sendWhatsApp) {
+                    try {
+                        $this->codeService->sendViaWhatsApp($code, $format);
+                        $whatsAppSent++;
+                        $codeData['whatsapp_sent'] = true;
+                    } catch (\Throwable $throwable) {
+                        $whatsAppFailed++;
+                        $codeData['whatsapp_sent'] = false;
+                        $codeData['whatsapp_error'] = $throwable->getMessage();
+                    }
+                }
+
+                $generated[] = $codeData;
+            } catch (\Throwable $throwable) {
+                $failed[] = [
+                    'student_id' => $studentId,
+                    'reason' => $throwable->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bulk code generation processed.',
+            'data' => [
+                'counts' => [
+                    'total' => count($uniqueStudentIds),
+                    'generated' => count($generated),
+                    'failed' => count($failed),
+                    'whatsapp_sent' => $whatsAppSent,
+                    'whatsapp_failed' => $whatsAppFailed,
+                ],
+                'generated' => $generated,
+                'failed' => $failed,
+            ],
+        ]);
     }
 
     public function centerBulkGenerate(BulkGenerateVideoAccessCodesRequest $request, Center $center): JsonResponse

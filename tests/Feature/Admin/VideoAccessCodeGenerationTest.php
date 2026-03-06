@@ -119,3 +119,84 @@ it('allows generating a new code when previous active code is expired', function
     expect($expiredCode->status)->toBe(VideoAccessCodeStatus::Expired);
     expect(VideoAccessCode::query()->count())->toBe(2);
 });
+
+it('allows system-scope single code generation for a student', function (): void {
+    [$center, $course, $video, $student] = buildVideoAccessCodeGenerationContext();
+    $this->asAdmin();
+
+    $response = $this->postJson(
+        "/api/v1/admin/students/{$student->id}/video-access-codes",
+        [
+            'video_id' => $video->id,
+            'course_id' => $course->id,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.student.id', $student->id)
+        ->assertJsonPath('data.course.id', $course->id)
+        ->assertJsonPath('data.video.id', $video->id);
+
+    $this->assertDatabaseHas('video_access_codes', [
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'center_id' => $center->id,
+    ]);
+});
+
+it('allows system-scope bulk code generation for multiple students', function (): void {
+    [$center, $course, $video] = buildVideoAccessCodeGenerationContext();
+    $this->asAdmin();
+
+    $studentA = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $studentB = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $studentA->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => EnrollmentStatus::Active,
+    ]);
+    Enrollment::factory()->create([
+        'user_id' => $studentB->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => EnrollmentStatus::Active,
+    ]);
+
+    $response = $this->postJson(
+        '/api/v1/admin/video-access-codes/bulk',
+        [
+            'student_ids' => [$studentA->id, $studentB->id],
+            'video_id' => $video->id,
+            'course_id' => $course->id,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.counts.total', 2)
+        ->assertJsonPath('data.counts.generated', 2)
+        ->assertJsonPath('data.counts.failed', 0);
+
+    $this->assertDatabaseHas('video_access_codes', [
+        'user_id' => $studentA->id,
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+    ]);
+    $this->assertDatabaseHas('video_access_codes', [
+        'user_id' => $studentB->id,
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+    ]);
+});
