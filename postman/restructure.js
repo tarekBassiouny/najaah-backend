@@ -15,26 +15,25 @@ function tryParseJson(path) {
 }
 
 function loadSourceCollection() {
-  const primary = tryParseJson(INPUT);
-  if (primary) return primary;
-
-  const fallbacks = [
+  const sources = [
     "storage/app/private/scribe/collection.json",
     "storage/app/scribe/collection.json",
     "public/docs/collection.json",
+    INPUT,
   ];
 
-  for (const fallback of fallbacks) {
-    const parsed = tryParseJson(fallback);
+  for (const sourcePath of sources) {
+    const parsed = tryParseJson(sourcePath);
     if (parsed) {
-      fs.writeFileSync(INPUT, JSON.stringify(parsed, null, 2));
-      console.warn(`⚠️ ${INPUT} was invalid JSON. Recovered from ${fallback}.`);
+      if (sourcePath !== INPUT) {
+        fs.writeFileSync(INPUT, JSON.stringify(parsed, null, 2));
+      }
       return parsed;
     }
   }
 
   throw new Error(
-    `Unable to parse ${INPUT} as JSON and no valid fallback collection was found.`
+    `Unable to parse any source collection. Checked: ${sources.join(", ")}.`
   );
 }
 
@@ -43,30 +42,8 @@ const source = loadSourceCollection();
 const folder = name => ({ name, item: [] });
 
 const tree = {
-  /* -------- ADMIN -------- */
-  adminAuth: folder("🔐 Admin – Auth (JWT)"),
-  adminAgents: folder("🧑‍💼 Admin – Agents"),
-  adminAnalytics: folder("🧑‍💼 Admin – Analytics"),
-  adminCategories: folder("🧑‍💼 Admin – Categories"),
-  adminCenters: folder("🧑‍💼 Admin – Centers"),
-  adminCourses: folder("🧑‍💼 Admin – Courses"),
-  adminSections: folder("🧑‍💼 Admin – Sections"),
-  adminEnrollment: folder("🧑‍💼 Admin – Enrollment & Controls"),
-  adminVideos: folder("🧑‍💼 Admin – Videos"),
-  adminInstructors: folder("🧑‍💼 Admin – Instructors"),
-  adminPdfs: folder("🧑‍💼 Admin – PDFs"),
-  adminRoles: folder("🧑‍💼 Admin – Roles"),
-  adminPermissions: folder("🧑‍💼 Admin – Permissions"),
-  adminUsers: folder("🧑‍💼 Admin – Users"),
-  adminStudents: folder("🧑‍💼 Admin – Students"),
-  adminSettings: folder("🧑‍💼 Admin – Settings"),
-  adminAudit: folder("🧑‍💼 Admin – Audit Logs"),
-  adminSurveys: folder("🧑‍💼 Admin – Surveys"),
-
-  /* -------- PUBLIC -------- */
+  admin: folder("🧑‍💼 Admin"),
   public: folder("🔔 Public"),
-
-  /* -------- STUDENT / MOBILE -------- */
   mobileAuth: folder("📱 Mobile – Auth (JWT)"),
   studentCenters: folder("🏫 Student – Centers (unbranded)"),
   studentCourses: folder("🎓 Student – Courses"),
@@ -76,8 +53,6 @@ const tree = {
   studentEnrollments: folder("🎓 Student – Enrollments"),
   mobileSurveys: folder("📱 Mobile – Surveys"),
   instructors: folder("👨‍🏫 Instructors"),
-
-  /* -------- HEALTH -------- */
   health: folder("🧪 Smoke & Health")
 };
 
@@ -89,6 +64,107 @@ const normalizePath = raw =>
     .split("?")[0];
 
 const has = (p, v) => p.includes(v);
+const ADMIN_PREFIX = "/api/v1/admin";
+const CENTER_ADMIN_PREFIX = /^\/api\/v1\/admin\/centers\/[^/]+(\/|$)/;
+const moduleMap = new Map();
+
+function ensureModule(name) {
+  if (!moduleMap.has(name)) {
+    const moduleFolder = folder(name);
+    tree.admin.item.push(moduleFolder);
+    moduleMap.set(name, moduleFolder);
+  }
+
+  return moduleMap.get(name);
+}
+
+function ensureScope(moduleName, scope) {
+  const moduleFolder = ensureModule(moduleName);
+  const scopeName = scope === "center" ? "Center Scoped" : "System Scoped";
+  let scopeFolder = moduleFolder.item.find(entry => entry.name === scopeName);
+
+  if (!scopeFolder) {
+    scopeFolder = folder(scopeName);
+    moduleFolder.item.push(scopeFolder);
+  }
+
+  return scopeFolder;
+}
+
+function getAdminScope(path) {
+  return CENTER_ADMIN_PREFIX.test(path) ? "center" : "system";
+}
+
+function getAdminModulePath(path, scope) {
+  if (scope === "center") {
+    return path.replace(/^\/api\/v1\/admin\/centers\/[^/]+\/?/, "");
+  }
+
+  return path.replace(/^\/api\/v1\/admin\/?/, "");
+}
+
+function resolveAdminModule(path, scope) {
+  const modulePath = getAdminModulePath(path, scope);
+  const clean = modulePath.replace(/^\/+/, "");
+  const centerRootActions = [
+    "status",
+    "restore",
+    "onboarding",
+    "branding"
+  ];
+
+  if (!clean) return "Centers";
+  if (clean.startsWith("auth")) return "Auth";
+  if (clean.startsWith("analytics")) return "Analytics";
+  if (clean.startsWith("dashboard")) return "Analytics";
+  if (clean.startsWith("agents")) return "Agents";
+  if (clean.startsWith("surveys")) return "Surveys";
+  if (clean.startsWith("notifications")) return "Notifications";
+  if (clean.startsWith("roles")) return "Roles";
+  if (clean.startsWith("permissions")) return "Permissions";
+  if (clean.startsWith("users")) return "Users";
+  if (clean.startsWith("students")) return "Students";
+  if (clean.startsWith("settings")) return "Settings";
+  if (clean.startsWith("audit-logs")) return "Audit Logs";
+  if (clean.startsWith("playback-sessions")) return "Playback Sessions";
+  if (clean.startsWith("categories")) return "Categories";
+  if (clean.startsWith("pdfs")) return "PDFs";
+  if (clean.startsWith("videos")) return "Videos";
+  if (clean.startsWith("instructors") || clean.match(/^courses\/[^/]+\/instructors(\/|$)/)) {
+    return "Instructors";
+  }
+  if (
+    clean.startsWith("video-access-codes") ||
+    clean.startsWith("video-access-requests") ||
+    clean.startsWith("video-accesses") ||
+    clean.startsWith("bulk-whatsapp-jobs")
+  ) {
+    return "Video Access";
+  }
+  if (
+    clean.startsWith("enrollments") ||
+    clean.startsWith("device-change-requests") ||
+    clean.startsWith("extra-view-requests") ||
+    clean.startsWith("extra-view-grants")
+  ) {
+    return "Enrollment & Controls";
+  }
+  if (
+    clean.startsWith("grades") ||
+    clean.startsWith("schools") ||
+    clean.startsWith("colleges")
+  ) {
+    return "Education";
+  }
+  if (clean.match(/^courses\/[^/]+\/sections(\/|$)/)) return "Sections";
+  if (clean.startsWith("courses")) return "Courses";
+  if (scope === "center" && centerRootActions.some(action => clean.startsWith(action))) {
+    return "Centers";
+  }
+  if (clean.startsWith("centers")) return "Centers";
+
+  return "Other";
+}
 
 /* ---------------- ROUTER ---------------- */
 
@@ -96,34 +172,11 @@ function route(item) {
   const raw = item.request?.url?.raw ?? "";
   const path = normalizePath(raw);
 
-  /* ========= ADMIN ========= */
-
-  if (has(path, "/api/v1/admin/auth")) return tree.adminAuth;
-  if (has(path, "/api/v1/admin/surveys")) return tree.adminSurveys;
-  // Categories & PDFs under centers must be checked BEFORE adminCenters
-  if (path.match(/^\/api\/v1\/admin\/centers\/[^/]+\/categories/)) return tree.adminCategories;
-  if (path.match(/^\/api\/v1\/admin\/centers\/[^/]+\/pdfs/)) return tree.adminPdfs;
-  if (path.match(/^\/api\/v1\/admin\/centers\/[^/]+\/videos/)) return tree.adminVideos;
-  if (has(path, "/api/v1/admin/centers")) return tree.adminCenters;
-  if (has(path, "/api/v1/admin/courses") && has(path, "/sections")) return tree.adminSections;
-  if (has(path, "/api/v1/admin/courses")) return tree.adminCourses;
-  if (
-    has(path, "/api/v1/admin/enrollments") ||
-    has(path, "/api/v1/admin/device-change-requests") ||
-    has(path, "/api/v1/admin/extra-view-requests")
-  ) return tree.adminEnrollment;
-  if (has(path, "/api/v1/admin/analytics")) return tree.adminAnalytics;
-  if (
-    has(path, "/api/v1/admin/instructors") ||
-    path.match(/^\/api\/v1\/admin\/courses\/[^/]+\/instructors/)
-  ) return tree.adminInstructors;
-  if (has(path, "/api/v1/admin/agents")) return tree.adminAgents;
-  if (has(path, "/api/v1/admin/roles")) return tree.adminRoles;
-  if (has(path, "/api/v1/admin/permissions")) return tree.adminPermissions;
-  if (has(path, "/api/v1/admin/users")) return tree.adminUsers;
-  if (has(path, "/api/v1/admin/students")) return tree.adminStudents;
-  if (has(path, "/api/v1/admin/settings")) return tree.adminSettings;
-  if (has(path, "/api/v1/admin/audit-logs")) return tree.adminAudit;
+  if (path.startsWith(ADMIN_PREFIX)) {
+    const scope = getAdminScope(path);
+    const module = resolveAdminModule(path, scope);
+    return ensureScope(module, scope);
+  }
 
   /* ========= PUBLIC ========= */
 
@@ -213,6 +266,15 @@ const finalCollection = {
   info: { ...source.info, name: "Najaah LMS API (v1)" },
   item: Object.values(tree).filter(f => f.item.length > 0)
 };
+
+for (const moduleFolder of tree.admin.item) {
+  moduleFolder.item.sort((a, b) => {
+    const order = { "System Scoped": 0, "Center Scoped": 1 };
+    return (order[a.name] ?? 99) - (order[b.name] ?? 99);
+  });
+}
+
+tree.admin.item.sort((a, b) => a.name.localeCompare(b.name));
 
 fs.writeFileSync(OUTPUT, JSON.stringify(finalCollection, null, 2));
 console.log("✅ Postman collection structured:", OUTPUT);
