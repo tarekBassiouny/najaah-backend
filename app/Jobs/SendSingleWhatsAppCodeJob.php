@@ -11,6 +11,7 @@ use App\Models\BulkWhatsAppJobItem;
 use App\Services\VideoAccess\Contracts\VideoApprovalCodeServiceInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -29,6 +30,41 @@ class SendSingleWhatsAppCodeJob implements ShouldQueue
 
     public function handle(VideoApprovalCodeServiceInterface $codeService): void
     {
+        /** @var BulkWhatsAppJobItem|null $itemForTimeout */
+        $itemForTimeout = BulkWhatsAppJobItem::query()
+            ->with(['bulkJob'])
+            ->find($this->itemId);
+
+        if (! $itemForTimeout instanceof BulkWhatsAppJobItem) {
+            return;
+        }
+
+        /** @var BulkWhatsAppJob $bulkJobForTimeout */
+        $bulkJobForTimeout = $itemForTimeout->bulkJob;
+        $settingsForTimeout = is_array($bulkJobForTimeout->settings) ? $bulkJobForTimeout->settings : [];
+        $processingTimeoutSeconds = $this->resolveProcessingTimeoutSeconds($settingsForTimeout);
+        $staleBefore = now()->subSeconds($processingTimeoutSeconds);
+
+        $claimed = BulkWhatsAppJobItem::query()
+            ->whereKey($this->itemId)
+            ->where(static function (Builder $query) use ($staleBefore): void {
+                $query
+                    ->where('status', BulkItemStatus::Pending->value)
+                    ->orWhere(static function (Builder $processing) use ($staleBefore): void {
+                        $processing
+                            ->where('status', BulkItemStatus::Processing->value)
+                            ->where('updated_at', '<=', $staleBefore);
+                    });
+            })
+            ->update([
+                'status' => BulkItemStatus::Processing->value,
+                'updated_at' => now(),
+            ]);
+
+        if ($claimed === 0) {
+            return;
+        }
+
         /** @var BulkWhatsAppJobItem|null $item */
         $item = BulkWhatsAppJobItem::query()
             ->with(['bulkJob', 'videoAccessCode.user', 'videoAccessCode.video'])
@@ -42,10 +78,9 @@ class SendSingleWhatsAppCodeJob implements ShouldQueue
         $bulkJob = $item->bulkJob;
 
         if (in_array($bulkJob->status, [BulkJobStatus::Paused, BulkJobStatus::Cancelled, BulkJobStatus::Completed], true)) {
-            return;
-        }
+            $item->status = BulkItemStatus::Pending;
+            $item->save();
 
-        if ($item->status !== BulkItemStatus::Pending) {
             return;
         }
 
@@ -98,12 +133,33 @@ class SendSingleWhatsAppCodeJob implements ShouldQueue
     {
         $job->refresh();
 
-        $pending = $job->items()->pending()->count();
+        $remaining = $job->items()
+            ->whereIn('status', [BulkItemStatus::Pending->value, BulkItemStatus::Processing->value])
+            ->count();
 
-        if ($pending === 0 && $job->status === BulkJobStatus::Processing) {
+        if ($remaining === 0 && $job->status === BulkJobStatus::Processing) {
             $job->status = BulkJobStatus::Completed;
             $job->completed_at = now();
             $job->save();
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $settings
+     */
+    private function resolveProcessingTimeoutSeconds(array $settings): int
+    {
+        $configured = $settings['processing_timeout_seconds'] ?? null;
+        if (is_numeric($configured)) {
+            return max(30, (int) $configured);
+        }
+
+        $connection = (string) config('queue.default', 'database');
+        $retryAfter = config('queue.connections.'.$connection.'.retry_after');
+        if (! is_numeric($retryAfter)) {
+            return 80;
+        }
+
+        return max(30, ((int) $retryAfter) - 10);
     }
 }

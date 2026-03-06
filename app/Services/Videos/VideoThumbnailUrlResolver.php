@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Courses;
+namespace App\Services\Videos;
 
 use App\Services\Storage\Contracts\StorageServiceInterface;
 
-class CourseThumbnailUrlResolver
+class VideoThumbnailUrlResolver
 {
     public function __construct(private readonly StorageServiceInterface $storageService) {}
 

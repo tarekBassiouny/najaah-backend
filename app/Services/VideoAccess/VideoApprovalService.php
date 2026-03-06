@@ -16,6 +16,7 @@ use App\Services\Centers\CenterScopeService;
 use App\Services\VideoAccess\Contracts\VideoApprovalServiceInterface;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class VideoApprovalService implements VideoApprovalServiceInterface
 {
@@ -58,39 +59,67 @@ class VideoApprovalService implements VideoApprovalServiceInterface
 
     public function grantFromCode(User $student, VideoAccessCode $code): VideoAccess
     {
-        /** @var VideoAccess|null $existingByCode */
-        $existingByCode = VideoAccess::query()
-            ->where('video_access_code_id', $code->id)
-            ->notDeleted()
-            ->first();
+        return DB::transaction(function () use ($student, $code): VideoAccess {
+            /** @var VideoAccess|null $existingByCode */
+            $existingByCode = VideoAccess::query()
+                ->withTrashed()
+                ->where('video_access_code_id', $code->id)
+                ->lockForUpdate()
+                ->first();
 
-        if ($existingByCode instanceof VideoAccess) {
-            return $existingByCode;
-        }
+            if ($existingByCode instanceof VideoAccess) {
+                if ($existingByCode->trashed()) {
+                    $existingByCode->restore();
+                }
 
-        $alreadyGranted = VideoAccess::query()
-            ->forUserAndVideo($student->id, (int) $code->video_id)
-            ->where('course_id', (int) $code->course_id)
-            ->active()
-            ->exists();
+                return $existingByCode->fresh() ?? $existingByCode;
+            }
 
-        if ($alreadyGranted) {
-            $this->deny(ErrorCodes::VIDEO_ACCESS_ALREADY_GRANTED, 'Video access already granted.', 422);
-        }
+            /** @var VideoAccess|null $existing */
+            $existing = VideoAccess::query()
+                ->withTrashed()
+                ->forUserAndVideo($student->id, (int) $code->video_id)
+                ->where('course_id', (int) $code->course_id)
+                ->lockForUpdate()
+                ->first();
 
-        /** @var VideoAccess $access */
-        $access = VideoAccess::query()->create([
-            'user_id' => $student->id,
-            'video_id' => $code->video_id,
-            'course_id' => $code->course_id,
-            'center_id' => $code->center_id,
-            'enrollment_id' => $code->enrollment_id,
-            'video_access_request_id' => $code->video_access_request_id,
-            'video_access_code_id' => $code->id,
-            'granted_at' => Carbon::now(),
-        ]);
+            if ($existing instanceof VideoAccess) {
+                if ($existing->revoked_at === null && ! $existing->trashed()) {
+                    $this->deny(ErrorCodes::VIDEO_ACCESS_ALREADY_GRANTED, 'Video access already granted.', 422);
+                }
 
-        return $access;
+                if ($existing->trashed()) {
+                    $existing->restore();
+                }
+
+                $existing->fill([
+                    'center_id' => $code->center_id,
+                    'enrollment_id' => $code->enrollment_id,
+                    'video_access_request_id' => $code->video_access_request_id,
+                    'video_access_code_id' => $code->id,
+                    'granted_at' => Carbon::now(),
+                    'revoked_at' => null,
+                    'revoked_by' => null,
+                ]);
+                $existing->save();
+
+                return $existing->fresh() ?? $existing;
+            }
+
+            /** @var VideoAccess $access */
+            $access = VideoAccess::query()->create([
+                'user_id' => $student->id,
+                'video_id' => $code->video_id,
+                'course_id' => $code->course_id,
+                'center_id' => $code->center_id,
+                'enrollment_id' => $code->enrollment_id,
+                'video_access_request_id' => $code->video_access_request_id,
+                'video_access_code_id' => $code->id,
+                'granted_at' => Carbon::now(),
+            ]);
+
+            return $access;
+        });
     }
 
     public function revoke(User $admin, VideoAccess $access): VideoAccess

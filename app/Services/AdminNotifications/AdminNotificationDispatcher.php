@@ -122,17 +122,26 @@ class AdminNotificationDispatcher
                 $student->name,
                 $video->translate('title') ?: 'Untitled Video',
             ),
-            data: [
-                'entity_type' => 'video_access_request',
-                'entity_id' => $request->id,
-                'action_url' => '/admin/video-access-requests/'.$request->id,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'video_id' => $video->id,
-                'video_title' => $video->translate('title'),
-                'course_id' => $request->course_id,
-                'reason' => $request->reason,
-            ],
+            data: array_merge(
+                $this->basePayload(
+                    entityType: 'video_access_request',
+                    entityId: $request->id,
+                    centerId: $centerId
+                ),
+                [
+                    'action_url' => $this->centerListPath(
+                        $this->ensureCenter($centerId, 'video access request'),
+                        '/student-requests/video-access',
+                        ['request_id' => (string) $request->id]
+                    ),
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'video_id' => $video->id,
+                    'video_title' => $video->translate('title'),
+                    'course_id' => $request->course_id,
+                    'reason' => $request->reason,
+                ]
+            ),
             userId: null,
             centerId: $centerId
         );

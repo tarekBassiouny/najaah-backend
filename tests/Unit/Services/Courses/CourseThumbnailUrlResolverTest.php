@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Services\Courses\CourseThumbnailUrlResolver;
 use App\Services\Storage\Contracts\StorageServiceInterface;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 uses(TestCase::class)->group('courses');
@@ -23,6 +22,8 @@ it('returns null when the thumbnail path is missing', function (): void {
 it('returns absolute urls without touching storage', function (): void {
     $storage = \Mockery::mock(StorageServiceInterface::class);
     $storage->shouldNotReceive('exists');
+    $storage->shouldNotReceive('temporaryUrl');
+    $storage->shouldNotReceive('url');
 
     $resolver = new CourseThumbnailUrlResolver($storage);
 
@@ -35,7 +36,7 @@ it('returns signed urls for private disks', function (): void {
     config()->set('filesystems.signed_url_ttl', 600);
 
     $storage = \Mockery::mock(StorageServiceInterface::class);
-    $storage->shouldReceive('exists')->once()->with('centers/1/courses/3/thumbnail/test.png')->andReturn(true);
+    $storage->shouldNotReceive('exists');
     $storage->shouldReceive('temporaryUrl')->once()->with('centers/1/courses/3/thumbnail/test.png', 600)->andReturn('https://signed.test/thumb');
 
     $resolver = new CourseThumbnailUrlResolver($storage);
@@ -48,7 +49,7 @@ it('returns public urls for public disks', function (): void {
     config()->set('filesystems.disks.public.visibility', 'public');
 
     $storage = \Mockery::mock(StorageServiceInterface::class);
-    $storage->shouldReceive('exists')->once()->with('centers/1/courses/3/thumbnail/test.png')->andReturn(true);
+    $storage->shouldNotReceive('exists');
     $storage->shouldReceive('url')->once()->with('centers/1/courses/3/thumbnail/test.png')->andReturn('https://cdn.test/thumb.png');
 
     $resolver = new CourseThumbnailUrlResolver($storage);
@@ -56,15 +57,16 @@ it('returns public urls for public disks', function (): void {
     expect($resolver->resolve('centers/1/courses/3/thumbnail/test.png'))->toBe('https://cdn.test/thumb.png');
 });
 
-it('returns null and logs warning when thumbnail path is missing on storage', function (): void {
+it('still returns url for stored paths without existence checks', function (): void {
     config()->set('filesystems.default', 'spaces');
-
-    Log::shouldReceive('warning')->once()->with('Course thumbnail path missing on storage.', ['path' => 'centers/1/courses/3/thumbnail/test.png']);
+    config()->set('filesystems.disks.spaces.visibility', 'private');
+    config()->set('filesystems.signed_url_ttl', 900);
 
     $storage = \Mockery::mock(StorageServiceInterface::class);
-    $storage->shouldReceive('exists')->once()->with('centers/1/courses/3/thumbnail/test.png')->andReturn(false);
+    $storage->shouldNotReceive('exists');
+    $storage->shouldReceive('temporaryUrl')->once()->with('centers/1/courses/3/thumbnail/test.png', 900)->andReturn('https://signed.test/thumb');
 
     $resolver = new CourseThumbnailUrlResolver($storage);
 
-    expect($resolver->resolve('centers/1/courses/3/thumbnail/test.png'))->toBeNull();
+    expect($resolver->resolve('centers/1/courses/3/thumbnail/test.png'))->toBe('https://signed.test/thumb');
 });

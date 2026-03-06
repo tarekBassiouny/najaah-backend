@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Courses;
+namespace App\Services\Instructors;
 
 use App\Services\Storage\Contracts\StorageServiceInterface;
 
-class CourseThumbnailUrlResolver
+class InstructorAvatarUrlResolver
 {
     public function __construct(private readonly StorageServiceInterface $storageService) {}
 

@@ -62,34 +62,48 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
 
         $this->courseAccessService->assertVideoInCourse($course, $video);
 
-        if ((int) $enrollment->user_id !== (int) $student->id || (int) $enrollment->course_id !== (int) $course->id) {
-            $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
-        }
+        return DB::transaction(function () use ($admin, $student, $video, $course, $enrollment, $request): VideoAccessCode {
+            /** @var Enrollment|null $lockedEnrollment */
+            $lockedEnrollment = Enrollment::query()
+                ->whereKey($enrollment->id)
+                ->lockForUpdate()
+                ->first();
 
-        $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
+            if (
+                ! $lockedEnrollment instanceof Enrollment
+                || (int) $lockedEnrollment->user_id !== (int) $student->id
+                || (int) $lockedEnrollment->course_id !== (int) $course->id
+            ) {
+                $this->deny(ErrorCodes::ENROLLMENT_REQUIRED, 'Active enrollment required.', 403);
+            }
 
-        if ($this->videoApprovalService->hasAccess($student, $video, $course)) {
-            $this->deny(ErrorCodes::VIDEO_ACCESS_ALREADY_GRANTED, 'Video access already granted.', 422);
-        }
+            $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
 
-        $codeValue = $this->generateUniqueCode();
+            if ($this->videoApprovalService->hasAccess($student, $video, $course)) {
+                $this->deny(ErrorCodes::VIDEO_ACCESS_ALREADY_GRANTED, 'Video access already granted.', 422);
+            }
 
-        /** @var VideoAccessCode $code */
-        $code = VideoAccessCode::query()->create([
-            'user_id' => $student->id,
-            'video_id' => $video->id,
-            'course_id' => $course->id,
-            'center_id' => $course->center_id,
-            'enrollment_id' => $enrollment->id,
-            'video_access_request_id' => $request?->id,
-            'code' => $codeValue,
-            'status' => VideoAccessCodeStatus::Active,
-            'generated_by' => $admin->id,
-            'generated_at' => Carbon::now(),
-            'expires_at' => $this->calculateExpiry($course->center),
-        ]);
+            $this->assertNoExistingValidCode($student, $video, $course, true);
 
-        return $code->fresh(['user', 'video', 'course', 'request']) ?? $code;
+            $codeValue = $this->generateUniqueCode();
+
+            /** @var VideoAccessCode $code */
+            $code = VideoAccessCode::query()->create([
+                'user_id' => $student->id,
+                'video_id' => $video->id,
+                'course_id' => $course->id,
+                'center_id' => $course->center_id,
+                'enrollment_id' => $lockedEnrollment->id,
+                'video_access_request_id' => $request?->id,
+                'code' => $codeValue,
+                'status' => VideoAccessCodeStatus::Active,
+                'generated_by' => $admin->id,
+                'generated_at' => Carbon::now(),
+                'expires_at' => $this->calculateExpiry($course->center),
+            ]);
+
+            return $code->fresh(['user', 'video', 'course', 'request']) ?? $code;
+        });
     }
 
     public function redeem(User $student, string $code): VideoAccess
@@ -242,6 +256,10 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
             $this->deny(ErrorCodes::STUDENT_NO_PHONE, 'Student has no phone number.', 422);
         }
 
+        $countryCode = trim((string) ($student->country_code ?? ''));
+        $destination = $countryCode !== '' ? $countryCode.$phone : $phone;
+        $normalizedDestination = $this->normalizeDestination($destination);
+
         $instanceName = (string) config('evolution.otp_instance_name', '');
 
         if ($instanceName === '') {
@@ -254,7 +272,7 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
         try {
             if ($format === WhatsAppCodeFormat::QrCode) {
                 $this->evolutionApiClient->sendMedia($instanceName, [
-                    'number' => $this->normalizeDestination($phone),
+                    'number' => $normalizedDestination,
                     'mediatype' => 'image',
                     'media' => $this->getQrCodeDataUrl($code),
                     'caption' => sprintf(
@@ -269,7 +287,7 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
             }
 
             $this->evolutionApiClient->sendText($instanceName, [
-                'number' => $this->normalizeDestination($phone),
+                'number' => $normalizedDestination,
                 'text' => sprintf(
                     "Your access code for '%s' is: %s\n\nEnter this code in the app to unlock the video.",
                     $video->translate('title') ?: 'Video',
@@ -279,7 +297,7 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
         } catch (\Throwable $throwable) {
             $this->deny(
                 ErrorCodes::WHATSAPP_SEND_FAILED,
-                'Failed to send WhatsApp message: '.$throwable->getMessage(),
+                'Failed to send WhatsApp message: '.$this->resolveWhatsAppSendFailureMessage($throwable, $instanceName),
                 500
             );
         }
@@ -410,6 +428,44 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
         return $code->expires_at !== null && $code->expires_at->isPast();
     }
 
+    private function assertNoExistingValidCode(
+        User $student,
+        Video $video,
+        Course $course,
+        bool $lockForUpdate = false
+    ): void {
+        $query = VideoAccessCode::query()
+            ->where('user_id', $student->id)
+            ->where('video_id', $video->id)
+            ->where('course_id', $course->id)
+            ->where('status', VideoAccessCodeStatus::Active->value);
+
+        if ($lockForUpdate) {
+            $query->lockForUpdate();
+        }
+
+        /** @var \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $activeCodes */
+        $activeCodes = $query->orderByDesc('id')->get();
+
+        foreach ($activeCodes as $activeCode) {
+            if ($this->isExpired($activeCode)) {
+                $this->markExpired($activeCode);
+
+                continue;
+            }
+
+            $expiryReason = $activeCode->expires_at instanceof Carbon
+                ? ' Existing code expires at '.$activeCode->expires_at->toISOString().'.'
+                : ' Existing code does not expire.';
+
+            $this->deny(
+                ErrorCodes::VIDEO_CODE_ACTIVE_EXISTS,
+                'Student already has a valid video access code for this video.'.$expiryReason,
+                422
+            );
+        }
+    }
+
     private function markExpired(VideoAccessCode $code): void
     {
         if ($code->status !== VideoAccessCodeStatus::Active) {
@@ -424,11 +480,82 @@ class VideoApprovalCodeService implements VideoApprovalCodeServiceInterface
     {
         $normalized = preg_replace('/\D+/', '', $destination) ?? '';
 
+        if (str_starts_with($normalized, '00')) {
+            $normalized = substr($normalized, 2);
+        }
+
         if ($normalized === '') {
             throw new \RuntimeException('Destination phone must contain digits.');
         }
 
         return $normalized;
+    }
+
+    private function resolveWhatsAppSendFailureMessage(\Throwable $throwable, string $instanceName): string
+    {
+        $message = $throwable->getMessage();
+        if (! $this->isLikelyInstanceConnectionError($message)) {
+            return $message;
+        }
+
+        $instanceStateMessage = $this->resolveInstanceStateErrorMessage($instanceName);
+        if ($instanceStateMessage !== null) {
+            return $instanceStateMessage;
+        }
+
+        return $message;
+    }
+
+    private function isLikelyInstanceConnectionError(string $message): bool
+    {
+        $normalized = strtolower($message);
+
+        return str_contains($normalized, 'onwha')
+            || str_contains($normalized, 'log out instance')
+            || str_contains($normalized, 'unauthorized');
+    }
+
+    private function resolveInstanceStateErrorMessage(string $instanceName): ?string
+    {
+        try {
+            $instances = $this->evolutionApiClient->fetchInstances();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        foreach ($instances as $instance) {
+            if (! is_array($instance)) {
+                continue;
+            }
+
+            if ((string) ($instance['name'] ?? '') !== $instanceName) {
+                continue;
+            }
+
+            $status = (string) ($instance['connectionStatus'] ?? 'unknown');
+            if (in_array(strtolower($status), ['open', 'connected', 'online'], true)) {
+                return null;
+            }
+
+            $reasonCode = $instance['disconnectionReasonCode'] ?? null;
+            $disconnectedAt = (string) ($instance['disconnectionAt'] ?? '');
+
+            $reasonPart = is_scalar($reasonCode) ? ' Reason code: '.$reasonCode.'.' : '';
+            $disconnectedAtPart = $disconnectedAt !== '' ? ' Disconnected at '.$disconnectedAt.'.' : '';
+
+            return sprintf(
+                'Evolution instance "%s" is not connected (status: %s). Reconnect the instance in Evolution Manager and retry.%s%s',
+                $instanceName,
+                $status !== '' ? $status : 'unknown',
+                $reasonPart,
+                $disconnectedAtPart
+            );
+        }
+
+        return sprintf(
+            'Evolution instance "%s" was not found. Create/connect the instance and retry.',
+            $instanceName
+        );
     }
 
     /**

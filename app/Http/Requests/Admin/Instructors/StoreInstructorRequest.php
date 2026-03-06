@@ -27,7 +27,7 @@ class StoreInstructorRequest extends FormRequest
             'bio_translations' => ['nullable', 'array'],
             'title_translations' => ['nullable', 'array'],
             'avatar_url' => ['nullable', 'string'],
-            'avatar' => ['sometimes', 'file', 'image', 'mimes:jpeg,jpg,png,webp', 'max:512000'],
+            'avatar' => ['sometimes', 'file', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'email' => ['nullable', 'email'],
             'phone' => ['nullable', 'string'],
             'social_links' => ['nullable', 'array'],
@@ -90,7 +90,7 @@ class StoreInstructorRequest extends FormRequest
                 'example' => 'https://example.com/avatar.jpg',
             ],
             'avatar' => [
-                'description' => 'Profile image file upload.',
+                'description' => 'Profile image file upload (max 5MB).',
             ],
             'email' => [
                 'description' => 'Contact email for the instructor.',

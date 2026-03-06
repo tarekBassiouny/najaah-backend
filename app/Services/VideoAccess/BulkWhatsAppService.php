@@ -184,7 +184,21 @@ class BulkWhatsAppService implements BulkWhatsAppServiceInterface
             'batch_pause_seconds' => is_numeric($bulkSettings['batch_pause_seconds'] ?? null) ? max(0, (int) $bulkSettings['batch_pause_seconds']) : 60,
             'max_retries' => is_numeric($bulkSettings['max_retries'] ?? null) ? max(0, (int) $bulkSettings['max_retries']) : 2,
             'max_failures_before_pause' => is_numeric($bulkSettings['max_failures_before_pause'] ?? null) ? max(1, (int) $bulkSettings['max_failures_before_pause']) : 10,
+            'processing_timeout_seconds' => is_numeric($bulkSettings['processing_timeout_seconds'] ?? null)
+                ? max(30, (int) $bulkSettings['processing_timeout_seconds'])
+                : $this->resolveDefaultProcessingTimeoutSeconds(),
         ];
+    }
+
+    private function resolveDefaultProcessingTimeoutSeconds(): int
+    {
+        $connection = (string) config('queue.default', 'database');
+        $retryAfter = config('queue.connections.'.$connection.'.retry_after');
+        if (! is_numeric($retryAfter)) {
+            return 80;
+        }
+
+        return max(30, ((int) $retryAfter) - 10);
     }
 
     /**

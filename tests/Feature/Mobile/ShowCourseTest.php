@@ -12,7 +12,10 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
+use App\Services\Storage\StoragePathResolver;
+use App\Services\Videos\VideoThumbnailUrlResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\Helpers\ApiTestHelper;
 
 uses(RefreshDatabase::class, ApiTestHelper::class)->group('courses', 'mobile', 'show');
@@ -103,6 +106,73 @@ it('shows course aggregate with metadata only', function (): void {
         'video_uuid',
         'library_id',
     ]);
+});
+
+it('prefers custom video thumbnail over bunny thumbnail when available', function (): void {
+    Storage::fake('spaces');
+    config()->set('filesystems.default', 'spaces');
+
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
+
+    $section = Section::factory()->create([
+        'course_id' => $course->id,
+        'order_index' => 1,
+    ]);
+
+    $readySession = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => 3,
+    ]);
+
+    $customPath = app(StoragePathResolver::class)->videoThumbnail($center->id, 999, 'custom-thumb.jpg');
+    Storage::disk('spaces')->put($customPath, 'thumb');
+
+    $video = Video::factory()->create([
+        'library_id' => 55,
+        'source_id' => 'video-custom-thumb',
+        'duration_seconds' => 120,
+        'thumbnail_url' => 'https://cdn.example.com/default-thumb.jpg',
+        'custom_thumbnail_url' => $customPath,
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => $readySession->id,
+    ]);
+
+    CourseVideo::create([
+        'course_id' => $course->id,
+        'section_id' => $section->id,
+        'video_id' => $video->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $this->asApiUser($student);
+    $expectedThumbnail = app(VideoThumbnailUrlResolver::class)->resolve($customPath);
+
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}");
+
+    $response->assertOk()
+        ->assertJsonPath('data.videos.0.id', $video->id)
+        ->assertJsonPath('data.videos.0.thumbnail', $expectedThumbnail)
+        ->assertJsonPath('data.videos.0.thumbnail_url', $expectedThumbnail);
 });
 
 it('allows system students to view unbranded center courses', function (): void {

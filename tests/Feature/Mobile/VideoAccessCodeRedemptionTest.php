@@ -199,3 +199,63 @@ test('student cannot redeem code belonging to another student', function (): voi
     $response->assertStatus(403)
         ->assertJsonPath('error.code', 'VIDEO_CODE_WRONG_USER');
 });
+
+test('redeeming a new code after revoke reuses the same video access row', function (): void {
+    [$center, $course, $video, $student, $enrollment] = buildRedemptionContext($this);
+
+    $firstCode = VideoAccessCode::query()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'enrollment_id' => $enrollment->id,
+        'code' => 'QW12ER34',
+        'status' => VideoAccessCodeStatus::Active,
+        'generated_at' => now(),
+        'expires_at' => now()->addDays(30),
+    ]);
+
+    $this->apiPost('/api/v1/video-access-codes/redeem', [
+        'code' => $firstCode->code,
+    ])->assertOk();
+
+    $firstAccessId = \App\Models\VideoAccess::query()
+        ->where('user_id', $student->id)
+        ->where('video_id', $video->id)
+        ->where('course_id', $course->id)
+        ->value('id');
+
+    expect($firstAccessId)->toBeInt();
+
+    \App\Models\VideoAccess::query()
+        ->whereKey($firstAccessId)
+        ->update([
+            'revoked_at' => now(),
+        ]);
+
+    $secondCode = VideoAccessCode::query()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'enrollment_id' => $enrollment->id,
+        'code' => 'TY56UI78',
+        'status' => VideoAccessCodeStatus::Active,
+        'generated_at' => now(),
+        'expires_at' => now()->addDays(30),
+    ]);
+
+    $this->apiPost('/api/v1/video-access-codes/redeem', [
+        'code' => $secondCode->code,
+    ])->assertOk();
+
+    $this->assertDatabaseCount('video_accesses', 1);
+    $this->assertDatabaseHas('video_accesses', [
+        'id' => $firstAccessId,
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'video_access_code_id' => $secondCode->id,
+        'revoked_at' => null,
+    ]);
+});

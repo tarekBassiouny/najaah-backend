@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Videos;
 
+use App\Actions\Admin\Videos\ClearVideoThumbnailAction;
+use App\Actions\Admin\Videos\UploadVideoThumbnailAction;
 use App\Http\Controllers\Concerns\AdminAuthenticates;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Videos\ListVideosRequest;
 use App\Http\Requests\Admin\Videos\StoreVideoRequest;
 use App\Http\Requests\Admin\Videos\UpdateVideoRequest;
+use App\Http\Requests\Admin\Videos\UploadVideoThumbnailRequest;
 use App\Http\Resources\Admin\Videos\AdminVideoResource;
 use App\Http\Resources\Admin\Videos\VideoResource;
 use App\Models\Center;
@@ -113,6 +116,49 @@ class VideoController extends Controller
             'success' => true,
             'data' => null,
         ], 200);
+    }
+
+    /**
+     * Upload a custom thumbnail for a video.
+     */
+    public function uploadThumbnail(
+        UploadVideoThumbnailRequest $request,
+        Center $center,
+        Video $video,
+        UploadVideoThumbnailAction $action
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertVideoBelongsToCenter($center, $video);
+
+        /** @var \Illuminate\Http\UploadedFile $thumbnail */
+        $thumbnail = $request->file('thumbnail');
+        $updated = $action->execute($video, $thumbnail, $admin);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Video thumbnail updated successfully',
+            'data' => new VideoResource($updated),
+        ]);
+    }
+
+    /**
+     * Remove custom thumbnail and fallback to default video thumbnail.
+     */
+    public function clearThumbnail(
+        Center $center,
+        Video $video,
+        ClearVideoThumbnailAction $action
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->assertVideoBelongsToCenter($center, $video);
+
+        $updated = $action->execute($video, $admin);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Video custom thumbnail removed successfully',
+            'data' => new VideoResource($updated),
+        ]);
     }
 
     /**

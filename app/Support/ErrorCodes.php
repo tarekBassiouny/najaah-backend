@@ -70,6 +70,8 @@ final class ErrorCodes
 
     public const VIDEO_CODE_WRONG_USER = 'VIDEO_CODE_WRONG_USER';
 
+    public const VIDEO_CODE_ACTIVE_EXISTS = 'VIDEO_CODE_ACTIVE_EXISTS';
+
     public const STUDENT_NO_PHONE = 'STUDENT_NO_PHONE';
 
     public const WHATSAPP_SEND_FAILED = 'WHATSAPP_SEND_FAILED';

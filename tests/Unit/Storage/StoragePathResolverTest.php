@@ -14,6 +14,7 @@ it('builds center-scoped paths for common assets', function (): void {
         ->and($resolver->userAvatar(10, 55, 'avatar.jpg'))->toBe('centers/10/users/55/avatar/avatar.jpg')
         ->and($resolver->instructorAvatar(10, 'avatar.jpg'))->toBe('centers/10/instructors/avatars/avatar.jpg')
         ->and($resolver->courseThumbnail(10, 22, 'thumb.jpg'))->toBe('centers/10/courses/22/thumbnail/thumb.jpg')
+        ->and($resolver->videoThumbnail(10, 33, 'video-thumb.jpg'))->toBe('centers/10/videos/33/thumbnail/video-thumb.jpg')
         ->and($resolver->pdf(10, 'file.pdf'))->toBe('centers/10/pdfs/file.pdf')
         ->and($resolver->export(10, 'export.csv'))->toBe('centers/10/exports/export.csv');
 });

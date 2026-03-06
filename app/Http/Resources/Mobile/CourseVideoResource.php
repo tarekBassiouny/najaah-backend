@@ -15,6 +15,7 @@ use App\Models\VideoAccessCode;
 use App\Models\VideoAccessRequest;
 use App\Services\Playback\Contracts\ViewLimitServiceInterface;
 use App\Services\VideoAccess\Contracts\VideoApprovalServiceInterface;
+use App\Services\Videos\VideoThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -47,14 +48,16 @@ class CourseVideoResource extends JsonResource
             $isLocked = $this->isViewLimitExceeded($request, $video, $pivot);
         }
 
+        $thumbnail = app(VideoThumbnailUrlResolver::class)->resolve($video->effectiveThumbnailPath());
+
         return [
             'id' => $video->id,
             'title' => $video->translate('title'),
             'tags' => $video->tags,
             'duration' => $video->duration_seconds,
             'duration_seconds' => $video->duration_seconds,
-            'thumbnail' => $video->thumbnail_url,
-            'thumbnail_url' => $video->thumbnail_url,
+            'thumbnail' => $thumbnail,
+            'thumbnail_url' => $thumbnail,
             'requires_redemption' => $requiresRedemption,
             'has_redeemed' => $redemptionData['has_redeemed'],
             'is_locked' => $isLocked,

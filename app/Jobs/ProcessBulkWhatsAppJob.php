@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Enums\BulkItemStatus;
 use App\Enums\BulkJobStatus;
 use App\Models\BulkWhatsAppJob;
 use Illuminate\Bus\Queueable;
@@ -26,7 +27,7 @@ class ProcessBulkWhatsAppJob implements ShouldQueue
     public function handle(): void
     {
         /** @var BulkWhatsAppJob|null $job */
-        $job = BulkWhatsAppJob::query()->with(['items'])->find($this->bulkJobId);
+        $job = BulkWhatsAppJob::query()->find($this->bulkJobId);
 
         if (! $job instanceof BulkWhatsAppJob) {
             return;
@@ -40,6 +41,8 @@ class ProcessBulkWhatsAppJob implements ShouldQueue
         $batchSize = max(1, (int) ($settings['batch_size'] ?? 50));
         $delaySeconds = max(0, (int) ($settings['delay_seconds'] ?? 3));
         $batchPause = max(0, (int) ($settings['batch_pause_seconds'] ?? 60));
+        $processingTimeoutSeconds = $this->resolveProcessingTimeoutSeconds($settings);
+        $staleBefore = now()->subSeconds($processingTimeoutSeconds);
 
         $job->status = BulkJobStatus::Processing;
         if ($job->started_at === null) {
@@ -48,12 +51,26 @@ class ProcessBulkWhatsAppJob implements ShouldQueue
 
         $job->save();
 
+        $job->items()
+            ->processing()
+            ->where('updated_at', '<=', $staleBefore)
+            ->update([
+                'status' => BulkItemStatus::Pending->value,
+                'updated_at' => now(),
+            ]);
+
         $items = $job->items()->pending()->orderBy('id')->get();
 
         if ($items->isEmpty()) {
-            $job->status = BulkJobStatus::Completed;
-            $job->completed_at = now();
-            $job->save();
+            $processingCount = $job->items()
+                ->where('status', BulkItemStatus::Processing->value)
+                ->count();
+
+            if ($processingCount === 0) {
+                $job->status = BulkJobStatus::Completed;
+                $job->completed_at = now();
+                $job->save();
+            }
 
             return;
         }
@@ -70,5 +87,24 @@ class ProcessBulkWhatsAppJob implements ShouldQueue
 
             $totalDelay += ($batch->count() * $delaySeconds) + $batchPause;
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $settings
+     */
+    private function resolveProcessingTimeoutSeconds(array $settings): int
+    {
+        $configured = $settings['processing_timeout_seconds'] ?? null;
+        if (is_numeric($configured)) {
+            return max(30, (int) $configured);
+        }
+
+        $connection = (string) config('queue.default', 'database');
+        $retryAfter = config('queue.connections.'.$connection.'.retry_after');
+        if (! is_numeric($retryAfter)) {
+            return 80;
+        }
+
+        return max(30, ((int) $retryAfter) - 10);
     }
 }

@@ -26,6 +26,8 @@ class BulkWhatsAppJobItem extends Model
     /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory<self>> */
     use HasFactory;
 
+    protected $table = 'bulk_whatsapp_job_items';
+
     protected $fillable = [
         'bulk_job_id',
         'video_access_code_id',
@@ -78,5 +80,14 @@ class BulkWhatsAppJobItem extends Model
     public function scopeFailed(Builder $query): Builder
     {
         return $query->where('status', BulkItemStatus::Failed->value);
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeProcessing(Builder $query): Builder
+    {
+        return $query->where('status', BulkItemStatus::Processing->value);
     }
 }

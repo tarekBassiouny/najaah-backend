@@ -213,26 +213,42 @@ class VideoApprovalRequestService implements VideoApprovalRequestServiceInterfac
             $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be rejected.', 409);
         }
 
-        $request->status = VideoAccessRequestStatus::Rejected;
-        $request->decision_reason = $decisionReason;
-        $request->decided_by = $admin->id;
-        $request->decided_at = Carbon::now();
-        $request->save();
+        return DB::transaction(function () use ($admin, $request, $decisionReason): VideoAccessRequest {
+            /** @var VideoAccessRequest|null $lockedRequest */
+            $lockedRequest = VideoAccessRequest::query()
+                ->whereKey($request->id)
+                ->lockForUpdate()
+                ->first();
 
-        $this->auditLogService->logByType(
-            $admin,
-            VideoAccessRequest::class,
-            (int) $request->id,
-            AuditActions::VIDEO_ACCESS_REQUEST_REJECTED,
-            [
-                'video_id' => $request->video_id,
-                'course_id' => $request->course_id,
-                'center_id' => $request->center_id,
-                'decision_reason' => $decisionReason,
-            ]
-        );
+            if (! $lockedRequest instanceof VideoAccessRequest) {
+                $this->deny(ErrorCodes::NOT_FOUND, 'Video access request not found.', 404);
+            }
 
-        return $request->fresh(['user', 'video', 'course', 'center', 'decider']) ?? $request;
+            if ($lockedRequest->status !== VideoAccessRequestStatus::Pending) {
+                $this->deny(ErrorCodes::INVALID_STATE, 'Only pending requests can be rejected.', 409);
+            }
+
+            $lockedRequest->status = VideoAccessRequestStatus::Rejected;
+            $lockedRequest->decision_reason = $decisionReason;
+            $lockedRequest->decided_by = $admin->id;
+            $lockedRequest->decided_at = Carbon::now();
+            $lockedRequest->save();
+
+            $this->auditLogService->logByType(
+                $admin,
+                VideoAccessRequest::class,
+                (int) $lockedRequest->id,
+                AuditActions::VIDEO_ACCESS_REQUEST_REJECTED,
+                [
+                    'video_id' => $lockedRequest->video_id,
+                    'course_id' => $lockedRequest->course_id,
+                    'center_id' => $lockedRequest->center_id,
+                    'decision_reason' => $decisionReason,
+                ]
+            );
+
+            return $lockedRequest->fresh(['user', 'video', 'course', 'center', 'decider']) ?? $lockedRequest;
+        });
     }
 
     public function bulkApprove(

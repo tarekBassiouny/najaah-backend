@@ -9,6 +9,7 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Playback\Contracts\ViewLimitServiceInterface;
+use App\Services\Videos\VideoThumbnailUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -63,10 +64,7 @@ class StudentCourseVideoResource extends JsonResource
             $watchLimit = $viewLimitService->getEffectiveLimit($this->student, $video, $this->course);
         }
 
-        $thumbnail = $video->thumbnail_url;
-        if ($thumbnail === null && is_array($video->thumbnail_urls)) {
-            $thumbnail = $video->thumbnail_urls['default'] ?? array_values($video->thumbnail_urls)[0] ?? null;
-        }
+        $thumbnail = app(VideoThumbnailUrlResolver::class)->resolve($video->effectiveThumbnailPath());
 
         return [
             'id' => $video->id,
@@ -74,7 +72,7 @@ class StudentCourseVideoResource extends JsonResource
             'title_translations' => $video->title_translations,
             'tags' => $video->tags,
             'duration_seconds' => $video->duration_seconds,
-            'thumbnail_url' => $video->thumbnail_url,
+            'thumbnail_url' => $thumbnail,
             'source_type' => $video->source_type,
             'source_provider' => $video->source_provider,
             'source_url' => $video->source_url,

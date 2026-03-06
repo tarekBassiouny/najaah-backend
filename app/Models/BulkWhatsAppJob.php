@@ -36,6 +36,8 @@ class BulkWhatsAppJob extends Model
 
     use SoftDeletes;
 
+    protected $table = 'bulk_whatsapp_jobs';
+
     protected $fillable = [
         'center_id',
         'total_codes',
