@@ -28,4 +28,33 @@ class StoreCollegeRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'name_translations' => [
+                'description' => 'Localized college name map.',
+                'example' => ['en' => 'Faculty of Engineering', 'ar' => 'كلية الهندسة'],
+            ],
+            'slug' => [
+                'description' => 'Optional slug. Auto-generated if omitted.',
+                'example' => 'faculty-of-engineering',
+            ],
+            'type' => [
+                'description' => 'Optional college type value (0..255).',
+                'example' => 1,
+            ],
+            'address' => [
+                'description' => 'Optional college address.',
+                'example' => 'Giza, Egypt',
+            ],
+            'is_active' => [
+                'description' => 'Whether college is active.',
+                'example' => true,
+            ],
+        ];
+    }
 }

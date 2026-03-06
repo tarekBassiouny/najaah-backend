@@ -25,7 +25,32 @@ class BulkApproveVideoAccessRequestsRequest extends FormRequest
             'request_ids.*' => ['integer', 'distinct'],
             'decision_reason' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'send_whatsapp' => ['sometimes', 'boolean'],
-            'whatsapp_format' => ['sometimes', 'string', 'in:qr_code,text_code'],
+            'whatsapp_format' => ['required_if:send_whatsapp,true', 'string', 'in:qr_code,text_code'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'request_ids' => [
+                'description' => 'Video access request IDs to approve.',
+                'example' => [11, 12, 13],
+            ],
+            'decision_reason' => [
+                'description' => 'Optional reason used for all approved requests.',
+                'example' => 'Bulk approved after verification.',
+            ],
+            'send_whatsapp' => [
+                'description' => 'Whether generated codes should be sent via WhatsApp.',
+                'example' => false,
+            ],
+            'whatsapp_format' => [
+                'description' => 'WhatsApp message format when sending is enabled.',
+                'example' => 'text_code',
+            ],
         ];
     }
 

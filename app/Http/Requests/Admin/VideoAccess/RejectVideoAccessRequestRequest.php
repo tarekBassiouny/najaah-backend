@@ -25,6 +25,19 @@ class RejectVideoAccessRequestRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'decision_reason' => [
+                'description' => 'Optional reason for rejection action.',
+                'example' => 'Insufficient eligibility criteria.',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

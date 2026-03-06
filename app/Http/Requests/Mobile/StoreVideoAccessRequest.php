@@ -22,4 +22,17 @@ class StoreVideoAccessRequest extends FormRequest
             'reason' => ['sometimes', 'nullable', 'string', 'max:1000'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'reason' => [
+                'description' => 'Optional student note describing why access approval is requested.',
+                'example' => 'I need to watch this lesson before tomorrow exam.',
+            ],
+        ];
+    }
 }
