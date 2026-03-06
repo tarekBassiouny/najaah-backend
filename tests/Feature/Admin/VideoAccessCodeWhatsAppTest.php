@@ -217,3 +217,72 @@ it('returns actionable error when evolution instance is disconnected', function 
             && str_contains($message, '2026-02-27T22:26:48.353Z')
         );
 });
+
+it('sends qr code via whatsapp media using raw base64 payload', function (): void {
+    config(['evolution.otp_instance_name' => 'otp-instance']);
+
+    $center = Center::factory()->create();
+    $admin = $this->asCenterAdmin($center);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'country_code' => '+20',
+        'phone' => '1012345678',
+    ]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $enrollment = Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $code = VideoAccessCode::query()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'enrollment_id' => $enrollment->id,
+        'video_access_request_id' => null,
+        'code' => 'QR12CD34',
+        'status' => VideoAccessCodeStatus::Active,
+        'generated_by' => $admin->id,
+        'generated_at' => now(),
+        'expires_at' => now()->addDays(30),
+    ]);
+
+    $this->mock(EvolutionApiClient::class)
+        ->shouldReceive('sendMedia')
+        ->once()
+        ->with('otp-instance', \Mockery::on(function (array $payload) use ($code): bool {
+            $media = (string) ($payload['media'] ?? '');
+
+            return ($payload['number'] ?? null) === '201012345678'
+                && ($payload['mediatype'] ?? null) === 'image'
+                && ! str_starts_with($media, 'data:image/')
+                && base64_decode($media, true) !== false
+                && is_string($payload['caption'] ?? null)
+                && str_contains((string) $payload['caption'], $code->code);
+        }))
+        ->andReturn(['key' => ['id' => 'msg-qr-1']]);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/video-access-codes/{$code->id}/send-whatsapp",
+        ['format' => 'qr_code'],
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('message', 'Code sent to student via WhatsApp');
+});
