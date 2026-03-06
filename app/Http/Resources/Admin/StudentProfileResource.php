@@ -68,6 +68,20 @@ class StudentProfileResource extends JsonResource
                 'id' => $student->center->id,
                 'name' => $student->center->translate('name'),
             ]),
+            'education' => [
+                'grade' => $this->when(
+                    $student->relationLoaded('grade') && $student->grade !== null,
+                    fn (): array => ['id' => $student->grade->id, 'name' => $student->grade->translate('name')]
+                ),
+                'school' => $this->when(
+                    $student->relationLoaded('school') && $student->school !== null,
+                    fn (): array => ['id' => $student->school->id, 'name' => $student->school->translate('name')]
+                ),
+                'college' => $this->when(
+                    $student->relationLoaded('college') && $student->college !== null,
+                    fn (): array => ['id' => $student->college->id, 'name' => $student->college->translate('name')]
+                ),
+            ],
             'enrollments' => $enrollmentResources,
         ];
     }

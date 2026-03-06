@@ -21,6 +21,9 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 /**
  * @property int $id
  * @property int|null $center_id
+ * @property int|null $grade_id
+ * @property int|null $school_id
+ * @property int|null $college_id
  * @property string $name
  * @property string|null $username
  * @property string $phone
@@ -33,6 +36,9 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property \Carbon\Carbon|null $last_login_at
  * @property \Carbon\Carbon|null $invitation_sent_at
  * @property-read Center|null $center
+ * @property-read Grade|null $grade
+ * @property-read School|null $school
+ * @property-read College|null $college
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Center> $centers
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Role> $roles
  * @property-read \Illuminate\Database\Eloquent\Collection<int, UserDevice> $devices
@@ -62,6 +68,9 @@ class User extends Authenticatable implements JWTSubject
 
     protected $fillable = [
         'center_id',
+        'grade_id',
+        'school_id',
+        'college_id',
         'name',
         'username',
         'phone',
@@ -78,6 +87,9 @@ class User extends Authenticatable implements JWTSubject
 
     protected $casts = [
         'status' => 'integer',
+        'grade_id' => 'integer',
+        'school_id' => 'integer',
+        'college_id' => 'integer',
         'is_student' => 'boolean',
         'force_password_reset' => 'boolean',
         'last_login_at' => 'datetime',
@@ -88,6 +100,24 @@ class User extends Authenticatable implements JWTSubject
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);
+    }
+
+    /** @return BelongsTo<Grade, self> */
+    public function grade(): BelongsTo
+    {
+        return $this->belongsTo(Grade::class);
+    }
+
+    /** @return BelongsTo<School, self> */
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    /** @return BelongsTo<College, self> */
+    public function college(): BelongsTo
+    {
+        return $this->belongsTo(College::class);
     }
 
     /** @return BelongsToMany<Center, self> */

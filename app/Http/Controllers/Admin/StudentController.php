@@ -91,6 +91,10 @@ class StudentController extends Controller
             studentName: $requestFilters->studentName,
             studentPhone: $requestFilters->studentPhone,
             studentEmail: $requestFilters->studentEmail,
+            gradeId: $requestFilters->gradeId,
+            schoolId: $requestFilters->schoolId,
+            collegeId: $requestFilters->collegeId,
+            stage: $requestFilters->stage,
             centerType: $requestFilters->centerType
         );
 

@@ -26,6 +26,7 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         'device_limit',
         'whatsapp_bulk_settings',
         'branding',
+        'education_profile',
     ];
 
     public function resolve(?User $student, ?Video $video = null, ?Course $course = null, ?Center $center = null): array

@@ -11,6 +11,28 @@ This feature enriches student profiles with educational information:
 
 All entities are center-scoped, allowing each center to manage their own lists.
 
+### Center Configuration (Required)
+
+Center-level behavior is controlled via:
+`center_settings.settings.education_profile`
+
+```json
+{
+  "enable_grade": true,
+  "enable_school": true,
+  "enable_college": true,
+  "require_grade": false,
+  "require_school": false,
+  "require_college": false
+}
+```
+
+Rules:
+- Mobile lookup endpoints expose only enabled modules.
+- Student profile education update returns `422` when a disabled module is submitted.
+- Admin CRUD for grades/schools/colleges remains available even if the module is disabled for students.
+- `require_*` flags enforce required fields at mobile profile update time.
+
 ---
 
 ## Architecture
@@ -226,12 +248,13 @@ enum SchoolType: int
 - Name is localized based on request locale
 - Sorted by `order` (grades) or `name` (schools/colleges)
 - No pagination (lightweight for mobile)
+- Endpoints are gated by `education_profile.enable_*` toggles per center
 
 ### Student Profile Update
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| PATCH | `/api/v1/profile/education` | Student updates their educational info |
+| PATCH | `/api/v1/auth/me/education` | Student updates their educational info |
 
 **Request Body:**
 ```json
@@ -243,8 +266,10 @@ enum SchoolType: int
 ```
 
 **Validation:**
-- IDs must belong to student's center (or unbranded centers)
+- IDs must belong to student's center scope rules
 - IDs must reference active records
+- Submitting a disabled module returns `422 VALIDATION_ERROR`
+- Required module fields are enforced by center `education_profile.require_*` flags
 
 ### Admin Student List Filters (Enhancement)
 
@@ -391,7 +416,7 @@ interface CollegeServiceInterface
 
 ### Student Update Education
 
-**PATCH** `/api/v1/profile/education`
+**PATCH** `/api/v1/auth/me/education`
 
 ```json
 {
@@ -471,10 +496,11 @@ interface CollegeServiceInterface
 - [ ] Add `lookup` action to `CollegeController`
 - [ ] Create mobile lookup controllers
 - [ ] Create mobile lookup resources (localized)
+- [ ] Add education module toggles to center settings (`education_profile`)
 - [ ] Add educational filters to admin student list
 - [ ] Create `UpdateEducationRequest` for mobile
-- [ ] Add `updateEducation` to profile controller
-- [ ] Mobile routes registration
+- [ ] Add `updateEducation` to `MeController`
+- [ ] Register routes in existing route files and bootstrap includes
 
 ### Phase 6: Quality & Testing
 - [ ] Create `GradeFactory`
@@ -539,7 +565,7 @@ Form Requests (10):
 - app/Http/Requests/Admin/Education/ListCollegesRequest.php
 - app/Http/Requests/Mobile/UpdateEducationRequest.php
 
-Resources (6):
+Resources (9):
 - app/Http/Resources/Admin/Education/GradeResource.php
 - app/Http/Resources/Admin/Education/GradeLookupResource.php
 - app/Http/Resources/Admin/Education/SchoolResource.php
@@ -567,11 +593,14 @@ Tests (5):
 - tests/Feature/Mobile/EducationLookupTest.php
 ```
 
-### Modified Files (3)
+### Modified Files (5)
 ```
 - app/Models/User.php (add grade/school/college relations)
 - app/Providers/AppServiceProvider.php (register services)
-- app/Http/Controllers/Mobile/ProfileController.php (add updateEducation)
+- app/Http/Controllers/Mobile/MeController.php (add updateEducation)
+- app/Http/Requests/Admin/Centers/UpdateCenterSettingsRequest.php (education_profile keys)
+- app/Services/Settings/PolicySettingsService.php (education_profile defaults/catalog)
+- app/Services/Settings/SettingsResolverService.php (education_profile pass-through)
 ```
 
 ---

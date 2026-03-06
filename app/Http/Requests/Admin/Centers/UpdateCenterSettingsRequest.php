@@ -34,6 +34,13 @@ class UpdateCenterSettingsRequest extends FormRequest
             'settings.whatsapp_bulk_settings.batch_pause_seconds' => ['sometimes', 'integer', 'min:0'],
             'settings.whatsapp_bulk_settings.max_retries' => ['sometimes', 'integer', 'min:0'],
             'settings.whatsapp_bulk_settings.max_failures_before_pause' => ['sometimes', 'integer', 'min:1'],
+            'settings.education_profile' => ['sometimes', 'array'],
+            'settings.education_profile.enable_grade' => ['sometimes', 'boolean'],
+            'settings.education_profile.enable_school' => ['sometimes', 'boolean'],
+            'settings.education_profile.enable_college' => ['sometimes', 'boolean'],
+            'settings.education_profile.require_grade' => ['sometimes', 'boolean'],
+            'settings.education_profile.require_school' => ['sometimes', 'boolean'],
+            'settings.education_profile.require_college' => ['sometimes', 'boolean'],
             'settings.branding' => ['sometimes', 'array'],
             'settings.branding.logo_url' => ['sometimes', 'nullable', 'string'],
             'settings.branding.primary_color' => ['sometimes', 'nullable', 'string'],
@@ -61,6 +68,14 @@ class UpdateCenterSettingsRequest extends FormRequest
                         'batch_pause_seconds' => 60,
                         'max_retries' => 2,
                         'max_failures_before_pause' => 10,
+                    ],
+                    'education_profile' => [
+                        'enable_grade' => true,
+                        'enable_school' => true,
+                        'enable_college' => true,
+                        'require_grade' => false,
+                        'require_school' => false,
+                        'require_college' => false,
                     ],
                     'branding' => [
                         'logo_url' => 'https://example.com/logo.png',
@@ -102,6 +117,17 @@ class UpdateCenterSettingsRequest extends FormRequest
                     'max_failures_before_pause' => 10,
                 ],
             ],
+            'settings.education_profile' => [
+                'description' => 'Education profile module configuration for student-facing education fields.',
+                'example' => [
+                    'enable_grade' => true,
+                    'enable_school' => true,
+                    'enable_college' => false,
+                    'require_grade' => true,
+                    'require_school' => false,
+                    'require_college' => false,
+                ],
+            ],
             'settings.branding' => [
                 'description' => 'Branding settings payload.',
                 'example' => [
@@ -136,6 +162,7 @@ class UpdateCenterSettingsRequest extends FormRequest
                 'pdf_download_permission',
                 'device_limit',
                 'whatsapp_bulk_settings',
+                'education_profile',
                 'branding',
             ];
 
@@ -165,6 +192,22 @@ class UpdateCenterSettingsRequest extends FormRequest
 
                 if (! empty($invalidBulk)) {
                     $validator->errors()->add('settings.whatsapp_bulk_settings', 'Unsupported WhatsApp bulk settings: '.implode(', ', $invalidBulk));
+                }
+            }
+
+            if (isset($settings['education_profile']) && is_array($settings['education_profile'])) {
+                $educationAllowed = [
+                    'enable_grade',
+                    'enable_school',
+                    'enable_college',
+                    'require_grade',
+                    'require_school',
+                    'require_college',
+                ];
+                $invalidEducation = array_diff(array_keys($settings['education_profile']), $educationAllowed);
+
+                if (! empty($invalidEducation)) {
+                    $validator->errors()->add('settings.education_profile', 'Unsupported education profile settings: '.implode(', ', $invalidEducation));
                 }
             }
         });
