@@ -32,4 +32,37 @@ class CreateVideoUploadRequest extends FormRequest
             'mime_type' => ['required', 'string', 'in:video/mp4,video/quicktime,video/x-matroska,video/webm,video/x-msvideo,video/mpeg,video/3gpp'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'title_translations' => [
+                'description' => 'Localized video title map.',
+                'example' => ['en' => 'Lesson 1', 'ar' => 'الدرس الأول'],
+            ],
+            'description_translations' => [
+                'description' => 'Optional localized video description map.',
+                'example' => ['en' => 'Introduction', 'ar' => 'مقدمة'],
+            ],
+            'tags' => [
+                'description' => 'Optional list of video tags.',
+                'example' => ['biology', 'grade-10'],
+            ],
+            'original_filename' => [
+                'description' => 'Source file name uploaded by admin.',
+                'example' => 'lesson-1.mp4',
+            ],
+            'file_size_bytes' => [
+                'description' => 'File size in bytes.',
+                'example' => 104857600,
+            ],
+            'mime_type' => [
+                'description' => 'Detected MIME type of uploaded file.',
+                'example' => 'video/mp4',
+            ],
+        ];
+    }
 }

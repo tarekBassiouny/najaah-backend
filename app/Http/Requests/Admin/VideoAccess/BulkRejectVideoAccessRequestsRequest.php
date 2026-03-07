@@ -27,6 +27,23 @@ class BulkRejectVideoAccessRequestsRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'request_ids' => [
+                'description' => 'Video access request IDs to reject.',
+                'example' => [31, 32],
+            ],
+            'decision_reason' => [
+                'description' => 'Optional rejection reason applied to all requests.',
+                'example' => 'Bulk rejected due to policy constraints.',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

@@ -25,6 +25,19 @@ class SendVideoAccessCodeWhatsAppRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'format' => [
+                'description' => 'WhatsApp code delivery format.',
+                'example' => 'qr_code',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Courses;
 
+use App\Http\Resources\Concerns\ResolvesCourseRequiresVideoApproval;
 use App\Models\Course;
 use App\Services\Courses\CourseThumbnailUrlResolver;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ use Illuminate\Support\Str;
  */
 class CourseSummaryResource extends JsonResource
 {
+    use ResolvesCourseRequiresVideoApproval;
+
     /**
      * @return array<string, mixed>
      */
@@ -36,6 +39,7 @@ class CourseSummaryResource extends JsonResource
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
             'is_published' => (bool) $course->is_published,
+            'requires_video_approval' => $this->resolveRequiresVideoApproval($course),
             'published_at' => $course->publish_at,
         ];
     }

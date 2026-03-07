@@ -23,7 +23,28 @@ class ApproveVideoAccessRequestRequest extends FormRequest
         return [
             'decision_reason' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'send_whatsapp' => ['sometimes', 'boolean'],
-            'whatsapp_format' => ['sometimes', 'string', 'in:qr_code,text_code'],
+            'whatsapp_format' => ['required_if:send_whatsapp,true', 'string', 'in:qr_code,text_code'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'decision_reason' => [
+                'description' => 'Optional reason for approval action.',
+                'example' => 'Student confirmed attendance.',
+            ],
+            'send_whatsapp' => [
+                'description' => 'Whether to send generated access code via WhatsApp.',
+                'example' => true,
+            ],
+            'whatsapp_format' => [
+                'description' => 'WhatsApp message format when sending is enabled.',
+                'example' => 'qr_code',
+            ],
         ];
     }
 

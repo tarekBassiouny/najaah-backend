@@ -90,11 +90,12 @@ it('shows course aggregate with metadata only', function (): void {
         ->assertJsonPath('data.videos.0.id', $video->id)
         ->assertJsonPath('data.videos.0.duration', 120)
         ->assertJsonPath('data.videos.0.duration_seconds', 120)
-        ->assertJsonPath('data.videos.0.thumbnail_url', 'https://cdn.example.com/thumb-1.jpg')
+        ->assertJsonPath('data.videos.0.thumbnail', 'https://cdn.example.com/thumb-1.jpg')
         ->assertJsonPath('data.videos.0.is_locked', false)
         ->assertJsonPath('data.pdfs.0.is_locked', false);
 
     $response->assertJsonMissing([
+        'thumbnail_url',
         'playback_url',
         'signed_url',
         'upload_url',
@@ -172,7 +173,7 @@ it('prefers custom video thumbnail over bunny thumbnail when available', functio
     $response->assertOk()
         ->assertJsonPath('data.videos.0.id', $video->id)
         ->assertJsonPath('data.videos.0.thumbnail', $expectedThumbnail)
-        ->assertJsonPath('data.videos.0.thumbnail_url', $expectedThumbnail);
+        ->assertJsonMissingPath('data.videos.0.thumbnail_url');
 });
 
 it('allows system students to view unbranded center courses', function (): void {

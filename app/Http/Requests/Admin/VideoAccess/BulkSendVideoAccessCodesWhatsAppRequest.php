@@ -27,6 +27,23 @@ class BulkSendVideoAccessCodesWhatsAppRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'code_ids' => [
+                'description' => 'Video access code IDs to send via WhatsApp.',
+                'example' => [101, 102],
+            ],
+            'format' => [
+                'description' => 'WhatsApp code delivery format.',
+                'example' => 'text_code',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

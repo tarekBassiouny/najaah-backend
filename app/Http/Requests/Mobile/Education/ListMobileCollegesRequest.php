@@ -22,4 +22,25 @@ class ListMobileCollegesRequest extends FormRequest
             'search' => ['sometimes', 'string'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function queryParameters(): array
+    {
+        return [
+            'search' => [
+                'description' => 'Optional localized name search term.',
+                'example' => 'Cairo University',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
+    }
 }

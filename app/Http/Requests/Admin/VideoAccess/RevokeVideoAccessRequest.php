@@ -25,6 +25,19 @@ class RevokeVideoAccessRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'reason' => [
+                'description' => 'Optional reason for revoking access.',
+                'example' => 'Access revoked by admin request.',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

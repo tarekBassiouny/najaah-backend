@@ -23,4 +23,29 @@ class ListMobileGradesRequest extends FormRequest
             'stage' => ['sometimes', 'integer', 'in:0,1,2,3,4'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function queryParameters(): array
+    {
+        return [
+            'search' => [
+                'description' => 'Optional localized name search term.',
+                'example' => 'Grade 9',
+            ],
+            'stage' => [
+                'description' => 'Optional educational stage filter (0..4).',
+                'example' => '2',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
+    }
 }

@@ -57,7 +57,6 @@ class CourseVideoResource extends JsonResource
             'duration' => $video->duration_seconds,
             'duration_seconds' => $video->duration_seconds,
             'thumbnail' => $thumbnail,
-            'thumbnail_url' => $thumbnail,
             'requires_redemption' => $requiresRedemption,
             'has_redeemed' => $redemptionData['has_redeemed'],
             'is_locked' => $isLocked,

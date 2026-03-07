@@ -28,4 +28,33 @@ class StoreSchoolRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'name_translations' => [
+                'description' => 'Localized school name map.',
+                'example' => ['en' => 'International School', 'ar' => 'مدرسة دولية'],
+            ],
+            'slug' => [
+                'description' => 'Optional slug. Auto-generated if omitted.',
+                'example' => 'international-school',
+            ],
+            'type' => [
+                'description' => 'School type enum (0..3).',
+                'example' => 2,
+            ],
+            'address' => [
+                'description' => 'Optional school address.',
+                'example' => 'Nasr City, Cairo',
+            ],
+            'is_active' => [
+                'description' => 'Whether school is active.',
+                'example' => true,
+            ],
+        ];
+    }
 }

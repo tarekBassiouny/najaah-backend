@@ -49,6 +49,7 @@ class UpdateCourseRequest extends FormRequest
             'category_id' => ['sometimes', 'required', 'exists:categories,id'],
             'difficulty' => ['sometimes', 'required', 'in:beginner,intermediate,advanced'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'requires_video_approval' => ['sometimes', 'nullable', 'boolean'],
             'metadata' => ['sometimes', 'nullable', 'array'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
@@ -98,6 +99,10 @@ class UpdateCourseRequest extends FormRequest
             'price' => [
                 'description' => 'Optional course price.',
                 'example' => 10.5,
+            ],
+            'requires_video_approval' => [
+                'description' => 'Optional per-course override for video access approval. Null inherits center settings.',
+                'example' => false,
             ],
             'metadata' => [
                 'description' => 'Optional metadata array.',

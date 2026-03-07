@@ -1,5 +1,6 @@
 <?php
 
+use App\Docs\Scribe\Strategies\Metadata\UseActionNameAsEndpointTitle;
 use Knuckles\Scribe\Config\AuthIn;
 use Knuckles\Scribe\Config\Defaults;
 use Knuckles\Scribe\Extracting\Strategies;
@@ -216,6 +217,7 @@ return [
     'strategies' => [
         'metadata' => [
             ...Defaults::METADATA_STRATEGIES,
+            UseActionNameAsEndpointTitle::class,
         ],
         'headers' => [
             ...Defaults::HEADERS_STRATEGIES,

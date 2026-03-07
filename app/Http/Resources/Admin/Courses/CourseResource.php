@@ -8,6 +8,7 @@ use App\Http\Resources\Admin\Sections\SectionResource;
 use App\Http\Resources\Admin\Summary\CategorySummaryResource;
 use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Http\Resources\Admin\Summary\InstructorSummaryResource;
+use App\Http\Resources\Concerns\ResolvesCourseRequiresVideoApproval;
 use App\Models\Course;
 use App\Services\Courses\CourseThumbnailUrlResolver;
 use Illuminate\Http\Request;
@@ -19,6 +20,8 @@ use Illuminate\Support\Str;
  */
 class CourseResource extends JsonResource
 {
+    use ResolvesCourseRequiresVideoApproval;
+
     /**
      * @return array<string, mixed>
      */
@@ -42,6 +45,7 @@ class CourseResource extends JsonResource
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
             'is_published' => (bool) $course->is_published,
+            'requires_video_approval' => $this->resolveRequiresVideoApproval($course),
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'category' => new CategorySummaryResource($this->whenLoaded('category')),
             'primary_instructor' => new InstructorSummaryResource($this->whenLoaded('primaryInstructor')),
