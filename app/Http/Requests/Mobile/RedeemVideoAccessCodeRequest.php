@@ -25,6 +25,19 @@ class RedeemVideoAccessCodeRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'code' => [
+                'description' => 'Video access code received by the student.',
+                'example' => 'AB12CD34',
+            ],
+        ];
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([

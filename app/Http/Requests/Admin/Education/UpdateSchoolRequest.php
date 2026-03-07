@@ -28,4 +28,33 @@ class UpdateSchoolRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'name_translations' => [
+                'description' => 'Localized school name map.',
+                'example' => ['en' => 'Updated School', 'ar' => 'مدرسة محدثة'],
+            ],
+            'slug' => [
+                'description' => 'Optional new slug.',
+                'example' => 'updated-school',
+            ],
+            'type' => [
+                'description' => 'School type enum (0..3).',
+                'example' => 1,
+            ],
+            'address' => [
+                'description' => 'Optional school address.',
+                'example' => 'Heliopolis, Cairo',
+            ],
+            'is_active' => [
+                'description' => 'Whether school is active.',
+                'example' => false,
+            ],
+        ];
+    }
 }

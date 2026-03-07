@@ -26,7 +26,36 @@ class BulkGenerateVideoAccessCodesRequest extends FormRequest
             'video_id' => ['required', 'integer', 'exists:videos,id'],
             'course_id' => ['required', 'integer', 'exists:courses,id'],
             'send_whatsapp' => ['sometimes', 'boolean'],
-            'whatsapp_format' => ['sometimes', 'string', 'in:qr_code,text_code'],
+            'whatsapp_format' => ['required_if:send_whatsapp,true', 'string', 'in:qr_code,text_code'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'student_ids' => [
+                'description' => 'Array of student IDs to generate codes for.',
+                'example' => [101, 102, 103],
+            ],
+            'video_id' => [
+                'description' => 'Target video ID.',
+                'example' => 55,
+            ],
+            'course_id' => [
+                'description' => 'Target course ID containing the selected video.',
+                'example' => 10,
+            ],
+            'send_whatsapp' => [
+                'description' => 'Whether generated codes should be sent via WhatsApp.',
+                'example' => false,
+            ],
+            'whatsapp_format' => [
+                'description' => 'WhatsApp payload type when sending is enabled.',
+                'example' => 'text_code',
+            ],
         ];
     }
 

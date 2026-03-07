@@ -50,6 +50,7 @@ class CreateCourseRequest extends FormRequest
             'difficulty' => ['required', 'in:beginner,intermediate,advanced'],
             'language' => ['nullable', 'string', 'max:10'],
             'price' => ['nullable', 'numeric', 'min:0'],
+            'requires_video_approval' => ['sometimes', 'nullable', 'boolean'],
             'metadata' => ['nullable', 'array'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
@@ -100,6 +101,10 @@ class CreateCourseRequest extends FormRequest
             'price' => [
                 'description' => 'Optional course price.',
                 'example' => 0,
+            ],
+            'requires_video_approval' => [
+                'description' => 'Optional per-course override for video access approval. Null inherits center settings.',
+                'example' => true,
             ],
             'metadata' => [
                 'description' => 'Optional metadata array.',

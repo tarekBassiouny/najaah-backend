@@ -38,4 +38,24 @@ class ListVideoUploadSessionsRequest extends AdminListRequest
             statusKey: FilterInput::stringOrNull($data, 'status')
         );
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function queryParameters(): array
+    {
+        return [
+            'page' => ['description' => 'Page number to retrieve.', 'example' => '1'],
+            'per_page' => ['description' => 'Items per page (max 100).', 'example' => '15'],
+            'status' => ['description' => 'Upload session status filter.', 'example' => 'active'],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
+    }
 }

@@ -33,6 +33,27 @@ class UpdateEducationRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'grade_id' => [
+                'description' => 'Optional grade ID for the student.',
+                'example' => 12,
+            ],
+            'school_id' => [
+                'description' => 'Optional school ID for the student.',
+                'example' => 8,
+            ],
+            'college_id' => [
+                'description' => 'Optional college ID for the student.',
+                'example' => 3,
+            ],
+        ];
+    }
+
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {

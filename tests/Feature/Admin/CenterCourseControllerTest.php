@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Category;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\Course;
 use App\Models\Role;
 use App\Models\User;
@@ -22,14 +23,22 @@ beforeEach(function (): void {
 
 it('lists center courses', function (): void {
     $center = Center::factory()->create();
-    Course::factory()->create(['center_id' => $center->id]);
+    Course::factory()->create([
+        'center_id' => $center->id,
+        'requires_video_approval' => true,
+    ]);
     Course::factory()->create(['center_id' => $center->id]);
 
     $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses", $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('success', true)
-        ->assertJsonCount(2, 'data');
+        ->assertJsonCount(2, 'data')
+        ->assertJsonStructure([
+            'data' => [
+                ['requires_video_approval'],
+            ],
+        ]);
 });
 
 it('creates course in center', function (): void {
@@ -46,6 +55,7 @@ it('creates course in center', function (): void {
         'category_id' => Category::factory()->create()->id,
         'difficulty' => 'beginner',
         'language' => 'en',
+        'requires_video_approval' => true,
     ];
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses", $payload, $this->adminHeaders());
@@ -54,12 +64,14 @@ it('creates course in center', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.title', 'Sample Course')
         ->assertJsonPath('data.title_translations.en', 'Sample Course')
-        ->assertJsonPath('data.title_translations.ar', 'دورة نموذجية');
+        ->assertJsonPath('data.title_translations.ar', 'دورة نموذجية')
+        ->assertJsonPath('data.requires_video_approval', true);
     $this->assertDatabaseHas('courses', [
         'center_id' => $center->id,
         'status' => 0,
         'is_published' => 0,
         'publish_at' => null,
+        'requires_video_approval' => 1,
     ]);
 });
 
@@ -83,7 +95,29 @@ it('shows course in center', function (): void {
 
     $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", $this->adminHeaders());
 
-    $response->assertOk()->assertJsonPath('data.id', $course->id);
+    $response->assertOk()
+        ->assertJsonPath('data.id', $course->id)
+        ->assertJsonPath('data.requires_video_approval', false);
+});
+
+it('falls back requires_video_approval to center settings when course override is null', function (): void {
+    $center = Center::factory()->create();
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'requires_video_approval' => true,
+        ],
+    ]);
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'requires_video_approval' => null,
+    ]);
+
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.id', $course->id)
+        ->assertJsonPath('data.requires_video_approval', true);
 });
 
 it('updates course in center', function (): void {
@@ -95,11 +129,18 @@ it('updates course in center', function (): void {
             'en' => 'Updated Title',
             'ar' => 'العنوان المحدث',
         ],
+        'requires_video_approval' => false,
     ], $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('data.title', 'Updated Title')
-        ->assertJsonPath('data.title_translations.en', 'Updated Title');
+        ->assertJsonPath('data.title_translations.en', 'Updated Title')
+        ->assertJsonPath('data.requires_video_approval', false);
+
+    $this->assertDatabaseHas('courses', [
+        'id' => $course->id,
+        'requires_video_approval' => 0,
+    ]);
 });
 
 it('soft deletes course in center', function (): void {

@@ -28,4 +28,33 @@ class StoreGradeRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'name_translations' => [
+                'description' => 'Localized grade name map.',
+                'example' => ['en' => 'Grade 9', 'ar' => 'الصف التاسع'],
+            ],
+            'slug' => [
+                'description' => 'Optional slug. Auto-generated if omitted.',
+                'example' => 'grade-9',
+            ],
+            'stage' => [
+                'description' => 'Educational stage enum (0..4).',
+                'example' => 2,
+            ],
+            'order' => [
+                'description' => 'Display order within grades list.',
+                'example' => 10,
+            ],
+            'is_active' => [
+                'description' => 'Whether grade is active.',
+                'example' => true,
+            ],
+        ];
+    }
 }
