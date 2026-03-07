@@ -30,6 +30,7 @@ it('lists courses for branded student center and marks enrollment', function ():
         'center_id' => $centerA->id,
         'status' => 3,
         'is_published' => true,
+        'requires_video_approval' => true,
     ]);
     Course::factory()->create([
         'center_id' => $centerB->id,
@@ -51,7 +52,8 @@ it('lists courses for branded student center and marks enrollment', function ():
     $response->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $courseA->id)
-        ->assertJsonPath('data.0.is_enrolled', true);
+        ->assertJsonPath('data.0.is_enrolled', true)
+        ->assertJsonPath('data.0.requires_video_approval', true);
 });
 
 it('lists only unbranded center courses for system students', function (): void {

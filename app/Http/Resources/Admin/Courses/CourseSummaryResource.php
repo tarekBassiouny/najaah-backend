@@ -36,6 +36,7 @@ class CourseSummaryResource extends JsonResource
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
             'is_published' => (bool) $course->is_published,
+            'requires_video_approval' => $course->requires_video_approval,
             'published_at' => $course->publish_at,
         ];
     }

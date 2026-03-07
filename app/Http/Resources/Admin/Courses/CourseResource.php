@@ -42,6 +42,7 @@ class CourseResource extends JsonResource
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
             'is_published' => (bool) $course->is_published,
+            'requires_video_approval' => $course->requires_video_approval,
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'category' => new CategorySummaryResource($this->whenLoaded('category')),
             'primary_instructor' => new InstructorSummaryResource($this->whenLoaded('primaryInstructor')),

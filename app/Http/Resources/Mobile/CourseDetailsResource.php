@@ -35,6 +35,7 @@ class CourseDetailsResource extends JsonResource
             'status' => $course->status->value,
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
+            'requires_video_approval' => $course->requires_video_approval,
             'is_enrolled' => (bool) ($course->is_enrolled ?? false),
             'enrollment_status' => $course->enrollment_status ?? null,
             'published_at' => $course->publish_at,

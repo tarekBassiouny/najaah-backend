@@ -27,6 +27,7 @@ class CourseSummaryResource extends JsonResource
         return [
             'id' => $course->id,
             'title' => $course->translate('title'),
+            'requires_video_approval' => $course->requires_video_approval,
         ];
     }
 }
