@@ -203,6 +203,7 @@ function route(item) {
 
   // Enrollment request
   if (path.endsWith("/enroll-request")) return tree.studentEnrollments;
+  if (path === "/api/v1/video-access-codes/redeem") return tree.studentRequests;
 
   // Enrolled courses
   if (path === "/api/v1/courses/enrolled") return tree.studentCourses;
