@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Category;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Instructor;
@@ -19,6 +20,12 @@ uses(RefreshDatabase::class, ApiTestHelper::class)->group('courses', 'mobile', '
 it('lists courses for branded student center and marks enrollment', function (): void {
     $centerA = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
     $centerB = Center::factory()->create(['type' => 1, 'api_key' => 'center-b-key']);
+    CenterSetting::factory()->create([
+        'center_id' => $centerA->id,
+        'settings' => [
+            'requires_video_approval' => true,
+        ],
+    ]);
 
     $student = User::factory()->create([
         'is_student' => true,
@@ -30,7 +37,7 @@ it('lists courses for branded student center and marks enrollment', function ():
         'center_id' => $centerA->id,
         'status' => 3,
         'is_published' => true,
-        'requires_video_approval' => true,
+        'requires_video_approval' => null,
     ]);
     Course::factory()->create([
         'center_id' => $centerB->id,

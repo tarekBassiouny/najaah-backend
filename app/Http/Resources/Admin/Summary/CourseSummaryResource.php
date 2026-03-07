@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Summary;
 
+use App\Http\Resources\Concerns\ResolvesCourseRequiresVideoApproval;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,6 +17,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class CourseSummaryResource extends JsonResource
 {
+    use ResolvesCourseRequiresVideoApproval;
+
     /**
      * @return array<string, mixed>
      */
@@ -27,7 +30,7 @@ class CourseSummaryResource extends JsonResource
         return [
             'id' => $course->id,
             'title' => $course->translate('title'),
-            'requires_video_approval' => $course->requires_video_approval,
+            'requires_video_approval' => $this->resolveRequiresVideoApproval($course),
         ];
     }
 }

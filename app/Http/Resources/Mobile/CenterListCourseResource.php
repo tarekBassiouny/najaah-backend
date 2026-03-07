@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Mobile;
 
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\Concerns\ResolvesCourseRequiresVideoApproval;
 use App\Models\Course;
 use App\Services\Courses\CourseThumbnailUrlResolver;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ use Illuminate\Support\Str;
  */
 class CenterListCourseResource extends JsonResource
 {
+    use ResolvesCourseRequiresVideoApproval;
+
     /**
      * @return array<string, mixed>
      */
@@ -37,7 +40,7 @@ class CenterListCourseResource extends JsonResource
             'status' => $course->status->value,
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
-            'requires_video_approval' => $course->requires_video_approval,
+            'requires_video_approval' => $this->resolveRequiresVideoApproval($course),
             'published_at' => $course->publish_at,
             'duration_minutes' => $course->duration_minutes,
             'category' => new CategoryResource($this->whenLoaded('category')),

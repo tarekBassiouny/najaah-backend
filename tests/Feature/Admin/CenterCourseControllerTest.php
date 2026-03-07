@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Category;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\Course;
 use App\Models\Role;
 use App\Models\User;
@@ -96,7 +97,27 @@ it('shows course in center', function (): void {
 
     $response->assertOk()
         ->assertJsonPath('data.id', $course->id)
-        ->assertJsonPath('data.requires_video_approval', $course->requires_video_approval);
+        ->assertJsonPath('data.requires_video_approval', false);
+});
+
+it('falls back requires_video_approval to center settings when course override is null', function (): void {
+    $center = Center::factory()->create();
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'requires_video_approval' => true,
+        ],
+    ]);
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'requires_video_approval' => null,
+    ]);
+
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.id', $course->id)
+        ->assertJsonPath('data.requires_video_approval', true);
 });
 
 it('updates course in center', function (): void {
