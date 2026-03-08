@@ -47,10 +47,14 @@ class LandingPageMediaController extends Controller
             ], 422);
         }
 
-        $path = sprintf('centers/%d/landing-page/hero', $centerModel->id);
-        $filename = sprintf('hero_%s.%s', now()->timestamp, $file->extension());
+        $path = sprintf(
+            'centers/%d/landing-page/hero/hero_%s.%s',
+            $centerModel->id,
+            now()->timestamp,
+            $file->extension()
+        );
 
-        $url = $this->storageService->upload($file, $path, $filename);
+        $url = $this->storageService->upload($path, $file);
 
         $landingPage = $this->landingPageService->getOrCreateForCenter($centerModel);
         $admin = $request->user();
@@ -98,10 +102,14 @@ class LandingPageMediaController extends Controller
             ], 422);
         }
 
-        $path = sprintf('centers/%d/landing-page/about', $centerModel->id);
-        $filename = sprintf('about_%s.%s', now()->timestamp, $file->extension());
+        $path = sprintf(
+            'centers/%d/landing-page/about/about_%s.%s',
+            $centerModel->id,
+            now()->timestamp,
+            $file->extension()
+        );
 
-        $url = $this->storageService->upload($file, $path, $filename);
+        $url = $this->storageService->upload($path, $file);
 
         $landingPage = $this->landingPageService->getOrCreateForCenter($centerModel);
         $admin = $request->user();
@@ -149,10 +157,14 @@ class LandingPageMediaController extends Controller
             ], 422);
         }
 
-        $path = sprintf('centers/%d/landing-page/testimonials', $centerModel->id);
-        $filename = sprintf('author_%s.%s', now()->timestamp, $file->extension());
+        $path = sprintf(
+            'centers/%d/landing-page/testimonials/author_%s.%s',
+            $centerModel->id,
+            now()->timestamp,
+            $file->extension()
+        );
 
-        $url = $this->storageService->upload($file, $path, $filename);
+        $url = $this->storageService->upload($path, $file);
 
         return response()->json([
             'success' => true,

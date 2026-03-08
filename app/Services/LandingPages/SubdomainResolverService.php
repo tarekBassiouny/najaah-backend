@@ -19,7 +19,7 @@ class SubdomainResolverService implements SubdomainResolverServiceInterface
             return null;
         }
 
-        $suffix = '.' . $baseDomain;
+        $suffix = '.'.$baseDomain;
         if (! str_ends_with($host, $suffix)) {
             return null;
         }
@@ -43,7 +43,7 @@ class SubdomainResolverService implements SubdomainResolverServiceInterface
         $host = $host ?? request()->getHost();
         $baseDomain = $this->getBaseDomain();
 
-        return $host === $baseDomain || $host === 'www.' . $baseDomain;
+        return $host === $baseDomain || $host === 'www.'.$baseDomain;
     }
 
     public function buildCenterUrl(Center $center, string $path = ''): string
@@ -54,7 +54,7 @@ class SubdomainResolverService implements SubdomainResolverServiceInterface
         $url = sprintf('%s://%s.%s', $scheme, $center->slug, $baseDomain);
 
         if ($path !== '') {
-            $url .= '/' . ltrim($path, '/');
+            $url .= '/'.ltrim($path, '/');
         }
 
         return $url;

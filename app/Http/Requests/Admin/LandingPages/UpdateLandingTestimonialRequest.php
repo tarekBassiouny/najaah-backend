@@ -47,7 +47,7 @@ class UpdateLandingTestimonialRequest extends FormRequest
                 'example' => 'Student',
             ],
             'author_image_url' => [
-                'description' => 'URL to the author\'s avatar image.',
+                'description' => "URL to the author's avatar image.",
                 'example' => 'https://example.com/avatar.jpg',
             ],
             'content' => [

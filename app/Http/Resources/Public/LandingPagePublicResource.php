@@ -100,7 +100,7 @@ class LandingPagePublicResource extends JsonResource
     {
         return $landingPage->testimonials
             ->filter(fn ($t) => $t->is_active)
-            ->map(fn ($testimonial) => [
+            ->map(fn ($testimonial): array => [
                 'id' => $testimonial->id,
                 'author_name' => $testimonial->author_name,
                 'author_title' => $testimonial->author_title,

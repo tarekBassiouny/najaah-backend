@@ -62,7 +62,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateMetaSection(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingPage
     {
@@ -80,7 +80,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateHeroSection(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingPage
     {
@@ -89,15 +89,19 @@ class LandingPageService implements LandingPageServiceInterface
         if (array_key_exists('hero_title', $data)) {
             $updateData['hero_title_translations'] = $data['hero_title'];
         }
+
         if (array_key_exists('hero_subtitle', $data)) {
             $updateData['hero_subtitle_translations'] = $data['hero_subtitle'];
         }
+
         if (array_key_exists('hero_background_url', $data)) {
             $updateData['hero_background_url'] = $data['hero_background_url'];
         }
+
         if (array_key_exists('hero_cta_text', $data)) {
             $updateData['hero_cta_text'] = $data['hero_cta_text'];
         }
+
         if (array_key_exists('hero_cta_url', $data)) {
             $updateData['hero_cta_url'] = $data['hero_cta_url'];
         }
@@ -114,7 +118,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateAboutSection(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingPage
     {
@@ -123,9 +127,11 @@ class LandingPageService implements LandingPageServiceInterface
         if (array_key_exists('about_title', $data)) {
             $updateData['about_title_translations'] = $data['about_title'];
         }
+
         if (array_key_exists('about_content', $data)) {
             $updateData['about_content_translations'] = $data['about_content'];
         }
+
         if (array_key_exists('about_image_url', $data)) {
             $updateData['about_image_url'] = $data['about_image_url'];
         }
@@ -142,7 +148,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateContactSection(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingPage
     {
@@ -160,7 +166,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateSocialSection(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingPage
     {
@@ -181,7 +187,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateStylingSection(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingPage
     {
@@ -199,7 +205,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateVisibilitySection(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingPage
     {
@@ -237,7 +243,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function createTestimonial(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingTestimonial
     {
@@ -260,7 +266,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateTestimonial(CenterLandingTestimonial $testimonial, array $data, ?User $actor = null): CenterLandingTestimonial
     {
@@ -269,18 +275,23 @@ class LandingPageService implements LandingPageServiceInterface
         if (array_key_exists('author_name', $data)) {
             $updateData['author_name'] = $data['author_name'];
         }
+
         if (array_key_exists('author_title', $data)) {
             $updateData['author_title'] = $data['author_title'];
         }
+
         if (array_key_exists('author_image_url', $data)) {
             $updateData['author_image_url'] = $data['author_image_url'];
         }
+
         if (array_key_exists('content', $data)) {
             $updateData['content_translations'] = $data['content'];
         }
+
         if (array_key_exists('rating', $data)) {
             $updateData['rating'] = $data['rating'];
         }
+
         if (array_key_exists('is_active', $data)) {
             $updateData['is_active'] = $data['is_active'];
         }
@@ -302,7 +313,7 @@ class LandingPageService implements LandingPageServiceInterface
     }
 
     /**
-     * @param array<int> $orderedIds
+     * @param  array<int>  $orderedIds
      */
     public function reorderTestimonials(CenterLandingPage $landingPage, array $orderedIds, ?User $actor = null): void
     {

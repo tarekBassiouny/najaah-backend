@@ -159,7 +159,7 @@ class LandingPageController extends Controller
                 'show_contact' => $landingPage->show_contact,
             ],
             'testimonials' => $landingPage->show_testimonials
-                ? $landingPage->testimonials->filter(fn ($t) => $t->is_active)->map(fn ($t) => [
+                ? $landingPage->testimonials->filter(fn ($t) => $t->is_active)->map(fn ($t): array => [
                     'id' => $t->id,
                     'author_name' => $t->author_name,
                     'author_title' => $t->author_title,
