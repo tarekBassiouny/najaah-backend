@@ -37,6 +37,10 @@ use App\Services\Education\GradeService;
 use App\Services\Education\SchoolService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
+use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
+use App\Services\LandingPages\Contracts\SubdomainResolverServiceInterface;
+use App\Services\LandingPages\LandingPageService;
+use App\Services\LandingPages\SubdomainResolverService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
 use App\Services\Pdfs\AdminPdfQueryService;
@@ -161,6 +165,8 @@ class AppServiceProvider extends ServiceProvider
             SurveyServiceInterface::class => SurveyService::class,
             SurveyAssignmentServiceInterface::class => SurveyAssignmentService::class,
             SurveyResponseServiceInterface::class => SurveyResponseService::class,
+            LandingPageServiceInterface::class => LandingPageService::class,
+            SubdomainResolverServiceInterface::class => SubdomainResolverService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {

@@ -205,4 +205,18 @@ final class AuditActions
     public const SYSTEM_SETTING_UPDATED = 'system_setting_updated';
 
     public const SYSTEM_SETTING_DELETED = 'system_setting_deleted';
+
+    public const LANDING_PAGE_UPDATED = 'landing_page_updated';
+
+    public const LANDING_PAGE_PUBLISHED = 'landing_page_published';
+
+    public const LANDING_PAGE_UNPUBLISHED = 'landing_page_unpublished';
+
+    public const TESTIMONIAL_CREATED = 'testimonial_created';
+
+    public const TESTIMONIAL_UPDATED = 'testimonial_updated';
+
+    public const TESTIMONIAL_DELETED = 'testimonial_deleted';
+
+    public const TESTIMONIALS_REORDERED = 'testimonials_reordered';
 }
