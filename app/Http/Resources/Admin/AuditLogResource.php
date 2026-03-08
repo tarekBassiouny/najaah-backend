@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin;
 
 use App\Http\Resources\Admin\Summary\UserSummaryResource;
+use App\Http\Resources\Concerns\FormatsDates;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -14,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class AuditLogResource extends JsonResource
 {
+    use FormatsDates;
     /**
      * @return array<string, mixed>
      */
@@ -38,7 +40,7 @@ class AuditLogResource extends JsonResource
                     ?? $log->entity?->id;
             }),
             'metadata' => $log->metadata,
-            'created_at' => $log->created_at,
+            'created_at' => $this->formatDateTime($log->created_at),
         ];
     }
 }

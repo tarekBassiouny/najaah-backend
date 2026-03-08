@@ -8,6 +8,7 @@ use App\Enums\UserDeviceStatus;
 use App\Http\Resources\Admin\Summary\CourseSummaryResource;
 use App\Http\Resources\Admin\Summary\UserSummaryResource;
 use App\Http\Resources\Admin\Summary\VideoSummaryResource;
+use App\Http\Resources\Concerns\FormatsDates;
 use App\Models\PlaybackSession;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,6 +19,7 @@ use Illuminate\Support\Str;
  */
 final class PlaybackSessionResource extends JsonResource
 {
+    use FormatsDates;
     /**
      * @return array<string, mixed>
      */
@@ -32,20 +34,20 @@ final class PlaybackSessionResource extends JsonResource
             'video' => new VideoSummaryResource($this->whenLoaded('video', $session->video)),
             'course' => new CourseSummaryResource($this->whenLoaded('course', $session->course)),
             'device' => $this->formatDevice(),
-            'started_at' => $session->started_at,
-            'ended_at' => $session->ended_at,
-            'expires_at' => $session->expires_at,
-            'last_activity_at' => $session->last_activity_at,
+            'started_at' => $this->formatDateTime($session->started_at),
+            'ended_at' => $this->formatDateTime($session->ended_at),
+            'expires_at' => $this->formatDateTime($session->expires_at),
+            'last_activity_at' => $this->formatDateTime($session->last_activity_at),
             'progress_percent' => $session->progress_percent,
             'is_full_play' => $session->is_full_play,
             'is_locked' => $session->is_locked,
             'auto_closed' => $session->auto_closed,
             'watch_duration' => $session->watch_duration,
             'close_reason' => $session->close_reason,
-            'embed_token_expires_at' => $session->embed_token_expires_at,
+            'embed_token_expires_at' => $this->formatDateTime($session->embed_token_expires_at),
             'is_active' => $session->ended_at === null,
-            'created_at' => $session->created_at,
-            'updated_at' => $session->updated_at,
+            'created_at' => $this->formatDateTime($session->created_at),
+            'updated_at' => $this->formatDateTime($session->updated_at),
         ];
     }
 

@@ -7,6 +7,7 @@ namespace App\Http\Resources\Admin;
 use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Http\Resources\Admin\Summary\CourseSummaryResource;
 use App\Http\Resources\Admin\Summary\StudentSummaryResource;
+use App\Http\Resources\Concerns\FormatsDates;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,6 +18,7 @@ use Illuminate\Support\Str;
  */
 class EnrollmentResource extends JsonResource
 {
+    use FormatsDates;
     /**
      * @return array<string, mixed>
      */
@@ -38,9 +40,9 @@ class EnrollmentResource extends JsonResource
             'student' => new StudentSummaryResource($this->whenLoaded('user')),
             'course' => new CourseSummaryResource($this->whenLoaded('course')),
             'center' => new CenterSummaryResource($this->whenLoaded('center')),
-            'enrolled_at' => $enrollment->enrolled_at,
-            'created_at' => $enrollment->created_at,
-            'expires_at' => $enrollment->expires_at,
+            'enrolled_at' => $this->formatDateTime($enrollment->enrolled_at),
+            'created_at' => $this->formatDateTime($enrollment->created_at),
+            'expires_at' => $this->formatDateTime($enrollment->expires_at),
         ];
     }
 }

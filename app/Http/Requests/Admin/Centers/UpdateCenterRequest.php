@@ -26,6 +26,7 @@ class UpdateCenterRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255', 'not_regex:/^\\s*[\\[{]/'],
+            'timezone' => ['sometimes', 'nullable', 'string', 'max:64', 'timezone:all'],
             'tier' => ['sometimes', 'string', 'in:standard,premium,vip'],
             'is_featured' => ['sometimes', 'boolean'],
             'branding_metadata' => ['sometimes', 'array'],
@@ -87,6 +88,10 @@ class UpdateCenterRequest extends FormRequest
             'name' => [
                 'description' => 'Center name.',
                 'example' => 'Updated Name',
+            ],
+            'timezone' => [
+                'description' => 'Center timezone (IANA timezone identifier). If null, uses system default.',
+                'example' => 'Africa/Cairo',
             ],
             'tier' => [
                 'description' => 'Center tier identifier.',

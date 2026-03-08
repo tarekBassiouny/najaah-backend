@@ -6,6 +6,7 @@ namespace App\Http\Resources\Admin\Users;
 
 use App\Enums\UserStatus;
 use App\Http\Resources\Admin\Summary\CenterSummaryResource;
+use App\Http\Resources\Concerns\FormatsDates;
 use App\Http\Resources\Mobile\DeviceResource;
 use App\Models\User;
 use App\Models\UserDevice;
@@ -18,6 +19,7 @@ use Illuminate\Support\Str;
  */
 class StudentResource extends JsonResource
 {
+    use FormatsDates;
     /**
      * @return array<string, mixed>
      */
@@ -67,7 +69,7 @@ class StudentResource extends JsonResource
                 'total_sessions' => (int) data_get($analyticsSummary, 'total_sessions', 0),
                 'full_play_sessions' => (int) data_get($analyticsSummary, 'full_play_sessions', 0),
                 'viewed_videos' => (int) data_get($analyticsSummary, 'viewed_videos', 0),
-                'last_activity_at' => $user->last_login_at?->toIso8601String(),
+                'last_activity_at' => $this->formatDateTime($user->last_login_at),
             ],
         ];
     }

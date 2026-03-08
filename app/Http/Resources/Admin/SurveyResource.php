@@ -6,6 +6,7 @@ namespace App\Http\Resources\Admin;
 
 use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Http\Resources\Admin\Summary\UserSummaryResource;
+use App\Http\Resources\Concerns\FormatsDates;
 use App\Models\Survey;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -15,6 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class SurveyResource extends JsonResource
 {
+    use FormatsDates;
     /**
      * @return array<string, mixed>
      */
@@ -37,8 +39,8 @@ class SurveyResource extends JsonResource
             'is_active' => $survey->is_active,
             'is_mandatory' => $survey->is_mandatory,
             'allow_multiple_submissions' => $survey->allow_multiple_submissions,
-            'start_at' => $survey->start_at?->toDateString(),
-            'end_at' => $survey->end_at?->toDateString(),
+            'start_at' => $this->formatDate($survey->start_at),
+            'end_at' => $this->formatDate($survey->end_at),
             'is_available' => $survey->isAvailable(),
             'creator' => new UserSummaryResource($this->whenLoaded('creator')),
             'questions' => SurveyQuestionResource::collection($this->whenLoaded('questions')),
@@ -48,8 +50,8 @@ class SurveyResource extends JsonResource
                 $survey->submitted_users_count !== null || $survey->responses_count !== null,
                 (int) ($survey->submitted_users_count ?? $survey->responses_count ?? 0)
             ),
-            'created_at' => $survey->created_at->toIso8601String(),
-            'updated_at' => $survey->updated_at->toIso8601String(),
+            'created_at' => $this->formatDateTime($survey->created_at),
+            'updated_at' => $this->formatDateTime($survey->updated_at),
         ];
     }
 }
