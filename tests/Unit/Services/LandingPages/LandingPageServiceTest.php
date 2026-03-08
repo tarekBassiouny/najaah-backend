@@ -87,7 +87,7 @@ it('updates hero section with translations', function (): void {
         'hero_cta_text' => 'Get Started',
     ]);
 
-    expect($updated->hero_title_translations)->toBe(['en' => 'Welcome', 'ar' => 'مرحبا'])
+    expect($updated->hero_title_translations)->toEqual(['en' => 'Welcome', 'ar' => 'مرحبا'])
         ->and($updated->hero_cta_text)->toBe('Get Started');
 });
 
