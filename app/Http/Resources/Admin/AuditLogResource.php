@@ -16,6 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class AuditLogResource extends JsonResource
 {
     use FormatsDates;
+
     /**
      * @return array<string, mixed>
      */

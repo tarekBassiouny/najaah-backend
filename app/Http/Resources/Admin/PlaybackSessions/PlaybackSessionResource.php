@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 final class PlaybackSessionResource extends JsonResource
 {
     use FormatsDates;
+
     /**
      * @return array<string, mixed>
      */

@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 class StudentResource extends JsonResource
 {
     use FormatsDates;
+
     /**
      * @return array<string, mixed>
      */

@@ -17,6 +17,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class SurveyResource extends JsonResource
 {
     use FormatsDates;
+
     /**
      * @return array<string, mixed>
      */

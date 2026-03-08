@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 class EnrollmentResource extends JsonResource
 {
     use FormatsDates;
+
     /**
      * @return array<string, mixed>
      */
