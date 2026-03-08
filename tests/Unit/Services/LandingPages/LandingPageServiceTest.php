@@ -8,8 +8,9 @@ use App\Models\CenterLandingPage;
 use App\Models\CenterLandingTestimonial;
 use App\Services\LandingPages\LandingPageService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class)->group('landing-pages', 'unit');
+uses(TestCase::class, RefreshDatabase::class)->group('landing-pages', 'unit');
 
 beforeEach(function (): void {
     $this->service = app(LandingPageService::class);

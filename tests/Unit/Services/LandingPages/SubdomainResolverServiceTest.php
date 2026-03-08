@@ -6,8 +6,9 @@ use App\Models\Center;
 use App\Services\LandingPages\SubdomainResolverService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class)->group('landing-pages', 'unit');
+uses(TestCase::class, RefreshDatabase::class)->group('landing-pages', 'unit');
 
 beforeEach(function (): void {
     Config::set('app.base_domain', 'najaah.me');
