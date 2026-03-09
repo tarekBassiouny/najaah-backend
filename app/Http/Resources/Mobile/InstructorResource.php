@@ -27,6 +27,7 @@ class InstructorResource extends JsonResource
             'id' => $instructor->id,
             'name' => $instructor->translate('name'),
             'title' => $instructor->translate('title'),
+            'bio' => $instructor->translate('bio'),
             'avatar_url' => $avatarUrl,
         ];
     }

@@ -37,7 +37,8 @@ it('lists instructors for branded student center', function (): void {
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $centerInstructor->id);
+        ->assertJsonPath('data.0.id', $centerInstructor->id)
+        ->assertJsonPath('data.0.bio', $centerInstructor->translate('bio'));
 });
 
 it('lists only unbranded instructors for system students', function (): void {
@@ -64,7 +65,8 @@ it('lists only unbranded instructors for system students', function (): void {
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $systemInstructor->id);
+        ->assertJsonPath('data.0.id', $systemInstructor->id)
+        ->assertJsonPath('data.0.bio', $systemInstructor->translate('bio'));
 });
 
 it('searches instructors by name or title', function (): void {
