@@ -86,7 +86,7 @@ final class QuizService implements QuizServiceInterface
             $newQuiz->created_by = $creator->id;
             $newQuiz->is_active = false;
             $newQuiz->title_translations = array_map(
-                fn (string $title): string => $title . ' (Copy)',
+                fn (string $title): string => $title.' (Copy)',
                 $quiz->title_translations
             );
             $newQuiz->save();

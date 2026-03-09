@@ -22,7 +22,7 @@ class QuizAttemptResource extends JsonResource
             'id' => $this->id,
             'quiz_id' => $this->quiz_id,
             'user_id' => $this->user_id,
-            'user' => $this->whenLoaded('user', fn () => [
+            'user' => $this->whenLoaded('user', fn (): array => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
                 'email' => $this->user->email,

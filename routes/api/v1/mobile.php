@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Mobile\AssignmentController;
+use App\Http\Controllers\Mobile\AssignmentGroupController;
+use App\Http\Controllers\Mobile\AssignmentSubmissionController;
 use App\Http\Controllers\Mobile\AuthController;
 use App\Http\Controllers\Mobile\CategoryController;
 use App\Http\Controllers\Mobile\CentersController;
@@ -14,12 +17,9 @@ use App\Http\Controllers\Mobile\InstructorController;
 use App\Http\Controllers\Mobile\MeController;
 use App\Http\Controllers\Mobile\PdfController;
 use App\Http\Controllers\Mobile\PlaybackController;
-use App\Http\Controllers\Mobile\SearchController;
-use App\Http\Controllers\Mobile\AssignmentController;
-use App\Http\Controllers\Mobile\AssignmentGroupController;
-use App\Http\Controllers\Mobile\AssignmentSubmissionController;
 use App\Http\Controllers\Mobile\QuizAttemptController;
 use App\Http\Controllers\Mobile\QuizController;
+use App\Http\Controllers\Mobile\SearchController;
 use App\Http\Controllers\Mobile\SurveyController;
 use App\Http\Controllers\Mobile\VideoAccessCodeController;
 use App\Http\Controllers\Mobile\VideoAccessRequestController;

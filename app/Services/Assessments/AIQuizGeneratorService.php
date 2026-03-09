@@ -208,7 +208,7 @@ PROMPT;
         ]);
 
         if (! $response->successful()) {
-            throw new \RuntimeException('OpenAI API request failed: ' . $response->body());
+            throw new \RuntimeException('OpenAI API request failed: '.$response->body());
         }
 
         $content = $response->json('choices.0.message.content');
@@ -237,7 +237,7 @@ PROMPT;
         ]);
 
         if (! $response->successful()) {
-            throw new \RuntimeException('Anthropic API request failed: ' . $response->body());
+            throw new \RuntimeException('Anthropic API request failed: '.$response->body());
         }
 
         $content = $response->json('content.0.text');

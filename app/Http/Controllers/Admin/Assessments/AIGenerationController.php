@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin\Assessments;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Quiz\ApproveQuestionsRequest;
 use App\Http\Requests\Admin\Quiz\GenerateFromPdfRequest;
 use App\Http\Requests\Admin\Quiz\GenerateFromVideoRequest;
-use App\Http\Requests\Admin\Quiz\ApproveQuestionsRequest;
 use App\Http\Resources\Admin\Quiz\AIGenerationJobResource;
 use App\Jobs\ProcessAIGenerationJob;
 use App\Models\AIGenerationJob;
@@ -124,7 +124,7 @@ class AIGenerationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => "{$addedCount} questions added to quiz.",
+            'message' => $addedCount . ' questions added to quiz.',
             'data' => [
                 'questions_added' => $addedCount,
             ],

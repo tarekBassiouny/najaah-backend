@@ -52,8 +52,8 @@ class ProcessAIGenerationJob implements ShouldQueue
     {
         return [
             'ai-generation',
-            'quiz:' . $this->aiGenerationJob->quiz_id,
-            'job:' . $this->aiGenerationJob->id,
+            'quiz:'.$this->aiGenerationJob->quiz_id,
+            'job:'.$this->aiGenerationJob->id,
         ];
     }
 }

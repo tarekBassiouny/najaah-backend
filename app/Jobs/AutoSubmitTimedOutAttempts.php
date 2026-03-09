@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Enums\QuizAttemptStatus;
-use App\Models\QuizAttempt;
 use App\Services\Assessments\Contracts\QuizAttemptServiceInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

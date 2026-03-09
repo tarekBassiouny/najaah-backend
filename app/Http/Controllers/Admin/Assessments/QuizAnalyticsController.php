@@ -8,7 +8,6 @@ use App\Enums\QuizAttemptStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Quiz\ListAttemptsRequest;
 use App\Http\Resources\Admin\Quiz\QuizAttemptResource;
-use App\Http\Resources\Admin\Quiz\QuizAttemptDetailResource;
 use App\Models\Center;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;

@@ -49,7 +49,7 @@ class QuizDetailResource extends JsonResource
             'questions_count' => $this->questions()->count(),
             'attempts_count' => $this->attempts()->count(),
             'questions' => QuizQuestionResource::collection($this->whenLoaded('questions')),
-            'creator' => $this->whenLoaded('creator', fn () => [
+            'creator' => $this->whenLoaded('creator', fn (): array => [
                 'id' => $this->creator->id,
                 'name' => $this->creator->name,
             ]),
