@@ -167,13 +167,18 @@ it('prefers custom video thumbnail over bunny thumbnail when available', functio
 
     $this->asApiUser($student);
     $expectedThumbnail = app(VideoThumbnailUrlResolver::class)->resolve($customPath);
+    $expectedBaseThumbnail = (string) strtok($expectedThumbnail, '?');
 
     $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}");
+    $actualThumbnail = (string) $response->json('data.videos.0.thumbnail');
+    $actualBaseThumbnail = (string) strtok($actualThumbnail, '?');
 
     $response->assertOk()
         ->assertJsonPath('data.videos.0.id', $video->id)
-        ->assertJsonPath('data.videos.0.thumbnail', $expectedThumbnail)
         ->assertJsonMissingPath('data.videos.0.thumbnail_url');
+
+    expect($actualBaseThumbnail)->toBe($expectedBaseThumbnail);
+    expect($actualThumbnail)->toContain('expiration=');
 });
 
 it('allows system students to view unbranded center courses', function (): void {

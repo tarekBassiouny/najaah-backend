@@ -371,3 +371,65 @@ it('excludes courses with non-ready videos from explore', function (): void {
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $readyCourse->id);
 });
+
+it('filters courses by instructor id when instructor is assigned as primary only', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $targetInstructor = Instructor::factory()->create(['center_id' => $center->id]);
+    $otherInstructor = Instructor::factory()->create(['center_id' => $center->id]);
+
+    $targetCourse = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'primary_instructor_id' => $targetInstructor->id,
+    ]);
+    $otherCourse = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'primary_instructor_id' => $otherInstructor->id,
+    ]);
+
+    $readySession = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => 3,
+    ]);
+
+    $targetVideo = Video::factory()->create([
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => $readySession->id,
+    ]);
+    $otherVideo = Video::factory()->create([
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => $readySession->id,
+    ]);
+
+    CourseVideo::create([
+        'course_id' => $targetCourse->id,
+        'video_id' => $targetVideo->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+    CourseVideo::create([
+        'course_id' => $otherCourse->id,
+        'video_id' => $otherVideo->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/courses/explore?instructor_id='.$targetInstructor->id);
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $targetCourse->id);
+});
