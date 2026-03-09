@@ -41,8 +41,11 @@ class ExploreCourseService
         }
 
         if ($filters->instructorId !== null) {
-            $query->whereHas('instructors', function ($query) use ($filters): void {
-                $query->where('instructors.id', $filters->instructorId);
+            $query->where(function ($query) use ($filters): void {
+                $query->where('primary_instructor_id', $filters->instructorId)
+                    ->orWhereHas('instructors', function ($query) use ($filters): void {
+                        $query->where('instructors.id', $filters->instructorId);
+                    });
             });
         }
 
