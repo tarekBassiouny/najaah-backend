@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CenterType;
 use App\Models\Center;
 use App\Models\CenterLandingPage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class)->group('landing-pages', 'admin');
 
 it('updates meta section', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -27,7 +28,7 @@ it('updates meta section', function (): void {
 });
 
 it('updates hero section with translations', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -46,7 +47,7 @@ it('updates hero section with translations', function (): void {
 });
 
 it('updates about section', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -62,7 +63,7 @@ it('updates about section', function (): void {
 });
 
 it('updates contact section', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -80,7 +81,7 @@ it('updates contact section', function (): void {
 });
 
 it('updates social section', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -96,7 +97,7 @@ it('updates social section', function (): void {
 });
 
 it('updates styling section', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -113,7 +114,7 @@ it('updates styling section', function (): void {
 });
 
 it('validates hex color format', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -127,7 +128,7 @@ it('validates hex color format', function (): void {
 });
 
 it('updates visibility section', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -144,4 +145,21 @@ it('updates visibility section', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.visibility.show_hero', true)
         ->assertJsonPath('data.visibility.show_about', false);
+});
+
+it('blocks section updates for unbranded centers', function (): void {
+    $center = Center::factory()->create([
+        'type' => CenterType::Unbranded,
+    ]);
+    CenterLandingPage::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/landing-page/sections/meta", [
+        'meta_title' => 'Blocked',
+    ], $this->adminHeaders());
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.message', 'Landing pages are allowed only for branded centers.');
 });

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CenterType;
 use App\Enums\LandingPageStatus;
 use App\Models\Center;
 use App\Models\CenterLandingPage;
@@ -10,7 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class)->group('landing-pages', 'admin');
 
 it('returns landing page for center', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create([
         'center_id' => $center->id,
         'meta_title' => 'Test Landing Page',
@@ -27,7 +28,7 @@ it('returns landing page for center', function (): void {
 });
 
 it('creates landing page when none exists', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
 
     $this->asCenterAdmin($center);
     $response = $this->getJson("/api/v1/admin/centers/{$center->id}/landing-page", $this->adminHeaders());
@@ -44,7 +45,7 @@ it('creates landing page when none exists', function (): void {
 });
 
 it('publishes landing page', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create([
         'center_id' => $center->id,
         'status' => LandingPageStatus::Draft,
@@ -66,7 +67,7 @@ it('publishes landing page', function (): void {
 });
 
 it('unpublishes landing page', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create([
         'center_id' => $center->id,
         'status' => LandingPageStatus::Published,
@@ -92,9 +93,23 @@ it('returns 404 for non-existent center', function (): void {
 });
 
 it('requires authentication', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
 
     $response = $this->getJson("/api/v1/admin/centers/{$center->id}/landing-page");
 
     $response->assertStatus(401);
+});
+
+it('blocks unbranded centers from landing page editor', function (): void {
+    $center = Center::factory()->create([
+        'type' => CenterType::Unbranded,
+    ]);
+
+    $this->asCenterAdmin($center);
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/landing-page", $this->adminHeaders());
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.message', 'Landing pages are allowed only for branded centers.');
 });

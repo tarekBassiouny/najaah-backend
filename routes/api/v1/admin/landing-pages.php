@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\LandingPages\LandingPageSectionController;
 use App\Http\Controllers\Admin\LandingPages\LandingPageTestimonialController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:landing_page.manage', 'scope.center'])->group(function (): void {
+Route::middleware(['require.permission:landing_page.manage', 'scope.center', 'ensure.branded.center'])->group(function (): void {
     // Landing page main routes
     Route::get('/centers/{center}/landing-page', [LandingPageController::class, 'show'])
         ->whereNumber('center');
