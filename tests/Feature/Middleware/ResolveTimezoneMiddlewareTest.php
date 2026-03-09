@@ -31,9 +31,11 @@ it('resolves timezone from query parameter', function (): void {
 });
 
 it('ignores invalid timezone query parameter', function (): void {
-    SystemSetting::factory()->create([
+    SystemSetting::query()->updateOrCreate([
         'key' => 'timezone',
+    ], [
         'value' => ['timezone' => 'Africa/Cairo'],
+        'is_public' => true,
     ]);
 
     $request = Request::create('/api/v1/test', 'GET', ['timezone' => 'Invalid/Timezone']);
@@ -71,9 +73,11 @@ it('resolves timezone from student center', function (): void {
 });
 
 it('falls back to system timezone when no context', function (): void {
-    SystemSetting::factory()->create([
+    SystemSetting::query()->updateOrCreate([
         'key' => 'timezone',
+    ], [
         'value' => ['timezone' => 'Africa/Cairo'],
+        'is_public' => true,
     ]);
 
     $request = Request::create('/api/v1/test', 'GET');

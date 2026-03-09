@@ -22,9 +22,11 @@ it('returns UTC as default system timezone when no setting exists', function ():
 });
 
 it('returns system timezone from settings', function (): void {
-    SystemSetting::factory()->create([
+    SystemSetting::query()->updateOrCreate([
         'key' => 'timezone',
+    ], [
         'value' => ['timezone' => 'Africa/Cairo'],
+        'is_public' => true,
     ]);
 
     $timezone = $this->service->getSystemTimezone();
@@ -33,9 +35,11 @@ it('returns system timezone from settings', function (): void {
 });
 
 it('falls back to UTC for invalid system timezone', function (): void {
-    SystemSetting::factory()->create([
+    SystemSetting::query()->updateOrCreate([
         'key' => 'timezone',
+    ], [
         'value' => ['timezone' => 'Invalid/Timezone'],
+        'is_public' => true,
     ]);
 
     $timezone = $this->service->getSystemTimezone();
@@ -60,9 +64,11 @@ it('returns effective timezone from center when available', function (): void {
 });
 
 it('returns system timezone when no center provided', function (): void {
-    SystemSetting::factory()->create([
+    SystemSetting::query()->updateOrCreate([
         'key' => 'timezone',
+    ], [
         'value' => ['timezone' => 'Africa/Cairo'],
+        'is_public' => true,
     ]);
 
     $timezone = $this->service->resolveTimezone(null);

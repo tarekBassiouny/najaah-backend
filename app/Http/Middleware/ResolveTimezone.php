@@ -43,7 +43,7 @@ class ResolveTimezone
         }
 
         // 2. From authenticated student's center
-        $student = $request->user('student');
+        $student = $this->getUserFromGuard($request, 'api');
         if ($student instanceof User && $student->is_student) {
             $center = $student->center;
             if ($center instanceof Center) {
@@ -66,8 +66,8 @@ class ResolveTimezone
             }
         }
 
-        // 4. From authenticated admin's center (if single center)
-        $admin = $request->user('sanctum');
+        // 4. From authenticated admin's center (if center-scoped admin)
+        $admin = $this->getUserFromGuard($request, 'admin');
         if ($admin instanceof User && ! $admin->is_student && $admin->center_id !== null) {
             $center = $admin->center;
             if ($center instanceof Center) {
@@ -77,5 +77,17 @@ class ResolveTimezone
 
         // 5. System default
         return $this->timezoneService->getSystemTimezone();
+    }
+
+    private function getUserFromGuard(Request $request, string $guard): ?User
+    {
+        $guards = config('auth.guards', []);
+        if (! array_key_exists($guard, $guards)) {
+            return null;
+        }
+
+        $user = $request->user($guard);
+
+        return $user instanceof User ? $user : null;
     }
 }

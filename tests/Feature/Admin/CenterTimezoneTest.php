@@ -39,8 +39,8 @@ it('allows updating center timezone', function (): void {
         'timezone' => 'UTC',
     ]);
 
-    $this->asCenterAdmin($center);
-    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}", [
+    $this->asAdmin();
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}", [
         'timezone' => 'Asia/Riyadh',
     ], $this->adminHeaders());
 
@@ -55,8 +55,8 @@ it('allows updating center timezone', function (): void {
 it('validates timezone format', function (): void {
     $center = Center::factory()->create();
 
-    $this->asCenterAdmin($center);
-    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}", [
+    $this->asAdmin();
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}", [
         'timezone' => 'Invalid/Timezone',
     ], $this->adminHeaders());
 
@@ -69,8 +69,8 @@ it('allows null timezone to use system default', function (): void {
         'timezone' => 'Asia/Dubai',
     ]);
 
-    $this->asCenterAdmin($center);
-    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}", [
+    $this->asAdmin();
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}", [
         'timezone' => null,
     ], $this->adminHeaders());
 
