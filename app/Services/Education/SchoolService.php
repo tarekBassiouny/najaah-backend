@@ -30,10 +30,15 @@ class SchoolService implements SchoolServiceInterface
     {
         $this->centerScopeService->assertAdminCenterId($admin, $centerId);
 
+        $locale = $this->resolveLocale();
+
         $query = School::query()
             ->forCenter($centerId)
             ->withCount('students')
-            ->orderBy('name_translations->en')
+            ->orderByRaw(
+                sprintf("COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(name_translations, '\$.\"%s\"')), ''), ", $locale).
+                "JSON_UNQUOTE(JSON_EXTRACT(name_translations, '$.\"en\"')), '') ASC"
+            )
             ->orderBy('id');
 
         if (isset($filters['type']) && is_numeric($filters['type'])) {
@@ -58,9 +63,14 @@ class SchoolService implements SchoolServiceInterface
     {
         $this->centerScopeService->assertAdminCenterId($admin, $centerId);
 
+        $locale = $this->resolveLocale();
+
         $query = School::query()
             ->forCenter($centerId)
-            ->orderBy('name_translations->en')
+            ->orderByRaw(
+                sprintf("COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(name_translations, '\$.\"%s\"')), ''), ", $locale).
+                "JSON_UNQUOTE(JSON_EXTRACT(name_translations, '$.\"en\"')), '') ASC"
+            )
             ->orderBy('id');
 
         if ($activeOnly) {
@@ -183,5 +193,12 @@ class SchoolService implements SchoolServiceInterface
         }
 
         return $slug;
+    }
+
+    private function resolveLocale(): string
+    {
+        $locale = strtolower(trim((string) app()->getLocale()));
+
+        return in_array($locale, ['en', 'ar'], true) ? $locale : 'en';
     }
 }
