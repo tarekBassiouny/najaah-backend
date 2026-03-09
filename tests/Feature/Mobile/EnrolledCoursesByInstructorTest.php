@@ -107,6 +107,7 @@ test('it returns enrolled courses grouped by instructor', function (): void {
                     'id',
                     'name',
                     'title',
+                    'bio',
                     'avatar_url',
                     'courses' => [
                         '*' => [
