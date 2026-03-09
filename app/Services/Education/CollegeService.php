@@ -30,10 +30,15 @@ class CollegeService implements CollegeServiceInterface
     {
         $this->centerScopeService->assertAdminCenterId($admin, $centerId);
 
+        $locale = $this->resolveLocale();
+
         $query = College::query()
             ->forCenter($centerId)
             ->withCount('students')
-            ->orderBy('name_translations->en')
+            ->orderByRaw(
+                sprintf("COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(name_translations, '\$.\"%s\"')), ''), ", $locale).
+                "JSON_UNQUOTE(JSON_EXTRACT(name_translations, '$.\"en\"')), '') ASC"
+            )
             ->orderBy('id');
 
         if (array_key_exists('is_active', $filters) && $filters['is_active'] !== null && $filters['is_active'] !== '') {
@@ -54,9 +59,14 @@ class CollegeService implements CollegeServiceInterface
     {
         $this->centerScopeService->assertAdminCenterId($admin, $centerId);
 
+        $locale = $this->resolveLocale();
+
         $query = College::query()
             ->forCenter($centerId)
-            ->orderBy('name_translations->en')
+            ->orderByRaw(
+                sprintf("COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(name_translations, '\$.\"%s\"')), ''), ", $locale).
+                "JSON_UNQUOTE(JSON_EXTRACT(name_translations, '$.\"en\"')), '') ASC"
+            )
             ->orderBy('id');
 
         if ($activeOnly) {
@@ -175,5 +185,12 @@ class CollegeService implements CollegeServiceInterface
         }
 
         return $slug;
+    }
+
+    private function resolveLocale(): string
+    {
+        $locale = strtolower(trim((string) app()->getLocale()));
+
+        return in_array($locale, ['en', 'ar'], true) ? $locale : 'en';
     }
 }

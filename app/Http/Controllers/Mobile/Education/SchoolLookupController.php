@@ -49,10 +49,16 @@ class SchoolLookupController extends Controller
         }
 
         $validated = $request->validated();
+        $locale = (string) $request->attributes->get('locale', app()->getLocale());
+        $locale = in_array($locale, ['en', 'ar'], true) ? $locale : 'en';
+
         $query = School::query()
             ->where('center_id', (int) $center->id)
             ->where('is_active', true)
-            ->orderBy('name_translations->en')
+            ->orderByRaw(sprintf(
+                "COALESCE(JSON_UNQUOTE(JSON_EXTRACT(name_translations, '$.\"%s\"')), JSON_UNQUOTE(JSON_EXTRACT(name_translations, '$.\"en\"')), '') ASC",
+                $locale
+            ))
             ->orderBy('id');
 
         if (isset($validated['type']) && is_numeric($validated['type'])) {
