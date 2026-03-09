@@ -39,6 +39,10 @@ use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
+use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
+use App\Services\LandingPages\Contracts\SubdomainResolverServiceInterface;
+use App\Services\LandingPages\LandingPageService;
+use App\Services\LandingPages\SubdomainResolverService;
 use App\Services\Pdfs\AdminPdfQueryService;
 use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
 use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
@@ -163,6 +167,8 @@ class AppServiceProvider extends ServiceProvider
             SurveyServiceInterface::class => SurveyService::class,
             SurveyAssignmentServiceInterface::class => SurveyAssignmentService::class,
             SurveyResponseServiceInterface::class => SurveyResponseService::class,
+            LandingPageServiceInterface::class => LandingPageService::class,
+            SubdomainResolverServiceInterface::class => SubdomainResolverService::class,
             TimezoneServiceInterface::class => TimezoneService::class,
         ];
 

@@ -15,6 +15,7 @@ use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\RequirePermission;
 use App\Http\Middleware\RequireRole;
 use App\Http\Middleware\ResolveCenterApiKey;
+use App\Http\Middleware\ResolveCenterSubdomain;
 use App\Http\Middleware\ResolveTimezone;
 use App\Http\Middleware\SetRequestLocale;
 use Illuminate\Foundation\Application;
@@ -80,6 +81,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/education.php';
                         require __DIR__.'/../routes/api/v1/admin/surveys.php';
                         require __DIR__.'/../routes/api/v1/admin/notifications.php';
+                        require __DIR__.'/../routes/api/v1/admin/landing-pages.php';
                     });
                 });
         }
@@ -118,6 +120,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'scope.system' => EnsureSystemScope::class,
             'scope.center' => EnsureCenterScope::class,
             'normalize.admin.api' => NormalizeAdminApiResponse::class,
+            'resolve.subdomain' => ResolveCenterSubdomain::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

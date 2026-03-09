@@ -56,6 +56,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'frontend_url' => env('FRONTEND_URL', 'http://najaah.local:3000'),
+    'base_domain' => env('APP_BASE_DOMAIN', 'najaah.me'),
+    'url_scheme' => env('APP_URL_SCHEME', 'https'),
 
     /*
     |--------------------------------------------------------------------------

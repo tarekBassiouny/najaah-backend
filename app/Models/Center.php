@@ -49,6 +49,7 @@ use RuntimeException;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, College> $colleges
  * @property-read CenterSetting|null $setting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoUploadSession> $videoUploadSessions
+ * @property-read CenterLandingPage|null $landingPage
  */
 class Center extends Model
 {
@@ -212,6 +213,12 @@ class Center extends Model
     public function videoUploadSessions(): HasMany
     {
         return $this->hasMany(VideoUploadSession::class);
+    }
+
+    /** @return HasOne<CenterLandingPage, self> */
+    public function landingPage(): HasOne
+    {
+        return $this->hasOne(CenterLandingPage::class);
     }
 
     public function getStorageRootAttribute(?string $value): string

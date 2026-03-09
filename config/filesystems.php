@@ -14,6 +14,7 @@ return [
     */
 
     'default' => env('FILESYSTEM_DISK', 'local'),
+    'landing_page_media_disk' => env('LANDING_PAGE_MEDIA_DISK', 'spaces'),
 
     'signed_url_ttl' => (int) env('SIGNED_URL_TTL', 900),
 
