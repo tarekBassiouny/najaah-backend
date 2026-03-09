@@ -21,6 +21,7 @@ use RuntimeException;
 /**
  * @property int $id
  * @property string $slug
+ * @property string $timezone
  * @property CenterType $type
  * @property CenterTier $tier
  * @property array<string, string> $name_translations
@@ -92,6 +93,7 @@ class Center extends Model
 
     protected $fillable = [
         'slug',
+        'timezone',
         'api_key',
         'type',
         'tier',
@@ -115,6 +117,7 @@ class Center extends Model
     protected $casts = [
         'name_translations' => 'array',
         'description_translations' => 'array',
+        'timezone' => 'string',
         'onboarding_status' => 'string',
         'branding_metadata' => 'array',
         'storage_driver' => 'string',
@@ -225,6 +228,22 @@ class Center extends Model
         }
 
         return 'centers/'.$this->id;
+    }
+
+    /**
+     * Get the effective timezone for this center.
+     *
+     * Falls back to system timezone setting if center has no timezone configured.
+     */
+    public function getEffectiveTimezone(): string
+    {
+        if (is_string($this->timezone) && $this->timezone !== '') {
+            return $this->timezone;
+        }
+
+        $systemTimezone = SystemSetting::where('key', 'timezone')->first()?->value['timezone'] ?? null;
+
+        return is_string($systemTimezone) ? $systemTimezone : 'UTC';
     }
 
     public static function generateUniqueApiKey(): string
