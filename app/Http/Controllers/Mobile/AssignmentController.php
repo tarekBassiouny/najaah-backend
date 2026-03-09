@@ -63,7 +63,7 @@ class AssignmentController extends Controller
             ->get();
 
         // Add submission info for each assignment
-        $assignments->each(function (Assignment $assignment) use ($student) {
+        $assignments->each(function (Assignment $assignment) use ($student): void {
             $submission = $assignment->submissions()
                 ->where('user_id', $student->id)
                 ->first();

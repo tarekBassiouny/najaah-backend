@@ -40,7 +40,7 @@ class QuizAttemptDetailResource extends JsonResource
             'remaining_time_seconds' => $this->getRemainingTimeSeconds(),
             'total_questions' => $questions->count(),
             'answered_questions' => count($answeredQuestionIds),
-            'questions' => $questions->map(function ($question) use ($answeredQuestionIds) {
+            'questions' => $questions->map(function ($question) use ($answeredQuestionIds): array {
                 $answers = $question->answers;
                 if ($this->quiz->shuffle_answers) {
                     $answers = $answers->shuffle();
@@ -56,7 +56,7 @@ class QuizAttemptDetailResource extends JsonResource
                     'points' => (float) $question->points,
                     'is_answered' => in_array($question->id, $answeredQuestionIds),
                     'selected_answer_ids' => $savedAnswer?->selected_answer_ids ?? [],
-                    'answers' => $answers->map(fn ($answer) => [
+                    'answers' => $answers->map(fn ($answer): array => [
                         'id' => $answer->id,
                         'answer' => $answer->translate('answer'),
                     ]),

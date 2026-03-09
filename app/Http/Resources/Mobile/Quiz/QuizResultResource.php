@@ -40,7 +40,7 @@ class QuizResultResource extends JsonResource
 
         // Include detailed results if show_correct_answers is enabled
         if ($showCorrectAnswers) {
-            $result['questions'] = $this->answers->map(function ($attemptAnswer) {
+            $result['questions'] = $this->answers->map(function ($attemptAnswer): array {
                 $question = $attemptAnswer->question;
                 $correctAnswerIds = $question->answers->where('is_correct', true)->pluck('id')->toArray();
 
@@ -53,7 +53,7 @@ class QuizResultResource extends JsonResource
                     'selected_answer_ids' => $attemptAnswer->selected_answer_ids,
                     'correct_answer_ids' => $correctAnswerIds,
                     'explanation' => $question->translate('explanation'),
-                    'answers' => $question->answers->map(fn ($answer) => [
+                    'answers' => $question->answers->map(fn ($answer): array => [
                         'id' => $answer->id,
                         'answer' => $answer->translate('answer'),
                         'is_correct' => $answer->is_correct,

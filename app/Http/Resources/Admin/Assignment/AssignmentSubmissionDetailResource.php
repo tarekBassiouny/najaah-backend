@@ -21,24 +21,24 @@ class AssignmentSubmissionDetailResource extends JsonResource
         return [
             'id' => $this->id,
             'assignment_id' => $this->assignment_id,
-            'assignment' => $this->whenLoaded('assignment', fn () => [
+            'assignment' => $this->whenLoaded('assignment', fn (): array => [
                 'id' => $this->assignment->id,
                 'title' => $this->assignment->translate('title'),
                 'max_points' => (float) $this->assignment->max_points,
                 'passing_score' => (float) $this->assignment->passing_score,
             ]),
             'user_id' => $this->user_id,
-            'user' => $this->whenLoaded('user', fn () => [
+            'user' => $this->whenLoaded('user', fn (): array => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
                 'email' => $this->user->email,
                 'phone' => $this->user->phone,
             ]),
             'group_id' => $this->group_id,
-            'group' => $this->whenLoaded('group', fn () => $this->group ? [
+            'group' => $this->whenLoaded('group', fn (): ?array => $this->group ? [
                 'id' => $this->group->id,
                 'name' => $this->group->name,
-                'members' => $this->group->members->map(fn ($member) => [
+                'members' => $this->group->members->map(fn ($member): array => [
                     'user_id' => $member->user_id,
                     'name' => $member->user->name,
                     'role' => $member->getRoleLabel(),
@@ -59,7 +59,7 @@ class AssignmentSubmissionDetailResource extends JsonResource
             'feedback' => $this->feedback,
             'files' => AssignmentSubmissionFileResource::collection($this->whenLoaded('files')),
             'graded_by' => $this->graded_by,
-            'grader' => $this->whenLoaded('grader', fn () => $this->grader ? [
+            'grader' => $this->whenLoaded('grader', fn (): ?array => $this->grader ? [
                 'id' => $this->grader->id,
                 'name' => $this->grader->name,
             ] : null),

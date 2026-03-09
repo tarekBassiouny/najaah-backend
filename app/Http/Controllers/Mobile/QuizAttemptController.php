@@ -105,7 +105,7 @@ class QuizAttemptController extends Controller
                 'message' => 'Quiz attempt started',
                 'data' => new QuizAttemptDetailResource($attempt),
             ], 201);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -221,7 +221,7 @@ class QuizAttemptController extends Controller
                     'remaining_time_seconds' => $attempt->getRemainingTimeSeconds(),
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -279,7 +279,7 @@ class QuizAttemptController extends Controller
                 'message' => 'Quiz submitted successfully',
                 'data' => new QuizResultResource($attempt),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [

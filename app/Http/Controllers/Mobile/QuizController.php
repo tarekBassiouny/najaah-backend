@@ -64,7 +64,7 @@ class QuizController extends Controller
             ->get();
 
         // Add attempt info for each quiz
-        $quizzes->each(function (Quiz $quiz) use ($student) {
+        $quizzes->each(function (Quiz $quiz) use ($student): void {
             $quiz->setAttribute('remaining_attempts', $this->quizService->getRemainingAttempts($quiz, $student));
             $quiz->setAttribute('best_score', $this->attemptService->calculateFinalScore($quiz, $student));
             $quiz->setAttribute('can_attempt', $this->quizService->canAttempt($quiz, $student));
@@ -179,7 +179,7 @@ class QuizController extends Controller
             'success' => true,
             'message' => 'Operation completed',
             'data' => [
-                'attempts' => $attempts->map(fn ($attempt) => [
+                'attempts' => $attempts->map(fn ($attempt): array => [
                     'id' => $attempt->id,
                     'attempt_number' => $attempt->attempt_number,
                     'status' => $attempt->status->value,

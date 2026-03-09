@@ -106,7 +106,7 @@ class AssignmentSubmissionController extends Controller
                 'message' => $submission->wasRecentlyCreated ? 'Draft created' : 'Draft updated',
                 'data' => new AssignmentSubmissionResource($submission),
             ], $submission->wasRecentlyCreated ? 201 : 200);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -153,7 +153,7 @@ class AssignmentSubmissionController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'FILE_LIMIT_REACHED',
-                    'message' => "Maximum of {$assignment->max_files} files allowed.",
+                    'message' => sprintf('Maximum of %d files allowed.', $assignment->max_files),
                 ],
             ], 400);
         }
@@ -180,7 +180,7 @@ class AssignmentSubmissionController extends Controller
                 'success' => false,
                 'error' => [
                     'code' => 'FILE_TOO_LARGE',
-                    'message' => "File size exceeds maximum of {$assignment->max_file_size_mb}MB.",
+                    'message' => sprintf('File size exceeds maximum of %dMB.', $assignment->max_file_size_mb),
                 ],
             ], 400);
         }
@@ -198,7 +198,7 @@ class AssignmentSubmissionController extends Controller
                     'file_type' => $submissionFile->file_type,
                 ],
             ], 201);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -264,7 +264,7 @@ class AssignmentSubmissionController extends Controller
                 'success' => true,
                 'message' => 'File removed successfully',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -334,7 +334,7 @@ class AssignmentSubmissionController extends Controller
                 'message' => 'Assignment submitted successfully',
                 'data' => new AssignmentSubmissionResource($submission),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [

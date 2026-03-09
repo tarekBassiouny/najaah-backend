@@ -22,7 +22,7 @@ class AssignmentSubmissionResource extends JsonResource
             'id' => $this->id,
             'assignment_id' => $this->assignment_id,
             'user_id' => $this->user_id,
-            'user' => $this->whenLoaded('user', fn () => [
+            'user' => $this->whenLoaded('user', fn (): array => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
                 'email' => $this->user->email,
@@ -40,7 +40,7 @@ class AssignmentSubmissionResource extends JsonResource
             'passed' => $this->passed,
             'files_count' => $this->whenCounted('files', $this->files_count ?? $this->files()->count()),
             'graded_at' => $this->graded_at?->toIso8601String(),
-            'grader' => $this->whenLoaded('grader', fn () => $this->grader ? [
+            'grader' => $this->whenLoaded('grader', fn (): ?array => $this->grader ? [
                 'id' => $this->grader->id,
                 'name' => $this->grader->name,
             ] : null),

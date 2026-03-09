@@ -75,7 +75,7 @@ final class AssignmentSubmissionService implements AssignmentSubmissionServiceIn
         if ($currentFileCount >= $assignment->max_files) {
             throw new \DomainException(json_encode([
                 'code' => 'MAX_FILES_EXCEEDED',
-                'message' => "Maximum of {$assignment->max_files} files allowed.",
+                'message' => sprintf('Maximum of %d files allowed.', $assignment->max_files),
             ]) ?: '');
         }
 
@@ -84,7 +84,7 @@ final class AssignmentSubmissionService implements AssignmentSubmissionServiceIn
         if ($fileSizeMb > $assignment->max_file_size_mb) {
             throw new \DomainException(json_encode([
                 'code' => 'FILE_TOO_LARGE',
-                'message' => "File size exceeds {$assignment->max_file_size_mb}MB limit.",
+                'message' => sprintf('File size exceeds %dMB limit.', $assignment->max_file_size_mb),
             ]) ?: '');
         }
 
@@ -99,7 +99,7 @@ final class AssignmentSubmissionService implements AssignmentSubmissionServiceIn
 
         // Store file
         $path = $file->store(
-            "assignments/{$assignment->id}/submissions/{$submission->id}",
+            sprintf('assignments/%d/submissions/%d', $assignment->id, $submission->id),
             'local'
         );
 

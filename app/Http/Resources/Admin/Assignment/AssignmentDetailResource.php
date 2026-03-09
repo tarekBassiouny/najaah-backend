@@ -49,7 +49,7 @@ class AssignmentDetailResource extends JsonResource
             'submissions_count' => $this->submissions()->count(),
             'pending_grading_count' => $this->submissions()->submitted()->count(),
             'submissions' => AssignmentSubmissionResource::collection($this->whenLoaded('submissions')),
-            'creator' => $this->whenLoaded('creator', fn () => [
+            'creator' => $this->whenLoaded('creator', fn (): array => [
                 'id' => $this->creator->id,
                 'name' => $this->creator->name,
             ]),

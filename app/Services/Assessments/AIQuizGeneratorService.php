@@ -73,16 +73,16 @@ final class AIQuizGeneratorService implements AIQuizGeneratorServiceInterface
                 'ai_provider' => config('services.ai.provider', 'openai'),
                 'ai_model' => config('services.ai.model', 'gpt-4'),
             ]);
-        } catch (\Throwable $e) {
+        } catch (\Throwable $throwable) {
             Log::error('AI Quiz Generation Failed', [
                 'job_id' => $job->id,
-                'error' => $e->getMessage(),
+                'error' => $throwable->getMessage(),
             ]);
 
             $job->update([
                 'status' => AIGenerationStatus::Failed,
                 'completed_at' => now(),
-                'error_message' => $e->getMessage(),
+                'error_message' => $throwable->getMessage(),
             ]);
         }
     }
@@ -102,7 +102,7 @@ final class AIQuizGeneratorService implements AIQuizGeneratorServiceInterface
             try {
                 $response = Http::withHeaders([
                     'AccessKey' => $apiKey,
-                ])->get("https://video.bunnycdn.com/library/{$libraryId}/videos/{$video->bunny_video_id}");
+                ])->get(sprintf('https://video.bunnycdn.com/library/%s/videos/%s', $libraryId, $video->bunny_video_id));
 
                 if ($response->successful()) {
                     $data = $response->json();
@@ -197,7 +197,7 @@ PROMPT;
         $model = config('services.ai.model', 'gpt-4');
 
         $response = Http::withHeaders([
-            'Authorization' => "Bearer {$apiKey}",
+            'Authorization' => 'Bearer ' . $apiKey,
             'Content-Type' => 'application/json',
         ])->post('https://api.openai.com/v1/chat/completions', [
             'model' => $model,

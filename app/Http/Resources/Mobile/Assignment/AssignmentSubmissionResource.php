@@ -35,13 +35,13 @@ class AssignmentSubmissionResource extends JsonResource
             'passed' => $this->passed,
             'feedback' => $this->feedback,
             'graded_at' => $this->graded_at?->toIso8601String(),
-            'files' => $this->whenLoaded('files', fn () => $this->files->map(fn ($file) => [
+            'files' => $this->whenLoaded('files', fn () => $this->files->map(fn ($file): array => [
                 'id' => $file->id,
                 'file_name' => $file->file_name,
                 'file_size_kb' => $file->file_size_kb,
                 'file_type' => $file->file_type,
             ])),
-            'group' => $this->whenLoaded('group', fn () => $this->group ? [
+            'group' => $this->whenLoaded('group', fn (): ?array => $this->group ? [
                 'id' => $this->group->id,
                 'name' => $this->group->name,
                 'members_count' => $this->group->members->count(),

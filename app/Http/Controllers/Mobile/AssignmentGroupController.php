@@ -133,7 +133,7 @@ class AssignmentGroupController extends Controller
                 'message' => 'Group created successfully',
                 'data' => new AssignmentGroupResource($group),
             ], 201);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -246,7 +246,7 @@ class AssignmentGroupController extends Controller
                 'message' => 'Joined group successfully',
                 'data' => new AssignmentGroupResource($group),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -304,7 +304,7 @@ class AssignmentGroupController extends Controller
                 'success' => true,
                 'message' => 'Left group successfully',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => [

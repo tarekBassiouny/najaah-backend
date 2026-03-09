@@ -23,18 +23,18 @@ class AssignmentGroupResource extends JsonResource
             'assignment_id' => $this->assignment_id,
             'name' => $this->name,
             'created_by' => $this->created_by,
-            'creator' => $this->whenLoaded('creator', fn () => [
+            'creator' => $this->whenLoaded('creator', fn (): array => [
                 'id' => $this->creator->id,
                 'name' => $this->creator->name,
             ]),
             'members_count' => $this->members_count ?? $this->members->count(),
-            'members' => $this->whenLoaded('members', fn () => $this->members->map(fn ($member) => [
+            'members' => $this->whenLoaded('members', fn () => $this->members->map(fn ($member): array => [
                 'user_id' => $member->user_id,
                 'name' => $member->user->name,
                 'role' => $member->getRoleLabel(),
                 'joined_at' => $member->joined_at?->toIso8601String(),
             ])),
-            'has_submission' => $this->whenLoaded('submission', fn () => $this->submission !== null),
+            'has_submission' => $this->whenLoaded('submission', fn (): bool => $this->submission !== null),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }
