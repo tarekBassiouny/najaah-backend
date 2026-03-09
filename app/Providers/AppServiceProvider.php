@@ -79,6 +79,8 @@ use App\Services\Surveys\Contracts\SurveyServiceInterface;
 use App\Services\Surveys\SurveyAssignmentService;
 use App\Services\Surveys\SurveyResponseService;
 use App\Services\Surveys\SurveyService;
+use App\Services\Timezone\Contracts\TimezoneServiceInterface;
+use App\Services\Timezone\TimezoneService;
 use App\Services\VideoAccess\BulkWhatsAppService;
 use App\Services\VideoAccess\Contracts\BulkWhatsAppServiceInterface;
 use App\Services\VideoAccess\Contracts\VideoApprovalCodeServiceInterface;
@@ -161,6 +163,7 @@ class AppServiceProvider extends ServiceProvider
             SurveyServiceInterface::class => SurveyService::class,
             SurveyAssignmentServiceInterface::class => SurveyAssignmentService::class,
             SurveyResponseServiceInterface::class => SurveyResponseService::class,
+            TimezoneServiceInterface::class => TimezoneService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {
