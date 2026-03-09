@@ -11,17 +11,10 @@ use App\Models\Course;
 use App\Models\Quiz;
 use App\Models\User;
 use App\Services\Assessments\Contracts\AssessmentProgressServiceInterface;
-use App\Services\Assessments\Contracts\AssignmentSubmissionServiceInterface;
-use App\Services\Assessments\Contracts\QuizAttemptServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 
 final class AssessmentProgressService implements AssessmentProgressServiceInterface
 {
-    public function __construct(
-        private readonly QuizAttemptServiceInterface $quizAttemptService,
-        private readonly AssignmentSubmissionServiceInterface $assignmentSubmissionService,
-    ) {}
-
     /**
      * @return array{quizzes: Collection, assignments: Collection}
      */

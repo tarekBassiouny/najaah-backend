@@ -124,7 +124,7 @@ class AIGenerationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => $addedCount . ' questions added to quiz.',
+            'message' => $addedCount.' questions added to quiz.',
             'data' => [
                 'questions_added' => $addedCount,
             ],
