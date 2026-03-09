@@ -16,6 +16,7 @@ use App\Models\Course;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
+use App\Services\Timezone\Contracts\TimezoneServiceInterface;
 use App\Support\AuditActions;
 use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -27,7 +28,10 @@ class CenterService implements CenterServiceInterface
 {
     private const CENTER_LIST_COURSE_LIMIT = 5;
 
-    public function __construct(private readonly AuditLogService $auditLogService) {}
+    public function __construct(
+        private readonly AuditLogService $auditLogService,
+        private readonly TimezoneServiceInterface $timezoneService,
+    ) {}
 
     /**
      * @return LengthAwarePaginator<Center>
@@ -104,6 +108,10 @@ class CenterService implements CenterServiceInterface
         return DB::transaction(function () use ($center, $data, $actor): Center {
             $settings = $data['settings'] ?? null;
             unset($data['settings'], $data['slug']);
+
+            if (array_key_exists('timezone', $data) && $data['timezone'] === null) {
+                $data['timezone'] = $this->timezoneService->getSystemTimezone();
+            }
 
             RejectNonScalarInput::validate($data, ['name', 'description']);
             if (array_key_exists('name', $data)) {

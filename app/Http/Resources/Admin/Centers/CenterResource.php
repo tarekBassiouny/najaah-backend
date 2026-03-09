@@ -30,6 +30,8 @@ class CenterResource extends JsonResource
         return [
             'id' => $center->id,
             'slug' => $center->slug,
+            'timezone' => $center->timezone,
+            'effective_timezone' => $center->getEffectiveTimezone(),
             'type' => $this->resolveType($center->type),
             'tier' => $this->resolveTier($center->tier),
             'is_featured' => $center->is_featured,

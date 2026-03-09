@@ -75,7 +75,7 @@ test('admin user creation is audited with actor', function (): void {
 
 test('center update is audited with actor', function (): void {
     $admin = $this->asAdmin();
-    $service = new CenterService(new AuditLogService);
+    $service = new CenterService(new AuditLogService, app(\App\Services\Timezone\Contracts\TimezoneServiceInterface::class));
     $center = Center::factory()->create();
 
     $service->update($center, ['name' => 'Updated Center'], $admin);
