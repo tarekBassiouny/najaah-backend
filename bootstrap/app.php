@@ -9,6 +9,7 @@ use App\Http\Middleware\EnsureSystemScope;
 use App\Http\Middleware\EnsureUnbrandedStudent;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
+use App\Http\Middleware\LocalizeApiResponse;
 use App\Http\Middleware\NormalizeAdminApiResponse;
 use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\RequirePermission;
@@ -102,6 +103,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ResolveCenterApiKey::class,
             SetRequestLocale::class,
             ResolveTimezone::class,
+            LocalizeApiResponse::class,
             SubstituteBindings::class,
         ]);
 

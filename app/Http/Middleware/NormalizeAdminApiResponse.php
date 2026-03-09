@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Support\Localization\ApiMessageCatalog;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -107,10 +108,10 @@ class NormalizeAdminApiResponse
         }
 
         return match (true) {
-            $status === 201 => 'Created successfully.',
-            $request->isMethod('delete') => 'Deleted successfully.',
-            $request->isMethod('patch') || $request->isMethod('put') => 'Updated successfully.',
-            default => 'Request completed successfully.',
+            $status === 201 => ApiMessageCatalog::get('success.created'),
+            $request->isMethod('delete') => ApiMessageCatalog::get('success.deleted'),
+            $request->isMethod('patch') || $request->isMethod('put') => ApiMessageCatalog::get('success.updated'),
+            default => ApiMessageCatalog::get('success.request_completed'),
         };
     }
 
@@ -128,13 +129,13 @@ class NormalizeAdminApiResponse
         }
 
         return match ($status) {
-            400 => 'Bad request.',
-            401 => 'Unauthenticated.',
-            403 => 'Forbidden.',
-            404 => 'Resource not found.',
-            409 => 'Conflict.',
-            422 => 'Validation failed.',
-            default => 'Request failed.',
+            400 => ApiMessageCatalog::get('error.bad_request'),
+            401 => ApiMessageCatalog::get('error.unauthenticated'),
+            403 => ApiMessageCatalog::get('error.forbidden'),
+            404 => ApiMessageCatalog::get('error.not_found'),
+            409 => ApiMessageCatalog::get('error.conflict'),
+            422 => ApiMessageCatalog::get('error.validation_failed'),
+            default => ApiMessageCatalog::get('error.request_failed'),
         };
     }
 
