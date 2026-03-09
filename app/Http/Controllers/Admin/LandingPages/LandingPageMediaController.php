@@ -9,15 +9,16 @@ use App\Http\Resources\Admin\LandingPages\LandingPageResource;
 use App\Models\Center;
 use App\Models\User;
 use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
-use App\Services\Storage\Contracts\StorageServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 class LandingPageMediaController extends Controller
 {
     public function __construct(
         private readonly LandingPageServiceInterface $landingPageService,
-        private readonly StorageServiceInterface $storageService,
     ) {}
 
     /**
@@ -54,7 +55,7 @@ class LandingPageMediaController extends Controller
             $file->extension()
         );
 
-        $url = $this->storageService->upload($path, $file);
+        $url = $this->uploadToLandingMediaDisk($path, $file);
 
         $landingPage = $this->landingPageService->getOrCreateForCenter($centerModel);
         $admin = $request->user();
@@ -109,7 +110,7 @@ class LandingPageMediaController extends Controller
             $file->extension()
         );
 
-        $url = $this->storageService->upload($path, $file);
+        $url = $this->uploadToLandingMediaDisk($path, $file);
 
         $landingPage = $this->landingPageService->getOrCreateForCenter($centerModel);
         $admin = $request->user();
@@ -164,7 +165,7 @@ class LandingPageMediaController extends Controller
             $file->extension()
         );
 
-        $url = $this->storageService->upload($path, $file);
+        $url = $this->uploadToLandingMediaDisk($path, $file);
 
         return response()->json([
             'success' => true,
@@ -184,5 +185,21 @@ class LandingPageMediaController extends Controller
                 'message' => $message,
             ],
         ], 404);
+    }
+
+    private function uploadToLandingMediaDisk(string $path, UploadedFile $file): string
+    {
+        $disk = (string) config('filesystems.landing_page_media_disk', 'spaces');
+        $normalizedPath = ltrim($path, '/');
+        $directory = trim((string) pathinfo($normalizedPath, PATHINFO_DIRNAME), '/');
+        $filename = (string) pathinfo($normalizedPath, PATHINFO_BASENAME);
+
+        $stored = Storage::disk($disk)->putFileAs($directory, $file, $filename, ['visibility' => 'private']);
+
+        if ($stored === false) {
+            throw new RuntimeException('Failed to store landing page media file.');
+        }
+
+        return (string) $stored;
     }
 }
