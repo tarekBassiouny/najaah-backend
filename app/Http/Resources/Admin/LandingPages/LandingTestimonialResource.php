@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin\LandingPages;
 
 use App\Models\CenterLandingTestimonial;
+use App\Services\LandingPages\LandingPageMediaUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,13 +21,14 @@ class LandingTestimonialResource extends JsonResource
     {
         /** @var CenterLandingTestimonial $testimonial */
         $testimonial = $this->resource;
+        $mediaUrlResolver = app(LandingPageMediaUrlResolver::class);
 
         return [
             'id' => $testimonial->id,
             'center_landing_page_id' => $testimonial->center_landing_page_id,
             'author_name' => $testimonial->author_name,
             'author_title' => $testimonial->author_title,
-            'author_image_url' => $testimonial->author_image_url,
+            'author_image_url' => $mediaUrlResolver->resolve($testimonial->author_image_url),
             'content' => $testimonial->translate('content'),
             'content_translations' => $testimonial->content_translations,
             'rating' => $testimonial->rating,

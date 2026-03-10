@@ -6,6 +6,7 @@ namespace App\Http\Resources\Admin\LandingPages;
 
 use App\Enums\LandingPageStatus;
 use App\Models\CenterLandingPage;
+use App\Services\LandingPages\LandingPageMediaUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,6 +23,7 @@ class LandingPageResource extends JsonResource
         /** @var CenterLandingPage $landingPage */
         $landingPage = $this->resource;
         $status = $landingPage->status instanceof LandingPageStatus ? $landingPage->status : LandingPageStatus::Draft;
+        $mediaUrlResolver = app(LandingPageMediaUrlResolver::class);
 
         return [
             'id' => $landingPage->id,
@@ -43,7 +45,7 @@ class LandingPageResource extends JsonResource
                 'title_translations' => $landingPage->hero_title_translations,
                 'subtitle' => $landingPage->translate('hero_subtitle'),
                 'subtitle_translations' => $landingPage->hero_subtitle_translations,
-                'background_url' => $landingPage->hero_background_url,
+                'background_url' => $mediaUrlResolver->resolve($landingPage->hero_background_url),
                 'cta_text' => $landingPage->hero_cta_text,
                 'cta_url' => $landingPage->hero_cta_url,
             ],
@@ -54,7 +56,7 @@ class LandingPageResource extends JsonResource
                 'title_translations' => $landingPage->about_title_translations,
                 'content' => $landingPage->translate('about_content'),
                 'content_translations' => $landingPage->about_content_translations,
-                'image_url' => $landingPage->about_image_url,
+                'image_url' => $mediaUrlResolver->resolve($landingPage->about_image_url),
             ],
 
             // Contact section

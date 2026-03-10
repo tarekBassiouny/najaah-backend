@@ -49,6 +49,30 @@ it('creates a testimonial', function (): void {
     ]);
 });
 
+it('normalizes signed author image url to storage path on create', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    CenterLandingPage::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/landing-page/testimonials", [
+        'author_name' => 'Tarek',
+        'author_title' => 'Learner',
+        'author_image_url' => "https://xyz-lms-bucket.fra1.digitaloceanspaces.com/centers/{$center->id}/landing-page/testimonials/author_1773109765.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=test",
+        'content' => ['en' => 'Amazing', 'ar' => 'رائع'],
+        'rating' => 5,
+        'is_active' => true,
+    ], $this->adminHeaders());
+
+    $response
+        ->assertCreated()
+        ->assertJsonPath('success', true);
+
+    $this->assertDatabaseHas('center_landing_testimonials', [
+        'author_name' => 'Tarek',
+        'author_image_url' => "centers/{$center->id}/landing-page/testimonials/author_1773109765.png",
+    ]);
+});
+
 it('validates required fields when creating testimonial', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);

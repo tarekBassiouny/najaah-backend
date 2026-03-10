@@ -22,6 +22,7 @@ class LandingPageService implements LandingPageServiceInterface
 
     public function __construct(
         private readonly AuditLogService $auditLogService,
+        private readonly LandingPageMediaUrlResolver $mediaUrlResolver,
     ) {}
 
     public function getOrCreateForCenter(Center $center): CenterLandingPage
@@ -95,7 +96,9 @@ class LandingPageService implements LandingPageServiceInterface
         }
 
         if (array_key_exists('hero_background_url', $data)) {
-            $updateData['hero_background_url'] = $data['hero_background_url'];
+            $updateData['hero_background_url'] = $this->mediaUrlResolver->normalizeForStorage(
+                is_string($data['hero_background_url']) ? $data['hero_background_url'] : null
+            );
         }
 
         if (array_key_exists('hero_cta_text', $data)) {
@@ -133,7 +136,9 @@ class LandingPageService implements LandingPageServiceInterface
         }
 
         if (array_key_exists('about_image_url', $data)) {
-            $updateData['about_image_url'] = $data['about_image_url'];
+            $updateData['about_image_url'] = $this->mediaUrlResolver->normalizeForStorage(
+                is_string($data['about_image_url']) ? $data['about_image_url'] : null
+            );
         }
 
         if (! empty($updateData)) {
@@ -253,7 +258,11 @@ class LandingPageService implements LandingPageServiceInterface
         $testimonial = $landingPage->testimonials()->create([
             'author_name' => $data['author_name'],
             'author_title' => $data['author_title'] ?? null,
-            'author_image_url' => $data['author_image_url'] ?? null,
+            'author_image_url' => $this->mediaUrlResolver->normalizeForStorage(
+                isset($data['author_image_url']) && is_string($data['author_image_url'])
+                    ? $data['author_image_url']
+                    : null
+            ),
             'content_translations' => $data['content'],
             'rating' => $data['rating'] ?? null,
             'sort_order' => $maxOrder + 1,
@@ -281,7 +290,9 @@ class LandingPageService implements LandingPageServiceInterface
         }
 
         if (array_key_exists('author_image_url', $data)) {
-            $updateData['author_image_url'] = $data['author_image_url'];
+            $updateData['author_image_url'] = $this->mediaUrlResolver->normalizeForStorage(
+                is_string($data['author_image_url']) ? $data['author_image_url'] : null
+            );
         }
 
         if (array_key_exists('content', $data)) {

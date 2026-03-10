@@ -9,6 +9,7 @@ use App\Http\Resources\Admin\LandingPages\LandingPageResource;
 use App\Models\Center;
 use App\Models\User;
 use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
+use App\Services\LandingPages\LandingPageMediaUrlResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -19,6 +20,7 @@ class LandingPageMediaController extends Controller
 {
     public function __construct(
         private readonly LandingPageServiceInterface $landingPageService,
+        private readonly LandingPageMediaUrlResolver $mediaUrlResolver,
     ) {}
 
     /**
@@ -70,7 +72,7 @@ class LandingPageMediaController extends Controller
             'success' => true,
             'message' => 'Hero background uploaded successfully',
             'data' => [
-                'url' => $url,
+                'url' => $this->mediaUrlResolver->resolve($url),
                 'landing_page' => new LandingPageResource($updated),
             ],
         ]);
@@ -125,7 +127,7 @@ class LandingPageMediaController extends Controller
             'success' => true,
             'message' => 'About image uploaded successfully',
             'data' => [
-                'url' => $url,
+                'url' => $this->mediaUrlResolver->resolve($url),
                 'landing_page' => new LandingPageResource($updated),
             ],
         ]);
@@ -171,7 +173,7 @@ class LandingPageMediaController extends Controller
             'success' => true,
             'message' => 'Testimonial image uploaded successfully',
             'data' => [
-                'url' => $url,
+                'url' => $this->mediaUrlResolver->resolve($url),
             ],
         ]);
     }

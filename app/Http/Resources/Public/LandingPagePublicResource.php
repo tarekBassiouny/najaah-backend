@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Public;
 
 use App\Models\CenterLandingPage;
+use App\Services\LandingPages\LandingPageMediaUrlResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,7 @@ class LandingPagePublicResource extends JsonResource
         /** @var CenterLandingPage $landingPage */
         $landingPage = $this->resource;
         $center = $landingPage->center;
+        $mediaUrlResolver = app(LandingPageMediaUrlResolver::class);
 
         return [
             'center' => [
@@ -41,7 +43,7 @@ class LandingPagePublicResource extends JsonResource
             'hero' => $landingPage->show_hero ? [
                 'title' => $landingPage->translate('hero_title'),
                 'subtitle' => $landingPage->translate('hero_subtitle'),
-                'background_url' => $landingPage->hero_background_url,
+                'background_url' => $mediaUrlResolver->resolve($landingPage->hero_background_url),
                 'cta_text' => $landingPage->hero_cta_text,
                 'cta_url' => $landingPage->hero_cta_url,
             ] : null,
@@ -50,7 +52,7 @@ class LandingPagePublicResource extends JsonResource
             'about' => $landingPage->show_about ? [
                 'title' => $landingPage->translate('about_title'),
                 'content' => $landingPage->translate('about_content'),
-                'image_url' => $landingPage->about_image_url,
+                'image_url' => $mediaUrlResolver->resolve($landingPage->about_image_url),
             ] : null,
 
             // Contact section (if visible)
@@ -88,7 +90,7 @@ class LandingPagePublicResource extends JsonResource
 
             // Testimonials (if visible and loaded)
             'testimonials' => $landingPage->show_testimonials
-                ? $this->formatTestimonials($landingPage)
+                ? $this->formatTestimonials($landingPage, $mediaUrlResolver)
                 : [],
         ];
     }
@@ -96,7 +98,7 @@ class LandingPagePublicResource extends JsonResource
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function formatTestimonials(CenterLandingPage $landingPage): array
+    private function formatTestimonials(CenterLandingPage $landingPage, LandingPageMediaUrlResolver $mediaUrlResolver): array
     {
         return $landingPage->testimonials
             ->filter(fn ($t) => $t->is_active)
@@ -104,7 +106,7 @@ class LandingPagePublicResource extends JsonResource
                 'id' => $testimonial->id,
                 'author_name' => $testimonial->author_name,
                 'author_title' => $testimonial->author_title,
-                'author_image_url' => $testimonial->author_image_url,
+                'author_image_url' => $mediaUrlResolver->resolve($testimonial->author_image_url),
                 'content' => $testimonial->translate('content'),
                 'rating' => $testimonial->rating,
             ])
