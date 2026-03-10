@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $thumbnail_url
  * @property int|null $duration_minutes
  * @property bool $is_featured
+ * @property bool $show_for_all_students
  * @property int $created_by
  * @property int|null $cloned_from_id
  * @property \Carbon\Carbon|null $publish_at
@@ -56,6 +57,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessRequest> $videoAccessRequests
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Grade> $grades
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, School> $schools
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, College> $colleges
  */
 class Course extends Model
 {
@@ -90,6 +94,7 @@ class Course extends Model
         'requires_video_approval',
         'duration_minutes',
         'is_featured',
+        'show_for_all_students',
         'is_demo',
         'created_by',
         'cloned_from_id',
@@ -104,6 +109,7 @@ class Course extends Model
         'is_published' => 'boolean',
         'requires_video_approval' => 'boolean',
         'is_featured' => 'boolean',
+        'show_for_all_students' => 'boolean',
         'is_demo' => 'boolean',
         'duration_minutes' => 'integer',
         'difficulty_level' => 'integer',
@@ -217,6 +223,27 @@ class Course extends Model
         return $this->hasMany(VideoAccess::class);
     }
 
+    /** @return BelongsToMany<Grade, self> */
+    public function grades(): BelongsToMany
+    {
+        return $this->belongsToMany(Grade::class, 'course_grades')
+            ->withTimestamps();
+    }
+
+    /** @return BelongsToMany<School, self> */
+    public function schools(): BelongsToMany
+    {
+        return $this->belongsToMany(School::class, 'course_schools')
+            ->withTimestamps();
+    }
+
+    /** @return BelongsToMany<College, self> */
+    public function colleges(): BelongsToMany
+    {
+        return $this->belongsToMany(College::class, 'course_colleges')
+            ->withTimestamps();
+    }
+
     /**
      * Scope to filter published courses.
      *
@@ -249,6 +276,58 @@ class Course extends Model
             $query
                 ->where('type', CenterType::Unbranded->value)
                 ->where('status', Center::STATUS_ACTIVE->value);
+        });
+    }
+
+    /**
+     * Scope to filter courses by a student's education profile.
+     *
+     * Matching logic:
+     * - Courses with show_for_all_students=true are always visible.
+     * - Targeted courses (show_for_all_students=false) must match each configured dimension:
+     *   grade, school, and/or college.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeMatchingStudentEducation(Builder $query, User $student): Builder
+    {
+        return $query->where(function (Builder $visibilityQuery) use ($student): void {
+            $visibilityQuery
+                ->where('show_for_all_students', true)
+                ->orWhere(function (Builder $targetedQuery) use ($student): void {
+                    $targetedQuery->where('show_for_all_students', false);
+
+                    $targetedQuery->where(function (Builder $gradeQuery) use ($student): void {
+                        $gradeQuery->whereDoesntHave('grades');
+
+                        if (is_numeric($student->grade_id)) {
+                            $gradeQuery->orWhereHas('grades', function (Builder $courseGradeQuery) use ($student): void {
+                                $courseGradeQuery->where('grades.id', (int) $student->grade_id);
+                            });
+                        }
+                    });
+
+                    $targetedQuery->where(function (Builder $schoolQuery) use ($student): void {
+                        $schoolQuery->whereDoesntHave('schools');
+
+                        if (is_numeric($student->school_id)) {
+                            $schoolQuery->orWhereHas('schools', function (Builder $courseSchoolQuery) use ($student): void {
+                                $courseSchoolQuery->where('schools.id', (int) $student->school_id);
+                            });
+                        }
+                    });
+
+                    $targetedQuery->where(function (Builder $collegeQuery) use ($student): void {
+                        $collegeQuery->whereDoesntHave('colleges');
+
+                        if (is_numeric($student->college_id)) {
+                            $collegeQuery->orWhereHas('colleges', function (Builder $courseCollegeQuery) use ($student): void {
+                                $courseCollegeQuery->where('colleges.id', (int) $student->college_id);
+                            });
+                        }
+                    });
+                });
         });
     }
 

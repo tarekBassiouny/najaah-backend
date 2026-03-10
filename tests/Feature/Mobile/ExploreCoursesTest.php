@@ -7,6 +7,7 @@ use App\Models\Center;
 use App\Models\CenterSetting;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Grade;
 use App\Models\Instructor;
 use App\Models\Pivots\CourseVideo;
 use App\Models\User;
@@ -61,6 +62,53 @@ it('lists courses for branded student center and marks enrollment', function ():
         ->assertJsonPath('data.0.id', $courseA->id)
         ->assertJsonPath('data.0.is_enrolled', true)
         ->assertJsonPath('data.0.requires_video_approval', true);
+});
+
+it('filters targeted courses by student education profile', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $grade12 = Grade::factory()->create(['center_id' => $center->id]);
+    $grade11 = Grade::factory()->create(['center_id' => $center->id]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'grade_id' => $grade12->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $forAll = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => true,
+    ]);
+    $grade12Course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+    ]);
+    $grade12Course->grades()->sync([$grade12->id]);
+
+    $grade11Course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+    ]);
+    $grade11Course->grades()->sync([$grade11->id]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/courses/explore');
+
+    $response->assertOk()
+        ->assertJsonCount(2, 'data');
+
+    $ids = collect($response->json('data'))->pluck('id')->all();
+    expect($ids)->toContain($forAll->id)
+        ->toContain($grade12Course->id)
+        ->not->toContain($grade11Course->id);
 });
 
 it('lists only unbranded center courses for system students', function (): void {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Grade;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
@@ -222,6 +223,34 @@ it('marks course as not enrolled when student is not enrolled', function (): voi
 
     $response->assertOk()
         ->assertJsonPath('data.is_enrolled', false);
+});
+
+it('returns not found when course does not match student education profile', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $grade12 = Grade::factory()->create(['center_id' => $center->id]);
+    $grade11 = Grade::factory()->create(['center_id' => $center->id]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'grade_id' => $grade12->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+    ]);
+    $course->grades()->sync([$grade11->id]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}");
+
+    $response->assertStatus(404)
+        ->assertJsonPath('error.code', 'NOT_FOUND');
 });
 
 it('returns not found for unpublished courses', function (): void {

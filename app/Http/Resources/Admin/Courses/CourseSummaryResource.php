@@ -40,6 +40,7 @@ class CourseSummaryResource extends JsonResource
             'status_label' => $course->status->name,
             'is_published' => (bool) $course->is_published,
             'requires_video_approval' => $this->resolveRequiresVideoApproval($course),
+            'show_for_all_students' => (bool) $course->show_for_all_students,
             'published_at' => $course->publish_at,
         ];
     }

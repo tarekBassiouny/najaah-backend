@@ -66,9 +66,16 @@ class CourseService implements CourseServiceInterface
             $data['language'] = 'en';
         }
 
+        $showForAllStudents = $this->resolveShowForAllStudentsForCreate($data);
+        $gradeIds = $this->extractTargetIds($data, 'grade_ids');
+        $schoolIds = $this->extractTargetIds($data, 'school_ids');
+        $collegeIds = $this->extractTargetIds($data, 'college_ids');
+        unset($data['grade_ids'], $data['school_ids'], $data['college_ids']);
+
         $data['status'] = CourseStatus::Draft;
         $data['is_published'] = false;
         $data['publish_at'] = null;
+        $data['show_for_all_students'] = $showForAllStudents;
 
         if ($actor instanceof User) {
             $centerId = isset($data['center_id']) && is_numeric($data['center_id']) ? (int) $data['center_id'] : null;
@@ -76,12 +83,13 @@ class CourseService implements CourseServiceInterface
         }
 
         $course = Course::create($data);
+        $this->syncEducationTargets($course, $showForAllStudents, $gradeIds, $schoolIds, $collegeIds, true);
 
         $this->auditLogService->log($actor, $course, AuditActions::COURSE_CREATED, [
             'center_id' => $course->center_id,
         ]);
 
-        return $course->fresh(['center', 'category', 'primaryInstructor', 'instructors']) ?? $course;
+        return $course->fresh(['center', 'category', 'primaryInstructor', 'instructors', 'grades', 'schools', 'colleges']) ?? $course;
     }
 
     /** @param array<string, mixed> $data */
@@ -102,13 +110,33 @@ class CourseService implements CourseServiceInterface
             $this->centerScopeService->assertAdminSameCenter($actor, $course);
         }
 
+        $explicitShowForAll = array_key_exists('show_for_all_students', $data) ? (bool) $data['show_for_all_students'] : null;
+        $gradeIdsProvided = array_key_exists('grade_ids', $data) && is_array($data['grade_ids']);
+        $schoolIdsProvided = array_key_exists('school_ids', $data) && is_array($data['school_ids']);
+        $collegeIdsProvided = array_key_exists('college_ids', $data) && is_array($data['college_ids']);
+        $gradeIds = $this->extractTargetIds($data, 'grade_ids');
+        $schoolIds = $this->extractTargetIds($data, 'school_ids');
+        $collegeIds = $this->extractTargetIds($data, 'college_ids');
+        unset($data['grade_ids'], $data['school_ids'], $data['college_ids']);
+
         $course->update($data);
+        $this->syncEducationTargets(
+            $course,
+            $explicitShowForAll,
+            $gradeIds,
+            $schoolIds,
+            $collegeIds,
+            false,
+            $gradeIdsProvided,
+            $schoolIdsProvided,
+            $collegeIdsProvided
+        );
 
         $this->auditLogService->log($actor, $course, AuditActions::COURSE_UPDATED, [
             'updated_fields' => array_keys($data),
         ]);
 
-        return $course->fresh(['center', 'category', 'primaryInstructor', 'instructors']) ?? $course;
+        return $course->fresh(['center', 'category', 'primaryInstructor', 'instructors', 'grades', 'schools', 'colleges']) ?? $course;
     }
 
     public function delete(Course $course, ?User $actor = null): void
@@ -124,7 +152,7 @@ class CourseService implements CourseServiceInterface
 
     public function find(int $id, ?User $actor = null): ?Course
     {
-        $query = Course::with(['center', 'category', 'primaryInstructor', 'instructors', 'sections.videos', 'sections.pdfs']);
+        $query = Course::with(['center', 'category', 'primaryInstructor', 'instructors', 'sections.videos', 'sections.pdfs', 'grades', 'schools', 'colleges']);
 
         $course = $query->find($id);
 
@@ -251,7 +279,8 @@ class CourseService implements CourseServiceInterface
             ->published()
             ->with(['center', 'category', 'instructors'])
             ->withEnrollmentMeta($student)
-            ->visibleToStudent($student);
+            ->visibleToStudent($student)
+            ->matchingStudentEducation($student);
 
         $query->whereDoesntHave('videos', function ($query): void {
             $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
@@ -265,5 +294,90 @@ class CourseService implements CourseServiceInterface
         });
 
         return $query;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<int>
+     */
+    private function extractTargetIds(array $data, string $key): array
+    {
+        if (! array_key_exists($key, $data) || ! is_array($data[$key])) {
+            return [];
+        }
+
+        return array_values(array_unique(array_map(
+            static fn (mixed $value): int => (int) $value,
+            array_filter($data[$key], static fn (mixed $value): bool => is_numeric($value))
+        )));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function resolveShowForAllStudentsForCreate(array $data): bool
+    {
+        if (array_key_exists('show_for_all_students', $data)) {
+            return (bool) $data['show_for_all_students'];
+        }
+
+        $hasTargets = $this->extractTargetIds($data, 'grade_ids') !== []
+            || $this->extractTargetIds($data, 'school_ids') !== []
+            || $this->extractTargetIds($data, 'college_ids') !== [];
+
+        return ! $hasTargets;
+    }
+
+    /**
+     * @param  array<int>  $gradeIds
+     * @param  array<int>  $schoolIds
+     * @param  array<int>  $collegeIds
+     */
+    private function syncEducationTargets(
+        Course $course,
+        ?bool $showForAllStudents,
+        array $gradeIds,
+        array $schoolIds,
+        array $collegeIds,
+        bool $isCreate,
+        bool $gradeIdsProvided = false,
+        bool $schoolIdsProvided = false,
+        bool $collegeIdsProvided = false
+    ): void {
+        if ($showForAllStudents === true) {
+            $course->grades()->sync([]);
+            $course->schools()->sync([]);
+            $course->colleges()->sync([]);
+
+            if (! $course->show_for_all_students) {
+                $course->update(['show_for_all_students' => true]);
+            }
+
+            return;
+        }
+
+        if ($showForAllStudents === false && $course->show_for_all_students) {
+            $course->update(['show_for_all_students' => false]);
+        }
+
+        if ($isCreate) {
+            $course->grades()->sync($gradeIds);
+            $course->schools()->sync($schoolIds);
+            $course->colleges()->sync($collegeIds);
+
+            return;
+        }
+
+        if ($gradeIdsProvided) {
+            $course->grades()->sync($gradeIds);
+        }
+
+        if ($schoolIdsProvided) {
+            $course->schools()->sync($schoolIds);
+        }
+
+        if ($collegeIdsProvided) {
+            $course->colleges()->sync($collegeIds);
+        }
     }
 }
