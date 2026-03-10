@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Exceptions\DomainException;
 use App\Http\Middleware\EnsureActiveEnrollment;
+use App\Http\Middleware\EnsureBrandedCenter;
 use App\Http\Middleware\EnsureCenterScope;
 use App\Http\Middleware\EnsureSystemScope;
 use App\Http\Middleware\EnsureUnbrandedStudent;
@@ -119,6 +120,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'require.role' => RequireRole::class,
             'scope.system' => EnsureSystemScope::class,
             'scope.center' => EnsureCenterScope::class,
+            'ensure.branded.center' => EnsureBrandedCenter::class,
             'normalize.admin.api' => NormalizeAdminApiResponse::class,
             'resolve.subdomain' => ResolveCenterSubdomain::class,
         ]);

@@ -5,11 +5,14 @@ declare(strict_types=1);
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Grade;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
+use App\Models\PlaybackSession;
 use App\Models\Section;
 use App\Models\User;
+use App\Models\UserDevice;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Storage\StoragePathResolver;
@@ -107,6 +110,91 @@ it('shows course aggregate with metadata only', function (): void {
         'video_uuid',
         'library_id',
     ]);
+});
+
+it('returns lesson card metrics for course videos', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
+    $section = Section::factory()->create([
+        'course_id' => $course->id,
+        'order_index' => 1,
+    ]);
+
+    $readySession = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => 3,
+    ]);
+
+    $video = Video::factory()->create([
+        'library_id' => 55,
+        'source_id' => 'video-lesson-stats-uuid',
+        'duration_seconds' => 120,
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => $readySession->id,
+    ]);
+
+    CourseVideo::create([
+        'course_id' => $course->id,
+        'section_id' => $section->id,
+        'video_id' => $video->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $device = UserDevice::factory()->create(['user_id' => $student->id]);
+
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'is_full_play' => true,
+        'watch_duration' => 100,
+        'started_at' => now()->subDay(),
+        'ended_at' => now()->subDay()->addMinutes(3),
+        'expires_at' => now()->subDay()->addMinutes(4),
+    ]);
+
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'is_full_play' => false,
+        'watch_duration' => 50,
+        'started_at' => now()->subHours(10),
+        'ended_at' => now()->subHours(9),
+        'expires_at' => now()->subHours(8),
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}");
+
+    $response->assertOk()
+        ->assertJsonPath('data.videos.0.id', $video->id)
+        ->assertJsonPath('data.videos.0.full_plays', 1)
+        ->assertJsonPath('data.videos.0.watch_duration_seconds', 150)
+        ->assertJsonPath('data.videos.0.view_limit', 2)
+        ->assertJsonPath('data.videos.0.remaining_views', 1);
 });
 
 it('prefers custom video thumbnail over bunny thumbnail when available', function (): void {
@@ -222,6 +310,34 @@ it('marks course as not enrolled when student is not enrolled', function (): voi
 
     $response->assertOk()
         ->assertJsonPath('data.is_enrolled', false);
+});
+
+it('returns not found when course does not match student education profile', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $grade12 = Grade::factory()->create(['center_id' => $center->id]);
+    $grade11 = Grade::factory()->create(['center_id' => $center->id]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'grade_id' => $grade12->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+    ]);
+    $course->grades()->sync([$grade11->id]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}");
+
+    $response->assertStatus(404)
+        ->assertJsonPath('error.code', 'NOT_FOUND');
 });
 
 it('returns not found for unpublished courses', function (): void {

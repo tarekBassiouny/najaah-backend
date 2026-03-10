@@ -48,10 +48,14 @@ class SubdomainResolverService implements SubdomainResolverServiceInterface
 
     public function buildCenterUrl(Center $center, string $path = ''): string
     {
-        $baseDomain = $this->getBaseDomain();
-        $scheme = Config::get('app.url_scheme', 'https');
+        $frontendUrl = (string) Config::get('app.frontend_url', '');
+        $parsedFrontendUrl = parse_url($frontendUrl);
 
-        $url = sprintf('%s://%s.%s', $scheme, $center->slug, $baseDomain);
+        $scheme = $parsedFrontendUrl['scheme'] ?? Config::get('app.url_scheme', 'https');
+        $host = $parsedFrontendUrl['host'] ?? $this->getBaseDomain();
+        $port = isset($parsedFrontendUrl['port']) ? ':'.$parsedFrontendUrl['port'] : '';
+
+        $url = sprintf('%s://%s.%s%s', $scheme, $center->slug, $host, $port);
 
         if ($path !== '') {
             $url .= '/'.ltrim($path, '/');

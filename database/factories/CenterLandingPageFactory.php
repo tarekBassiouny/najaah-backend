@@ -64,6 +64,9 @@ class CenterLandingPageFactory extends Factory
             'show_courses' => true,
             'show_testimonials' => true,
             'show_contact' => true,
+            'section_order' => CenterLandingPage::DEFAULT_SECTION_ORDER,
+            'section_layouts' => CenterLandingPage::defaultSectionLayouts(),
+            'section_styles' => CenterLandingPage::defaultSectionStyles(),
         ];
     }
 

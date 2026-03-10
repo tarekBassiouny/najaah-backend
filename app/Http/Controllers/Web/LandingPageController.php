@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Center;
 use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
+use App\Services\LandingPages\LandingPageMediaUrlResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,7 @@ class LandingPageController extends Controller
 {
     public function __construct(
         private readonly LandingPageServiceInterface $landingPageService,
+        private readonly LandingPageMediaUrlResolver $mediaUrlResolver,
     ) {}
 
     /**
@@ -124,14 +126,14 @@ class LandingPageController extends Controller
             'hero' => $landingPage->show_hero ? [
                 'title' => $landingPage->translate('hero_title'),
                 'subtitle' => $landingPage->translate('hero_subtitle'),
-                'background_url' => $landingPage->hero_background_url,
+                'background_url' => $this->mediaUrlResolver->resolve($landingPage->hero_background_url),
                 'cta_text' => $landingPage->hero_cta_text,
                 'cta_url' => $landingPage->hero_cta_url,
             ] : null,
             'about' => $landingPage->show_about ? [
                 'title' => $landingPage->translate('about_title'),
                 'content' => $landingPage->translate('about_content'),
-                'image_url' => $landingPage->about_image_url,
+                'image_url' => $this->mediaUrlResolver->resolve($landingPage->about_image_url),
             ] : null,
             'contact' => $landingPage->show_contact ? [
                 'email' => $landingPage->contact_email,
@@ -158,12 +160,17 @@ class LandingPageController extends Controller
                 'show_testimonials' => $landingPage->show_testimonials,
                 'show_contact' => $landingPage->show_contact,
             ],
+            'layout' => [
+                'section_order' => $landingPage->effectiveSectionOrder(),
+                'section_layouts' => $landingPage->effectiveSectionLayouts(),
+                'section_styles' => $landingPage->effectiveSectionStyles(),
+            ],
             'testimonials' => $landingPage->show_testimonials
                 ? $landingPage->testimonials->filter(fn ($t) => $t->is_active)->map(fn ($t): array => [
                     'id' => $t->id,
                     'author_name' => $t->author_name,
                     'author_title' => $t->author_title,
-                    'author_image_url' => $t->author_image_url,
+                    'author_image_url' => $this->mediaUrlResolver->resolve($t->author_image_url),
                     'content' => $t->translate('content'),
                     'rating' => $t->rating,
                 ])->values()->all()

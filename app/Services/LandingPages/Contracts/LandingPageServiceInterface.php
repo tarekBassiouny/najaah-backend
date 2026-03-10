@@ -52,6 +52,21 @@ interface LandingPageServiceInterface
      */
     public function updateVisibilitySection(CenterLandingPage $landingPage, array $data, ?User $actor = null): CenterLandingPage;
 
+    /**
+     * @param  array<int, string>  $sectionOrder
+     */
+    public function updateLayoutOrder(CenterLandingPage $landingPage, array $sectionOrder, ?User $actor = null): CenterLandingPage;
+
+    /**
+     * @param  array<string, string>  $sectionLayouts
+     */
+    public function updateLayoutVariants(CenterLandingPage $landingPage, array $sectionLayouts, ?User $actor = null): CenterLandingPage;
+
+    /**
+     * @param  array<string, array<string, scalar|null>>  $sectionStyles
+     */
+    public function updateLayoutStyles(CenterLandingPage $landingPage, array $sectionStyles, ?User $actor = null): CenterLandingPage;
+
     public function publish(CenterLandingPage $landingPage, ?User $actor = null): CenterLandingPage;
 
     public function unpublish(CenterLandingPage $landingPage, ?User $actor = null): CenterLandingPage;

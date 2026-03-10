@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property bool $show_courses
  * @property bool $show_testimonials
  * @property bool $show_contact
+ * @property array<int, string>|null $section_order
+ * @property array<string, string>|null $section_layouts
+ * @property array<string, array<string, scalar|null>>|null $section_styles
  * @property-read Center $center
  * @property-read \Illuminate\Database\Eloquent\Collection<int, CenterLandingTestimonial> $testimonials
  */
@@ -54,6 +57,43 @@ class CenterLandingPage extends Model
 
     use HasTranslations;
     use SoftDeletes;
+
+    public const SECTION_HERO = 'hero';
+
+    public const SECTION_ABOUT = 'about';
+
+    public const SECTION_COURSES = 'courses';
+
+    public const SECTION_TESTIMONIALS = 'testimonials';
+
+    public const SECTION_CONTACT = 'contact';
+
+    /** @var array<int, string> */
+    public const DEFAULT_SECTION_ORDER = [
+        self::SECTION_HERO,
+        self::SECTION_ABOUT,
+        self::SECTION_COURSES,
+        self::SECTION_TESTIMONIALS,
+        self::SECTION_CONTACT,
+    ];
+
+    /** @var array<string, array<int, string>> */
+    public const ALLOWED_LAYOUT_VARIANTS = [
+        self::SECTION_HERO => ['default', 'split'],
+        self::SECTION_ABOUT => ['default', 'split'],
+        self::SECTION_COURSES => ['default', 'grid'],
+        self::SECTION_TESTIMONIALS => ['default', 'cards'],
+        self::SECTION_CONTACT => ['default', 'split'],
+    ];
+
+    /** @var array<string, array<int, string>> */
+    public const ALLOWED_STYLE_KEYS = [
+        self::SECTION_HERO => ['text_align', 'overlay_opacity', 'content_width'],
+        self::SECTION_ABOUT => ['text_align', 'image_fit'],
+        self::SECTION_COURSES => ['columns_desktop', 'columns_mobile'],
+        self::SECTION_TESTIMONIALS => ['card_style', 'columns_desktop'],
+        self::SECTION_CONTACT => ['layout', 'show_map'],
+    ];
 
     protected $fillable = [
         'center_id',
@@ -86,6 +126,9 @@ class CenterLandingPage extends Model
         'show_courses',
         'show_testimonials',
         'show_contact',
+        'section_order',
+        'section_layouts',
+        'section_styles',
     ];
 
     protected $casts = [
@@ -99,6 +142,9 @@ class CenterLandingPage extends Model
         'show_courses' => 'boolean',
         'show_testimonials' => 'boolean',
         'show_contact' => 'boolean',
+        'section_order' => 'array',
+        'section_layouts' => 'array',
+        'section_styles' => 'array',
     ];
 
     /** @var array<int, string> */
@@ -124,5 +170,80 @@ class CenterLandingPage extends Model
     public function isPublished(): bool
     {
         return $this->status === LandingPageStatus::Published;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function effectiveSectionOrder(): array
+    {
+        $order = is_array($this->section_order) ? array_values($this->section_order) : [];
+        if ($order === []) {
+            return self::DEFAULT_SECTION_ORDER;
+        }
+
+        return $order;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function effectiveSectionLayouts(): array
+    {
+        $stored = is_array($this->section_layouts) ? $this->section_layouts : [];
+        $defaults = self::defaultSectionLayouts();
+
+        foreach ($defaults as $section => $variant) {
+            if (! isset($stored[$section]) || ! is_string($stored[$section]) || $stored[$section] === '') {
+                $stored[$section] = $variant;
+            }
+        }
+
+        return $stored;
+    }
+
+    /**
+     * @return array<string, array<string, scalar|null>>
+     */
+    public function effectiveSectionStyles(): array
+    {
+        $stored = is_array($this->section_styles) ? $this->section_styles : [];
+        $defaults = self::defaultSectionStyles();
+
+        foreach ($defaults as $section => $styles) {
+            if (! isset($stored[$section]) || ! is_array($stored[$section])) {
+                $stored[$section] = $styles;
+            }
+        }
+
+        return $stored;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function defaultSectionLayouts(): array
+    {
+        return [
+            self::SECTION_HERO => 'default',
+            self::SECTION_ABOUT => 'default',
+            self::SECTION_COURSES => 'default',
+            self::SECTION_TESTIMONIALS => 'default',
+            self::SECTION_CONTACT => 'default',
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, scalar|null>>
+     */
+    public static function defaultSectionStyles(): array
+    {
+        return [
+            self::SECTION_HERO => [],
+            self::SECTION_ABOUT => [],
+            self::SECTION_COURSES => [],
+            self::SECTION_TESTIMONIALS => [],
+            self::SECTION_CONTACT => [],
+        ];
     }
 }

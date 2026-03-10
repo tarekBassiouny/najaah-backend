@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Grade;
 use App\Models\Instructor;
 use App\Models\Pivots\CourseVideo;
 use App\Models\PlaybackSession;
@@ -78,6 +79,44 @@ it('searches courses by title', function (): void {
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $match->id)
         ->assertJsonPath('data.0.is_enrolled', true);
+});
+
+it('filters targeted courses by student education profile in search', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $grade12 = Grade::factory()->create(['center_id' => $center->id]);
+    $grade11 = Grade::factory()->create(['center_id' => $center->id]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'grade_id' => $grade12->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $matching = Course::factory()->create([
+        'center_id' => $center->id,
+        'title_translations' => ['en' => 'Profile Course'],
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+    ]);
+    $matching->grades()->sync([$grade12->id]);
+
+    $nonMatching = Course::factory()->create([
+        'center_id' => $center->id,
+        'title_translations' => ['en' => 'Profile Course'],
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+    ]);
+    $nonMatching->grades()->sync([$grade11->id]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/search?search=Profile');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $matching->id);
 });
 
 it('searches courses by instructor name', function (): void {

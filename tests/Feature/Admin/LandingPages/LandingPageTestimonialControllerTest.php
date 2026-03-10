@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CenterType;
 use App\Models\Center;
 use App\Models\CenterLandingPage;
 use App\Models\CenterLandingTestimonial;
@@ -10,7 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class)->group('landing-pages', 'admin');
 
 it('lists testimonials', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $landingPage = CenterLandingPage::factory()->create(['center_id' => $center->id]);
     CenterLandingTestimonial::factory()->count(3)->create([
         'center_landing_page_id' => $landingPage->id,
@@ -26,7 +27,7 @@ it('lists testimonials', function (): void {
 });
 
 it('creates a testimonial', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -48,8 +49,32 @@ it('creates a testimonial', function (): void {
     ]);
 });
 
+it('normalizes signed author image url to storage path on create', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    CenterLandingPage::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/landing-page/testimonials", [
+        'author_name' => 'Tarek',
+        'author_title' => 'Learner',
+        'author_image_url' => "https://xyz-lms-bucket.fra1.digitaloceanspaces.com/centers/{$center->id}/landing-page/testimonials/author_1773109765.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=test",
+        'content' => ['en' => 'Amazing', 'ar' => 'رائع'],
+        'rating' => 5,
+        'is_active' => true,
+    ], $this->adminHeaders());
+
+    $response
+        ->assertCreated()
+        ->assertJsonPath('success', true);
+
+    $this->assertDatabaseHas('center_landing_testimonials', [
+        'author_name' => 'Tarek',
+        'author_image_url' => "centers/{$center->id}/landing-page/testimonials/author_1773109765.png",
+    ]);
+});
+
 it('validates required fields when creating testimonial', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     CenterLandingPage::factory()->create(['center_id' => $center->id]);
 
     $this->asCenterAdmin($center);
@@ -63,7 +88,7 @@ it('validates required fields when creating testimonial', function (): void {
 });
 
 it('updates a testimonial', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $landingPage = CenterLandingPage::factory()->create(['center_id' => $center->id]);
     $testimonial = CenterLandingTestimonial::factory()->create([
         'center_landing_page_id' => $landingPage->id,
@@ -84,7 +109,7 @@ it('updates a testimonial', function (): void {
 });
 
 it('deletes a testimonial', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $landingPage = CenterLandingPage::factory()->create(['center_id' => $center->id]);
     $testimonial = CenterLandingTestimonial::factory()->create([
         'center_landing_page_id' => $landingPage->id,
@@ -103,7 +128,7 @@ it('deletes a testimonial', function (): void {
 });
 
 it('reorders testimonials', function (): void {
-    $center = Center::factory()->create();
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
     $landingPage = CenterLandingPage::factory()->create(['center_id' => $center->id]);
     $t1 = CenterLandingTestimonial::factory()->create([
         'center_landing_page_id' => $landingPage->id,
@@ -133,8 +158,8 @@ it('reorders testimonials', function (): void {
 });
 
 it('returns 404 for testimonial from different center', function (): void {
-    $center1 = Center::factory()->create();
-    $center2 = Center::factory()->create();
+    $center1 = Center::factory()->create(['type' => CenterType::Branded]);
+    $center2 = Center::factory()->create(['type' => CenterType::Branded]);
     $landingPage = CenterLandingPage::factory()->create(['center_id' => $center2->id]);
     $testimonial = CenterLandingTestimonial::factory()->create([
         'center_landing_page_id' => $landingPage->id,
@@ -146,4 +171,19 @@ it('returns 404 for testimonial from different center', function (): void {
     $response
         ->assertNotFound()
         ->assertJsonPath('error.code', 'NOT_FOUND');
+});
+
+it('blocks testimonials endpoints for unbranded centers', function (): void {
+    $center = Center::factory()->create([
+        'type' => CenterType::Unbranded,
+    ]);
+    CenterLandingPage::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/landing-page/testimonials", $this->adminHeaders());
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.message', 'Landing pages are allowed only for branded centers.');
 });

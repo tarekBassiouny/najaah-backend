@@ -6,6 +6,18 @@ use App\Services\AdminNotifications\AdminNotificationService;
 use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
 use App\Services\AdminUsers\AdminUserService;
 use App\Services\AdminUsers\Contracts\AdminUserServiceInterface;
+use App\Services\Assessments\AIQuizGeneratorService;
+use App\Services\Assessments\AssessmentProgressService;
+use App\Services\Assessments\AssignmentService;
+use App\Services\Assessments\AssignmentSubmissionService;
+use App\Services\Assessments\Contracts\AIQuizGeneratorServiceInterface;
+use App\Services\Assessments\Contracts\AssessmentProgressServiceInterface;
+use App\Services\Assessments\Contracts\AssignmentServiceInterface;
+use App\Services\Assessments\Contracts\AssignmentSubmissionServiceInterface;
+use App\Services\Assessments\Contracts\QuizAttemptServiceInterface;
+use App\Services\Assessments\Contracts\QuizServiceInterface;
+use App\Services\Assessments\QuizAttemptService;
+use App\Services\Assessments\QuizService;
 use App\Services\Auth\AdminAuthService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Auth\Contracts\JwtServiceInterface;
@@ -138,6 +150,12 @@ class AppServiceProvider extends ServiceProvider
             AdminAuthServiceInterface::class => AdminAuthService::class,
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
+            QuizServiceInterface::class => QuizService::class,
+            QuizAttemptServiceInterface::class => QuizAttemptService::class,
+            AssignmentServiceInterface::class => AssignmentService::class,
+            AssignmentSubmissionServiceInterface::class => AssignmentSubmissionService::class,
+            AIQuizGeneratorServiceInterface::class => AIQuizGeneratorService::class,
+            AssessmentProgressServiceInterface::class => AssessmentProgressService::class,
             SectionServiceInterface::class => SectionService::class,
             SectionStructureServiceInterface::class => SectionStructureService::class,
             SectionWorkflowServiceInterface::class => SectionWorkflowService::class,

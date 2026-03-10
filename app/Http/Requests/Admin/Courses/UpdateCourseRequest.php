@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Courses;
 
+use App\Models\Center;
+use App\Models\College;
+use App\Models\Grade;
+use App\Models\School;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCourseRequest extends FormRequest
 {
@@ -32,13 +38,21 @@ class UpdateCourseRequest extends FormRequest
                 'primary_instructor_id' => $this->input('instructor_id'),
             ]);
         }
+
+        if (! $this->has('show_for_all_students') && $this->hasAnyTargetingIds($this->all())) {
+            $this->merge([
+                'show_for_all_students' => false,
+            ]);
+        }
     }
 
     /**
-     * @return array<string, array<int, string>|string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
+        $centerId = $this->resolveCenterId();
+
         return [
             'title_translations' => ['sometimes', 'array', 'min:1'],
             'title_translations.en' => ['nullable', 'string', 'max:255'],
@@ -50,6 +64,25 @@ class UpdateCourseRequest extends FormRequest
             'difficulty' => ['sometimes', 'required', 'in:beginner,intermediate,advanced'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'requires_video_approval' => ['sometimes', 'nullable', 'boolean'],
+            'show_for_all_students' => ['sometimes', 'boolean'],
+            'grade_ids' => ['sometimes', 'array'],
+            'grade_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists(Grade::class, 'id')->where(fn ($query) => $query->where('center_id', $centerId)),
+            ],
+            'school_ids' => ['sometimes', 'array'],
+            'school_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists(School::class, 'id')->where(fn ($query) => $query->where('center_id', $centerId)),
+            ],
+            'college_ids' => ['sometimes', 'array'],
+            'college_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists(College::class, 'id')->where(fn ($query) => $query->where('center_id', $centerId)),
+            ],
             'metadata' => ['sometimes', 'nullable', 'array'],
             'difficulty_level' => ['sometimes', 'integer'],
             'created_by' => ['sometimes', 'integer', 'exists:users,id'],
@@ -104,6 +137,22 @@ class UpdateCourseRequest extends FormRequest
                 'description' => 'Optional per-course override for video access approval. Null inherits center settings.',
                 'example' => false,
             ],
+            'show_for_all_students' => [
+                'description' => 'If true, course is visible to all students in the center. If false, education targets are used.',
+                'example' => false,
+            ],
+            'grade_ids' => [
+                'description' => 'Target grade IDs when show_for_all_students=false.',
+                'example' => [12],
+            ],
+            'school_ids' => [
+                'description' => 'Target school IDs when show_for_all_students=false.',
+                'example' => [3, 5],
+            ],
+            'college_ids' => [
+                'description' => 'Target college IDs when show_for_all_students=false.',
+                'example' => [7],
+            ],
             'metadata' => [
                 'description' => 'Optional metadata array.',
                 'example' => ['key' => 'value'],
@@ -123,5 +172,61 @@ class UpdateCourseRequest extends FormRequest
             'advanced' => 3,
             default => 0,
         };
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            /** @var array<string, mixed> $data */
+            $data = $this->all();
+
+            if (! array_key_exists('show_for_all_students', $data) && ! $this->hasAnyTargetingIds($data)) {
+                return;
+            }
+
+            $showForAll = array_key_exists('show_for_all_students', $data)
+                ? (bool) $data['show_for_all_students']
+                : ! $this->hasAnyTargetingIds($data);
+
+            if ($showForAll) {
+                return;
+            }
+
+            if (! $this->hasAnyTargetingIds($data)) {
+                $validator->errors()->add(
+                    'show_for_all_students',
+                    'At least one of grade_ids, school_ids, or college_ids is required when show_for_all_students is false.'
+                );
+            }
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function hasAnyTargetingIds(array $data): bool
+    {
+        return $this->hasNonEmptyArray($data, 'grade_ids')
+            || $this->hasNonEmptyArray($data, 'school_ids')
+            || $this->hasNonEmptyArray($data, 'college_ids');
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function hasNonEmptyArray(array $data, string $key): bool
+    {
+        return array_key_exists($key, $data) && is_array($data[$key]) && $data[$key] !== [];
+    }
+
+    private function resolveCenterId(): int
+    {
+        $center = $this->route('center');
+
+        if ($center instanceof Center) {
+            return (int) $center->id;
+        }
+
+        return is_numeric($center) ? (int) $center : 0;
     }
 }

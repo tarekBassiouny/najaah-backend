@@ -8,6 +8,7 @@ use App\Enums\VideoAccessCodeStatus;
 use App\Enums\VideoAccessRequestStatus;
 use App\Models\Course;
 use App\Models\Pivots\CourseVideo;
+use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoAccess;
@@ -48,6 +49,7 @@ class CourseVideoResource extends JsonResource
             $isLocked = $this->isViewLimitExceeded($request, $video, $pivot);
         }
 
+        $lessonStats = $this->resolveLessonStats($request, $video, $course);
         $thumbnail = app(VideoThumbnailUrlResolver::class)->resolve($video->effectiveThumbnailPath());
 
         return [
@@ -60,6 +62,10 @@ class CourseVideoResource extends JsonResource
             'requires_redemption' => $requiresRedemption,
             'has_redeemed' => $redemptionData['has_redeemed'],
             'is_locked' => $isLocked,
+            'view_limit' => $lessonStats['view_limit'],
+            'remaining_views' => $lessonStats['remaining_views'],
+            'full_plays' => $lessonStats['full_plays'],
+            'watch_duration_seconds' => $lessonStats['watch_duration_seconds'],
             'access_status' => $redemptionData['access_status'],
             'pending_request_id' => $redemptionData['pending_request_id'],
             'updated_at' => $video->updated_at,
@@ -221,5 +227,123 @@ class CourseVideoResource extends JsonResource
         }
 
         return null;
+    }
+
+    /**
+     * @return array{
+     *     view_limit:int|null,
+     *     remaining_views:int|null,
+     *     full_plays:int,
+     *     watch_duration_seconds:int
+     * }
+     */
+    private function resolveLessonStats(Request $request, Video $video, ?Course $course): array
+    {
+        /** @var User|null $user */
+        $user = $request->user();
+
+        if (! $user instanceof User || ! $course instanceof Course) {
+            return [
+                'view_limit' => null,
+                'remaining_views' => null,
+                'full_plays' => 0,
+                'watch_duration_seconds' => 0,
+            ];
+        }
+
+        /** @var ViewLimitServiceInterface $viewLimitService */
+        $viewLimitService = app(ViewLimitServiceInterface::class);
+
+        $statsMap = $this->resolveLessonStatsMap($request, $course, $user, (int) $video->id);
+        $videoStats = $statsMap[$video->id] ?? [
+            'full_plays' => 0,
+            'watch_duration_seconds' => 0,
+        ];
+
+        return [
+            'view_limit' => $viewLimitService->getEffectiveLimit($user, $video, $course),
+            'remaining_views' => $viewLimitService->getRemainingViews($user, $video, $course),
+            'full_plays' => (int) ($videoStats['full_plays'] ?? 0),
+            'watch_duration_seconds' => (int) ($videoStats['watch_duration_seconds'] ?? 0),
+        ];
+    }
+
+    /**
+     * @return array<int, array{full_plays:int,watch_duration_seconds:int}>
+     */
+    private function resolveLessonStatsMap(Request $request, Course $course, User $user, int $fallbackVideoId): array
+    {
+        /** @var array<string, array<int, array{full_plays:int,watch_duration_seconds:int}>> $cache */
+        $cache = $request->attributes->get('course_video_lesson_stats_cache', []);
+        if (! is_array($cache)) {
+            $cache = [];
+        }
+
+        $cacheKey = $user->id.':'.$course->id;
+        if (array_key_exists($cacheKey, $cache)) {
+            return $cache[$cacheKey];
+        }
+
+        $videoIds = $this->resolveCourseVideoIds($course);
+        if ($videoIds === []) {
+            $videoIds = [$fallbackVideoId];
+        }
+
+        $stats = array_fill_keys($videoIds, [
+            'full_plays' => 0,
+            'watch_duration_seconds' => 0,
+        ]);
+
+        $rows = PlaybackSession::query()
+            ->selectRaw(
+                'video_id, SUM(CASE WHEN is_full_play = 1 THEN 1 ELSE 0 END) as full_plays, COALESCE(SUM(watch_duration), 0) as watch_duration_seconds'
+            )
+            ->where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->whereIn('video_id', $videoIds)
+            ->whereNull('deleted_at')
+            ->groupBy('video_id')
+            ->get();
+
+        foreach ($rows as $row) {
+            $videoId = (int) $row->video_id;
+            $stats[$videoId] = [
+                'full_plays' => (int) ($row->full_plays ?? 0),
+                'watch_duration_seconds' => (int) ($row->watch_duration_seconds ?? 0),
+            ];
+        }
+
+        $cache[$cacheKey] = $stats;
+        $request->attributes->set('course_video_lesson_stats_cache', $cache);
+
+        return $stats;
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function resolveCourseVideoIds(Course $course): array
+    {
+        $videoIds = [];
+
+        if ($course->relationLoaded('videos')) {
+            foreach ($course->videos as $video) {
+                $videoIds[] = (int) $video->id;
+            }
+        }
+
+        if ($course->relationLoaded('sections')) {
+            foreach ($course->sections as $section) {
+                if (! $section->relationLoaded('videos')) {
+                    continue;
+                }
+
+                foreach ($section->videos as $video) {
+                    $videoIds[] = (int) $video->id;
+                }
+            }
+        }
+
+        return array_values(array_unique($videoIds));
     }
 }

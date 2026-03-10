@@ -30,7 +30,8 @@ class ExploreCourseService
             ->published()
             ->with(['center', 'category', 'instructors'])
             ->withEnrollmentMeta($student)
-            ->visibleToStudent($student);
+            ->visibleToStudent($student)
+            ->matchingStudentEducation($student);
 
         if ($filters->categoryId !== null) {
             $query->where('category_id', $filters->categoryId);
@@ -86,8 +87,13 @@ class ExploreCourseService
     {
         $course = Course::query()
             ->withEnrollmentMeta($student, true)
+            ->matchingStudentEducation($student)
             ->whereKey($course->id)
-            ->firstOrFail();
+            ->first();
+
+        if (! $course instanceof Course) {
+            $this->notFound();
+        }
 
         if ($course->status !== CourseStatus::Published || $course->is_published !== true) {
             $this->notFound();
