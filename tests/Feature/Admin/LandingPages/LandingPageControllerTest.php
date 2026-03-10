@@ -24,7 +24,9 @@ it('returns landing page for center', function (): void {
         ->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.center_id', $center->id)
-        ->assertJsonPath('data.meta.title', 'Test Landing Page');
+        ->assertJsonPath('data.meta.title', 'Test Landing Page')
+        ->assertJsonPath('data.layout.section_order.0', 'hero')
+        ->assertJsonPath('data.layout.section_layouts.hero', 'default');
 });
 
 it('creates landing page when none exists', function (): void {

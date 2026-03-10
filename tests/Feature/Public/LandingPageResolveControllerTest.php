@@ -131,3 +131,22 @@ it('respects section visibility settings', function (): void {
         ->assertJsonPath('data.about', null)
         ->assertJsonPath('data.contact', null);
 });
+
+it('returns layout metadata with defaults for legacy records', function (): void {
+    $center = Center::factory()->create(['slug' => 'layout-defaults-center']);
+    CenterLandingPage::factory()->create([
+        'center_id' => $center->id,
+        'status' => LandingPageStatus::Published,
+        'section_order' => null,
+        'section_layouts' => null,
+        'section_styles' => null,
+    ]);
+
+    $response = $this->getJson('/api/v1/resolve/landing-page/layout-defaults-center');
+
+    $response
+        ->assertOk()
+        ->assertJsonPath('data.layout.section_order.0', 'hero')
+        ->assertJsonPath('data.layout.section_layouts.hero', 'default')
+        ->assertJsonPath('data.layout.section_styles.hero', []);
+});

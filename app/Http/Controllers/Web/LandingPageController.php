@@ -160,6 +160,11 @@ class LandingPageController extends Controller
                 'show_testimonials' => $landingPage->show_testimonials,
                 'show_contact' => $landingPage->show_contact,
             ],
+            'layout' => [
+                'section_order' => $landingPage->effectiveSectionOrder(),
+                'section_layouts' => $landingPage->effectiveSectionLayouts(),
+                'section_styles' => $landingPage->effectiveSectionStyles(),
+            ],
             'testimonials' => $landingPage->show_testimonials
                 ? $landingPage->testimonials->filter(fn ($t) => $t->is_active)->map(fn ($t): array => [
                     'id' => $t->id,

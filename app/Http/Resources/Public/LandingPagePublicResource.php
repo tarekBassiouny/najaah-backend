@@ -88,6 +88,12 @@ class LandingPagePublicResource extends JsonResource
                 'show_contact' => $landingPage->show_contact,
             ],
 
+            'layout' => [
+                'section_order' => $landingPage->effectiveSectionOrder(),
+                'section_layouts' => $landingPage->effectiveSectionLayouts(),
+                'section_styles' => $landingPage->effectiveSectionStyles(),
+            ],
+
             // Testimonials (if visible and loaded)
             'testimonials' => $landingPage->show_testimonials
                 ? $this->formatTestimonials($landingPage, $mediaUrlResolver)

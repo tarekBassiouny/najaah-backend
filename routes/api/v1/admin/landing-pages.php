@@ -33,6 +33,12 @@ Route::middleware(['require.permission:landing_page.manage', 'scope.center', 'en
         ->whereNumber('center');
     Route::patch('/centers/{center}/landing-page/sections/visibility', [LandingPageSectionController::class, 'updateVisibility'])
         ->whereNumber('center');
+    Route::patch('/centers/{center}/landing-page/layout/order', [LandingPageSectionController::class, 'updateLayoutOrder'])
+        ->whereNumber('center');
+    Route::patch('/centers/{center}/landing-page/layout/variants', [LandingPageSectionController::class, 'updateLayoutVariants'])
+        ->whereNumber('center');
+    Route::patch('/centers/{center}/landing-page/layout/styles', [LandingPageSectionController::class, 'updateLayoutStyles'])
+        ->whereNumber('center');
 
     // Testimonial routes
     Route::get('/centers/{center}/landing-page/testimonials', [LandingPageTestimonialController::class, 'index'])

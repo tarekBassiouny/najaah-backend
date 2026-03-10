@@ -229,6 +229,66 @@ class LandingPageService implements LandingPageServiceInterface
         return $landingPage->fresh(['testimonials']) ?? $landingPage;
     }
 
+    /**
+     * @param  array<int, string>  $sectionOrder
+     */
+    public function updateLayoutOrder(CenterLandingPage $landingPage, array $sectionOrder, ?User $actor = null): CenterLandingPage
+    {
+        $landingPage->update([
+            'section_order' => array_values($sectionOrder),
+        ]);
+
+        $this->auditLogService->log($actor, $landingPage, AuditActions::LANDING_PAGE_UPDATED, [
+            'section' => 'layout_order',
+        ]);
+
+        return $landingPage->fresh(['testimonials']) ?? $landingPage;
+    }
+
+    /**
+     * @param  array<string, string>  $sectionLayouts
+     */
+    public function updateLayoutVariants(CenterLandingPage $landingPage, array $sectionLayouts, ?User $actor = null): CenterLandingPage
+    {
+        $current = $landingPage->effectiveSectionLayouts();
+
+        foreach ($sectionLayouts as $section => $variant) {
+            $current[$section] = $variant;
+        }
+
+        $landingPage->update([
+            'section_layouts' => $current,
+        ]);
+
+        $this->auditLogService->log($actor, $landingPage, AuditActions::LANDING_PAGE_UPDATED, [
+            'section' => 'layout_variants',
+        ]);
+
+        return $landingPage->fresh(['testimonials']) ?? $landingPage;
+    }
+
+    /**
+     * @param  array<string, array<string, scalar|null>>  $sectionStyles
+     */
+    public function updateLayoutStyles(CenterLandingPage $landingPage, array $sectionStyles, ?User $actor = null): CenterLandingPage
+    {
+        $current = $landingPage->effectiveSectionStyles();
+
+        foreach ($sectionStyles as $section => $styles) {
+            $current[$section] = $styles;
+        }
+
+        $landingPage->update([
+            'section_styles' => $current,
+        ]);
+
+        $this->auditLogService->log($actor, $landingPage, AuditActions::LANDING_PAGE_UPDATED, [
+            'section' => 'layout_styles',
+        ]);
+
+        return $landingPage->fresh(['testimonials']) ?? $landingPage;
+    }
+
     public function publish(CenterLandingPage $landingPage, ?User $actor = null): CenterLandingPage
     {
         $landingPage->update(['status' => LandingPageStatus::Published]);

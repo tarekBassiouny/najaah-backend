@@ -147,6 +147,86 @@ it('updates visibility section', function (): void {
         ->assertJsonPath('data.visibility.show_about', false);
 });
 
+it('updates layout order', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    CenterLandingPage::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/landing-page/layout/order", [
+        'section_order' => ['about', 'hero', 'courses', 'contact', 'testimonials'],
+    ], $this->adminHeaders());
+
+    $response
+        ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.layout.section_order.0', 'about')
+        ->assertJsonPath('data.layout.section_order.4', 'testimonials');
+});
+
+it('updates layout variants', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    CenterLandingPage::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/landing-page/layout/variants", [
+        'section_layouts' => [
+            'hero' => 'split',
+            'testimonials' => 'cards',
+        ],
+    ], $this->adminHeaders());
+
+    $response
+        ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.layout.section_layouts.hero', 'split')
+        ->assertJsonPath('data.layout.section_layouts.testimonials', 'cards');
+});
+
+it('updates layout styles', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    CenterLandingPage::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/landing-page/layout/styles", [
+        'section_styles' => [
+            'hero' => ['text_align' => 'left', 'overlay_opacity' => 0.6],
+            'courses' => ['columns_desktop' => 3],
+        ],
+    ], $this->adminHeaders());
+
+    $response
+        ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.layout.section_styles.hero.text_align', 'left')
+        ->assertJsonPath('data.layout.section_styles.courses.columns_desktop', 3);
+});
+
+it('validates layout variants and styles', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    CenterLandingPage::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    $variantsResponse = $this->patchJson("/api/v1/admin/centers/{$center->id}/landing-page/layout/variants", [
+        'section_layouts' => [
+            'hero' => 'unknown_variant',
+        ],
+    ], $this->adminHeaders());
+
+    $variantsResponse
+        ->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+
+    $stylesResponse = $this->patchJson("/api/v1/admin/centers/{$center->id}/landing-page/layout/styles", [
+        'section_styles' => [
+            'hero' => ['unknown_key' => 'x'],
+        ],
+    ], $this->adminHeaders());
+
+    $stylesResponse
+        ->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+});
+
 it('blocks section updates for unbranded centers', function (): void {
     $center = Center::factory()->create([
         'type' => CenterType::Unbranded,

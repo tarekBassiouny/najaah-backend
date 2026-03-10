@@ -92,6 +92,13 @@ class LandingPageResource extends JsonResource
                 'show_contact' => $landingPage->show_contact,
             ],
 
+            // Layout variants/order/styles
+            'layout' => [
+                'section_order' => $landingPage->effectiveSectionOrder(),
+                'section_layouts' => $landingPage->effectiveSectionLayouts(),
+                'section_styles' => $landingPage->effectiveSectionStyles(),
+            ],
+
             // Testimonials
             'testimonials' => LandingTestimonialResource::collection($this->whenLoaded('testimonials')),
 

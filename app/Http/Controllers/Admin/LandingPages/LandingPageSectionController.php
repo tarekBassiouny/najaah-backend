@@ -8,6 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LandingPages\UpdateAboutSectionRequest;
 use App\Http\Requests\Admin\LandingPages\UpdateContactSectionRequest;
 use App\Http\Requests\Admin\LandingPages\UpdateHeroSectionRequest;
+use App\Http\Requests\Admin\LandingPages\UpdateLayoutOrderRequest;
+use App\Http\Requests\Admin\LandingPages\UpdateLayoutStylesRequest;
+use App\Http\Requests\Admin\LandingPages\UpdateLayoutVariantsRequest;
 use App\Http\Requests\Admin\LandingPages\UpdateMetaSectionRequest;
 use App\Http\Requests\Admin\LandingPages\UpdateSocialSectionRequest;
 use App\Http\Requests\Admin\LandingPages\UpdateStylingSectionRequest;
@@ -223,6 +226,93 @@ class LandingPageSectionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Visibility section updated successfully',
+            'data' => new LandingPageResource($updated),
+        ]);
+    }
+
+    /**
+     * Update layout section order.
+     */
+    public function updateLayoutOrder(UpdateLayoutOrderRequest $request, int $center): JsonResponse
+    {
+        $centerModel = Center::find($center);
+
+        if (! $centerModel instanceof Center) {
+            return $this->notFoundResponse('Center not found');
+        }
+
+        $landingPage = $this->landingPageService->getOrCreateForCenter($centerModel);
+        $admin = $request->user();
+
+        /** @var array<int, string> $sectionOrder */
+        $sectionOrder = $request->validated('section_order');
+        $updated = $this->landingPageService->updateLayoutOrder(
+            $landingPage,
+            $sectionOrder,
+            $admin instanceof User ? $admin : null
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Layout order updated successfully',
+            'data' => new LandingPageResource($updated),
+        ]);
+    }
+
+    /**
+     * Update layout variants.
+     */
+    public function updateLayoutVariants(UpdateLayoutVariantsRequest $request, int $center): JsonResponse
+    {
+        $centerModel = Center::find($center);
+
+        if (! $centerModel instanceof Center) {
+            return $this->notFoundResponse('Center not found');
+        }
+
+        $landingPage = $this->landingPageService->getOrCreateForCenter($centerModel);
+        $admin = $request->user();
+
+        /** @var array<string, string> $sectionLayouts */
+        $sectionLayouts = $request->validated('section_layouts');
+        $updated = $this->landingPageService->updateLayoutVariants(
+            $landingPage,
+            $sectionLayouts,
+            $admin instanceof User ? $admin : null
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Layout variants updated successfully',
+            'data' => new LandingPageResource($updated),
+        ]);
+    }
+
+    /**
+     * Update layout styles.
+     */
+    public function updateLayoutStyles(UpdateLayoutStylesRequest $request, int $center): JsonResponse
+    {
+        $centerModel = Center::find($center);
+
+        if (! $centerModel instanceof Center) {
+            return $this->notFoundResponse('Center not found');
+        }
+
+        $landingPage = $this->landingPageService->getOrCreateForCenter($centerModel);
+        $admin = $request->user();
+
+        /** @var array<string, array<string, scalar|null>> $sectionStyles */
+        $sectionStyles = $request->validated('section_styles');
+        $updated = $this->landingPageService->updateLayoutStyles(
+            $landingPage,
+            $sectionStyles,
+            $admin instanceof User ? $admin : null
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Layout styles updated successfully',
             'data' => new LandingPageResource($updated),
         ]);
     }
