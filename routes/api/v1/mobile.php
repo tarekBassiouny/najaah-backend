@@ -23,6 +23,7 @@ use App\Http\Controllers\Mobile\SearchController;
 use App\Http\Controllers\Mobile\SurveyController;
 use App\Http\Controllers\Mobile\VideoAccessCodeController;
 use App\Http\Controllers\Mobile\VideoAccessRequestController;
+use App\Http\Controllers\Mobile\WeeklyActivityController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -109,6 +110,7 @@ Route::middleware('jwt.mobile')->group(function (): void {
     */
     Route::get('/courses/enrolled', [EnrolledCoursesController::class, 'index']);
     Route::get('/courses/enrolled/by-instructor', [EnrolledCoursesController::class, 'byInstructor']);
+    Route::get('/centers/{center}/activity/weekly', [WeeklyActivityController::class, 'index']);
 
     /*
     |--------------------------------------------------------------------------

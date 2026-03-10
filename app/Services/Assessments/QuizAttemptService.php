@@ -209,6 +209,7 @@ final class QuizAttemptService implements QuizAttemptServiceInterface
     {
         return $quiz->attempts()
             ->where('user_id', $student->id)
+            ->withCount('answers')
             ->orderBy('attempt_number')
             ->get();
     }

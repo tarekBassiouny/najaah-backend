@@ -9,6 +9,7 @@ use App\Http\Resources\Mobile\Quiz\QuizInfoResource;
 use App\Http\Resources\Mobile\Quiz\QuizListResource;
 use App\Models\Course;
 use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use App\Models\User;
 use App\Services\Assessments\Contracts\QuizAttemptServiceInterface;
 use App\Services\Assessments\Contracts\QuizServiceInterface;
@@ -174,6 +175,10 @@ class QuizController extends Controller
         }
 
         $attempts = $this->attemptService->getAttempts($quiz, $student);
+        $totalQuestions = $quiz->questions()->active()->count();
+        $gradedAttempts = $attempts->filter(static fn (QuizAttempt $attempt): bool => is_numeric($attempt->score));
+        $completedAttempts = $attempts->filter(static fn (QuizAttempt $attempt): bool => $attempt->status->isCompleted());
+        $failedCompletedAttempts = $completedAttempts->filter(static fn (QuizAttempt $attempt): bool => $attempt->passed === false);
 
         return response()->json([
             'success' => true,
@@ -189,7 +194,18 @@ class QuizController extends Controller
                     'started_at' => $attempt->started_at?->toIso8601String(),
                     'submitted_at' => $attempt->submitted_at?->toIso8601String(),
                     'time_spent_seconds' => $attempt->time_spent_seconds,
+                    'answered_questions' => (int) ($attempt->answers_count ?? 0),
+                    'total_questions' => $totalQuestions,
+                    'can_resume' => $attempt->isInProgress(),
                 ]),
+                'stats' => [
+                    'lowest_score' => $gradedAttempts->isEmpty() ? null : (float) $gradedAttempts->min('score'),
+                    'average_score' => $gradedAttempts->isEmpty() ? null : round((float) $gradedAttempts->avg('score'), 2),
+                    'highest_score' => $gradedAttempts->isEmpty() ? null : (float) $gradedAttempts->max('score'),
+                    'opened_count' => $attempts->count(),
+                    'completed_count' => $completedAttempts->count(),
+                    'failed_count' => $failedCompletedAttempts->count(),
+                ],
                 'best_score' => $this->attemptService->calculateFinalScore($quiz, $student),
                 'remaining_attempts' => $this->quizService->getRemainingAttempts($quiz, $student),
             ],
