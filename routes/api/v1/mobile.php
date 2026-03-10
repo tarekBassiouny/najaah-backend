@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Mobile\AssignmentController;
+use App\Http\Controllers\Mobile\AssignmentGroupController;
+use App\Http\Controllers\Mobile\AssignmentSubmissionController;
 use App\Http\Controllers\Mobile\AuthController;
 use App\Http\Controllers\Mobile\CategoryController;
 use App\Http\Controllers\Mobile\CentersController;
@@ -14,10 +17,13 @@ use App\Http\Controllers\Mobile\InstructorController;
 use App\Http\Controllers\Mobile\MeController;
 use App\Http\Controllers\Mobile\PdfController;
 use App\Http\Controllers\Mobile\PlaybackController;
+use App\Http\Controllers\Mobile\QuizAttemptController;
+use App\Http\Controllers\Mobile\QuizController;
 use App\Http\Controllers\Mobile\SearchController;
 use App\Http\Controllers\Mobile\SurveyController;
 use App\Http\Controllers\Mobile\VideoAccessCodeController;
 use App\Http\Controllers\Mobile\VideoAccessRequestController;
+use App\Http\Controllers\Mobile\WeeklyActivityController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -104,6 +110,7 @@ Route::middleware('jwt.mobile')->group(function (): void {
     */
     Route::get('/courses/enrolled', [EnrolledCoursesController::class, 'index']);
     Route::get('/courses/enrolled/by-instructor', [EnrolledCoursesController::class, 'byInstructor']);
+    Route::get('/centers/{center}/activity/weekly', [WeeklyActivityController::class, 'index']);
 
     /*
     |--------------------------------------------------------------------------
@@ -180,5 +187,43 @@ Route::middleware('jwt.mobile')->group(function (): void {
     Route::get('/surveys/assigned', [SurveyController::class, 'assigned']);
     Route::get('/surveys/{survey}', [SurveyController::class, 'show']);
     Route::post('/surveys/{survey}/submit', [SurveyController::class, 'submit']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Quizzes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/centers/{center}/courses/{course}/quizzes', [QuizController::class, 'index']);
+    Route::get('/centers/{center}/quizzes/{quiz}', [QuizController::class, 'show']);
+    Route::get('/centers/{center}/quizzes/{quiz}/my-attempts', [QuizController::class, 'myAttempts']);
+    Route::post('/centers/{center}/quizzes/{quiz}/start', [QuizAttemptController::class, 'start']);
+    Route::get('/centers/{center}/quiz-attempts/{attempt}', [QuizAttemptController::class, 'show']);
+    Route::post('/centers/{center}/quiz-attempts/{attempt}/answer', [QuizAttemptController::class, 'answer']);
+    Route::post('/centers/{center}/quiz-attempts/{attempt}/submit', [QuizAttemptController::class, 'submit']);
+    Route::get('/centers/{center}/quiz-attempts/{attempt}/results', [QuizAttemptController::class, 'results']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Assignments
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/centers/{center}/courses/{course}/assignments', [AssignmentController::class, 'index']);
+    Route::get('/centers/{center}/assignments/{assignment}', [AssignmentController::class, 'show']);
+    Route::get('/centers/{center}/assignments/{assignment}/my-submission', [AssignmentController::class, 'mySubmission']);
+    Route::post('/centers/{center}/assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store']);
+    Route::post('/centers/{center}/submissions/{submission}/files', [AssignmentSubmissionController::class, 'uploadFile']);
+    Route::delete('/centers/{center}/submissions/{submission}/files/{file}', [AssignmentSubmissionController::class, 'removeFile']);
+    Route::post('/centers/{center}/submissions/{submission}/submit', [AssignmentSubmissionController::class, 'submit']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Assignment Groups
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/centers/{center}/assignments/{assignment}/groups', [AssignmentGroupController::class, 'index']);
+    Route::post('/centers/{center}/assignments/{assignment}/groups', [AssignmentGroupController::class, 'store']);
+    Route::get('/centers/{center}/assignment-groups/{group}', [AssignmentGroupController::class, 'show']);
+    Route::post('/centers/{center}/assignment-groups/{group}/join', [AssignmentGroupController::class, 'join']);
+    Route::post('/centers/{center}/assignment-groups/{group}/leave', [AssignmentGroupController::class, 'leave']);
 
 });

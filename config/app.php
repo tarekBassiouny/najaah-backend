@@ -56,6 +56,14 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'frontend_url' => env('FRONTEND_URL', 'http://najaah.local:3000'),
+    'base_domain' => env(
+        'APP_BASE_DOMAIN',
+        parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST) ?: 'localhost'
+    ),
+    'url_scheme' => env(
+        'APP_URL_SCHEME',
+        parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_SCHEME) ?: 'http'
+    ),
 
     /*
     |--------------------------------------------------------------------------

@@ -7,6 +7,7 @@ use App\Models\Center;
 use App\Models\CenterSetting;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Grade;
 use App\Models\Instructor;
 use App\Models\Pivots\CourseVideo;
 use App\Models\User;
@@ -61,6 +62,53 @@ it('lists courses for branded student center and marks enrollment', function ():
         ->assertJsonPath('data.0.id', $courseA->id)
         ->assertJsonPath('data.0.is_enrolled', true)
         ->assertJsonPath('data.0.requires_video_approval', true);
+});
+
+it('filters targeted courses by student education profile', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $grade12 = Grade::factory()->create(['center_id' => $center->id]);
+    $grade11 = Grade::factory()->create(['center_id' => $center->id]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'grade_id' => $grade12->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $forAll = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => true,
+    ]);
+    $grade12Course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+    ]);
+    $grade12Course->grades()->sync([$grade12->id]);
+
+    $grade11Course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+    ]);
+    $grade11Course->grades()->sync([$grade11->id]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/courses/explore');
+
+    $response->assertOk()
+        ->assertJsonCount(2, 'data');
+
+    $ids = collect($response->json('data'))->pluck('id')->all();
+    expect($ids)->toContain($forAll->id)
+        ->toContain($grade12Course->id)
+        ->not->toContain($grade11Course->id);
 });
 
 it('lists only unbranded center courses for system students', function (): void {
@@ -370,4 +418,66 @@ it('excludes courses with non-ready videos from explore', function (): void {
     $response->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $readyCourse->id);
+});
+
+it('filters courses by instructor id when instructor is assigned as primary only', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $targetInstructor = Instructor::factory()->create(['center_id' => $center->id]);
+    $otherInstructor = Instructor::factory()->create(['center_id' => $center->id]);
+
+    $targetCourse = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'primary_instructor_id' => $targetInstructor->id,
+    ]);
+    $otherCourse = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'primary_instructor_id' => $otherInstructor->id,
+    ]);
+
+    $readySession = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => 3,
+    ]);
+
+    $targetVideo = Video::factory()->create([
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => $readySession->id,
+    ]);
+    $otherVideo = Video::factory()->create([
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => $readySession->id,
+    ]);
+
+    CourseVideo::create([
+        'course_id' => $targetCourse->id,
+        'video_id' => $targetVideo->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+    CourseVideo::create([
+        'course_id' => $otherCourse->id,
+        'video_id' => $otherVideo->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/courses/explore?instructor_id='.$targetInstructor->id);
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $targetCourse->id);
 });

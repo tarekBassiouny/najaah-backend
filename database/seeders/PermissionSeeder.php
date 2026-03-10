@@ -39,6 +39,7 @@ class PermissionSeeder extends Seeder
             'agent.execute' => 'Run automated agents',
             'agent.content_publishing' => 'Execute content publishing agents',
             'agent.enrollment.bulk' => 'Execute bulk enrollment agents',
+            'landing_page.manage' => 'Manage center landing pages',
         ];
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0');

@@ -47,6 +47,7 @@ class CourseFactory extends Factory
             'is_published' => false,
             'duration_minutes' => 60,
             'is_featured' => false,
+            'show_for_all_students' => true,
             'created_by' => User::factory()->for($center, 'center'),
             'cloned_from_id' => null,
             'publish_at' => now(),

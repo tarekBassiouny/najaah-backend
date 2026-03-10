@@ -160,7 +160,7 @@ it('shows single enrollment', function (): void {
         ->assertJsonPath('data.student.phone', $student->phone)
         ->assertJsonPath('data.center.id', $center->id)
         ->assertJsonPath('data.reason', 'Interested in this course')
-        ->assertJsonPath('data.created_at', $enrollment->created_at?->toJSON())
+        ->assertJsonPath('data.created_at', $enrollment->created_at?->toIso8601String())
         ->assertJsonStructure([
             'success',
             'data' => ['id', 'status', 'user_id', 'course_id', 'center_id', 'reason', 'enrolled_at', 'created_at', 'course', 'student'],

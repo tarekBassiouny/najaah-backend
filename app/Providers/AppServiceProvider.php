@@ -6,6 +6,18 @@ use App\Services\AdminNotifications\AdminNotificationService;
 use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
 use App\Services\AdminUsers\AdminUserService;
 use App\Services\AdminUsers\Contracts\AdminUserServiceInterface;
+use App\Services\Assessments\AIQuizGeneratorService;
+use App\Services\Assessments\AssessmentProgressService;
+use App\Services\Assessments\AssignmentService;
+use App\Services\Assessments\AssignmentSubmissionService;
+use App\Services\Assessments\Contracts\AIQuizGeneratorServiceInterface;
+use App\Services\Assessments\Contracts\AssessmentProgressServiceInterface;
+use App\Services\Assessments\Contracts\AssignmentServiceInterface;
+use App\Services\Assessments\Contracts\AssignmentSubmissionServiceInterface;
+use App\Services\Assessments\Contracts\QuizAttemptServiceInterface;
+use App\Services\Assessments\Contracts\QuizServiceInterface;
+use App\Services\Assessments\QuizAttemptService;
+use App\Services\Assessments\QuizService;
 use App\Services\Auth\AdminAuthService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Auth\Contracts\JwtServiceInterface;
@@ -39,6 +51,10 @@ use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
+use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
+use App\Services\LandingPages\Contracts\SubdomainResolverServiceInterface;
+use App\Services\LandingPages\LandingPageService;
+use App\Services\LandingPages\SubdomainResolverService;
 use App\Services\Pdfs\AdminPdfQueryService;
 use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
 use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
@@ -79,6 +95,8 @@ use App\Services\Surveys\Contracts\SurveyServiceInterface;
 use App\Services\Surveys\SurveyAssignmentService;
 use App\Services\Surveys\SurveyResponseService;
 use App\Services\Surveys\SurveyService;
+use App\Services\Timezone\Contracts\TimezoneServiceInterface;
+use App\Services\Timezone\TimezoneService;
 use App\Services\VideoAccess\BulkWhatsAppService;
 use App\Services\VideoAccess\Contracts\BulkWhatsAppServiceInterface;
 use App\Services\VideoAccess\Contracts\VideoApprovalCodeServiceInterface;
@@ -132,6 +150,12 @@ class AppServiceProvider extends ServiceProvider
             AdminAuthServiceInterface::class => AdminAuthService::class,
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
+            QuizServiceInterface::class => QuizService::class,
+            QuizAttemptServiceInterface::class => QuizAttemptService::class,
+            AssignmentServiceInterface::class => AssignmentService::class,
+            AssignmentSubmissionServiceInterface::class => AssignmentSubmissionService::class,
+            AIQuizGeneratorServiceInterface::class => AIQuizGeneratorService::class,
+            AssessmentProgressServiceInterface::class => AssessmentProgressService::class,
             SectionServiceInterface::class => SectionService::class,
             SectionStructureServiceInterface::class => SectionStructureService::class,
             SectionWorkflowServiceInterface::class => SectionWorkflowService::class,
@@ -161,6 +185,9 @@ class AppServiceProvider extends ServiceProvider
             SurveyServiceInterface::class => SurveyService::class,
             SurveyAssignmentServiceInterface::class => SurveyAssignmentService::class,
             SurveyResponseServiceInterface::class => SurveyResponseService::class,
+            LandingPageServiceInterface::class => LandingPageService::class,
+            SubdomainResolverServiceInterface::class => SubdomainResolverService::class,
+            TimezoneServiceInterface::class => TimezoneService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {

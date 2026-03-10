@@ -216,3 +216,154 @@ it('returns 422 when submitted education fields belong to different centers', fu
     $response->assertStatus(422)
         ->assertJsonPath('error.code', 'VALIDATION_ERROR');
 });
+
+it('orders schools by current locale translation with english fallback', function (): void {
+    $center = Center::factory()->create(['api_key' => 'education-order-school-key']);
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+            ],
+        ],
+    ]);
+
+    $first = School::factory()->create([
+        'center_id' => $center->id,
+        'is_active' => true,
+        'name_translations' => ['en' => 'Zoo School', 'ar' => 'ألف مدرسة'],
+    ]);
+    $second = School::factory()->create([
+        'center_id' => $center->id,
+        'is_active' => true,
+        'name_translations' => ['en' => 'Alpha School', 'ar' => 'ياء مدرسة'],
+    ]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'password' => 'secret123',
+    ]);
+    $this->asApiUser($student);
+
+    $response = $this->withHeader('X-Locale', 'ar')
+        ->getJson("/api/v1/centers/{$center->id}/schools", [
+            'X-Api-Key' => $center->api_key,
+        ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.0.id', $first->id)
+        ->assertJsonPath('data.1.id', $second->id);
+});
+
+it('orders colleges by current locale translation with english fallback', function (): void {
+    $center = Center::factory()->create(['api_key' => 'education-order-college-key']);
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+            ],
+        ],
+    ]);
+
+    $first = College::factory()->create([
+        'center_id' => $center->id,
+        'is_active' => true,
+        'name_translations' => ['en' => 'Zoo College', 'ar' => 'ألف كلية'],
+    ]);
+    $second = College::factory()->create([
+        'center_id' => $center->id,
+        'is_active' => true,
+        'name_translations' => ['en' => 'Alpha College', 'ar' => 'ياء كلية'],
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'password' => 'secret123',
+    ]);
+    $this->asApiUser($student);
+
+    $response = $this->withHeader('X-Locale', 'ar')
+        ->getJson("/api/v1/centers/{$center->id}/colleges", [
+            'X-Api-Key' => $center->api_key,
+        ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.0.id', $first->id)
+        ->assertJsonPath('data.1.id', $second->id);
+});
+
+it('returns aggregated education settings and enabled lookups for mobile', function (): void {
+    $center = Center::factory()->create(['api_key' => 'education-aggregate-key']);
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => false,
+                'enable_college' => true,
+                'require_grade' => true,
+                'require_school' => false,
+                'require_college' => true,
+            ],
+        ],
+    ]);
+
+    $grade = Grade::factory()->create(['center_id' => $center->id, 'is_active' => true]);
+    School::factory()->create(['center_id' => $center->id, 'is_active' => true]);
+    $college = College::factory()->create(['center_id' => $center->id, 'is_active' => true]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'password' => 'secret123',
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/education", ['X-Api-Key' => $center->api_key]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.settings.enable_grade', true)
+        ->assertJsonPath('data.settings.enable_school', false)
+        ->assertJsonPath('data.settings.enable_college', true)
+        ->assertJsonPath('data.settings.require_grade', true)
+        ->assertJsonPath('data.settings.require_school', false)
+        ->assertJsonPath('data.settings.require_college', true)
+        ->assertJsonPath('data.lookups.grades.0.id', $grade->id)
+        ->assertJsonCount(0, 'data.lookups.schools')
+        ->assertJsonPath('data.lookups.colleges.0.id', $college->id);
+});
+
+it('returns 403 for aggregated education lookup when student center mismatches route center', function (): void {
+    $center = Center::factory()->create(['api_key' => 'education-aggregate-mismatch-a']);
+    $otherCenter = Center::factory()->create(['api_key' => 'education-aggregate-mismatch-b']);
+
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+            ],
+        ],
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'password' => 'secret123',
+    ]);
+    $this->asApiUser($student);
+
+    $response = $this->apiGet("/api/v1/centers/{$otherCenter->id}/education", ['X-Api-Key' => $otherCenter->api_key]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});

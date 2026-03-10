@@ -5,8 +5,11 @@ declare(strict_types=1);
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\CenterSetting;
+use App\Models\College;
 use App\Models\Course;
+use App\Models\Grade;
 use App\Models\Role;
+use App\Models\School;
 use App\Models\User;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -72,7 +75,51 @@ it('creates course in center', function (): void {
         'is_published' => 0,
         'publish_at' => null,
         'requires_video_approval' => 1,
+        'show_for_all_students' => 1,
     ]);
+});
+
+it('creates targeted course with education targets', function (): void {
+    $center = Center::factory()->create();
+    $category = Category::factory()->create();
+    $grade = Grade::factory()->create(['center_id' => $center->id]);
+    $school = School::factory()->create(['center_id' => $center->id]);
+    $college = College::factory()->create(['center_id' => $center->id]);
+
+    $payload = [
+        'title_translations' => [
+            'en' => 'Targeted Course',
+            'ar' => 'دورة موجهة',
+        ],
+        'description_translations' => [
+            'en' => 'Targeted description',
+            'ar' => 'وصف موجه',
+        ],
+        'category_id' => $category->id,
+        'difficulty' => 'beginner',
+        'show_for_all_students' => false,
+        'grade_ids' => [$grade->id],
+        'school_ids' => [$school->id],
+        'college_ids' => [$college->id],
+    ];
+
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses", $payload, $this->adminHeaders());
+
+    $response->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.show_for_all_students', false)
+        ->assertJsonPath('data.education_targets.grades.0.id', $grade->id)
+        ->assertJsonPath('data.education_targets.schools.0.id', $school->id)
+        ->assertJsonPath('data.education_targets.colleges.0.id', $college->id);
+
+    $courseId = (int) $response->json('data.id');
+    $this->assertDatabaseHas('courses', [
+        'id' => $courseId,
+        'show_for_all_students' => 0,
+    ]);
+    $this->assertDatabaseHas('course_grades', ['course_id' => $courseId, 'grade_id' => $grade->id]);
+    $this->assertDatabaseHas('course_schools', ['course_id' => $courseId, 'school_id' => $school->id]);
+    $this->assertDatabaseHas('course_colleges', ['course_id' => $courseId, 'college_id' => $college->id]);
 });
 
 it('rejects invalid title_translations payload when creating course', function (): void {
@@ -141,6 +188,38 @@ it('updates course in center', function (): void {
         'id' => $course->id,
         'requires_video_approval' => 0,
     ]);
+});
+
+it('switches targeted course to show for all and clears targets', function (): void {
+    $center = Center::factory()->create();
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'show_for_all_students' => false,
+    ]);
+    $grade = Grade::factory()->create(['center_id' => $center->id]);
+    $school = School::factory()->create(['center_id' => $center->id]);
+    $college = College::factory()->create(['center_id' => $center->id]);
+    $course->grades()->sync([$grade->id]);
+    $course->schools()->sync([$school->id]);
+    $course->colleges()->sync([$college->id]);
+
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [
+        'show_for_all_students' => true,
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.show_for_all_students', true)
+        ->assertJsonPath('data.education_targets.grades', [])
+        ->assertJsonPath('data.education_targets.schools', [])
+        ->assertJsonPath('data.education_targets.colleges', []);
+
+    $this->assertDatabaseHas('courses', [
+        'id' => $course->id,
+        'show_for_all_students' => 1,
+    ]);
+    $this->assertDatabaseMissing('course_grades', ['course_id' => $course->id]);
+    $this->assertDatabaseMissing('course_schools', ['course_id' => $course->id]);
+    $this->assertDatabaseMissing('course_colleges', ['course_id' => $course->id]);
 });
 
 it('soft deletes course in center', function (): void {
