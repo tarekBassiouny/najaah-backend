@@ -13,6 +13,7 @@ uses(TestCase::class, RefreshDatabase::class)->group('landing-pages', 'unit');
 beforeEach(function (): void {
     Config::set('app.base_domain', 'najaah.me');
     Config::set('app.url_scheme', 'https');
+    Config::set('app.frontend_url', 'https://najaah.me');
     $this->service = app(SubdomainResolverService::class);
 });
 
@@ -83,4 +84,13 @@ it('handles path without leading slash', function (): void {
     $url = $this->service->buildCenterUrl($center, 'register');
 
     expect($url)->toBe('https://test-center.najaah.me/register');
+});
+
+it('builds center URL using frontend port when provided', function (): void {
+    Config::set('app.frontend_url', 'http://najaah.local:3000');
+    $center = Center::factory()->create(['slug' => 'test-center']);
+
+    $url = $this->service->buildCenterUrl($center, '/');
+
+    expect($url)->toBe('http://test-center.najaah.local:3000/');
 });

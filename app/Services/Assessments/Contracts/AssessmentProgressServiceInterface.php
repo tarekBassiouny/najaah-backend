@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Assessments\Contracts;
 
+use App\Models\Assignment;
 use App\Models\Course;
+use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -13,14 +15,14 @@ interface AssessmentProgressServiceInterface
     /**
      * Get all required assessments (quizzes and assignments) for a course.
      *
-     * @return array{quizzes: Collection, assignments: Collection}
+     * @return array{quizzes: Collection<int, Quiz>, assignments: Collection<int, Assignment>}
      */
     public function getRequiredAssessments(Course $course): array;
 
     /**
      * Get completed assessments for a student in a course.
      *
-     * @return array{quizzes: Collection, assignments: Collection}
+     * @return array{quizzes: Collection<int, Quiz>, assignments: Collection<int, Assignment>}
      */
     public function getCompletedAssessments(User $student, Course $course): array;
 

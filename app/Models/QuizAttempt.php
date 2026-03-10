@@ -137,7 +137,7 @@ class QuizAttempt extends Model
         $elapsedSeconds = now()->diffInSeconds($this->started_at);
         $timeLimitSeconds = $this->quiz->time_limit_minutes * 60;
 
-        return max(0, $timeLimitSeconds - $elapsedSeconds);
+        return max(0, (int) round($timeLimitSeconds - $elapsedSeconds));
     }
 
     /**

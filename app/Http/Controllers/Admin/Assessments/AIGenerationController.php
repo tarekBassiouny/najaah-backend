@@ -34,7 +34,9 @@ class AIGenerationController extends Controller
     {
         $this->assertQuizInCenter($quiz, $center);
 
-        $video = Video::findOrFail($request->validated('video_id'));
+        $video = Video::query()
+            ->whereKey($request->integer('video_id'))
+            ->firstOrFail();
         $admin = $request->user();
 
         $job = $this->aiGeneratorService->generateFromVideo(
@@ -63,7 +65,9 @@ class AIGenerationController extends Controller
     {
         $this->assertQuizInCenter($quiz, $center);
 
-        $pdf = Pdf::findOrFail($request->validated('pdf_id'));
+        $pdf = Pdf::query()
+            ->whereKey($request->integer('pdf_id'))
+            ->firstOrFail();
         $admin = $request->user();
 
         $job = $this->aiGeneratorService->generateFromPdf(

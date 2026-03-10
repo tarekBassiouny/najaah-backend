@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Collection;
 final class AssessmentProgressService implements AssessmentProgressServiceInterface
 {
     /**
-     * @return array{quizzes: Collection, assignments: Collection}
+     * @return array{quizzes: Collection<int, Quiz>, assignments: Collection<int, Assignment>}
      */
     public function getRequiredAssessments(Course $course): array
     {
@@ -33,7 +33,7 @@ final class AssessmentProgressService implements AssessmentProgressServiceInterf
     }
 
     /**
-     * @return array{quizzes: Collection, assignments: Collection}
+     * @return array{quizzes: Collection<int, Quiz>, assignments: Collection<int, Assignment>}
      */
     public function getCompletedAssessments(User $student, Course $course): array
     {
