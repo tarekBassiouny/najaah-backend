@@ -6,11 +6,13 @@ use App\Services\AdminNotifications\AdminNotificationService;
 use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
 use App\Services\AdminUsers\AdminUserService;
 use App\Services\AdminUsers\Contracts\AdminUserServiceInterface;
-use App\Services\Assessments\AIQuizGeneratorService;
+use App\Services\AI\AIIntegrationService;
+use App\Services\AI\Contracts\AIIntegrationServiceInterface;
+use App\Services\Assessments\AIContentService;
 use App\Services\Assessments\AssessmentProgressService;
 use App\Services\Assessments\AssignmentService;
 use App\Services\Assessments\AssignmentSubmissionService;
-use App\Services\Assessments\Contracts\AIQuizGeneratorServiceInterface;
+use App\Services\Assessments\Contracts\AIContentServiceInterface;
 use App\Services\Assessments\Contracts\AssessmentProgressServiceInterface;
 use App\Services\Assessments\Contracts\AssignmentServiceInterface;
 use App\Services\Assessments\Contracts\AssignmentSubmissionServiceInterface;
@@ -139,6 +141,7 @@ class AppServiceProvider extends ServiceProvider
         $bindings = [
             AdminNotificationServiceInterface::class => AdminNotificationService::class,
             AdminUserServiceInterface::class => AdminUserService::class,
+            AIIntegrationServiceInterface::class => AIIntegrationService::class,
             OtpServiceInterface::class => OtpService::class,
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
@@ -154,7 +157,7 @@ class AppServiceProvider extends ServiceProvider
             QuizAttemptServiceInterface::class => QuizAttemptService::class,
             AssignmentServiceInterface::class => AssignmentService::class,
             AssignmentSubmissionServiceInterface::class => AssignmentSubmissionService::class,
-            AIQuizGeneratorServiceInterface::class => AIQuizGeneratorService::class,
+            AIContentServiceInterface::class => AIContentService::class,
             AssessmentProgressServiceInterface::class => AssessmentProgressService::class,
             SectionServiceInterface::class => SectionService::class,
             SectionStructureServiceInterface::class => SectionStructureService::class,

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Admin\Assessments\AIGenerationController;
 use App\Http\Controllers\Admin\Assessments\QuizAnalyticsController;
 use App\Http\Controllers\Admin\Assessments\QuizController;
 use App\Http\Controllers\Admin\Assessments\QuizQuestionController;
@@ -44,18 +43,6 @@ Route::middleware(['require.permission:quiz.manage', 'scope.center'])->group(fun
         ->whereNumber(['center', 'quiz', 'question']);
     Route::put('/centers/{center}/quizzes/{quiz}/questions/reorder', [QuizQuestionController::class, 'reorder'])
         ->whereNumber(['center', 'quiz']);
-
-    // AI Generation
-    Route::post('/centers/{center}/quizzes/{quiz}/generate-from-video', [AIGenerationController::class, 'generateFromVideo'])
-        ->whereNumber(['center', 'quiz']);
-    Route::post('/centers/{center}/quizzes/{quiz}/generate-from-pdf', [AIGenerationController::class, 'generateFromPdf'])
-        ->whereNumber(['center', 'quiz']);
-    Route::get('/centers/{center}/ai-generation-jobs/{aiGenerationJob}', [AIGenerationController::class, 'show'])
-        ->whereNumber(['center', 'aiGenerationJob']);
-    Route::post('/centers/{center}/ai-generation-jobs/{aiGenerationJob}/approve', [AIGenerationController::class, 'approve'])
-        ->whereNumber(['center', 'aiGenerationJob']);
-    Route::delete('/centers/{center}/ai-generation-jobs/{aiGenerationJob}', [AIGenerationController::class, 'discard'])
-        ->whereNumber(['center', 'aiGenerationJob']);
 
     // Quiz Analytics
     Route::get('/centers/{center}/quizzes/{quiz}/attempts', [QuizAnalyticsController::class, 'attempts'])

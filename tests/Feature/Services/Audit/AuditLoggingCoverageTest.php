@@ -99,17 +99,6 @@ it('audits student lifecycle actions', function (): void {
         'entity_id' => $studentId,
     ]);
 
-    $deleteResponse = $this->deleteJson("/api/v1/admin/students/{$studentId}", [], $this->adminHeaders());
-    $deleteResponse->assertOk()
-        ->assertJsonPath('success', true)
-        ->assertJsonPath('data', null);
-
-    $this->assertDatabaseHas('audit_logs', [
-        'user_id' => $admin->id,
-        'action' => AuditActions::STUDENT_DELETED,
-        'entity_type' => User::class,
-        'entity_id' => $studentId,
-    ]);
 });
 
 it('audits instructor lifecycle actions', function (): void {

@@ -22,4 +22,17 @@ class ListAssignmentsRequest extends FormRequest
             'active_only' => ['sometimes', 'boolean'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function queryParameters(): array
+    {
+        return [
+            'active_only' => [
+                'description' => 'Filter assignments by active status.',
+                'example' => 'true',
+            ],
+        ];
+    }
 }

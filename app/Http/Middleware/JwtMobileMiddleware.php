@@ -2,10 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserStatus;
 use App\Models\Center;
 use App\Models\JwtToken;
 use App\Models\User;
 use App\Models\UserDevice;
+use App\Support\ErrorCodes;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,6 +35,17 @@ class JwtMobileMiddleware
 
         if (! $user->is_student) {
             return $this->deny('UNAUTHORIZED', 'Only students can access this endpoint.');
+        }
+
+        if ((int) $user->status !== UserStatus::Active->value) {
+            return $this->deny(
+                (int) $user->status === UserStatus::Banned->value
+                    ? ErrorCodes::STUDENT_BANNED
+                    : ErrorCodes::STUDENT_INACTIVE,
+                (int) $user->status === UserStatus::Banned->value
+                    ? 'Student account is banned.'
+                    : 'Student account is inactive.'
+            );
         }
 
         /*

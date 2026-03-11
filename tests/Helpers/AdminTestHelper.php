@@ -37,6 +37,8 @@ trait AdminTestHelper
             'permission.view',
             'course.manage',
             'course.publish',
+            'quiz.manage',
+            'assignment.manage',
             'section.manage',
             'video.manage',
             'video.upload',
@@ -52,6 +54,9 @@ trait AdminTestHelper
             'instructor.manage',
             'student.manage',
             'survey.manage',
+            'ai_content.generate',
+            'ai_content.review_publish',
+            'learning_asset.manage',
             'landing_page.manage',
         ];
 

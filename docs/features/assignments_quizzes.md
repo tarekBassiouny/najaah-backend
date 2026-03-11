@@ -316,32 +316,66 @@ Group membership.
 **Indexes:**
 - `UNIQUE [assignment_group_id, user_id]`
 
-### ai_generation_jobs
+### ai_content_jobs
 
-Track AI question generation jobs.
+Track AI content generation jobs (quizzes, assignments, summaries, flashcards, interactive activities).
 
 | Column | Type | Description |
 |--------|------|-------------|
 | `id` | bigint | Primary key |
-| `quiz_id` | FK → quizzes | Target quiz |
-| `source_type` | varchar | 'video' or 'pdf' |
-| `source_id` | bigint | Video or PDF ID |
-| `status` | tinyint | 0=pending, 1=processing, 2=completed, 3=failed |
-| `questions_requested` | int | Number of questions to generate |
-| `questions_generated` | int | Actually generated |
+| `center_id` | FK → centers | Center scope |
+| `course_id` | FK → courses | Course scope |
+| `source_type` | varchar | 'video', 'pdf', 'section', 'course' |
+| `source_id` | bigint | Source entity ID |
+| `target_type` | varchar | 'quiz', 'assignment', 'summary', 'flashcards', 'interactive_activity' |
+| `target_id` | bigint nullable | Existing target (for update/regenerate) |
+| `status` | tinyint | 0=pending, 1=processing, 2=completed, 3=failed, 4=approved, 5=published, 6=discarded |
+| `generation_config` | json | Generation options |
+| `generated_payload` | json | Raw AI output |
+| `reviewed_payload` | json | Admin-reviewed payload before publish |
 | `ai_provider` | varchar | 'openai', 'anthropic', etc. |
 | `ai_model` | varchar | Model used |
 | `prompt_used` | text | Prompt sent to AI |
 | `error_message` | text | Error if failed |
 | `started_at` | timestamp | |
 | `completed_at` | timestamp | |
+| `published_at` | timestamp | |
 | `created_by` | FK → users | Admin who initiated |
+| `reviewed_by` | FK → users nullable | Admin reviewer |
+| `published_by` | FK → users nullable | Admin publisher |
 | `created_at` | timestamp | |
 | `updated_at` | timestamp | |
 
 **Indexes:**
-- `[quiz_id]`
-- `[status]`
+- `[center_id, status]`
+- `[source_type, source_id]`
+- `[target_type, target_id]`
+- `[course_id]`
+
+### learning_assets
+
+Published AI-derived learning assets consumed by mobile.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | bigint | Primary key |
+| `center_id` | FK → centers | Center scope |
+| `course_id` | FK → courses | Course scope |
+| `attachable_type` | varchar nullable | Optional attachable type |
+| `attachable_id` | bigint nullable | Optional attachable id |
+| `asset_type` | varchar | 'summary', 'flashcards', 'interactive_activity' |
+| `status` | tinyint | 0=draft, 1=published, 2=archived |
+| `title_translations` | json nullable | Translated title |
+| `content_translations` | json nullable | Translated content |
+| `payload` | json nullable | Structured payload (cards/steps/etc.) |
+| `is_active` | bool | Visibility toggle |
+| `created_by` | FK → users | Creator |
+| `updated_by` | FK → users nullable | Last updater |
+| `published_by` | FK → users nullable | Publisher |
+| `published_at` | timestamp nullable | Publish time |
+| `created_at` | timestamp | |
+| `updated_at` | timestamp | |
+| `deleted_at` | timestamp nullable | Soft delete |
 
 ---
 
@@ -403,15 +437,18 @@ enum SubmissionStatus: int
 }
 ```
 
-### AIGenerationStatus
+### AIContentJobStatus
 
 ```php
-enum AIGenerationStatus: int
+enum AIContentJobStatus: int
 {
     case Pending = 0;
     case Processing = 1;
     case Completed = 2;
     case Failed = 3;
+    case Approved = 4;
+    case Published = 5;
+    case Discarded = 6;
 }
 ```
 
@@ -464,25 +501,20 @@ interface QuizAttemptServiceInterface
 }
 ```
 
-### AIQuizGeneratorService
+### AIContentService
 
 ```php
-interface AIQuizGeneratorServiceInterface
+interface AIContentServiceInterface
 {
-    // Generate from video
-    public function generateFromVideo(Quiz $quiz, Video $video, int $questionCount): AIGenerationJob;
-
-    // Generate from PDF
-    public function generateFromPdf(Quiz $quiz, Pdf $pdf, int $questionCount): AIGenerationJob;
+    // Job lifecycle
+    public function createJob(Center $center, array $data, User $creator): AIContentJob;
+    public function reviewJob(AIContentJob $job, array $reviewedPayload, User $reviewer): AIContentJob;
+    public function approveJob(AIContentJob $job, User $reviewer): AIContentJob;
+    public function publishJob(AIContentJob $job, User $publisher): array;
+    public function discardJob(AIContentJob $job): void;
 
     // Process job (called by queue worker)
-    public function processJob(AIGenerationJob $job): void;
-
-    // Get transcript from video
-    public function extractVideoTranscript(Video $video): string;
-
-    // Extract text from PDF
-    public function extractPdfContent(Pdf $pdf): string;
+    public function processJob(AIContentJob $job): void;
 }
 ```
 
@@ -566,15 +598,17 @@ interface AssessmentProgressServiceInterface
 | DELETE | `/api/v1/admin/centers/{center}/quizzes/{quiz}/questions/{question}` | Delete question |
 | PUT | `/api/v1/admin/centers/{center}/quizzes/{quiz}/questions/reorder` | Reorder questions |
 
-### Admin - AI Generation
+### Admin - AI Content Jobs
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/v1/admin/centers/{center}/quizzes/{quiz}/generate-from-video` | Generate from video |
-| POST | `/api/v1/admin/centers/{center}/quizzes/{quiz}/generate-from-pdf` | Generate from PDF |
-| GET | `/api/v1/admin/centers/{center}/ai-generation-jobs/{job}` | Check job status |
-| POST | `/api/v1/admin/centers/{center}/ai-generation-jobs/{job}/approve` | Approve generated questions |
-| DELETE | `/api/v1/admin/centers/{center}/ai-generation-jobs/{job}` | Discard generated questions |
+| GET | `/api/v1/admin/centers/{center}/ai-content/jobs` | List AI jobs |
+| POST | `/api/v1/admin/centers/{center}/ai-content/jobs` | Create AI job |
+| GET | `/api/v1/admin/centers/{center}/ai-content/jobs/{job}` | Get job details |
+| PATCH | `/api/v1/admin/centers/{center}/ai-content/jobs/{job}/review` | Save reviewed payload |
+| POST | `/api/v1/admin/centers/{center}/ai-content/jobs/{job}/approve` | Approve reviewed payload |
+| POST | `/api/v1/admin/centers/{center}/ai-content/jobs/{job}/publish` | Publish to target |
+| DELETE | `/api/v1/admin/centers/{center}/ai-content/jobs/{job}` | Discard job |
 
 ### Admin - Quiz Analytics
 
@@ -641,38 +675,23 @@ interface AssessmentProgressServiceInterface
 
 ---
 
-## AI Generation Flow
+## AI Content Workflow
 
-### Video Quiz Generation
-
-```
-1. Admin selects video and requests N questions
-2. System creates AIGenerationJob (status: pending)
-3. Queue job processes:
-   a. Extract transcript from Bunny Stream or stored transcript
-   b. Send to AI with prompt:
-      "Generate {N} multiple choice questions from this transcript.
-       Each question should have 4 options with 1 correct answer.
-       Include explanation for correct answer.
-       Format as JSON array."
-   c. Parse AI response
-   d. Store as draft questions (not yet added to quiz)
-4. Admin reviews generated questions
-5. Admin approves/edits/discards questions
-6. Approved questions added to quiz
-```
-
-### PDF Quiz Generation
+### Generation + Review + Publish
 
 ```
-1. Admin selects PDF and requests N questions
-2. System creates AIGenerationJob (status: pending)
-3. Queue job processes:
-   a. Extract text from PDF (using pdftotext or similar)
-   b. Send to AI with same prompt structure
-   c. Parse AI response
-   d. Store as draft questions
-4. Admin reviews and approves
+1. Admin selects source (`video|pdf|section|course`) and target (`quiz|assignment|summary|flashcards|interactive_activity`)
+2. System creates `AIContentJob` (status: pending)
+3. Queue worker processes the job:
+   a. Extracts source content
+   b. Calls AI provider with structured prompt based on target type
+   c. Stores parsed output in `generated_payload`
+   d. Marks job as completed (or failed)
+4. Admin reviews/edits payload via `reviewed_payload`
+5. Admin approves reviewed payload
+6. Admin publishes:
+   - quiz/assignment target updates canonical assessment entities
+   - summary/flashcards/interactive activity target publishes into `learning_assets`
 ```
 
 ### AI Prompt Template
@@ -732,7 +751,7 @@ public function isCompleted(Enrollment $enrollment): bool
 
 ## Implementation Checklist
 
-### Phase 1: Database Architecture (11 migrations) ✅ COMPLETED
+### Phase 1: Database Architecture ✅ COMPLETED
 - [x] Create `quizzes` table
 - [x] Create `quiz_questions` table
 - [x] Create `quiz_answers` table
@@ -743,10 +762,11 @@ public function isCompleted(Enrollment $enrollment): bool
 - [x] Create `assignment_submission_files` table
 - [x] Create `assignment_groups` table
 - [x] Create `assignment_group_members` table
-- [x] Create `ai_generation_jobs` table
+- [x] Create `ai_content_jobs` table
+- [x] Create `learning_assets` table
 
-### Phase 2: Enums & Models (17 files) ✅ COMPLETED
-- [x] Create enums (6 enums): QuestionType, AttemptScorePolicy, QuizAttemptStatus, SubmissionType, SubmissionStatus, AIGenerationStatus
+### Phase 2: Enums & Models ✅ COMPLETED
+- [x] Create enums for quiz/assignment + AI content jobs + learning assets
 - [x] Create `Quiz` model
 - [x] Create `QuizQuestion` model
 - [x] Create `QuizAnswer` model
@@ -757,25 +777,26 @@ public function isCompleted(Enrollment $enrollment): bool
 - [x] Create `AssignmentSubmissionFile` model
 - [x] Create `AssignmentGroup` model
 - [x] Create `AssignmentGroupMember` model
-- [x] Create `AIGenerationJob` model
+- [x] Create `AIContentJob` model
+- [x] Create `LearningAsset` model
 
-### Phase 3: Service Layer (12 files) ✅ COMPLETED
+### Phase 3: Service Layer ✅ COMPLETED
 - [x] Create `QuizServiceInterface` + `QuizService`
 - [x] Create `QuizAttemptServiceInterface` + `QuizAttemptService`
-- [x] Create `AIQuizGeneratorServiceInterface` + `AIQuizGeneratorService`
+- [x] Create `AIContentServiceInterface` + `AIContentService`
 - [x] Create `AssignmentServiceInterface` + `AssignmentService`
 - [x] Create `AssignmentSubmissionServiceInterface` + `AssignmentSubmissionService`
 - [x] Create `AssessmentProgressServiceInterface` + `AssessmentProgressService`
 
-### Phase 4: Admin Quiz API (~22 files) ✅ COMPLETED
+### Phase 4: Admin APIs ✅ COMPLETED
 - [x] Quiz CRUD controller (QuizController)
 - [x] Question CRUD controller (QuizQuestionController)
-- [x] AI generation controller (AIGenerationController)
+- [x] AI content jobs controller (AIContentJobController)
 - [x] Quiz analytics controller (QuizAnalyticsController)
 - [x] Form requests (10 files)
 - [x] Resources (6 files)
 - [x] Routes (quizzes.php)
-- [x] ProcessAIGenerationJob
+- [x] ProcessAIContentJob
 
 ### Phase 5: Admin Assignment API (~14 files) ✅ COMPLETED
 - [x] Assignment CRUD controller (AssignmentController)
@@ -799,32 +820,32 @@ public function isCompleted(Enrollment $enrollment): bool
 - [x] Resources (4 files)
 - [x] Routes added to mobile.php
 
-### Phase 8: AI Integration ✅ COMPLETED
-- [x] Video transcript extraction (Bunny API or stored)
-- [x] PDF text extraction service
-- [x] AI provider integration (OpenAI/Anthropic)
-- [x] Job processing queue (ProcessAIGenerationJob)
-- [x] Question review/approval flow
+### Phase 8: AI Content Integration ✅ COMPLETED
+- [x] Multi-source extraction (video/pdf/section/course)
+- [x] Multi-target generation (quiz/assignment/summary/flashcards/interactive_activity)
+- [x] AI provider integration (OpenAI)
+- [x] Job processing queue (ProcessAIContentJob)
+- [x] Review/approve/publish workflow
 
 ### Phase 9: Integration & Jobs ✅ COMPLETED
 - [x] AutoSubmitTimedOutAttempts job
 - [x] AssessmentProgressService for course completion integration
 - [ ] Hook into CourseProgressService (requires integration with Certificates feature)
 
-### Phase 10: Quality & Testing
-- [ ] Create factories for all models
-- [ ] Feature tests for quiz flow
-- [ ] Feature tests for assignment flow
-- [ ] Feature tests for AI generation
-- [ ] Unit tests for grading logic
-- [ ] Run quality checks
+### Phase 10: Quality & Testing ✅ COMPLETED
+- [x] Create factories for all models
+- [x] Feature tests for quiz flow
+- [x] Feature tests for assignment flow
+- [x] Feature tests for AI content jobs
+- [x] Unit tests for grading logic
+- [x] Run quality checks
 
 ---
 
 ## File Summary (~90 files)
 
 ```
-Migrations (11):
+Migrations:
 - create_quizzes_table.php
 - create_quiz_questions_table.php
 - create_quiz_answers_table.php
@@ -835,15 +856,19 @@ Migrations (11):
 - create_assignment_submission_files_table.php
 - create_assignment_groups_table.php
 - create_assignment_group_members_table.php
-- create_ai_generation_jobs_table.php
+- replace_ai_generation_jobs_with_ai_content_jobs.php
 
-Enums (6):
+Enums:
 - QuestionType.php
 - AttemptScorePolicy.php
 - QuizAttemptStatus.php
 - SubmissionType.php
 - SubmissionStatus.php
-- AIGenerationStatus.php
+- AIContentJobStatus.php
+- AIContentSourceType.php
+- AIContentTargetType.php
+- LearningAssetStatus.php
+- LearningAssetType.php
 
 Models (11):
 - Quiz.php
@@ -856,12 +881,13 @@ Models (11):
 - AssignmentSubmissionFile.php
 - AssignmentGroup.php
 - AssignmentGroupMember.php
-- AIGenerationJob.php
+- AIContentJob.php
+- LearningAsset.php
 
 Services (12):
 - QuizServiceInterface.php + QuizService.php
 - QuizAttemptServiceInterface.php + QuizAttemptService.php
-- AIQuizGeneratorServiceInterface.php + AIQuizGeneratorService.php
+- AIContentServiceInterface.php + AIContentService.php
 - AssignmentServiceInterface.php + AssignmentService.php
 - AssignmentSubmissionServiceInterface.php + AssignmentSubmissionService.php
 - AssessmentProgressServiceInterface.php + AssessmentProgressService.php
@@ -869,7 +895,7 @@ Services (12):
 Controllers (12):
 - Admin/QuizController.php
 - Admin/QuizQuestionController.php
-- Admin/AIGenerationController.php
+- Admin/AIContentJobController.php
 - Admin/QuizAnalyticsController.php
 - Admin/AssignmentController.php
 - Admin/AssignmentSubmissionController.php
@@ -880,7 +906,7 @@ Controllers (12):
 - Mobile/AssignmentGroupController.php
 
 Jobs (2):
-- ProcessAIGenerationJob.php
+- ProcessAIContentJob.php
 - AutoSubmitTimedOutAttempts.php
 
 Form Requests (~20)
@@ -898,7 +924,7 @@ Tests (~15)
 # Run all assessment tests
 php artisan test --filter="Quiz"
 php artisan test --filter="Assignment"
-php artisan test --filter="AIGeneration"
+php artisan test --filter="AIContent"
 ```
 
 ### Key Test Scenarios

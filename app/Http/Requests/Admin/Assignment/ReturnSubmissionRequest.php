@@ -24,12 +24,15 @@ class ReturnSubmissionRequest extends FormRequest
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {
         return [
-            'feedback' => 'Feedback explaining why the submission needs revision',
+            'feedback' => [
+                'description' => 'Feedback explaining why the submission needs revision.',
+                'example' => 'Please add references and resubmit.',
+            ],
         ];
     }
 }

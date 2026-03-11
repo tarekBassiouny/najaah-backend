@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\EnrollmentStatus;
+use App\Enums\UserStatus;
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\Course;
@@ -63,6 +64,8 @@ test('returns current student on /auth/me', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.id', $user->id)
         ->assertJsonPath('data.center.id', $user->center_id)
+        ->assertJsonPath('data.is_complete_profile', true)
+        ->assertJsonPath('data.profile_completion.missing_steps', [])
         ->assertJsonPath('data.device.device_id', $device->device_id)
         ->assertJsonPath('data.device.device_name', $device->device_name)
         ->assertJsonPath('data.device.device_type', $device->device_type);
@@ -140,6 +143,8 @@ test('returns detailed current student profile on /auth/me/profile', function ()
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.id', $user->id)
         ->assertJsonPath('data.center.id', $center->id)
+        ->assertJsonPath('data.is_complete_profile', true)
+        ->assertJsonPath('data.profile_completion.missing_steps', [])
         ->assertJsonPath('data.enrollments.0.course.id', $course->id)
         ->assertJsonPath('data.enrollments.0.course.videos.0.id', $video->id)
         ->assertJsonPath('data.enrollments.0.course.videos.0.watch_count', 1);
@@ -330,6 +335,34 @@ test('blocks tokens for revoked devices', function (): void {
     $response->assertStatus(403);
 });
 
+test('blocks inactive students even with a valid token', function (): void {
+    $user = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'status' => UserStatus::Inactive->value,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $access = JWTAuth::fromUser($user);
+
+    JwtToken::create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'access_token' => $access,
+        'refresh_token' => 'refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDays(30),
+    ]);
+
+    $response = $this->getJson('/api/v1/auth/me', authHeaders($access));
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'STUDENT_INACTIVE');
+});
+
 test('allows system-level students without center assignment', function (): void {
     $student = User::factory()->create([
         'is_student' => true,
@@ -382,8 +415,59 @@ test('updates student profile name', function (): void {
     ], authHeaders($access));
 
     $response->assertOk()->assertJsonPath('data.name', 'New Name');
+    $response->assertJsonPath('data.is_complete_profile', true);
     $this->assertDatabaseHas('users', [
         'id' => $user->id,
         'name' => 'New Name',
     ]);
+});
+
+test('returns incomplete completion state on /auth/me/profile when placeholder name and required education are missing', function (): void {
+    $center = Center::factory()->create([
+        'api_key' => 'center-me-profile-completion-key',
+    ]);
+
+    \App\Models\CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+                'require_grade' => true,
+                'require_school' => false,
+                'require_college' => false,
+            ],
+        ],
+    ]);
+
+    $user = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'name' => 'Student',
+        'center_id' => $center->id,
+        'grade_id' => null,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $access = JWTAuth::fromUser($user);
+
+    JwtToken::create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'access_token' => $access,
+        'refresh_token' => 'refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDays(30),
+    ]);
+
+    $response = $this->getJson('/api/v1/auth/me/profile', authHeaders($access, 'center-me-profile-completion-key'));
+
+    $response->assertOk()
+        ->assertJsonPath('data.is_complete_profile', false)
+        ->assertJsonPath('data.profile_completion.missing_steps', ['name', 'education'])
+        ->assertJsonPath('data.profile_completion.missing_fields', ['name', 'grade_id']);
 });

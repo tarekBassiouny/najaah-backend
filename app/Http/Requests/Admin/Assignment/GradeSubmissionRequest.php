@@ -25,13 +25,19 @@ class GradeSubmissionRequest extends FormRequest
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {
         return [
-            'score' => 'Points awarded for this submission',
-            'feedback' => 'Feedback for the student (optional, max 5000 characters)',
+            'score' => [
+                'description' => 'Points awarded for this submission.',
+                'example' => 85,
+            ],
+            'feedback' => [
+                'description' => 'Feedback for the student (optional, max 5000 characters).',
+                'example' => 'Great structure, improve the conclusion.',
+            ],
         ];
     }
 }

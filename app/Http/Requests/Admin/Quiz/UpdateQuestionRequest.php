@@ -39,4 +39,44 @@ class UpdateQuestionRequest extends FormRequest
             'answers.*.order_index' => ['sometimes', 'integer', 'min:0'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'question_translations' => [
+                'description' => 'Localized question text map.',
+                'example' => ['en' => 'Updated question text?'],
+            ],
+            'question_type' => [
+                'description' => 'Question type (0=single choice, 1=multiple choice).',
+                'example' => 0,
+            ],
+            'explanation_translations' => [
+                'description' => 'Localized explanation map.',
+                'example' => ['en' => 'Updated explanation'],
+            ],
+            'points' => [
+                'description' => 'Question points.',
+                'example' => 2,
+            ],
+            'order_index' => [
+                'description' => 'Question order in quiz.',
+                'example' => 3,
+            ],
+            'is_active' => [
+                'description' => 'Whether question is active.',
+                'example' => true,
+            ],
+            'answers' => [
+                'description' => 'Optional full replacement list of answers.',
+                'example' => [
+                    ['answer_translations' => ['en' => 'A'], 'is_correct' => false, 'order_index' => 0],
+                    ['answer_translations' => ['en' => 'B'], 'is_correct' => true, 'order_index' => 1],
+                ],
+            ],
+        ];
+    }
 }

@@ -14,6 +14,7 @@ use App\Http\Controllers\Mobile\EnrollmentRequestController;
 use App\Http\Controllers\Mobile\ExploreController;
 use App\Http\Controllers\Mobile\ExtraViewRequestController;
 use App\Http\Controllers\Mobile\InstructorController;
+use App\Http\Controllers\Mobile\LearningAssetController;
 use App\Http\Controllers\Mobile\MeController;
 use App\Http\Controllers\Mobile\PdfController;
 use App\Http\Controllers\Mobile\PlaybackController;
@@ -225,5 +226,17 @@ Route::middleware('jwt.mobile')->group(function (): void {
     Route::get('/centers/{center}/assignment-groups/{group}', [AssignmentGroupController::class, 'show']);
     Route::post('/centers/{center}/assignment-groups/{group}/join', [AssignmentGroupController::class, 'join']);
     Route::post('/centers/{center}/assignment-groups/{group}/leave', [AssignmentGroupController::class, 'leave']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Learning Assets (Published Only)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/centers/{center}/courses/{course}/summaries', [LearningAssetController::class, 'summaries']);
+    Route::get('/centers/{center}/summaries/{asset}', [LearningAssetController::class, 'summary']);
+    Route::get('/centers/{center}/courses/{course}/flashcards', [LearningAssetController::class, 'flashcards']);
+    Route::get('/centers/{center}/flashcards/{asset}', [LearningAssetController::class, 'flashcardSet']);
+    Route::get('/centers/{center}/courses/{course}/interactive-activities', [LearningAssetController::class, 'interactiveActivities']);
+    Route::get('/centers/{center}/interactive-activities/{asset}', [LearningAssetController::class, 'interactiveActivity']);
 
 });

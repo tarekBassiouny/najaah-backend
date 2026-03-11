@@ -46,30 +46,87 @@ class StoreQuizRequest extends FormRequest
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {
         return [
-            'title_translations' => 'Quiz title in multiple languages',
-            'title_translations.en' => 'English title (required)',
-            'title_translations.ar' => 'Arabic title (optional)',
-            'description_translations' => 'Quiz description/instructions',
-            'attachable_type' => 'Type of content to attach quiz to: video, pdf, section, or course',
-            'attachable_id' => 'ID of the attached content',
-            'passing_score' => 'Minimum percentage to pass (default: 70)',
-            'max_attempts' => 'Maximum attempts allowed, 0 for unlimited (default: 0)',
-            'attempt_score_policy' => '0=best, 1=latest, 2=average (default: 0)',
-            'time_limit_minutes' => 'Time limit in minutes, null for no limit',
-            'shuffle_questions' => 'Randomize question order (default: false)',
-            'shuffle_answers' => 'Randomize answer order (default: false)',
-            'show_correct_answers' => 'Show correct answers after submission (default: true)',
-            'show_score_immediately' => 'Show score immediately after submission (default: true)',
-            'is_required' => 'Required for course completion (default: false)',
-            'is_active' => 'Quiz is available to students (default: false)',
-            'available_from' => 'Start availability datetime',
-            'available_until' => 'End availability datetime',
-            'order_index' => 'Display order (default: 0)',
+            'title_translations' => [
+                'description' => 'Quiz title in multiple languages.',
+                'example' => ['en' => 'Chapter 1 Quiz', 'ar' => 'اختبار الفصل الأول'],
+            ],
+            'title_translations.en' => [
+                'description' => 'English title (required).',
+                'example' => 'Chapter 1 Quiz',
+            ],
+            'title_translations.ar' => [
+                'description' => 'Arabic title (optional).',
+                'example' => 'اختبار الفصل الأول',
+            ],
+            'description_translations' => [
+                'description' => 'Quiz description/instructions.',
+                'example' => ['en' => 'Read carefully before submitting.'],
+            ],
+            'attachable_type' => [
+                'description' => 'Type of content to attach quiz to.',
+                'example' => 'video',
+            ],
+            'attachable_id' => [
+                'description' => 'ID of the attached content.',
+                'example' => 55,
+            ],
+            'passing_score' => [
+                'description' => 'Minimum percentage to pass.',
+                'example' => 70,
+            ],
+            'max_attempts' => [
+                'description' => 'Maximum attempts allowed, 0 for unlimited.',
+                'example' => 3,
+            ],
+            'attempt_score_policy' => [
+                'description' => 'Score policy (0=best, 1=latest, 2=average).',
+                'example' => 0,
+            ],
+            'time_limit_minutes' => [
+                'description' => 'Time limit in minutes, null for no limit.',
+                'example' => 30,
+            ],
+            'shuffle_questions' => [
+                'description' => 'Randomize question order.',
+                'example' => true,
+            ],
+            'shuffle_answers' => [
+                'description' => 'Randomize answer order.',
+                'example' => true,
+            ],
+            'show_correct_answers' => [
+                'description' => 'Show correct answers after submission.',
+                'example' => true,
+            ],
+            'show_score_immediately' => [
+                'description' => 'Show score immediately after submission.',
+                'example' => true,
+            ],
+            'is_required' => [
+                'description' => 'Whether quiz is required for course completion.',
+                'example' => false,
+            ],
+            'is_active' => [
+                'description' => 'Whether quiz is available to students.',
+                'example' => true,
+            ],
+            'available_from' => [
+                'description' => 'Start availability datetime.',
+                'example' => '2026-03-12 10:00:00',
+            ],
+            'available_until' => [
+                'description' => 'End availability datetime.',
+                'example' => '2026-04-01 23:59:59',
+            ],
+            'order_index' => [
+                'description' => 'Display order.',
+                'example' => 0,
+            ],
         ];
     }
 }
