@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Actions\Mobile\LoginAction;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\JwtToken;
 use App\Models\OtpCode;
 use App\Models\User;
@@ -166,6 +167,9 @@ test('verify otp issues tokens', function (): void {
         'data',
         'token' => ['access_token', 'refresh_token', 'expires_in'],
     ]);
+    $response->assertJsonPath('data.is_complete_profile', true);
+    $response->assertJsonPath('data.profile_completion.missing_steps', []);
+    $response->assertJsonPath('data.profile_completion.missing_fields', []);
     $response->assertJsonPath('data.device.device_id', $device->device_id);
     $response->assertJsonPath('data.device.device_name', 'iPhone');
     $response->assertJsonPath('data.device.device_type', 'iPhone 15 Pro');
@@ -400,6 +404,45 @@ test('verify reuses existing unbranded student when otp user_id is null', functi
         ->whereNull('center_id')
         ->where('phone', '1555555555')
         ->count())->toBe(1);
+});
+
+test('verify marks profile incomplete when placeholder name and required education are missing', function (): void {
+    $center = Center::factory()->create(['api_key' => 'center-profile-completion-key']);
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+                'require_grade' => true,
+                'require_school' => false,
+                'require_college' => false,
+            ],
+        ],
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => null,
+        'phone' => '1999999999',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-profile-completion',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-profile-completion',
+        'device_uuid' => 'device-profile-completion',
+    ], [
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.name', 'Student')
+        ->assertJsonPath('data.is_complete_profile', false)
+        ->assertJsonPath('data.profile_completion.missing_steps', ['name', 'education'])
+        ->assertJsonPath('data.profile_completion.missing_fields', ['name', 'grade_id']);
 });
 
 test('verify issues tokens using login action', function (): void {

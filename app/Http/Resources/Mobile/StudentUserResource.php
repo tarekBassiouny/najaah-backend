@@ -7,6 +7,7 @@ namespace App\Http\Resources\Mobile;
 use App\Enums\UserStatus;
 use App\Models\Center;
 use App\Models\User;
+use App\Services\Students\StudentProfileCompletionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
@@ -26,6 +27,11 @@ class StudentUserResource extends JsonResource
         $status = $user->status instanceof UserStatus
             ? $user->status
             : ($user->status !== null ? UserStatus::tryFrom((int) $user->status) : null);
+        $resolvedCenterId = $request->attributes->get('resolved_center_id');
+        $completion = app(StudentProfileCompletionService::class)->resolve(
+            $user,
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
 
         return [
             'id' => $user->id,
@@ -41,6 +47,11 @@ class StudentUserResource extends JsonResource
             'device' => $user->relationLoaded('activeDevice') && $user->activeDevice
                 ? new DeviceResource($user->activeDevice)
                 : null,
+            'is_complete_profile' => $completion['is_complete_profile'],
+            'profile_completion' => [
+                'missing_steps' => $completion['missing_steps'],
+                'missing_fields' => $completion['missing_fields'],
+            ],
         ];
     }
 }
