@@ -33,6 +33,8 @@ class AIContentJobResource extends JsonResource
             'reviewed_payload' => $this->reviewed_payload,
             'ai_provider' => $this->ai_provider,
             'ai_model' => $this->ai_model,
+            'estimated_input_tokens' => $this->estimated_input_tokens,
+            'estimated_output_tokens' => $this->estimated_output_tokens,
             'error_message' => $this->error_message,
             'started_at' => $this->started_at?->toIso8601String(),
             'completed_at' => $this->completed_at?->toIso8601String(),

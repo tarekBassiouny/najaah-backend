@@ -6,6 +6,7 @@ namespace App\Http\Requests\Admin\AIContent;
 
 use App\Enums\AIContentSourceType;
 use App\Enums\AIContentTargetType;
+use App\Enums\AIProvider;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,7 +28,7 @@ class CreateAIContentJobRequest extends FormRequest
             'source_id' => ['required', 'integer', 'min:1'],
             'target_type' => ['required', 'string', Rule::enum(AIContentTargetType::class)],
             'target_id' => ['sometimes', 'nullable', 'integer', 'min:1'],
-            'ai_provider' => ['sometimes', 'string', Rule::in(['openai', 'anthropic', 'gemini'])],
+            'ai_provider' => ['sometimes', 'string', Rule::in(AIProvider::values())],
             'ai_model' => ['sometimes', 'string', 'max:100'],
             'generation_config' => ['sometimes', 'array'],
         ];

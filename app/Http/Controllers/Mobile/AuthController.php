@@ -146,9 +146,9 @@ class AuthController extends Controller
     }
 
     /**
-     * @param  array{error:'INVALID_OTP'|'CENTER_MISMATCH'}  $result
+     * @param  array{error:'INVALID_OTP'|'CENTER_MISMATCH'|'STUDENT_INACTIVE'|'STUDENT_BANNED'}  $result
      *
-     * @phpstan-param array{error:'INVALID_OTP'|'CENTER_MISMATCH'} $result
+     * @phpstan-param array{error:'INVALID_OTP'|'CENTER_MISMATCH'|'STUDENT_INACTIVE'|'STUDENT_BANNED'} $result
      */
     private function deny(array $result): JsonResponse
     {
@@ -159,10 +159,14 @@ class AuthController extends Controller
                 'message' => match ($result['error']) {
                     'INVALID_OTP' => 'Invalid OTP.',
                     'CENTER_MISMATCH' => 'Center mismatch.',
+                    'STUDENT_INACTIVE' => 'Student account is inactive.',
+                    'STUDENT_BANNED' => 'Student account is banned.',
                     default => 'Invalid request.',
                 },
             ],
-        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        ], in_array($result['error'], ['STUDENT_INACTIVE', 'STUDENT_BANNED'], true)
+            ? Response::HTTP_FORBIDDEN
+            : Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     private function denyInactiveCenter(): JsonResponse

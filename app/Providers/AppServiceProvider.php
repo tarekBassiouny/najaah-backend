@@ -6,6 +6,8 @@ use App\Services\AdminNotifications\AdminNotificationService;
 use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
 use App\Services\AdminUsers\AdminUserService;
 use App\Services\AdminUsers\Contracts\AdminUserServiceInterface;
+use App\Services\AI\AIIntegrationService;
+use App\Services\AI\Contracts\AIIntegrationServiceInterface;
 use App\Services\Assessments\AIContentService;
 use App\Services\Assessments\AssessmentProgressService;
 use App\Services\Assessments\AssignmentService;
@@ -139,6 +141,7 @@ class AppServiceProvider extends ServiceProvider
         $bindings = [
             AdminNotificationServiceInterface::class => AdminNotificationService::class,
             AdminUserServiceInterface::class => AdminUserService::class,
+            AIIntegrationServiceInterface::class => AIIntegrationService::class,
             OtpServiceInterface::class => OtpService::class,
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,

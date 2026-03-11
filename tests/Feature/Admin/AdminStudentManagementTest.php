@@ -36,7 +36,7 @@ it('denies student access without permission', function (): void {
     $response->assertStatus(403)->assertJsonPath('error.code', 'PERMISSION_DENIED');
 });
 
-it('allows super admin to create and delete students', function (): void {
+it('allows super admin to create students and rejects deleting them', function (): void {
     $this->asAdmin();
 
     // Use branded center to test immediate user_centers association.
@@ -70,10 +70,12 @@ it('allows super admin to create and delete students', function (): void {
 
     $delete = $this->deleteJson("/api/v1/admin/students/{$studentId}", [], $this->adminHeaders());
 
-    $delete->assertOk()
-        ->assertJsonPath('success', true)
-        ->assertJsonPath('data', null);
-    $this->assertSoftDeleted('users', ['id' => $studentId]);
+    $delete->assertStatus(422)
+        ->assertJsonPath('error.code', 'STUDENT_DELETE_DISABLED');
+    $this->assertDatabaseHas('users', [
+        'id' => $studentId,
+        'deleted_at' => null,
+    ]);
 });
 
 it('attaches existing system student to unbranded center without creating duplicate user', function (): void {
@@ -564,7 +566,7 @@ it('allows updating inactive students', function (): void {
         ->assertJsonPath('data.status', \App\Enums\UserStatus::Active->value);
 });
 
-it('detaches unbranded student from center route without deleting user record', function (): void {
+it('rejects deleting unbranded student from center route', function (): void {
     $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
         'description' => 'Permission: student.manage',
     ]);
@@ -599,22 +601,22 @@ it('detaches unbranded student from center route without deleting user record', 
         'X-Api-Key' => $center->api_key,
     ]);
 
-    $response->assertOk()
-        ->assertJsonPath('success', true)
-        ->assertJsonPath('data', null);
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'STUDENT_DELETE_DISABLED');
 
     $this->assertDatabaseHas('users', [
         'id' => $student->id,
         'deleted_at' => null,
     ]);
-    $this->assertSoftDeleted('user_centers', [
+    $this->assertDatabaseHas('user_centers', [
         'user_id' => $student->id,
         'center_id' => $center->id,
         'type' => 'student',
+        'deleted_at' => null,
     ]);
 });
 
-it('deletes branded student from center route', function (): void {
+it('rejects deleting branded student from center route', function (): void {
     $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
         'description' => 'Permission: student.manage',
     ]);
@@ -649,11 +651,13 @@ it('deletes branded student from center route', function (): void {
         'X-Api-Key' => $center->api_key,
     ]);
 
-    $response->assertOk()
-        ->assertJsonPath('success', true)
-        ->assertJsonPath('data', null);
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'STUDENT_DELETE_DISABLED');
 
-    $this->assertSoftDeleted('users', ['id' => $student->id]);
+    $this->assertDatabaseHas('users', [
+        'id' => $student->id,
+        'deleted_at' => null,
+    ]);
 });
 
 it('bulk updates unbranded center students by pivot association', function (): void {

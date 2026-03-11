@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Actions\Mobile\LoginAction;
+use App\Enums\UserStatus;
 use App\Models\Center;
 use App\Models\CenterSetting;
 use App\Models\JwtToken;
@@ -240,6 +241,64 @@ test('verify rejects inactive center api key', function (): void {
 
     $response->assertStatus(403)
         ->assertJsonPath('error.code', 'CENTER_INACTIVE');
+});
+
+test('verify rejects inactive student', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112224444',
+        'country_code' => '+20',
+        'center_id' => null,
+        'status' => UserStatus::Inactive->value,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112224444',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-inactive-student',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-inactive-student',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'STUDENT_INACTIVE');
+});
+
+test('verify rejects banned student', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112225555',
+        'country_code' => '+20',
+        'center_id' => null,
+        'status' => UserStatus::Banned->value,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112225555',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-banned-student',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-banned-student',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'STUDENT_BANNED');
 });
 
 test('verify rejects branded student when using system api key', function (): void {

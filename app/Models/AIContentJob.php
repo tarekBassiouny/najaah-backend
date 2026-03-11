@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<string,mixed>|null $reviewed_payload
  * @property string|null $ai_provider
  * @property string|null $ai_model
+ * @property int $estimated_input_tokens
+ * @property int $estimated_output_tokens
  * @property string|null $prompt_used
  * @property string|null $error_message
  * @property \Carbon\Carbon|null $started_at
@@ -63,6 +65,8 @@ class AIContentJob extends Model
         'reviewed_payload',
         'ai_provider',
         'ai_model',
+        'estimated_input_tokens',
+        'estimated_output_tokens',
         'prompt_used',
         'error_message',
         'started_at',
@@ -81,6 +85,8 @@ class AIContentJob extends Model
         'generation_config' => 'array',
         'generated_payload' => 'array',
         'reviewed_payload' => 'array',
+        'estimated_input_tokens' => 'integer',
+        'estimated_output_tokens' => 'integer',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
         'published_at' => 'datetime',

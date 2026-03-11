@@ -275,8 +275,11 @@ class StudentService
             $this->centerScopeService->assertAdminSameCenter($actor, $user);
         }
 
-        $this->auditLogService->log($actor, $user, AuditActions::STUDENT_DELETED);
-        $user->delete();
+        throw new \App\Exceptions\DomainException(
+            'Student deletion is disabled. Update the student status instead.',
+            ErrorCodes::STUDENT_DELETE_DISABLED,
+            422
+        );
     }
 
     public function deleteFromCenter(User $student, Center $center, ?User $actor = null): void
@@ -303,18 +306,11 @@ class StudentService
             throw new \App\Exceptions\NotFoundException('Student not found.', 404);
         }
 
-        if (is_numeric($student->center_id) && (int) $student->center_id === (int) $center->id) {
-            $this->auditLogService->log($actor, $student, AuditActions::STUDENT_DELETED);
-            $student->delete();
-
-            return;
-        }
-
-        $association->delete();
-
-        $this->auditLogService->log($actor, $student, AuditActions::STUDENT_UPDATED, [
-            'detached_center_id' => (int) $center->id,
-        ]);
+        throw new \App\Exceptions\DomainException(
+            'Student deletion is disabled. Update the student status instead.',
+            ErrorCodes::STUDENT_DELETE_DISABLED,
+            422
+        );
     }
 
     /**

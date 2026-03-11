@@ -85,6 +85,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/quizzes.php';
                         require __DIR__.'/../routes/api/v1/admin/assignments.php';
                         require __DIR__.'/../routes/api/v1/admin/ai-content.php';
+                        require __DIR__.'/../routes/api/v1/admin/ai-providers.php';
                         require __DIR__.'/../routes/api/v1/admin/landing-pages.php';
                     });
                 });

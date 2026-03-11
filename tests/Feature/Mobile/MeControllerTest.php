@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\EnrollmentStatus;
+use App\Enums\UserStatus;
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\Course;
@@ -332,6 +333,34 @@ test('blocks tokens for revoked devices', function (): void {
     $response = $this->getJson('/api/v1/auth/me', authHeaders($access));
 
     $response->assertStatus(403);
+});
+
+test('blocks inactive students even with a valid token', function (): void {
+    $user = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'status' => UserStatus::Inactive->value,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $access = JWTAuth::fromUser($user);
+
+    JwtToken::create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'access_token' => $access,
+        'refresh_token' => 'refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDays(30),
+    ]);
+
+    $response = $this->getJson('/api/v1/auth/me', authHeaders($access));
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'STUDENT_INACTIVE');
 });
 
 test('allows system-level students without center assignment', function (): void {

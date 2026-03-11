@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Mobile;
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Audit\AuditLogService;
@@ -12,6 +13,7 @@ use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Students\StudentService;
 use App\Support\AuditActions;
+use App\Support\ErrorCodes;
 use Illuminate\Database\UniqueConstraintViolationException;
 
 class LoginAction
@@ -33,7 +35,7 @@ class LoginAction
      *   device_os?:string,
      *   device_type?:string
      * } $data
-     * @return array{user:User,token:array{access_token:string,refresh_token:string}}|array{error:'INVALID_OTP'|'CENTER_MISMATCH'}
+     * @return array{user:User,token:array{access_token:string,refresh_token:string}}|array{error:'INVALID_OTP'|'CENTER_MISMATCH'|'STUDENT_INACTIVE'|'STUDENT_BANNED'}
      */
     public function execute(array $data, ?int $centerId = null): array
     {
@@ -64,6 +66,14 @@ class LoginAction
             }
         } elseif (is_numeric($user->center_id)) {
             return ['error' => 'CENTER_MISMATCH'];
+        }
+
+        if ((int) $user->status !== UserStatus::Active->value) {
+            return [
+                'error' => (int) $user->status === UserStatus::Banned->value
+                    ? ErrorCodes::STUDENT_BANNED
+                    : ErrorCodes::STUDENT_INACTIVE,
+            ];
         }
 
         $device = $this->deviceService->register(

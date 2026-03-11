@@ -22,6 +22,7 @@ use App\Models\QuizQuestion;
 use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\AI\Contracts\AIIntegrationServiceInterface;
 use App\Services\Assessments\Contracts\AIContentServiceInterface;
 use App\Services\Assessments\Contracts\AssignmentServiceInterface;
 use App\Services\Assessments\Contracts\QuizServiceInterface;
@@ -34,7 +35,8 @@ final class AIContentService implements AIContentServiceInterface
 {
     public function __construct(
         private readonly QuizServiceInterface $quizService,
-        private readonly AssignmentServiceInterface $assignmentService
+        private readonly AssignmentServiceInterface $assignmentService,
+        private readonly AIIntegrationServiceInterface $aiIntegrationService
     ) {}
 
     /**
@@ -57,16 +59,30 @@ final class AIContentService implements AIContentServiceInterface
         $targetId = array_key_exists('target_id', $data) && is_numeric($data['target_id'])
             ? (int) $data['target_id']
             : null;
-        $provider = $this->resolveProvider(
-            array_key_exists('ai_provider', $data) && is_string($data['ai_provider']) ? $data['ai_provider'] : null
-        );
-        $model = $this->resolveModel(
-            $provider,
+        $this->validateSourceOwnership($center, $course, $sourceType, $sourceId);
+        $this->validateTargetOwnership($center, $course, $targetType, $targetId);
+
+        $resolvedConfig = $this->aiIntegrationService->resolveProviderAndModel(
+            $center,
+            array_key_exists('ai_provider', $data) && is_string($data['ai_provider']) ? $data['ai_provider'] : null,
             array_key_exists('ai_model', $data) && is_string($data['ai_model']) ? $data['ai_model'] : null
         );
 
-        $this->validateSourceOwnership($center, $course, $sourceType, $sourceId);
-        $this->validateTargetOwnership($center, $course, $targetType, $targetId);
+        $provider = (string) $resolvedConfig['provider'];
+        $model = (string) $resolvedConfig['model'];
+
+        $sourceContent = $this->extractSourceContentByContext($center->id, $course->id, $sourceType, $sourceId);
+        $inputChars = mb_strlen($sourceContent);
+        $estimatedInputTokens = $this->aiIntegrationService->estimateTokensFromChars($inputChars);
+        $estimatedOutputTokens = $this->aiIntegrationService->defaultEstimatedOutputTokens($center, $provider);
+
+        $this->aiIntegrationService->assertCanCreateJob(
+            $center,
+            $provider,
+            $inputChars,
+            $estimatedInputTokens,
+            $estimatedOutputTokens
+        );
 
         return AIContentJob::query()->create([
             'center_id' => $center->id,
@@ -79,6 +95,8 @@ final class AIContentService implements AIContentServiceInterface
             'generation_config' => $data['generation_config'] ?? [],
             'ai_provider' => $provider,
             'ai_model' => $model,
+            'estimated_input_tokens' => $estimatedInputTokens,
+            'estimated_output_tokens' => $estimatedOutputTokens,
             'created_by' => $creator->id,
         ]);
     }
@@ -87,6 +105,11 @@ final class AIContentService implements AIContentServiceInterface
     {
         if (! in_array($job->status, [AIContentJobStatus::Pending, AIContentJobStatus::Failed], true)) {
             throw new DomainException('Only pending or failed jobs can be processed.', ErrorCodes::INVALID_STATE, 422);
+        }
+
+        $center = Center::query()->find($job->center_id);
+        if (! $center instanceof Center) {
+            throw new DomainException('Center not found for AI content job.', ErrorCodes::NOT_FOUND, 404);
         }
 
         $job->update([
@@ -102,15 +125,39 @@ final class AIContentService implements AIContentServiceInterface
             }
 
             $prompt = $this->buildPrompt($job, $content);
-            $provider = $this->resolveProvider($job->ai_provider);
-            $model = $this->resolveModel($provider, $job->ai_model);
-            $payload = $this->callAIProvider($prompt, $provider, $model);
+            $provider = is_string($job->ai_provider) ? $job->ai_provider : '';
+            $model = is_string($job->ai_model) ? $job->ai_model : '';
+            if ($provider === '' || $model === '') {
+                throw new \RuntimeException('AI provider/model is missing on job.');
+            }
+
+            $inputChars = mb_strlen($content);
+            $estimatedInputTokens = $this->aiIntegrationService->estimateTokensFromChars($inputChars);
+            $apiKey = $this->aiIntegrationService->resolveApiKey($provider);
+            if ($apiKey === '') {
+                throw new \RuntimeException(sprintf('API key is not configured for provider [%s].', $provider));
+            }
+
+            $payload = $this->callAIProvider($prompt, $provider, $model, $apiKey);
+            $encodedPayload = json_encode($payload, JSON_UNESCAPED_UNICODE);
+            $outputChars = is_string($encodedPayload) ? mb_strlen($encodedPayload) : 0;
+            $actualOutputTokens = $this->aiIntegrationService->estimateTokensFromChars($outputChars);
+
+            $this->aiIntegrationService->assertCanStoreOutput(
+                $center,
+                $provider,
+                $job,
+                $outputChars,
+                $actualOutputTokens
+            );
 
             $job->update([
                 'status' => AIContentJobStatus::Completed,
                 'generated_payload' => $payload,
                 'ai_provider' => $provider,
                 'ai_model' => $model,
+                'estimated_input_tokens' => $estimatedInputTokens,
+                'estimated_output_tokens' => $actualOutputTokens,
                 'prompt_used' => $prompt,
                 'completed_at' => now(),
             ]);
@@ -122,11 +169,6 @@ final class AIContentService implements AIContentServiceInterface
 
             $job->update([
                 'status' => AIContentJobStatus::Failed,
-                'ai_provider' => $this->resolveProvider($job->ai_provider),
-                'ai_model' => $this->resolveModel(
-                    $this->resolveProvider($job->ai_provider),
-                    $job->ai_model
-                ),
                 'error_message' => $throwable->getMessage(),
                 'completed_at' => now(),
             ]);
@@ -239,6 +281,8 @@ final class AIContentService implements AIContentServiceInterface
             'reviewed_payload' => $job->reviewed_payload,
             'ai_provider' => $job->ai_provider,
             'ai_model' => $job->ai_model,
+            'estimated_input_tokens' => $job->estimated_input_tokens,
+            'estimated_output_tokens' => $job->estimated_output_tokens,
             'error_message' => $job->error_message,
             'started_at' => $job->started_at?->toIso8601String(),
             'completed_at' => $job->completed_at?->toIso8601String(),
@@ -333,19 +377,28 @@ final class AIContentService implements AIContentServiceInterface
 
     private function extractSourceContent(AIContentJob $job): string
     {
-        return match ($job->source_type) {
-            AIContentSourceType::Video => $this->extractVideoContent($job),
-            AIContentSourceType::Pdf => $this->extractPdfContent($job),
-            AIContentSourceType::Section => $this->extractSectionContent($job),
-            AIContentSourceType::Course => $this->extractCourseContent($job),
+        return $this->extractSourceContentByContext($job->center_id, $job->course_id, $job->source_type, $job->source_id);
+    }
+
+    private function extractSourceContentByContext(
+        int $centerId,
+        int $courseId,
+        AIContentSourceType $sourceType,
+        int $sourceId
+    ): string {
+        return match ($sourceType) {
+            AIContentSourceType::Video => $this->extractVideoContent($centerId, $sourceId),
+            AIContentSourceType::Pdf => $this->extractPdfContent($centerId, $sourceId),
+            AIContentSourceType::Section => $this->extractSectionContent($courseId, $sourceId),
+            AIContentSourceType::Course => $this->extractCourseContent($centerId, $sourceId),
         };
     }
 
-    private function extractVideoContent(AIContentJob $job): string
+    private function extractVideoContent(int $centerId, int $sourceId): string
     {
         $video = Video::query()
-            ->whereKey($job->source_id)
-            ->where('center_id', $job->center_id)
+            ->whereKey($sourceId)
+            ->where('center_id', $centerId)
             ->firstOrFail();
 
         /** @var mixed $transcript */
@@ -358,11 +411,11 @@ final class AIContentService implements AIContentServiceInterface
         ])));
     }
 
-    private function extractPdfContent(AIContentJob $job): string
+    private function extractPdfContent(int $centerId, int $sourceId): string
     {
         $pdf = Pdf::query()
-            ->whereKey($job->source_id)
-            ->where('center_id', $job->center_id)
+            ->whereKey($sourceId)
+            ->where('center_id', $centerId)
             ->firstOrFail();
 
         /** @var mixed $textContent */
@@ -375,11 +428,11 @@ final class AIContentService implements AIContentServiceInterface
         ])));
     }
 
-    private function extractSectionContent(AIContentJob $job): string
+    private function extractSectionContent(int $courseId, int $sourceId): string
     {
         $section = Section::query()
-            ->whereKey($job->source_id)
-            ->where('course_id', $job->course_id)
+            ->whereKey($sourceId)
+            ->where('course_id', $courseId)
             ->with(['videos', 'pdfs'])
             ->firstOrFail();
 
@@ -409,11 +462,11 @@ final class AIContentService implements AIContentServiceInterface
         return trim(implode("\n\n", $parts));
     }
 
-    private function extractCourseContent(AIContentJob $job): string
+    private function extractCourseContent(int $centerId, int $sourceId): string
     {
         $course = Course::query()
-            ->whereKey($job->source_id)
-            ->where('center_id', $job->center_id)
+            ->whereKey($sourceId)
+            ->where('center_id', $centerId)
             ->with(['sections.videos', 'sections.pdfs'])
             ->firstOrFail();
 
@@ -517,13 +570,13 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callAIProvider(string $prompt, string $provider, string $model): array
+    private function callAIProvider(string $prompt, string $provider, string $model, string $apiKey): array
     {
         /** @var array<string,mixed> $payload */
         $payload = match ($provider) {
-            'anthropic' => $this->callAnthropic($prompt, $model),
-            'gemini' => $this->callGemini($prompt, $model),
-            default => $this->callOpenAI($prompt, $model),
+            'anthropic' => $this->callAnthropic($prompt, $model, $apiKey),
+            'gemini' => $this->callGemini($prompt, $model, $apiKey),
+            default => $this->callOpenAI($prompt, $model, $apiKey),
         };
 
         return $payload;
@@ -532,10 +585,8 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callOpenAI(string $prompt, string $model): array
+    private function callOpenAI(string $prompt, string $model, string $apiKey): array
     {
-        $apiKey = (string) config('services.openai.api_key');
-
         $response = Http::withHeaders([
             'Authorization' => 'Bearer '.$apiKey,
             'Content-Type' => 'application/json',
@@ -562,10 +613,8 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callAnthropic(string $prompt, string $model): array
+    private function callAnthropic(string $prompt, string $model, string $apiKey): array
     {
-        $apiKey = (string) config('services.anthropic.api_key');
-
         $response = Http::withHeaders([
             'x-api-key' => $apiKey,
             'Content-Type' => 'application/json',
@@ -593,13 +642,8 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callGemini(string $prompt, string $model): array
+    private function callGemini(string $prompt, string $model, string $apiKey): array
     {
-        $apiKey = trim((string) config('services.gemini.api_key'));
-        if ($apiKey === '') {
-            throw new \RuntimeException('Gemini API key is missing.');
-        }
-
         $endpoint = sprintf(
             'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent',
             rawurlencode($model)
@@ -649,33 +693,6 @@ PROMPT;
         }
 
         return $decoded;
-    }
-
-    private function resolveProvider(?string $provider): string
-    {
-        $configured = (string) config('services.ai.provider', 'openai');
-        $normalized = strtolower(trim((string) ($provider ?? $configured)));
-
-        return in_array($normalized, ['openai', 'anthropic', 'gemini'], true) ? $normalized : 'openai';
-    }
-
-    private function resolveModel(string $provider, ?string $model): string
-    {
-        $trimmedModel = trim((string) $model);
-        if ($trimmedModel !== '') {
-            return $trimmedModel;
-        }
-
-        $configuredModel = trim((string) config('services.ai.model', ''));
-        if ($configuredModel !== '') {
-            return $configuredModel;
-        }
-
-        return match ($provider) {
-            'anthropic' => 'claude-3-5-sonnet-20241022',
-            'gemini' => 'gemini-1.5-flash',
-            default => 'gpt-4o-mini',
-        };
     }
 
     /**
