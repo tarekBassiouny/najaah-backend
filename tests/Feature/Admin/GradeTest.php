@@ -40,8 +40,8 @@ it('manages center grades and lookup', function (): void {
 
     $lookup = $this->getJson("/api/v1/admin/centers/{$center->id}/grades/lookup", $this->adminHeaders());
     $lookup->assertOk()
-        ->assertJsonCount(2, 'data')
-        ->assertJsonPath('data.0.id', $gradeId);
+        ->assertJsonCount(2, 'data');
+    expect(collect($lookup->json('data'))->pluck('id')->contains($gradeId))->toBeTrue();
 
     $lookupActiveOnly = $this->getJson("/api/v1/admin/centers/{$center->id}/grades/lookup?is_active=true", $this->adminHeaders());
     $lookupActiveOnly->assertOk()

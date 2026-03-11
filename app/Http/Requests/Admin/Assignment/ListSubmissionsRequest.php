@@ -29,4 +29,37 @@ class ListSubmissionsRequest extends FormRequest
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function queryParameters(): array
+    {
+        return [
+            'status' => [
+                'description' => 'Submission status filter (0..3).',
+                'example' => '1',
+            ],
+            'user_id' => [
+                'description' => 'Student user ID filter.',
+                'example' => '42',
+            ],
+            'passed' => [
+                'description' => 'Pass/fail filter.',
+                'example' => 'true',
+            ],
+            'is_late' => [
+                'description' => 'Late submission filter.',
+                'example' => 'false',
+            ],
+            'page' => [
+                'description' => 'Page number.',
+                'example' => '1',
+            ],
+            'per_page' => [
+                'description' => 'Items per page (max 100).',
+                'example' => '15',
+            ],
+        ];
+    }
 }

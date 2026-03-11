@@ -10,6 +10,7 @@ use App\Models\College;
 use App\Models\Grade;
 use App\Models\School;
 use App\Models\User;
+use App\Services\Students\StudentEducationProfileService;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -85,30 +86,12 @@ class UpdateEducationRequest extends FormRequest
      */
     private function educationProfileSettings(User $student): array
     {
-        $center = $this->resolveEducationCenter($student);
+        $resolvedCenterId = $this->attributes->get('resolved_center_id');
 
-        if (! $center instanceof Center) {
-            return [
-                'enable_grade' => true,
-                'enable_school' => true,
-                'enable_college' => true,
-                'require_grade' => false,
-                'require_school' => false,
-                'require_college' => false,
-            ];
-        }
-
-        $settings = $center->setting?->settings;
-        $profile = is_array($settings['education_profile'] ?? null) ? $settings['education_profile'] : [];
-
-        return array_merge([
-            'enable_grade' => true,
-            'enable_school' => true,
-            'enable_college' => true,
-            'require_grade' => false,
-            'require_school' => false,
-            'require_college' => false,
-        ], $profile);
+        return app(StudentEducationProfileService::class)->resolveSettings(
+            $student,
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
     }
 
     private function validateModuleToggle(Validator $validator, string $field, string $toggleKey, string $message): void
@@ -186,23 +169,6 @@ class UpdateEducationRequest extends FormRequest
             ->where('id', $entityCenterId)
             ->where('type', CenterType::Unbranded->value)
             ->exists();
-    }
-
-    private function resolveEducationCenter(User $student): ?Center
-    {
-        if (is_numeric($student->center_id)) {
-            return Center::query()->find((int) $student->center_id);
-        }
-
-        $resolvedCenterId = $this->attributes->get('resolved_center_id');
-        if (is_numeric($resolvedCenterId)) {
-            /** @var Center|null $center */
-            $center = Center::query()->where('type', CenterType::Unbranded->value)->find((int) $resolvedCenterId);
-
-            return $center;
-        }
-
-        return null;
     }
 
     private function validateSingleCenterContext(Validator $validator): void

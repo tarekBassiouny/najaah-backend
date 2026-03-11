@@ -26,7 +26,8 @@ The Assessments system provides two types of assessable content:
 - **Auto-graded** upon submission
 - **Timed** with optional time limits
 - **Configurable attempts** with score policies (best/latest/average)
-- **AI-generated** questions from video transcripts or PDFs
+- **AI-generated draft content** from video/PDF/section/course sources
+  (quizzes, assignments, summaries, flashcards, interactive activities)
 
 ### Assignments
 - **Multiple submission types**: file upload, text, or link
@@ -283,99 +284,105 @@ PUT /centers/{center}/quizzes/{quiz}/questions/reorder
 
 ---
 
-### AI Question Generation
+### AI Content Jobs
 
-#### Generate from Video
+#### Create Generation Job
 ```http
-POST /centers/{center}/quizzes/{quiz}/generate-from-video
+POST /centers/{center}/ai-content/jobs
 ```
 
 **Request Body:**
 ```json
 {
-  "video_id": 123,
-  "question_count": 5
-}
-```
-
-**Response:** `202 Accepted` with job status
-```json
-{
-  "success": true,
-  "message": "AI generation job started",
-  "data": {
-    "job_id": 45,
-    "status": "pending",
-    "questions_requested": 5
+  "course_id": 12,
+  "source_type": "video",
+  "source_id": 123,
+  "target_type": "quiz",
+  "target_id": 45,
+  "generation_config": {
+    "question_count": 10
   }
 }
 ```
 
-#### Generate from PDF
-```http
-POST /centers/{center}/quizzes/{quiz}/generate-from-pdf
-```
-
-**Request Body:**
-```json
-{
-  "pdf_id": 456,
-  "question_count": 10
-}
-```
-
-#### Check Job Status
-```http
-GET /centers/{center}/ai-generation-jobs/{job}
-```
-
-**Response:**
+**Response:** `202 Accepted`
 ```json
 {
   "success": true,
+  "message": "AI content generation job queued successfully.",
   "data": {
-    "id": 45,
-    "status": "completed",
-    "status_label": "Completed",
-    "questions_requested": 5,
-    "questions_generated": 5,
-    "ai_provider": "openai",
-    "ai_model": "gpt-4",
-    "generated_questions": [
-      {
-        "question": "What is the main topic discussed?",
-        "options": [
-          {"label": "A", "text": "Option A", "is_correct": false},
-          {"label": "B", "text": "Option B", "is_correct": true},
-          {"label": "C", "text": "Option C", "is_correct": false},
-          {"label": "D", "text": "Option D", "is_correct": false}
-        ],
-        "explanation": "Explanation here",
-        "difficulty": "medium"
-      }
-    ],
-    "started_at": "2026-03-10T12:00:00Z",
-    "completed_at": "2026-03-10T12:01:30Z"
+    "id": 89,
+    "center_id": 3,
+    "course_id": 12,
+    "source_type": "video",
+    "source_id": 123,
+    "target_type": "quiz",
+    "target_id": 45,
+    "status": 0,
+    "status_label": "Pending"
   }
 }
 ```
 
-#### Approve Questions
+#### List Jobs
 ```http
-POST /centers/{center}/ai-generation-jobs/{job}/approve
+GET /centers/{center}/ai-content/jobs?course_id=12&target_type=quiz&status=2&page=1&per_page=20
+```
+
+#### Get Job
+```http
+GET /centers/{center}/ai-content/jobs/{job}
+```
+
+#### Review Job Payload
+```http
+PATCH /centers/{center}/ai-content/jobs/{job}/review
 ```
 
 **Request Body:**
 ```json
 {
-  "question_indexes": [0, 2, 4]
+  "reviewed_payload": {
+    "quiz": {
+      "title": "Edited Quiz Title",
+      "description": "Edited quiz description"
+    },
+    "questions": []
+  }
 }
 ```
-*If `question_indexes` is omitted, all questions are approved.*
 
-#### Discard Questions
+#### Approve Job
 ```http
-DELETE /centers/{center}/ai-generation-jobs/{job}
+POST /centers/{center}/ai-content/jobs/{job}/approve
+```
+
+#### Publish Job
+```http
+POST /centers/{center}/ai-content/jobs/{job}/publish
+```
+
+**Response includes publication target:**
+```json
+{
+  "success": true,
+  "data": {
+    "job": {
+      "id": 89,
+      "status": 5,
+      "status_label": "Published"
+    },
+    "publication": {
+      "target_type": "quiz",
+      "target_id": 45
+    }
+  }
+}
+```
+
+#### Discard Job
+```http
+DELETE /centers/{center}/ai-content/jobs/{job}
 ```
 
 ---
@@ -1261,13 +1268,16 @@ POST /centers/{center}/assignment-groups/{group}/leave
 | 2 | Graded | Graded with score |
 | 3 | Returned | Returned for revision |
 
-### AI Generation Status
+### AI Content Job Status
 | Value | Label | Description |
 |-------|-------|-------------|
 | 0 | Pending | Queued for processing |
 | 1 | Processing | Currently generating |
 | 2 | Completed | Successfully generated |
 | 3 | Failed | Generation failed |
+| 4 | Approved | Reviewed and approved |
+| 5 | Published | Published to final target |
+| 6 | Discarded | Discarded by admin |
 
 ---
 
@@ -1339,10 +1349,10 @@ The system runs a scheduled job every minute to auto-submit quiz attempts that h
    - Preview mode for quiz before publishing
    - Batch question import/export
 
-2. **AI Generation Flow:**
+2. **AI Content Jobs Flow:**
    - Show progress indicator while job is processing
-   - Allow selecting which generated questions to approve
-   - Edit questions before approval
+   - Allow editing reviewed payload before approval
+   - Support lifecycle actions: review, approve, publish, discard
 
 3. **Grading Interface:**
    - Inline submission preview

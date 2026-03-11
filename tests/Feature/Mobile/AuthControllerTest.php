@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Actions\Mobile\LoginAction;
+use App\Enums\UserStatus;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\JwtToken;
 use App\Models\OtpCode;
 use App\Models\User;
@@ -166,6 +168,9 @@ test('verify otp issues tokens', function (): void {
         'data',
         'token' => ['access_token', 'refresh_token', 'expires_in'],
     ]);
+    $response->assertJsonPath('data.is_complete_profile', true);
+    $response->assertJsonPath('data.profile_completion.missing_steps', []);
+    $response->assertJsonPath('data.profile_completion.missing_fields', []);
     $response->assertJsonPath('data.device.device_id', $device->device_id);
     $response->assertJsonPath('data.device.device_name', 'iPhone');
     $response->assertJsonPath('data.device.device_type', 'iPhone 15 Pro');
@@ -236,6 +241,64 @@ test('verify rejects inactive center api key', function (): void {
 
     $response->assertStatus(403)
         ->assertJsonPath('error.code', 'CENTER_INACTIVE');
+});
+
+test('verify rejects inactive student', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112224444',
+        'country_code' => '+20',
+        'center_id' => null,
+        'status' => UserStatus::Inactive->value,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112224444',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-inactive-student',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-inactive-student',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'STUDENT_INACTIVE');
+});
+
+test('verify rejects banned student', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create([
+        'phone' => '1112225555',
+        'country_code' => '+20',
+        'center_id' => null,
+        'status' => UserStatus::Banned->value,
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '1112225555',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-banned-student',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-banned-student',
+        'device_uuid' => 'device-1',
+    ], [
+        'X-Api-Key' => 'system-key',
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'STUDENT_BANNED');
 });
 
 test('verify rejects branded student when using system api key', function (): void {
@@ -400,6 +463,45 @@ test('verify reuses existing unbranded student when otp user_id is null', functi
         ->whereNull('center_id')
         ->where('phone', '1555555555')
         ->count())->toBe(1);
+});
+
+test('verify marks profile incomplete when placeholder name and required education are missing', function (): void {
+    $center = Center::factory()->create(['api_key' => 'center-profile-completion-key']);
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+                'require_grade' => true,
+                'require_school' => false,
+                'require_college' => false,
+            ],
+        ],
+    ]);
+
+    OtpCode::factory()->create([
+        'user_id' => null,
+        'phone' => '1999999999',
+        'country_code' => '+20',
+        'otp_code' => '123456',
+        'otp_token' => 'token-profile-completion',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/verify', [
+        'otp' => '123456',
+        'token' => 'token-profile-completion',
+        'device_uuid' => 'device-profile-completion',
+    ], [
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.name', 'Student')
+        ->assertJsonPath('data.is_complete_profile', false)
+        ->assertJsonPath('data.profile_completion.missing_steps', ['name', 'education'])
+        ->assertJsonPath('data.profile_completion.missing_fields', ['name', 'grade_id']);
 });
 
 test('verify issues tokens using login action', function (): void {

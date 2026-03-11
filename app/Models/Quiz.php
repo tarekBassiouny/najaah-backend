@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\AIContentTargetType;
 use App\Enums\AttemptScorePolicy;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
@@ -45,7 +46,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Model|null $attachable
  * @property-read \Illuminate\Database\Eloquent\Collection<int, QuizQuestion> $questions
  * @property-read \Illuminate\Database\Eloquent\Collection<int, QuizAttempt> $attempts
- * @property-read \Illuminate\Database\Eloquent\Collection<int, AIGenerationJob> $aiGenerationJobs
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, AIContentJob> $aiContentJobs
  */
 class Quiz extends Model
 {
@@ -140,10 +141,11 @@ class Quiz extends Model
         return $this->hasMany(QuizAttempt::class);
     }
 
-    /** @return HasMany<AIGenerationJob, self> */
-    public function aiGenerationJobs(): HasMany
+    /** @return HasMany<AIContentJob, self> */
+    public function aiContentJobs(): HasMany
     {
-        return $this->hasMany(AIGenerationJob::class);
+        return $this->hasMany(AIContentJob::class, 'target_id')
+            ->where('target_type', AIContentTargetType::Quiz->value);
     }
 
     public function hasUnlimitedAttempts(): bool

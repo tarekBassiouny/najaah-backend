@@ -13,6 +13,7 @@ use App\Http\Resources\Mobile\StudentUserResource;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\JwtServiceInterface;
+use App\Services\Students\StudentProfileCompletionService;
 use App\Services\Students\StudentProfileQueryService;
 use App\Services\Students\StudentService;
 use App\Support\AuditActions;
@@ -26,7 +27,8 @@ class MeController extends Controller
         private readonly StudentService $studentService,
         private readonly JwtServiceInterface $jwtService,
         private readonly AuditLogService $auditLogService,
-        private readonly StudentProfileQueryService $studentProfileQueryService
+        private readonly StudentProfileQueryService $studentProfileQueryService,
+        private readonly StudentProfileCompletionService $studentProfileCompletionService
     ) {}
 
     public function profile(): JsonResponse
@@ -64,9 +66,20 @@ class MeController extends Controller
 
         $this->studentProfileQueryService->load($user);
 
+        $completion = $this->studentProfileCompletionService->resolve(
+            $user,
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
+        $data = (new StudentProfileResource($user))->resolve($request);
+        $data['is_complete_profile'] = $completion['is_complete_profile'];
+        $data['profile_completion'] = [
+            'missing_steps' => $completion['missing_steps'],
+            'missing_fields' => $completion['missing_fields'],
+        ];
+
         return response()->json([
             'success' => true,
-            'data' => new StudentProfileResource($user),
+            'data' => $data,
         ]);
     }
 
@@ -98,6 +111,12 @@ class MeController extends Controller
         $updated = $this->studentService->updateEducation($user, $request->validated());
         $updated->loadMissing(['grade', 'school', 'college']);
 
+        $resolvedCenterId = $request->attributes->get('resolved_center_id');
+        $completion = $this->studentProfileCompletionService->resolve(
+            $updated,
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
+
         return response()->json([
             'success' => true,
             'message' => 'Educational profile updated successfully.',
@@ -114,6 +133,11 @@ class MeController extends Controller
                     'id' => $updated->college->id,
                     'name' => $updated->college->translate('name'),
                 ] : null,
+                'is_complete_profile' => $completion['is_complete_profile'],
+                'profile_completion' => [
+                    'missing_steps' => $completion['missing_steps'],
+                    'missing_fields' => $completion['missing_fields'],
+                ],
             ],
         ]);
     }

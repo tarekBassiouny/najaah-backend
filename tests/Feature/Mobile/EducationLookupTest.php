@@ -169,7 +169,10 @@ it('updates student education on mobile endpoint when allowed', function (): voi
     $response->assertOk()
         ->assertJsonPath('data.grade.id', $grade->id)
         ->assertJsonPath('data.school.id', $school->id)
-        ->assertJsonPath('data.college.id', $college->id);
+        ->assertJsonPath('data.college.id', $college->id)
+        ->assertJsonPath('data.is_complete_profile', true)
+        ->assertJsonPath('data.profile_completion.missing_steps', [])
+        ->assertJsonPath('data.profile_completion.missing_fields', []);
 
     $this->assertDatabaseHas('users', [
         'id' => $student->id,
@@ -178,6 +181,44 @@ it('updates student education on mobile endpoint when allowed', function (): voi
         'college_id' => $college->id,
     ]);
     expect(Cache::get('student_profile:'.$student->id))->toBeNull();
+});
+
+it('keeps profile incomplete after education update when placeholder name remains', function (): void {
+    $center = Center::factory()->create(['api_key' => 'education-update-incomplete-key']);
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+                'require_grade' => true,
+                'require_school' => false,
+                'require_college' => false,
+            ],
+        ],
+    ]);
+
+    $grade = Grade::factory()->create(['center_id' => $center->id, 'is_active' => true]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'password' => 'secret123',
+        'name' => 'Student',
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiPatch('/api/v1/auth/me/education', [
+        'grade_id' => $grade->id,
+    ], ['X-Api-Key' => $center->api_key]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.grade.id', $grade->id)
+        ->assertJsonPath('data.is_complete_profile', false)
+        ->assertJsonPath('data.profile_completion.missing_steps', ['name'])
+        ->assertJsonPath('data.profile_completion.missing_fields', ['name']);
 });
 
 it('returns 422 when submitted education fields belong to different centers', function (): void {
