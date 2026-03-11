@@ -47,6 +47,9 @@ return [
     'anthropic' => [
         'api_key' => env('ANTHROPIC_API_KEY'),
     ],
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY'),
+    ],
     'ai' => [
         'provider' => env('AI_PROVIDER', 'openai'),
         'model' => env('AI_MODEL', 'gpt-4o-mini'),

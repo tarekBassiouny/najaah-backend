@@ -522,6 +522,7 @@ PROMPT;
         /** @var array<string,mixed> $payload */
         $payload = match ($provider) {
             'anthropic' => $this->callAnthropic($prompt, $model),
+            'gemini' => $this->callGemini($prompt, $model),
             default => $this->callOpenAI($prompt, $model),
         };
 
@@ -592,6 +593,48 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
+    private function callGemini(string $prompt, string $model): array
+    {
+        $apiKey = trim((string) config('services.gemini.api_key'));
+        if ($apiKey === '') {
+            throw new \RuntimeException('Gemini API key is missing.');
+        }
+
+        $endpoint = sprintf(
+            'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent',
+            rawurlencode($model)
+        );
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post($endpoint.'?key='.$apiKey, [
+            'contents' => [
+                [
+                    'parts' => [
+                        ['text' => $prompt],
+                    ],
+                ],
+            ],
+            'generationConfig' => [
+                'temperature' => 0.4,
+            ],
+        ]);
+
+        if (! $response->successful()) {
+            throw new \RuntimeException('Gemini API request failed: '.$response->body());
+        }
+
+        $content = $response->json('candidates.0.content.parts.0.text');
+        if (! is_string($content) || $content === '') {
+            throw new \RuntimeException('Gemini response content is empty.');
+        }
+
+        return $this->parseAIResponse($content);
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
     private function parseAIResponse(string $content): array
     {
         $trimmed = trim($content);
@@ -613,7 +656,7 @@ PROMPT;
         $configured = (string) config('services.ai.provider', 'openai');
         $normalized = strtolower(trim((string) ($provider ?? $configured)));
 
-        return in_array($normalized, ['openai', 'anthropic'], true) ? $normalized : 'openai';
+        return in_array($normalized, ['openai', 'anthropic', 'gemini'], true) ? $normalized : 'openai';
     }
 
     private function resolveModel(string $provider, ?string $model): string
@@ -628,9 +671,11 @@ PROMPT;
             return $configuredModel;
         }
 
-        return $provider === 'anthropic'
-            ? 'claude-3-5-sonnet-20241022'
-            : 'gpt-4o-mini';
+        return match ($provider) {
+            'anthropic' => 'claude-3-5-sonnet-20241022',
+            'gemini' => 'gemini-1.5-flash',
+            default => 'gpt-4o-mini',
+        };
     }
 
     /**

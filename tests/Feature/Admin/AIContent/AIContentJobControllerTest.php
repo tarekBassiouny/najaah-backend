@@ -67,6 +67,52 @@ it('creates and queues ai content generation job', function (): void {
     Queue::assertPushed(ProcessAIContentJob::class);
 });
 
+it('creates ai content job with gemini provider and model', function (): void {
+    Queue::fake();
+
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['center_id' => $center->id]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $video->id,
+            'target_type' => AIContentTargetType::Summary->value,
+            'ai_provider' => 'gemini',
+            'ai_model' => 'gemini-1.5-flash',
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(202)
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.ai_provider', 'gemini')
+        ->assertJsonPath('data.ai_model', 'gemini-1.5-flash');
+
+    $this->assertDatabaseHas('ai_content_jobs', [
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'source_type' => AIContentSourceType::Video->value,
+        'source_id' => $video->id,
+        'target_type' => AIContentTargetType::Summary->value,
+        'ai_provider' => 'gemini',
+        'ai_model' => 'gemini-1.5-flash',
+    ]);
+
+    Queue::assertPushed(ProcessAIContentJob::class);
+});
+
 it('returns 422 for invalid ai provider during ai job creation', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create(['center_id' => $center->id]);
