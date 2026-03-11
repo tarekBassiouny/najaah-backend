@@ -25,4 +25,17 @@ class CreateGroupRequest extends FormRequest
             'name' => ['required', 'string', 'min:2', 'max:100'],
         ];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'name' => [
+                'description' => 'Group display name for the assignment group.',
+                'example' => 'Team Alpha',
+            ],
+        ];
+    }
 }
