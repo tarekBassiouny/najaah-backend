@@ -41,6 +41,8 @@ it('creates and queues ai content generation job', function (): void {
             'source_type' => AIContentSourceType::Video->value,
             'source_id' => $video->id,
             'target_type' => AIContentTargetType::Summary->value,
+            'ai_provider' => 'openai',
+            'ai_model' => 'gpt-4o-mini',
         ],
         $this->adminHeaders()
     );
@@ -48,7 +50,9 @@ it('creates and queues ai content generation job', function (): void {
     $response->assertStatus(202)
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.center_id', $center->id)
-        ->assertJsonPath('data.course_id', $course->id);
+        ->assertJsonPath('data.course_id', $course->id)
+        ->assertJsonPath('data.ai_provider', 'openai')
+        ->assertJsonPath('data.ai_model', 'gpt-4o-mini');
 
     $this->assertDatabaseHas('ai_content_jobs', [
         'center_id' => $center->id,
@@ -56,9 +60,41 @@ it('creates and queues ai content generation job', function (): void {
         'source_type' => AIContentSourceType::Video->value,
         'source_id' => $video->id,
         'target_type' => AIContentTargetType::Summary->value,
+        'ai_provider' => 'openai',
+        'ai_model' => 'gpt-4o-mini',
     ]);
 
     Queue::assertPushed(ProcessAIContentJob::class);
+});
+
+it('returns 422 for invalid ai provider during ai job creation', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['center_id' => $center->id]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $video->id,
+            'target_type' => AIContentTargetType::Summary->value,
+            'ai_provider' => 'invalid-provider',
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
 });
 
 it('returns 422 for source mismatch during ai job creation', function (): void {

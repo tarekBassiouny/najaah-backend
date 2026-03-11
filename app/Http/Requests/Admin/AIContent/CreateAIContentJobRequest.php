@@ -27,12 +27,14 @@ class CreateAIContentJobRequest extends FormRequest
             'source_id' => ['required', 'integer', 'min:1'],
             'target_type' => ['required', 'string', Rule::enum(AIContentTargetType::class)],
             'target_id' => ['sometimes', 'nullable', 'integer', 'min:1'],
+            'ai_provider' => ['sometimes', 'string', Rule::in(['openai', 'anthropic'])],
+            'ai_model' => ['sometimes', 'string', 'max:100'],
             'generation_config' => ['sometimes', 'array'],
         ];
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {
@@ -56,6 +58,14 @@ class CreateAIContentJobRequest extends FormRequest
             'target_id' => [
                 'description' => 'Optional existing target entity ID to update/publish into.',
                 'example' => '55',
+            ],
+            'ai_provider' => [
+                'description' => 'Optional AI provider override for this job.',
+                'example' => 'openai',
+            ],
+            'ai_model' => [
+                'description' => 'Optional AI model override for this job.',
+                'example' => 'gpt-4o-mini',
             ],
             'generation_config' => [
                 'description' => 'Optional generation options (for example question_count).',

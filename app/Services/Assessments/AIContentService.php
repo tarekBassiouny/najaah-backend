@@ -57,6 +57,13 @@ final class AIContentService implements AIContentServiceInterface
         $targetId = array_key_exists('target_id', $data) && is_numeric($data['target_id'])
             ? (int) $data['target_id']
             : null;
+        $provider = $this->resolveProvider(
+            array_key_exists('ai_provider', $data) && is_string($data['ai_provider']) ? $data['ai_provider'] : null
+        );
+        $model = $this->resolveModel(
+            $provider,
+            array_key_exists('ai_model', $data) && is_string($data['ai_model']) ? $data['ai_model'] : null
+        );
 
         $this->validateSourceOwnership($center, $course, $sourceType, $sourceId);
         $this->validateTargetOwnership($center, $course, $targetType, $targetId);
@@ -70,6 +77,8 @@ final class AIContentService implements AIContentServiceInterface
             'target_id' => $targetId,
             'status' => AIContentJobStatus::Pending,
             'generation_config' => $data['generation_config'] ?? [],
+            'ai_provider' => $provider,
+            'ai_model' => $model,
             'created_by' => $creator->id,
         ]);
     }
@@ -93,13 +102,15 @@ final class AIContentService implements AIContentServiceInterface
             }
 
             $prompt = $this->buildPrompt($job, $content);
-            $payload = $this->callAIProvider($prompt);
+            $provider = $this->resolveProvider($job->ai_provider);
+            $model = $this->resolveModel($provider, $job->ai_model);
+            $payload = $this->callAIProvider($prompt, $provider, $model);
 
             $job->update([
                 'status' => AIContentJobStatus::Completed,
                 'generated_payload' => $payload,
-                'ai_provider' => (string) config('services.ai.provider', 'openai'),
-                'ai_model' => (string) config('services.ai.model', 'gpt-4'),
+                'ai_provider' => $provider,
+                'ai_model' => $model,
                 'prompt_used' => $prompt,
                 'completed_at' => now(),
             ]);
@@ -111,6 +122,11 @@ final class AIContentService implements AIContentServiceInterface
 
             $job->update([
                 'status' => AIContentJobStatus::Failed,
+                'ai_provider' => $this->resolveProvider($job->ai_provider),
+                'ai_model' => $this->resolveModel(
+                    $this->resolveProvider($job->ai_provider),
+                    $job->ai_model
+                ),
                 'error_message' => $throwable->getMessage(),
                 'completed_at' => now(),
             ]);
@@ -501,14 +517,12 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callAIProvider(string $prompt): array
+    private function callAIProvider(string $prompt, string $provider, string $model): array
     {
-        $provider = (string) config('services.ai.provider', 'openai');
-
         /** @var array<string,mixed> $payload */
         $payload = match ($provider) {
-            'anthropic' => $this->callAnthropic($prompt),
-            default => $this->callOpenAI($prompt),
+            'anthropic' => $this->callAnthropic($prompt, $model),
+            default => $this->callOpenAI($prompt, $model),
         };
 
         return $payload;
@@ -517,10 +531,9 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callOpenAI(string $prompt): array
+    private function callOpenAI(string $prompt, string $model): array
     {
         $apiKey = (string) config('services.openai.api_key');
-        $model = (string) config('services.ai.model', 'gpt-4');
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer '.$apiKey,
@@ -548,10 +561,9 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callAnthropic(string $prompt): array
+    private function callAnthropic(string $prompt, string $model): array
     {
         $apiKey = (string) config('services.anthropic.api_key');
-        $model = (string) config('services.ai.model', 'claude-3-sonnet-20240229');
 
         $response = Http::withHeaders([
             'x-api-key' => $apiKey,
@@ -594,6 +606,31 @@ PROMPT;
         }
 
         return $decoded;
+    }
+
+    private function resolveProvider(?string $provider): string
+    {
+        $configured = (string) config('services.ai.provider', 'openai');
+        $normalized = strtolower(trim((string) ($provider ?? $configured)));
+
+        return in_array($normalized, ['openai', 'anthropic'], true) ? $normalized : 'openai';
+    }
+
+    private function resolveModel(string $provider, ?string $model): string
+    {
+        $trimmedModel = trim((string) $model);
+        if ($trimmedModel !== '') {
+            return $trimmedModel;
+        }
+
+        $configuredModel = trim((string) config('services.ai.model', ''));
+        if ($configuredModel !== '') {
+            return $configuredModel;
+        }
+
+        return $provider === 'anthropic'
+            ? 'claude-3-5-sonnet-20241022'
+            : 'gpt-4o-mini';
     }
 
     /**
