@@ -41,23 +41,62 @@ class StoreQuestionRequest extends FormRequest
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {
         return [
-            'question_translations' => 'Question text in multiple languages',
-            'question_translations.en' => 'English question text (required)',
-            'question_translations.ar' => 'Arabic question text (optional)',
-            'question_type' => '0=single choice, 1=multiple choice (default: 0)',
-            'explanation_translations' => 'Explanation shown after answering',
-            'points' => 'Points for this question (default: 1.00)',
-            'order_index' => 'Question order in the quiz',
-            'is_active' => 'Include in quiz (default: true)',
-            'answers' => 'Array of answer options (min 2, max 10)',
-            'answers.*.answer_translations' => 'Answer text in multiple languages',
-            'answers.*.is_correct' => 'Whether this is a correct answer',
-            'answers.*.order_index' => 'Answer display order',
+            'question_translations' => [
+                'description' => 'Question text in multiple languages.',
+                'example' => ['en' => 'What is 2 + 2?', 'ar' => 'كم يساوي 2 + 2؟'],
+            ],
+            'question_translations.en' => [
+                'description' => 'English question text (required).',
+                'example' => 'What is 2 + 2?',
+            ],
+            'question_translations.ar' => [
+                'description' => 'Arabic question text (optional).',
+                'example' => 'كم يساوي 2 + 2؟',
+            ],
+            'question_type' => [
+                'description' => 'Question type (0=single choice, 1=multiple choice).',
+                'example' => 0,
+            ],
+            'explanation_translations' => [
+                'description' => 'Explanation shown after answering.',
+                'example' => ['en' => 'Because 2 + 2 equals 4.'],
+            ],
+            'points' => [
+                'description' => 'Points for this question.',
+                'example' => 1,
+            ],
+            'order_index' => [
+                'description' => 'Question order in the quiz.',
+                'example' => 1,
+            ],
+            'is_active' => [
+                'description' => 'Include question in quiz.',
+                'example' => true,
+            ],
+            'answers' => [
+                'description' => 'Array of answer options (min 2, max 10).',
+                'example' => [
+                    ['answer_translations' => ['en' => '3'], 'is_correct' => false, 'order_index' => 0],
+                    ['answer_translations' => ['en' => '4'], 'is_correct' => true, 'order_index' => 1],
+                ],
+            ],
+            'answers.*.answer_translations' => [
+                'description' => 'Answer text in multiple languages.',
+                'example' => ['en' => '4'],
+            ],
+            'answers.*.is_correct' => [
+                'description' => 'Whether this is a correct answer.',
+                'example' => true,
+            ],
+            'answers.*.order_index' => [
+                'description' => 'Answer display order.',
+                'example' => 1,
+            ],
         ];
     }
 }

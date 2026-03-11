@@ -55,14 +55,17 @@ This is the short integration checklist. For full details use:
 - Reorder: `PUT /centers/{center}/quizzes/{quiz}/questions/reorder`
   - Required: `question_ids: number[]`
 
-## AI Generation
-- `POST /centers/{center}/quizzes/{quiz}/generate-from-video`
-  - Required: `video_id`
-- `POST /centers/{center}/quizzes/{quiz}/generate-from-pdf`
-  - Required: `pdf_id`
-- `GET /centers/{center}/ai-generation-jobs/{aiGenerationJob}`
-- `POST /centers/{center}/ai-generation-jobs/{aiGenerationJob}/approve`
-- `DELETE /centers/{center}/ai-generation-jobs/{aiGenerationJob}`
+## AI Content Jobs
+- Create draft job: `POST /centers/{center}/ai-content/jobs`
+  - Required: `course_id`, `source_type`, `source_id`, `target_type`
+  - Optional: `target_id`, `generation_config`
+- List jobs: `GET /centers/{center}/ai-content/jobs`
+- Get job: `GET /centers/{center}/ai-content/jobs/{job}`
+- Review payload: `PATCH /centers/{center}/ai-content/jobs/{job}/review`
+  - Required: `reviewed_payload`
+- Approve: `POST /centers/{center}/ai-content/jobs/{job}/approve`
+- Publish: `POST /centers/{center}/ai-content/jobs/{job}/publish`
+- Discard: `DELETE /centers/{center}/ai-content/jobs/{job}`
 
 ## Analytics
 - `GET /centers/{center}/quizzes/{quiz}/attempts`
@@ -168,7 +171,6 @@ Mobile common:
 
 Admin common:
 - `VALIDATION_ERROR` (422)
-- `JOB_NOT_COMPLETED` (AI approval before completion)
+- `INVALID_STATE` (invalid lifecycle transition, like approve before completion)
 - `SUBMISSION_NOT_GRADABLE`
-- `INVALID_STATE`
 - `FILE_NOT_FOUND`

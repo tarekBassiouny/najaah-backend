@@ -258,52 +258,64 @@ Behavior:
 
 ---
 
-## Admin: Quiz AI Generation
+## Admin: AI Content Jobs
 
-## 12) Generate from video
-- `POST /api/v1/admin/centers/{center}/quizzes/{quiz}/generate-from-video`
+## 12) Create AI content job
+- `POST /api/v1/admin/centers/{center}/ai-content/jobs`
 
 Body validation:
-- `video_id` required integer exists `videos.id`
-- `question_count` optional integer min 1 max 20 (default 5)
+- `course_id` required integer exists `courses.id`
+- `source_type` required enum `video|pdf|section|course`
+- `source_id` required integer
+- `target_type` required enum `quiz|assignment|summary|flashcards|interactive_activity`
+- `target_id` optional nullable integer
+- `generation_config` optional object
 
 Response:
 - `202 Accepted`
-- `data` = AIGenerationJobResource
+- `data` = `AIContentJobResource`
 
-## 13) Generate from pdf
-- `POST /api/v1/admin/centers/{center}/quizzes/{quiz}/generate-from-pdf`
+## 13) List AI content jobs
+- `GET /api/v1/admin/centers/{center}/ai-content/jobs`
+
+Query validation:
+- `course_id` optional integer exists `courses.id`
+- `status` optional integer enum `0..6`
+- `target_type` optional enum `quiz|assignment|summary|flashcards|interactive_activity`
+- `page` optional integer min 1
+- `per_page` optional integer min 1 max 100
+
+## 14) Get AI content job
+- `GET /api/v1/admin/centers/{center}/ai-content/jobs/{job}`
+
+## 15) Review AI content job
+- `PATCH /api/v1/admin/centers/{center}/ai-content/jobs/{job}/review`
 
 Body validation:
-- `pdf_id` required integer exists `pdfs.id`
-- `question_count` optional integer min 1 max 20 (default 5)
+- `reviewed_payload` required object
 
-Response:
-- `202 Accepted`
-- `data` = AIGenerationJobResource
-
-## 14) Get AI job status
-- `GET /api/v1/admin/centers/{center}/ai-generation-jobs/{aiGenerationJob}`
-
-## 15) Approve generated questions
-- `POST /api/v1/admin/centers/{center}/ai-generation-jobs/{aiGenerationJob}/approve`
-
-Body validation:
-- `question_indexes` optional nullable array
-- `question_indexes.*` integer min 0
+## 16) Approve AI content job
+- `POST /api/v1/admin/centers/{center}/ai-content/jobs/{job}/approve`
 
 Behavior:
-- If `question_indexes` omitted/null: approve all generated questions
-- If job not completed: `422` with `error.code=JOB_NOT_COMPLETED`
+- Job must be completed (or previously approved for re-approve after review update)
+- Invalid transition returns `422` with `error.code=INVALID_STATE`
 
-## 16) Discard generated questions
-- `DELETE /api/v1/admin/centers/{center}/ai-generation-jobs/{aiGenerationJob}`
+## 17) Publish AI content job
+- `POST /api/v1/admin/centers/{center}/ai-content/jobs/{job}/publish`
+
+Behavior:
+- Job must be approved
+- Publishes into canonical target (`quiz`, `assignment`, or `learning_assets`)
+
+## 18) Discard AI content job
+- `DELETE /api/v1/admin/centers/{center}/ai-content/jobs/{job}`
 
 ---
 
 ## Admin: Quiz Analytics
 
-## 17) List attempts
+## 19) List attempts
 - `GET /api/v1/admin/centers/{center}/quizzes/{quiz}/attempts`
 
 Query validation:
@@ -317,7 +329,7 @@ Response:
 - `data[]` = QuizAttemptResource
 - `meta`: `page, per_page, total, last_page`
 
-## 18) Quiz analytics summary
+## 20) Quiz analytics summary
 - `GET /api/v1/admin/centers/{center}/quizzes/{quiz}/analytics`
 
 Response `data`:
@@ -336,7 +348,7 @@ Response `data`:
   - `total_answers, correct_answers, correct_rate`
   - `points`
 
-## 19) Attempt detail
+## 21) Attempt detail
 - `GET /api/v1/admin/centers/{center}/quizzes/{quiz}/attempts/{attempt}`
 
 Response `data`:

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\AIContentTargetType;
 use App\Enums\SubmissionType;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,6 +49,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Model|null $attachable
  * @property-read \Illuminate\Database\Eloquent\Collection<int, AssignmentSubmission> $submissions
  * @property-read \Illuminate\Database\Eloquent\Collection<int, AssignmentGroup> $groups
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, AIContentJob> $aiContentJobs
  */
 class Assignment extends Model
 {
@@ -146,6 +148,13 @@ class Assignment extends Model
     public function groups(): HasMany
     {
         return $this->hasMany(AssignmentGroup::class);
+    }
+
+    /** @return HasMany<AIContentJob, self> */
+    public function aiContentJobs(): HasMany
+    {
+        return $this->hasMany(AIContentJob::class, 'target_id')
+            ->where('target_type', AIContentTargetType::Assignment->value);
     }
 
     public function allowsSubmissionType(SubmissionType $type): bool

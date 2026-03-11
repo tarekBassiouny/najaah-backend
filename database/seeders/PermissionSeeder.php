@@ -18,6 +18,8 @@ class PermissionSeeder extends Seeder
             'permission.view' => 'View permission catalog',
             'course.manage' => 'Manage courses',
             'course.publish' => 'Publish courses',
+            'quiz.manage' => 'Manage quizzes and quiz questions',
+            'assignment.manage' => 'Manage assignments and grading',
             'section.manage' => 'Manage sections',
             'analytics.manage' => 'Manage analytics dashboards',
             'video.manage' => 'Manage videos',
@@ -39,6 +41,9 @@ class PermissionSeeder extends Seeder
             'agent.execute' => 'Run automated agents',
             'agent.content_publishing' => 'Execute content publishing agents',
             'agent.enrollment.bulk' => 'Execute bulk enrollment agents',
+            'ai_content.generate' => 'Generate AI learning content drafts',
+            'ai_content.review_publish' => 'Review and publish AI generated content',
+            'learning_asset.manage' => 'Manage generated learning assets',
             'landing_page.manage' => 'Manage center landing pages',
         ];
 

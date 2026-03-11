@@ -25,12 +25,15 @@ class ReorderQuestionsRequest extends FormRequest
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, mixed>>
      */
     public function bodyParameters(): array
     {
         return [
-            'question_ids' => 'Ordered array of question IDs',
+            'question_ids' => [
+                'description' => 'Ordered array of question IDs.',
+                'example' => [13, 9, 22],
+            ],
         ];
     }
 }
