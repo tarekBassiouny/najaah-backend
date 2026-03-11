@@ -24,6 +24,11 @@ class ListCollegesRequest extends AdminListRequest
         ]);
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->normalizeBooleanFields(['is_active']);
+    }
+
     /**
      * @return array<string, mixed>
      */

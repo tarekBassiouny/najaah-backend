@@ -27,4 +27,25 @@ class SaveAnswerRequest extends FormRequest
             'answer_ids.*' => ['required', 'integer', 'exists:quiz_answers,id'],
         ];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'question_id' => [
+                'description' => 'Question ID inside the active quiz attempt.',
+                'example' => 1201,
+            ],
+            'answer_ids' => [
+                'description' => 'Selected answer IDs. For single-choice send one value; for multiple-choice send all selected IDs.',
+                'example' => [3001],
+            ],
+            'answer_ids.*' => [
+                'description' => 'Selected answer ID.',
+                'example' => 3001,
+            ],
+        ];
+    }
 }

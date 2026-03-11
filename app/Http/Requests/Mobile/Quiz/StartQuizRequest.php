@@ -23,4 +23,12 @@ class StartQuizRequest extends FormRequest
     {
         return [];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
+    }
 }

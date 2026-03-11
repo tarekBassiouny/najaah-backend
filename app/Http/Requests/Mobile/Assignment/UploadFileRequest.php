@@ -25,4 +25,18 @@ class UploadFileRequest extends FormRequest
             'file' => ['required', 'file', 'max:102400'], // 100MB max, specific validation in controller
         ];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'file' => [
+                'description' => 'Submission file to upload (multipart/form-data). Max 100MB; additional assignment-specific file type/size checks are applied server-side.',
+                'type' => 'file',
+                'example' => null,
+            ],
+        ];
+    }
 }

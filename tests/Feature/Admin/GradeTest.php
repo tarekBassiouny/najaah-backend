@@ -27,16 +27,31 @@ it('manages center grades and lookup', function (): void {
         ->assertJsonPath('data.stage', EducationalStage::HighSchool->value);
 
     $gradeId = (int) $create->json('data.id');
+    $inactiveGrade = Grade::factory()->create([
+        'center_id' => $center->id,
+        'stage' => EducationalStage::HighSchool->value,
+        'is_active' => false,
+    ]);
 
     $list = $this->getJson("/api/v1/admin/centers/{$center->id}/grades?stage=2", $this->adminHeaders());
     $list->assertOk()
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $gradeId);
+        ->assertJsonCount(2, 'data')
+        ->assertJsonFragment(['id' => $gradeId]);
 
     $lookup = $this->getJson("/api/v1/admin/centers/{$center->id}/grades/lookup", $this->adminHeaders());
     $lookup->assertOk()
+        ->assertJsonCount(2, 'data')
+        ->assertJsonPath('data.0.id', $gradeId);
+
+    $lookupActiveOnly = $this->getJson("/api/v1/admin/centers/{$center->id}/grades/lookup?is_active=true", $this->adminHeaders());
+    $lookupActiveOnly->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $gradeId);
+
+    $lookupInactiveOnly = $this->getJson("/api/v1/admin/centers/{$center->id}/grades/lookup?is_active=false", $this->adminHeaders());
+    $lookupInactiveOnly->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $inactiveGrade->id);
 
     $update = $this->putJson("/api/v1/admin/centers/{$center->id}/grades/{$gradeId}", [
         'is_active' => false,
