@@ -12,6 +12,38 @@ This feature adds a complete assessment layer to the LMS:
 - **Time Limits**: Optional timed quizzes with auto-submit
 - **Completion**: Optional requirement for course completion
 
+## Related Docs
+
+- `/docs/features/assignments_quizzes_api_contract.md`
+- `/docs/features/assignments_quizzes_frontend_quick_reference.md`
+- `/docs/features/course_asset_authoring_admin_ux_handoff.md`
+
+## Validated Admin Authoring Strategy
+
+The broader "course assets" UX should be unified in admin, but the canonical backend models are intentionally split:
+- `quiz` and `assignment` publish into dedicated assessment tables.
+- `summary`, `flashcards`, and `interactive_activity` publish into `learning_assets`.
+- AI generation always goes through `ai_content_jobs` first, then admin review, then publish.
+
+Validated product decision for v1:
+
+| Asset | AI Path | Manual Path | Validation Outcome |
+|--------|---------|-------------|--------------------|
+| Summary | Yes | Not required in v1 | Keep AI-first |
+| Flashcards | Yes | Not required in v1 | Keep AI-first |
+| Interactive Activity | Yes | Not required in v1 | Keep AI-first |
+| Quiz | Yes | Yes | Keep hybrid |
+| Assignment | Yes | Yes | Keep hybrid |
+
+Important implementation constraints:
+- Quiz questions support only `single_choice` and `multiple_choice`. Do not design short-answer quiz UX in this feature.
+- AI content generation is single-target per job today. "Generate 5 assets" must create 5 jobs unless a batch API is added.
+- Manual CRUD exists for quizzes and assignments only. Admin CRUD for `learning_assets` is not exposed yet.
+- Publishing an AI job currently creates active/live canonical content immediately.
+
+For the validated admin workflow, wireframes, and backend gap analysis, use:
+- `/docs/features/course_asset_authoring_admin_ux_handoff.md`
+
 ---
 
 ## Architecture

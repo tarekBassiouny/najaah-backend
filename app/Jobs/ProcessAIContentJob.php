@@ -27,7 +27,9 @@ class ProcessAIContentJob implements ShouldQueue
 
     public function __construct(
         public readonly AIContentJob $aiContentJob
-    ) {}
+    ) {
+        $this->onQueue((string) config('ai.content_queue', 'ai-content'));
+    }
 
     public function handle(AIContentServiceInterface $service): void
     {
