@@ -81,9 +81,9 @@ class SyncPermissions extends Command
 
         $this->newLine();
         $this->info('Summary:');
-        $this->line('  Created: ' . $created);
-        $this->line('  Updated: ' . $updated);
-        $this->line('  Unchanged: ' . $unchanged);
+        $this->line('  Created: '.$created);
+        $this->line('  Updated: '.$updated);
+        $this->line('  Unchanged: '.$unchanged);
         $this->line('  Total in config: '.count($permissions));
 
         $dbCount = Permission::count();
