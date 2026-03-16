@@ -12,40 +12,8 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $permissions = [
-            'admin.manage' => 'Manage admin users',
-            'role.manage' => 'Manage roles and permissions',
-            'permission.view' => 'View permission catalog',
-            'course.manage' => 'Manage courses',
-            'course.publish' => 'Publish courses',
-            'quiz.manage' => 'Manage quizzes and quiz questions',
-            'assignment.manage' => 'Manage assignments and grading',
-            'section.manage' => 'Manage sections',
-            'analytics.manage' => 'Manage analytics dashboards',
-            'video.manage' => 'Manage videos',
-            'video.upload' => 'Authorize video uploads',
-            'video.playback.override' => 'Override playback restrictions',
-            'pdf.manage' => 'Manage PDFs',
-            'enrollment.manage' => 'Manage enrollments',
-            'center.manage' => 'Manage centers',
-            'settings.manage' => 'Manage settings',
-            'settings.view' => 'View settings',
-            'student.manage' => 'Manage student accounts',
-            'survey.manage' => 'Manage surveys',
-            'audit.view' => 'View analytics and audit logs',
-            'notification.manage' => 'Manage admin notifications',
-            'device_change.manage' => 'Manage device change requests',
-            'extra_view.manage' => 'Manage extra view requests',
-            'video_access.manage' => 'Manage video access approvals and codes',
-            'instructor.manage' => 'Manage instructors',
-            'agent.execute' => 'Run automated agents',
-            'agent.content_publishing' => 'Execute content publishing agents',
-            'agent.enrollment.bulk' => 'Execute bulk enrollment agents',
-            'ai_content.generate' => 'Generate AI learning content drafts',
-            'ai_content.review_publish' => 'Review and publish AI generated content',
-            'learning_asset.manage' => 'Manage generated learning assets',
-            'landing_page.manage' => 'Manage center landing pages',
-        ];
+        /** @var array<string, string> $permissions */
+        $permissions = config('permissions', []);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
         Permission::truncate();
