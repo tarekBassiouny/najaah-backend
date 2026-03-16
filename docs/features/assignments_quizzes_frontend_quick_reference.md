@@ -11,6 +11,10 @@ This is the short integration checklist. For full details use:
 - Base: `/api/v1/admin`
 - Quiz module: `quiz.manage` + `scope.center`
 - Assignment module: `assignment.manage` + `scope.center`
+- AI content create/list/show/discard: `ai_content.generate` + `scope.center`
+- AI content review/approve/publish: `ai_content.review_publish` + `scope.center`
+- Course Builder asset catalog: `course.manage` + `scope.center`
+- Learning asset admin: `learning_asset.manage` + `scope.center`
 
 ## Mobile Auth/Scope
 - Base: `/api/v1`
@@ -55,17 +59,71 @@ This is the short integration checklist. For full details use:
 - Reorder: `PUT /centers/{center}/quizzes/{quiz}/questions/reorder`
   - Required: `question_ids: number[]`
 
+Notes:
+- Supported quiz question types are `single_choice` and `multiple_choice` only.
+- Do not design short-answer quiz authoring against this API.
+
 ## AI Content Jobs
 - Create draft job: `POST /centers/{center}/ai-content/jobs`
   - Required: `course_id`, `source_type`, `source_id`, `target_type`
   - Optional: `target_id`, `generation_config`
+- Create batch: `POST /centers/{center}/ai-content/batches`
+  - Required: `course_id`, `source_type=video|pdf`, `source_id`, `assets[]`
+  - `assets[].target_type`: `summary|quiz|flashcards|assignment`
+  - `assets[].target_id`: optional regenerate target for same source
+  - `assets[].generation_config`: target-specific options
 - List jobs: `GET /centers/{center}/ai-content/jobs`
+  - Query: `course_id`, `batch_key`, `status`, `target_type`
 - Get job: `GET /centers/{center}/ai-content/jobs/{job}`
 - Review payload: `PATCH /centers/{center}/ai-content/jobs/{job}/review`
   - Required: `reviewed_payload`
 - Approve: `POST /centers/{center}/ai-content/jobs/{job}/approve`
 - Publish: `POST /centers/{center}/ai-content/jobs/{job}/publish`
 - Discard: `DELETE /centers/{center}/ai-content/jobs/{job}`
+
+Notes:
+- One job still generates one asset type. Batch create just creates multiple jobs with one `batch_key`.
+- `target_id` supports regenerate/update-existing flows.
+- If `target_id` is used from Course Builder, it must belong to the same source item.
+- Publishing to an existing live quiz or assignment now creates a new inactive version path and swaps on publish.
+- Publishing currently makes canonical content live immediately.
+
+## Course Builder Assets
+- Asset catalog: `GET /centers/{center}/courses/{course}/asset-catalog`
+- Query: `section_id`, `source_type=video|pdf`, `source_id`
+- Returns:
+  - `course`
+  - flat `sources[]`
+  - each source has `section` snapshot + `assets[]`
+- Each asset slot has:
+  - `asset_type`
+  - `slot_state`
+  - `canonical`
+  - `latest_job`
+
+Slot states:
+- `missing`
+- `draft`
+- `generating`
+- `review_required`
+- `approved`
+- `published`
+- `failed`
+
+Frontend note:
+- use `GET /ai-content/jobs?batch_key=...` for polling
+- refetch `asset-catalog` after publish or manual create
+
+## Admin Learning Assets
+- List: `GET /centers/{center}/courses/{course}/learning-assets`
+- Show: `GET /centers/{center}/learning-assets/{asset}`
+- Update: `PUT /centers/{center}/learning-assets/{asset}`
+- Status: `PATCH /centers/{center}/learning-assets/{asset}/status`
+
+Notes:
+- use these for generated `summary` and `flashcards`
+- no delete endpoint in v1
+- archive by status instead of delete
 
 ## Analytics
 - `GET /centers/{center}/quizzes/{quiz}/attempts`

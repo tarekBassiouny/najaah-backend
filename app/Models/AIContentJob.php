@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $center_id
  * @property int $course_id
+ * @property string|null $batch_key
  * @property AIContentSourceType $source_type
  * @property int $source_id
  * @property AIContentTargetType $target_type
@@ -55,6 +56,7 @@ class AIContentJob extends Model
     protected $fillable = [
         'center_id',
         'course_id',
+        'batch_key',
         'source_type',
         'source_id',
         'target_type',
@@ -82,6 +84,7 @@ class AIContentJob extends Model
         'source_type' => AIContentSourceType::class,
         'target_type' => AIContentTargetType::class,
         'status' => AIContentJobStatus::class,
+        'batch_key' => 'string',
         'generation_config' => 'array',
         'generated_payload' => 'array',
         'reviewed_payload' => 'array',

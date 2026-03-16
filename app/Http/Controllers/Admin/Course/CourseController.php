@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin\Course;
 
 use App\Actions\Admin\Courses\UploadCourseThumbnailAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Courses\AssetCatalogRequest;
 use App\Http\Requests\Admin\Courses\CreateCourseRequest;
 use App\Http\Requests\Admin\Courses\ListCoursesRequest;
 use App\Http\Requests\Admin\Courses\UpdateCourseRequest;
@@ -14,6 +15,7 @@ use App\Http\Resources\Admin\Courses\CourseSummaryResource;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\User;
+use App\Services\Assessments\CourseAssetCatalogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
 use App\Services\Courses\CourseQueryService;
@@ -172,6 +174,26 @@ class CourseController extends Controller
             'message' => 'Course deleted successfully',
             'data' => null,
         ], 200);
+    }
+
+    /**
+     * Return source-bound course assets for the course builder.
+     */
+    public function assetCatalog(
+        AssetCatalogRequest $request,
+        Center $center,
+        Course $course,
+        CourseAssetCatalogService $catalogService
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+        $this->centerScopeService->assertAdminCenterId($admin, (int) $center->id);
+        $this->assertCourseBelongsToCenter($center, $course);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course asset catalog retrieved successfully',
+            'data' => $catalogService->build($course, $request->validated()),
+        ]);
     }
 
     private function assertCourseBelongsToCenter(Center $center, Course $course): void

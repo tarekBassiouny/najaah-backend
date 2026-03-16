@@ -12,6 +12,9 @@ use App\Jobs\ProcessAIContentJob;
 use App\Models\AIContentJob;
 use App\Models\Center;
 use App\Models\Course;
+use App\Models\Quiz;
+use App\Models\QuizAnswer;
+use App\Models\QuizQuestion;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -237,4 +240,246 @@ it('reviews approves and publishes ai summary job', function (): void {
         'status' => LearningAssetStatus::Published->value,
         'is_active' => true,
     ]);
+});
+
+it('creates and queues ai content generation batch', function (): void {
+    Queue::fake();
+
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['center_id' => $center->id]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/batches",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $video->id,
+            'assets' => [
+                [
+                    'target_type' => AIContentTargetType::Summary->value,
+                    'ai_provider' => 'openai',
+                    'ai_model' => 'gpt-4o-mini',
+                    'generation_config' => [
+                        'length' => 'medium',
+                    ],
+                ],
+                [
+                    'target_type' => AIContentTargetType::Quiz->value,
+                    'ai_provider' => 'openai',
+                    'ai_model' => 'gpt-4o-mini',
+                    'generation_config' => [
+                        'question_count' => 5,
+                        'question_styles' => ['single_choice'],
+                    ],
+                ],
+            ],
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(202)
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(2, 'data.jobs');
+
+    $batchKey = $response->json('data.batch_key');
+
+    expect($batchKey)->not->toBeNull();
+
+    $jobs = AIContentJob::query()
+        ->where('batch_key', $batchKey)
+        ->orderBy('id')
+        ->get();
+
+    expect($jobs)->toHaveCount(2);
+    expect($jobs->pluck('target_type')->map->value->all())->toBe([
+        AIContentTargetType::Summary->value,
+        AIContentTargetType::Quiz->value,
+    ]);
+
+    Queue::assertPushed(ProcessAIContentJob::class, 2);
+});
+
+it('filters ai content jobs by batch key', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $admin = $this->asCenterAdmin($center);
+
+    $matchingBatchKey = (string) \Illuminate\Support\Str::uuid();
+
+    AIContentJob::factory()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'batch_key' => $matchingBatchKey,
+        'source_type' => AIContentSourceType::Course,
+        'source_id' => $course->id,
+        'target_type' => AIContentTargetType::Summary,
+        'created_by' => $admin->id,
+    ]);
+
+    AIContentJob::factory()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'batch_key' => (string) \Illuminate\Support\Str::uuid(),
+        'source_type' => AIContentSourceType::Course,
+        'source_id' => $course->id,
+        'target_type' => AIContentTargetType::Quiz,
+        'created_by' => $admin->id,
+    ]);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs?batch_key={$matchingBatchKey}",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.batch_key', $matchingBatchKey);
+});
+
+it('rejects batch target when it belongs to a different source item', function (): void {
+    Queue::fake();
+
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $videoA = Video::factory()->create(['center_id' => $center->id]);
+    $videoB = Video::factory()->create(['center_id' => $center->id]);
+    $course->videos()->attach($videoA->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+    $course->videos()->attach($videoB->id, [
+        'section_id' => null,
+        'order_index' => 2,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $quiz = Quiz::factory()->forCourse($course)->create([
+        'center_id' => $center->id,
+        'attachable_type' => AIContentSourceType::Video->value,
+        'attachable_id' => $videoB->id,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/batches",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $videoA->id,
+            'assets' => [
+                [
+                    'target_type' => AIContentTargetType::Quiz->value,
+                    'target_id' => $quiz->id,
+                ],
+            ],
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'INVALID_STATE');
+});
+
+it('publishes ai quiz into a new draft version when target quiz is live', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['center_id' => $center->id]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $admin = $this->asCenterAdmin($center);
+
+    $liveQuiz = Quiz::factory()->forCourse($course)->active()->create([
+        'center_id' => $center->id,
+        'attachable_type' => AIContentSourceType::Video->value,
+        'attachable_id' => $video->id,
+        'title_translations' => ['en' => 'Live quiz'],
+    ]);
+    $oldQuestion = QuizQuestion::factory()->create([
+        'quiz_id' => $liveQuiz->id,
+        'question_translations' => ['en' => 'Old question?'],
+    ]);
+    QuizAnswer::factory()->correct()->create([
+        'quiz_question_id' => $oldQuestion->id,
+        'answer_translations' => ['en' => 'Old answer'],
+    ]);
+
+    $job = AIContentJob::query()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'batch_key' => null,
+        'source_type' => AIContentSourceType::Video,
+        'source_id' => $video->id,
+        'target_type' => AIContentTargetType::Quiz,
+        'target_id' => $liveQuiz->id,
+        'status' => AIContentJobStatus::Approved,
+        'generation_config' => [],
+        'reviewed_payload' => [
+            'quiz' => [
+                'title' => 'New quiz title',
+                'description' => 'New quiz description',
+            ],
+            'questions' => [
+                [
+                    'question' => 'New generated question?',
+                    'options' => [
+                        ['text' => 'Correct answer', 'is_correct' => true],
+                        ['text' => 'Wrong answer', 'is_correct' => false],
+                    ],
+                    'explanation' => 'Because it is correct.',
+                    'points' => 2,
+                ],
+            ],
+        ],
+        'created_by' => $admin->id,
+        'reviewed_by' => $admin->id,
+        'started_at' => now()->subMinutes(2),
+        'completed_at' => now()->subMinute(),
+    ]);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs/{$job->id}/publish",
+        [],
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.publication.target_type', AIContentTargetType::Quiz->value);
+
+    $newQuizId = (int) $response->json('data.publication.target_id');
+
+    expect($newQuizId)->not->toBe($liveQuiz->id);
+
+    $liveQuiz->refresh();
+    $newQuiz = Quiz::query()->findOrFail($newQuizId);
+
+    expect($liveQuiz->is_active)->toBeFalse();
+    expect($liveQuiz->translate('title'))->toBe('Live quiz');
+    expect($liveQuiz->questions()->count())->toBe(1);
+
+    expect($newQuiz->is_active)->toBeTrue();
+    expect($newQuiz->attachable_type)->toBe(AIContentSourceType::Video->value);
+    expect($newQuiz->attachable_id)->toBe($video->id);
+    expect($newQuiz->translate('title'))->toBe('New quiz title');
+    expect($newQuiz->questions()->count())->toBe(1);
+    expect($newQuiz->questions()->first()?->translate('question'))->toBe('New generated question?');
 });

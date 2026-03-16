@@ -15,6 +15,12 @@ interface AIContentServiceInterface
      */
     public function createJob(Center $center, array $data, User $creator): AIContentJob;
 
+    /**
+     * @param  array<string,mixed>  $data
+     * @return array{batch_key:string,jobs:list<AIContentJob>}
+     */
+    public function createBatch(Center $center, array $data, User $creator): array;
+
     public function processJob(AIContentJob $job): void;
 
     /**

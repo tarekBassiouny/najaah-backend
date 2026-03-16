@@ -9,6 +9,7 @@ Route::middleware('require.permission:course.manage')->group(function (): void {
         Route::get('/centers/{center}/courses', [CourseController::class, 'centerIndex'])->whereNumber('center');
         Route::post('/centers/{center}/courses', [CourseController::class, 'centerStore'])->whereNumber('center');
         Route::get('/centers/{center}/courses/{course}', [CourseController::class, 'centerShow'])->whereNumber('center');
+        Route::get('/centers/{center}/courses/{course}/asset-catalog', [CourseController::class, 'assetCatalog'])->whereNumber('center');
         Route::put('/centers/{center}/courses/{course}', [CourseController::class, 'centerUpdate'])->whereNumber('center');
         Route::delete('/centers/{center}/courses/{course}', [CourseController::class, 'centerDestroy'])->whereNumber('center');
         Route::post('/centers/{center}/courses/{course}/clone', [CourseOperationController::class, 'cloneCourse'])->whereNumber('center');

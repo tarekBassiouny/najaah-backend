@@ -12,6 +12,7 @@ $csvToList = static function (string $key, string $default): array {
 };
 
 return [
+    'content_queue' => env('AI_CONTENT_QUEUE', 'ai-content'),
     'providers' => [
         'openai' => [
             'label' => 'OpenAI',
