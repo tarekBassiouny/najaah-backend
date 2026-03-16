@@ -34,7 +34,7 @@ class BunnyEmbedTokenService
         string $videoUuid,
         User $student,
         int $centerId,
-        int $enrollmentId,
+        ?int $enrollmentId,
         int $ttlSeconds = 600
     ): array {
         return $this->generateForVideo($videoUuid, $ttlSeconds);

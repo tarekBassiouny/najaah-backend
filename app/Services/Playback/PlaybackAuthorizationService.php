@@ -14,6 +14,7 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Models\VideoAccess;
 use App\Services\Access\CourseAccessService;
 use App\Services\Access\EnrollmentAccessService;
 use App\Services\Access\StudentAccessService;
@@ -59,8 +60,16 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         }
 
         $this->videoAccessService->assertReadyForPlayback($video);
-        $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
-        $this->videoApprovalService->assertApprovalAccess($student, $center, $course, $video);
+
+        // Check access based on course access model
+        if ($course->usesVideoCodeAccess()) {
+            // For video_code access model: check VideoAccess from code redemption
+            $this->assertVideoCodeAccess($student, $video, $course);
+        } else {
+            // For enrollment access model: check enrollment and approval
+            $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
+            $this->videoApprovalService->assertApprovalAccess($student, $center, $course, $video);
+        }
 
         $override = $pivot->pivot?->view_limit_override;
         $this->viewLimitService->assertWithinLimit($student, $video, $course, $override);
@@ -93,7 +102,14 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
 
         $this->assertCourseContext($student, $center, $course, $video, $session);
         $this->videoAccessService->assertReadyForPlayback($video);
-        $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
+
+        // Check access based on course access model
+        if ($course->usesVideoCodeAccess()) {
+            $this->assertVideoCodeAccess($student, $video, $course);
+        } else {
+            $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
+        }
+
         $this->assertVideoUuid($video);
     }
 
@@ -122,7 +138,13 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         }
 
         $this->videoAccessService->assertReadyForPlayback($video);
-        $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
+
+        // Check access based on course access model
+        if ($course->usesVideoCodeAccess()) {
+            $this->assertVideoCodeAccess($student, $video, $course);
+        } else {
+            $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
+        }
     }
 
     public function getActiveDevice(): UserDevice
@@ -132,6 +154,27 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         }
 
         return $this->activeDevice;
+    }
+
+    /**
+     * Assert that the student has video access from a redeemed code.
+     */
+    private function assertVideoCodeAccess(User $student, Video $video, Course $course): void
+    {
+        $hasAccess = VideoAccess::query()
+            ->where('user_id', $student->id)
+            ->where('video_id', $video->id)
+            ->where('course_id', $course->id)
+            ->active()
+            ->exists();
+
+        if (! $hasAccess) {
+            $this->deny(
+                ErrorCodes::VIDEO_ACCESS_DENIED,
+                'Please redeem a valid access code for this video.',
+                403
+            );
+        }
     }
 
     private function assertCenterAccess(User $student, Center $center): void

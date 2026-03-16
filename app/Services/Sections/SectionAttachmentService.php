@@ -19,8 +19,6 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
 
     public function moveVideoToSection(Video $video, Section $section): void
     {
-        $this->assertVideoBelongsToCourse($section, $video);
-
         $pivot = CourseVideo::withTrashed()
             ->where('video_id', $video->id)
             ->where('course_id', $section->course_id)
@@ -136,17 +134,6 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
             ->max('order_index');
 
         return is_numeric($maxOrder) ? (int) $maxOrder + 1 : 1;
-    }
-
-    private function assertVideoBelongsToCourse(Section $section, Video $video): void
-    {
-        $attachedToOtherCourse = $this->attachmentAccessService->isVideoAttachedToOtherCourse($section, $video);
-
-        if ($attachedToOtherCourse) {
-            throw ValidationException::withMessages([
-                'course_id' => ['Video is already attached to another course.'],
-            ]);
-        }
     }
 
     private function assertPdfBelongsToCourse(Section $section, Pdf $pdf): void

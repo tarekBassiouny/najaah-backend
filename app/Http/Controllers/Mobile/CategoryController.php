@@ -18,9 +18,11 @@ class CategoryController extends Controller
 
     public function index(ListCategoriesRequest $request): JsonResponse
     {
+        /** @var User|null $student */
         $student = $request->user();
 
-        if (! $student instanceof User || $student->is_student === false) {
+        // For authenticated users, verify they are students
+        if ($student instanceof User && $student->is_student === false) {
             return response()->json([
                 'success' => false,
                 'error' => [
@@ -46,9 +48,11 @@ class CategoryController extends Controller
 
     public function centerIndex(ListCategoriesRequest $request, Center $center): JsonResponse
     {
+        /** @var User|null $student */
         $student = $request->user();
 
-        if (! $student instanceof User || $student->is_student === false) {
+        // For authenticated users, verify they are students
+        if ($student instanceof User && $student->is_student === false) {
             return response()->json([
                 'success' => false,
                 'error' => [

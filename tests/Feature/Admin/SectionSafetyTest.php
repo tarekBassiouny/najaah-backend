@@ -9,6 +9,7 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\Video;
+use App\Models\VideoUploadSession;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -57,6 +58,53 @@ it('blocks attaching video to section from another course', function (): void {
 
     $response->assertNotFound()
         ->assertJsonPath('error.code', 'NOT_FOUND');
+});
+
+it('bulk attaches a video to a section even when the same video is attached to another course', function (): void {
+    $center = Center::factory()->create();
+    $courseA = Course::factory()->create(['center_id' => $center->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id]);
+    $sectionA = Section::factory()->create(['course_id' => $courseA->id]);
+    $sectionB = Section::factory()->create(['course_id' => $courseB->id]);
+    $uploadSession = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => 3,
+        'expires_at' => now()->addHour(),
+    ]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'created_by' => $courseA->created_by,
+        'upload_session_id' => $uploadSession->id,
+    ]);
+
+    CourseVideo::create([
+        'course_id' => $courseA->id,
+        'video_id' => $video->id,
+        'section_id' => $sectionA->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/courses/{$courseB->id}/sections/{$sectionB->id}/videos/bulk-attach",
+        ['video_ids' => [$video->id]],
+        $this->adminHeaders()
+    );
+
+    $response->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.attached', 1)
+        ->assertJsonPath('data.failed', 0)
+        ->assertJsonPath('data.details.attached_ids.0', $video->id);
+
+    $this->assertDatabaseHas('course_video', [
+        'course_id' => $courseB->id,
+        'video_id' => $video->id,
+        'section_id' => $sectionB->id,
+        'deleted_at' => null,
+    ]);
 });
 
 it('restores section attachments', function (): void {

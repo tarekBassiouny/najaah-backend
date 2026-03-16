@@ -16,9 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $video_id
  * @property int $course_id
  * @property int $center_id
- * @property int $enrollment_id
+ * @property int|null $enrollment_id
  * @property int|null $video_access_request_id
- * @property int $video_access_code_id
+ * @property int|null $video_access_code_id
+ * @property int|null $total_view_limit
  * @property \Illuminate\Support\Carbon|null $granted_at
  * @property \Illuminate\Support\Carbon|null $revoked_at
  * @property int|null $revoked_by
@@ -26,9 +27,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Video $video
  * @property-read Course $course
  * @property-read Center $center
- * @property-read Enrollment $enrollment
+ * @property-read Enrollment|null $enrollment
  * @property-read VideoAccessRequest|null $request
- * @property-read VideoAccessCode $code
+ * @property-read VideoAccessCode|null $code
  * @property-read User|null $revoker
  */
 class VideoAccess extends Model
@@ -46,12 +47,14 @@ class VideoAccess extends Model
         'enrollment_id',
         'video_access_request_id',
         'video_access_code_id',
+        'total_view_limit',
         'granted_at',
         'revoked_at',
         'revoked_by',
     ];
 
     protected $casts = [
+        'total_view_limit' => 'integer',
         'granted_at' => 'datetime',
         'revoked_at' => 'datetime',
     ];

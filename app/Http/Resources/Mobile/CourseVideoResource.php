@@ -117,6 +117,44 @@ class CourseVideoResource extends JsonResource
             ];
         }
 
+        // For video_code access model, only check VideoAccess (no approval flow)
+        if ($course->usesVideoCodeAccess()) {
+            return $this->resolveVideoCodeRedemptionStatus($user, $video, $course);
+        }
+
+        // For enrollment access model, use the full approval flow
+        return $this->resolveEnrollmentRedemptionStatus($user, $video, $course);
+    }
+
+    /**
+     * Resolve redemption status for video_code access model.
+     * Only checks for VideoAccess - no pending requests or approval codes.
+     *
+     * @return array{has_redeemed:bool,access_status:?string,pending_request_id:?int}
+     */
+    private function resolveVideoCodeRedemptionStatus(User $user, Video $video, Course $course): array
+    {
+        $hasAccess = VideoAccess::query()
+            ->forUserAndVideo($user->id, $video->id)
+            ->where('course_id', $course->id)
+            ->active()
+            ->exists();
+
+        return [
+            'has_redeemed' => $hasAccess,
+            'access_status' => $hasAccess ? 'granted' : 'locked',
+            'pending_request_id' => null,
+        ];
+    }
+
+    /**
+     * Resolve redemption status for enrollment access model.
+     * Uses the full approval flow with VideoAccessRequests and VideoAccessCodes.
+     *
+     * @return array{has_redeemed:bool,access_status:?string,pending_request_id:?int}
+     */
+    private function resolveEnrollmentRedemptionStatus(User $user, Video $video, Course $course): array
+    {
         $hasRedeemed = VideoAccess::query()
             ->forUserAndVideo($user->id, $video->id)
             ->where('course_id', $course->id)
@@ -198,6 +236,12 @@ class CourseVideoResource extends JsonResource
             return false;
         }
 
+        // Video code access model always requires redemption (via code)
+        if ($course->usesVideoCodeAccess()) {
+            return true;
+        }
+
+        // Enrollment access model uses the approval setting
         if ($course->center === null) {
             return false;
         }
@@ -220,6 +264,10 @@ class CourseVideoResource extends JsonResource
         }
 
         if ($video->relationLoaded('courses')) {
+            if ($video->courses->count() !== 1) {
+                return null;
+            }
+
             /** @var Course|null $course */
             $course = $video->courses->first();
 

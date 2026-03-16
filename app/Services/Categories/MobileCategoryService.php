@@ -17,12 +17,24 @@ class MobileCategoryService
     /**
      * @return LengthAwarePaginator<Category>
      */
-    public function list(User $student, CategoryFilters $filters): LengthAwarePaginator
+    public function list(?User $student, CategoryFilters $filters): LengthAwarePaginator
     {
         $query = Category::query()
             ->where('is_active', true)
-            ->visibleToStudent($student)
             ->orderByDesc('created_at');
+
+        if ($student instanceof User) {
+            $query->visibleToStudent($student);
+        } else {
+            // Guest user - show categories from centers that allow guest browsing
+            $query->where(function ($query): void {
+                $query->whereNull('center_id')
+                    ->orWhereHas('center', function ($query): void {
+                        $query->where('status', Center::STATUS_ACTIVE->value)
+                            ->where('allow_guest_browsing', true);
+                    });
+            });
+        }
 
         if ($filters->search !== null) {
             $term = $filters->search;

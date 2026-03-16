@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Enums\CourseAccessModel;
 use App\Enums\CourseStatus;
 use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
+use App\Exceptions\DomainException;
 use App\Filters\Mobile\CourseFilters;
 use App\Models\Course;
 use App\Models\Instructor;
@@ -15,6 +17,7 @@ use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
 use App\Support\AuditActions;
+use App\Support\ErrorCodes;
 use App\Support\Guards\RejectNonScalarInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -110,6 +113,8 @@ class CourseService implements CourseServiceInterface
             $this->centerScopeService->assertAdminSameCenter($actor, $course);
         }
 
+        $this->assertAccessModelTransitionAllowed($course, $data);
+
         $explicitShowForAll = array_key_exists('show_for_all_students', $data) ? (bool) $data['show_for_all_students'] : null;
         $gradeIdsProvided = array_key_exists('grade_ids', $data) && is_array($data['grade_ids']);
         $schoolIdsProvided = array_key_exists('school_ids', $data) && is_array($data['school_ids']);
@@ -166,9 +171,11 @@ class CourseService implements CourseServiceInterface
     /**
      * @return LengthAwarePaginator<Course>
      */
-    public function search(User $student, ?string $query, int $perPage = 15, int $page = 1): LengthAwarePaginator
+    public function search(?User $student, ?string $query, int $perPage = 15, int $page = 1): LengthAwarePaginator
     {
-        $builder = $this->mobileBaseQuery($student);
+        $builder = $student instanceof User
+            ? $this->mobileBaseQuery($student)
+            : $this->guestBaseQuery();
 
         if ($query !== null && $query !== '') {
             $builder->where(function (Builder $q) use ($query): void {
@@ -185,8 +192,16 @@ class CourseService implements CourseServiceInterface
     /**
      * @return Collection<int, Course>
      */
-    public function fallback(User $student): Collection
+    public function fallback(?User $student): Collection
     {
+        // For guests, return recent courses from centers that allow guest browsing
+        if (! $student instanceof User) {
+            return $this->guestBaseQuery()
+                ->orderByDesc('created_at')
+                ->limit(5)
+                ->get();
+        }
+
         $recentCourseIds = Course::query()
             ->selectRaw('courses.id, MAX(playback_sessions.started_at) as last_seen')
             ->join('course_video', 'courses.id', '=', 'course_video.course_id')
@@ -212,12 +227,14 @@ class CourseService implements CourseServiceInterface
     }
 
     /**
+     * Get courses the student has access to (via enrollment OR video code redemptions).
+     *
      * @return LengthAwarePaginator<Course>
      */
     public function enrolled(User $student, CourseFilters $filters): LengthAwarePaginator
     {
         $builder = $this->mobileBaseQuery($student)
-            ->enrolledBy($student);
+            ->accessibleBy($student);
 
         if ($filters->categoryId !== null) {
             $builder->where('category_id', $filters->categoryId);
@@ -238,32 +255,34 @@ class CourseService implements CourseServiceInterface
     }
 
     /**
+     * Get courses the student has access to, grouped by instructor.
+     *
      * @return Collection<int, Instructor>
      */
     public function enrolledGroupedByInstructor(User $student, CourseFilters $filters): Collection
     {
         $query = Course::query()
             ->published()
-            ->enrolledBy($student)
+            ->accessibleBy($student)
             ->visibleToStudent($student);
 
         if ($filters->categoryId !== null) {
             $query->where('category_id', $filters->categoryId);
         }
 
-        $enrolledCourseIds = $query->pluck('id');
+        $accessibleCourseIds = $query->pluck('id');
 
-        if ($enrolledCourseIds->isEmpty()) {
+        if ($accessibleCourseIds->isEmpty()) {
             return collect();
         }
 
         return Instructor::query()
-            ->whereHas('courses', function (Builder $query) use ($enrolledCourseIds): void {
-                $query->whereIn('courses.id', $enrolledCourseIds);
+            ->whereHas('courses', function (Builder $query) use ($accessibleCourseIds): void {
+                $query->whereIn('courses.id', $accessibleCourseIds);
             })
             ->with([
-                'courses' => function ($query) use ($enrolledCourseIds): void {
-                    $query->whereIn('courses.id', $enrolledCourseIds)
+                'courses' => function ($query) use ($accessibleCourseIds): void {
+                    $query->whereIn('courses.id', $accessibleCourseIds)
                         ->with(['center', 'category', 'instructors']);
                 },
             ])
@@ -281,6 +300,36 @@ class CourseService implements CourseServiceInterface
             ->withEnrollmentMeta($student)
             ->visibleToStudent($student)
             ->matchingStudentEducation($student);
+
+        $query->whereDoesntHave('videos', function ($query): void {
+            $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
+                ->orWhere('lifecycle_status', '!=', VideoLifecycleStatus::Ready->value)
+                ->orWhere(function ($query): void {
+                    $query->whereNotNull('upload_session_id')
+                        ->whereHas('uploadSession', function ($query): void {
+                            $query->where('upload_status', '!=', VideoUploadStatus::Ready->value);
+                        });
+                });
+        });
+
+        return $query;
+    }
+
+    /**
+     * Base query for guest users - shows courses from centers that allow guest browsing.
+     *
+     * @return Builder<Course>
+     */
+    private function guestBaseQuery(): Builder
+    {
+        $query = Course::query()
+            ->published()
+            ->with(['center', 'category', 'instructors'])
+            ->whereHas('center', function ($query): void {
+                $query->where('status', \App\Models\Center::STATUS_ACTIVE->value)
+                    ->where('allow_guest_browsing', true);
+            })
+            ->where('show_for_all_students', true);
 
         $query->whereDoesntHave('videos', function ($query): void {
             $query->where('encoding_status', '!=', VideoUploadStatus::Ready->value)
@@ -379,5 +428,48 @@ class CourseService implements CourseServiceInterface
         if ($collegeIdsProvided) {
             $course->colleges()->sync($collegeIds);
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function assertAccessModelTransitionAllowed(Course $course, array $data): void
+    {
+        if (! array_key_exists('access_model', $data)) {
+            return;
+        }
+
+        $targetAccessModel = $this->resolveAccessModel($data['access_model']);
+
+        if (! $targetAccessModel instanceof CourseAccessModel || $targetAccessModel === $course->access_model) {
+            return;
+        }
+
+        $this->deny(
+            'Course access model cannot be changed after creation. Create a new course instead.',
+            ErrorCodes::INVALID_STATE,
+            422
+        );
+    }
+
+    private function resolveAccessModel(mixed $value): ?CourseAccessModel
+    {
+        if ($value instanceof CourseAccessModel) {
+            return $value;
+        }
+
+        if (! is_string($value)) {
+            return null;
+        }
+
+        return CourseAccessModel::tryFrom($value);
+    }
+
+    /**
+     * @return never
+     */
+    private function deny(string $message, string $code, int $status): void
+    {
+        throw new DomainException($message, $code, $status);
     }
 }

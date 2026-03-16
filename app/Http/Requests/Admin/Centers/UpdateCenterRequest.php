@@ -29,6 +29,7 @@ class UpdateCenterRequest extends FormRequest
             'timezone' => ['sometimes', 'nullable', 'string', 'max:64', 'timezone:all'],
             'tier' => ['sometimes', 'string', 'in:standard,premium,vip'],
             'is_featured' => ['sometimes', 'boolean'],
+            'allow_guest_browsing' => ['sometimes', 'boolean'],
             'branding_metadata' => ['sometimes', 'array'],
             'branding_metadata.primary_color' => ['sometimes', 'string'],
             'name_translations' => ['prohibited'],
@@ -100,6 +101,10 @@ class UpdateCenterRequest extends FormRequest
             'is_featured' => [
                 'description' => 'Whether the center is featured.',
                 'example' => true,
+            ],
+            'allow_guest_browsing' => [
+                'description' => "Whether guest users can browse this center's courses without authentication.",
+                'example' => false,
             ],
             'branding_metadata' => [
                 'description' => 'Branding metadata for branded centers.',

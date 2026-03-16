@@ -24,6 +24,7 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         'video_code_expiry_days',
         'pdf_download_permission',
         'device_limit',
+        'allow_guest_browsing',
         'whatsapp_bulk_settings',
         'branding',
         'education_profile',
@@ -63,16 +64,15 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         }
 
         if ($video->relationLoaded('courses')) {
-            /** @var Course|null $first */
-            $first = $video->courses->first();
-
-            return $first;
+            return $video->courses->count() === 1 ? $video->courses->first() : null;
         }
 
-        /** @var Course|null $first */
-        $first = $video->courses()->first();
+        $courses = $video->courses()
+            ->wherePivotNull('deleted_at')
+            ->limit(2)
+            ->get();
 
-        return $first;
+        return $courses->count() === 1 ? $courses->first() : null;
     }
 
     private function resolveCenter(?Course $course, ?Video $video): ?Center
@@ -82,6 +82,14 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         }
 
         if ($video !== null) {
+            if ($video->relationLoaded('center') && $video->center !== null) {
+                return $video->center;
+            }
+
+            if (is_numeric($video->center_id)) {
+                return Center::query()->find((int) $video->center_id);
+            }
+
             $courseFromVideo = $this->resolveCourseFromVideo($video);
 
             return $courseFromVideo?->center;
@@ -124,6 +132,7 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         $defaults['video_code_expiry_days'] = null;
         $defaults['pdf_download_permission'] = $center->pdf_download_permission;
         $defaults['device_limit'] = $center->device_limit;
+        $defaults['allow_guest_browsing'] = $center->allow_guest_browsing;
         $defaults['whatsapp_bulk_settings'] = [
             'delay_seconds' => 3,
             'batch_size' => 50,

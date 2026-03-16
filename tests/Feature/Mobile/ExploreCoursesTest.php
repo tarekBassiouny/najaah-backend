@@ -479,5 +479,8 @@ it('filters courses by instructor id when instructor is assigned as primary only
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $targetCourse->id);
+        ->assertJsonPath('data.0.id', $targetCourse->id)
+        ->assertJsonPath('data.0.primary_instructor_id', $targetInstructor->id)
+        ->assertJsonPath('data.0.primary_instructor.id', $targetInstructor->id)
+        ->assertJsonPath('data.0.primary_instructor.name', $targetInstructor->translate('name'));
 });

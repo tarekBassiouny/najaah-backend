@@ -46,23 +46,12 @@ Route::post('/device-change/submit', [DeviceChangeRequestController::class, 'sub
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated Mobile Routes
+| Guest-Accessible Browsing Routes (Optional Authentication)
 |--------------------------------------------------------------------------
+| These routes allow guest browsing when the center has allow_guest_browsing
+| enabled. Authenticated users can always access these routes.
 */
-Route::middleware('jwt.mobile')->group(function (): void {
-
-    Route::get('/auth/me', [MeController::class, 'profile']);
-    Route::get('/auth/me/profile', [MeController::class, 'profileDetails']);
-    Route::post('/auth/me', [MeController::class, 'updateProfile']);
-    Route::patch('/auth/me/education', [MeController::class, 'updateEducation']);
-    Route::post('/auth/logout', [MeController::class, 'logout']);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Settings
-    |--------------------------------------------------------------------------
-    */
-    Route::post('/settings/device-change', [DeviceChangeRequestController::class, 'store']);
+Route::middleware(['jwt.mobile.optional', 'guest.browsing'])->group(function (): void {
 
     /*
     |--------------------------------------------------------------------------
@@ -84,11 +73,9 @@ Route::middleware('jwt.mobile')->group(function (): void {
     | Centers (Unbranded Only)
     |--------------------------------------------------------------------------
     */
-    Route::middleware('ensure.unbranded.student')->group(function (): void {
-        Route::get('/centers', [CentersController::class, 'index']);
-        Route::get('/centers/{center}', [CentersController::class, 'show']);
-        Route::get('/centers/{center}/categories', [CategoryController::class, 'centerIndex']);
-    });
+    Route::get('/centers', [CentersController::class, 'index']);
+    Route::get('/centers/{center}', [CentersController::class, 'show']);
+    Route::get('/centers/{center}/categories', [CategoryController::class, 'centerIndex']);
 
     /*
     |--------------------------------------------------------------------------
@@ -103,6 +90,28 @@ Route::middleware('jwt.mobile')->group(function (): void {
     |--------------------------------------------------------------------------
     */
     Route::get('/categories', [CategoryController::class, 'index']);
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Mobile Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware('jwt.mobile')->group(function (): void {
+
+    Route::get('/auth/me', [MeController::class, 'profile']);
+    Route::get('/auth/me/profile', [MeController::class, 'profileDetails']);
+    Route::post('/auth/me', [MeController::class, 'updateProfile']);
+    Route::patch('/auth/me/education', [MeController::class, 'updateEducation']);
+    Route::post('/auth/logout', [MeController::class, 'logout']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Settings
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/settings/device-change', [DeviceChangeRequestController::class, 'store']);
 
     /*
     |--------------------------------------------------------------------------
@@ -169,6 +178,17 @@ Route::middleware('jwt.mobile')->group(function (): void {
         [VideoAccessRequestController::class, 'status']
     );
     Route::post('/video-access-codes/redeem', [VideoAccessCodeController::class, 'redeem']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Video Code Batches (for video_code access model)
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/video-codes/redeem', [VideoAccessCodeController::class, 'redeemBatchCode'])
+        ->middleware('throttle:video-code-redeem');
+    Route::post('/video-codes/validate', [VideoAccessCodeController::class, 'validateBatchCode'])
+        ->middleware('throttle:video-code-validate');
+    Route::get('/video-codes/my-redemptions', [VideoAccessCodeController::class, 'myRedemptions']);
 
     /*
     |--------------------------------------------------------------------------

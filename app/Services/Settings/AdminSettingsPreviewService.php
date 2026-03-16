@@ -37,10 +37,11 @@ class AdminSettingsPreviewService
 
         if ($video !== null) {
             $video->loadMissing(['creator', 'courses']);
-            $centerId = $video->creator->center_id;
+            $centerId = $video->center_id ?? $video->creator->center_id;
 
             if ($centerId === null) {
-                $centerId = $video->courses->first()?->center_id;
+                $courseIds = $video->courses->pluck('center_id')->filter()->unique()->values();
+                $centerId = $courseIds->count() === 1 ? $courseIds->first() : null;
             }
 
             $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);

@@ -83,6 +83,7 @@ test('it rejects playback when views are exhausted', function (): void {
     PlaybackSession::factory()->create([
         'user_id' => $student->id,
         'video_id' => $video->id,
+        'course_id' => $course->id,
         'device_id' => $device->id,
         'is_full_play' => true,
         'progress_percent' => 100,
