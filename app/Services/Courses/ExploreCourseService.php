@@ -108,7 +108,7 @@ class ExploreCourseService
                 ->matchingStudentEducation($student);
         } else {
             // Guest user - apply guest education filter
-            $this->applyGuestEducationFilter($query);
+            $this->applyGuestEducationFilter();
         }
 
         $course = $query->first();
@@ -203,10 +203,8 @@ class ExploreCourseService
     /**
      * Apply education filter for guest users.
      * Guests see all courses without education restrictions.
-     *
-     * @param  Builder<Course>  $query
      */
-    private function applyGuestEducationFilter(Builder $query): void
+    private function applyGuestEducationFilter(): void
     {
         // No education filter for guests - they can see all published courses
     }

@@ -39,7 +39,10 @@ it('rejects a tampered code', function (): void {
 
     $generator = app(VideoCodeGenerator::class);
     $code = $generator->generateCode($batch, 3);
-    $tampered = substr($code, 0, -1).'A';
+    $lastChar = substr($code, -1);
+    // Ensure tampered character is different from original
+    $tamperedChar = $lastChar === 'A' ? 'B' : 'A';
+    $tampered = substr($code, 0, -1).$tamperedChar;
 
     expect($generator->parseAndValidate($tampered))->toBeNull();
 });
