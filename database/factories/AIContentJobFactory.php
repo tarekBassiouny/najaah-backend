@@ -28,6 +28,7 @@ class AIContentJobFactory extends Factory
         return [
             'center_id' => Center::factory(),
             'course_id' => Course::factory(),
+            'batch_key' => null,
             'source_type' => AIContentSourceType::Course,
             'source_id' => static fn (array $attributes): int => (int) $attributes['course_id'],
             'target_type' => AIContentTargetType::Summary,

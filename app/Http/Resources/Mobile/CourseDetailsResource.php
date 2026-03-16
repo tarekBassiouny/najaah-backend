@@ -39,17 +39,38 @@ class CourseDetailsResource extends JsonResource
             'status_key' => Str::snake($course->status->name),
             'status_label' => $course->status->name,
             'requires_video_approval' => $this->resolveRequiresVideoApproval($course),
-            'is_enrolled' => (bool) ($course->is_enrolled ?? false),
+            'access_model' => $course->access_model->value,
+            'is_enrolled' => $this->resolveHasAccess($course),
+            'has_access' => $this->resolveHasAccess($course),
             'enrollment_status' => $course->enrollment_status ?? null,
             'published_at' => $course->publish_at,
             'duration_minutes' => $course->duration_minutes,
             'primary_instructor_id' => $course->primary_instructor_id,
             'center' => new CenterResource($this->whenLoaded('center')),
             'category' => new CategoryResource($this->whenLoaded('category')),
+            'primary_instructor' => new InstructorResource($this->whenLoaded('primaryInstructor')),
             'instructors' => InstructorResource::collection($this->whenLoaded('instructors')),
             'sections' => CourseSectionResource::collection($this->whenLoaded('sections')),
             'videos' => CourseVideoResource::collection($this->whenLoaded('videos')),
             'pdfs' => CoursePdfResource::collection($this->whenLoaded('pdfs')),
         ];
+    }
+
+    /**
+     * Resolve whether the student has access to the course.
+     * This is the unified access flag that works for both access models:
+     * - Enrollment model: has active enrollment
+     * - Video code model: has at least one video code redemption
+     *
+     * Mobile can use this field (or is_enrolled) to show "enrolled/accessed" state.
+     */
+    private function resolveHasAccess(Course $course): bool
+    {
+        if ($course->usesEnrollmentAccess()) {
+            return (bool) ($course->is_enrolled ?? false);
+        }
+
+        // For video_code model, check if student has any code redemptions
+        return (bool) ($course->has_video_code_access ?? false);
     }
 }

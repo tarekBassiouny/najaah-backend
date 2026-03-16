@@ -14,5 +14,5 @@ interface MobileInstructorServiceInterface
     /**
      * @return LengthAwarePaginator<Instructor>
      */
-    public function list(User $student, InstructorFilters $filters): LengthAwarePaginator;
+    public function list(?User $student, InstructorFilters $filters): LengthAwarePaginator;
 }

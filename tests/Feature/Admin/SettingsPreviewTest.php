@@ -109,6 +109,42 @@ it('falls back when higher-level settings are missing', function (): void {
         ->assertJsonPath('data.device_limit', 1);
 });
 
+it('does not apply an arbitrary course setting when a video belongs to multiple courses and no course is specified', function (): void {
+    $center = Center::factory()->create([
+        'default_view_limit' => 6,
+        'allow_extra_view_requests' => false,
+        'pdf_download_permission' => false,
+        'device_limit' => 1,
+    ]);
+
+    $courseA = Course::factory()->create(['center_id' => $center->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id]);
+
+    CourseSetting::factory()->create([
+        'course_id' => $courseA->id,
+        'settings' => [
+            'pdf_download_permission' => true,
+        ],
+    ]);
+    CourseSetting::factory()->create([
+        'course_id' => $courseB->id,
+        'settings' => [
+            'pdf_download_permission' => false,
+        ],
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+    ]);
+    $video->courses()->attach([$courseA->id, $courseB->id]);
+
+    $response = $this->getJson('/api/v1/admin/settings/preview?video_id='.$video->id, $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.view_limit', 6)
+        ->assertJsonPath('data.pdf_download_permission', false);
+});
+
 it('ignores unsupported keys', function (): void {
     $center = Center::factory()->create();
 

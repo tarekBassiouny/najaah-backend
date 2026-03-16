@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin\Assessments;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AIContent\CreateAIContentBatchRequest;
 use App\Http\Requests\Admin\AIContent\CreateAIContentJobRequest;
 use App\Http\Requests\Admin\AIContent\ListAIContentJobsRequest;
 use App\Http\Requests\Admin\AIContent\ReviewAIContentJobRequest;
@@ -35,6 +36,10 @@ class AIContentJobController extends Controller
 
         if ($request->filled('course_id')) {
             $query->where('course_id', $request->integer('course_id'));
+        }
+
+        if ($request->filled('batch_key')) {
+            $query->where('batch_key', $request->string('batch_key')->toString());
         }
 
         if ($request->filled('status')) {
@@ -80,6 +85,35 @@ class AIContentJobController extends Controller
             'success' => true,
             'message' => 'AI content generation job queued successfully.',
             'data' => new AIContentJobResource($job),
+        ], 202);
+    }
+
+    /**
+     * Create and enqueue a new AI content generation batch.
+     *
+     * @group Admin - AI Content
+     */
+    public function storeBatch(CreateAIContentBatchRequest $request, Center $center): JsonResponse
+    {
+        /** @var User|null $admin */
+        $admin = $request->user();
+        if (! $admin instanceof User) {
+            abort(401, 'Unauthorized');
+        }
+
+        $result = $this->aiContentService->createBatch($center, $request->validated(), $admin);
+
+        foreach ($result['jobs'] as $job) {
+            ProcessAIContentJob::dispatch($job);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'AI content batch queued successfully.',
+            'data' => [
+                'batch_key' => $result['batch_key'],
+                'jobs' => AIContentJobResource::collection(collect($result['jobs']))->resolve(),
+            ],
         ], 202);
     }
 

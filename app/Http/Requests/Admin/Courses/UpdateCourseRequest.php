@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Courses;
 
+use App\Enums\CourseAccessModel;
 use App\Models\Center;
 use App\Models\College;
 use App\Models\Grade;
@@ -64,6 +65,7 @@ class UpdateCourseRequest extends FormRequest
             'difficulty' => ['sometimes', 'required', 'in:beginner,intermediate,advanced'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'requires_video_approval' => ['sometimes', 'nullable', 'boolean'],
+            'access_model' => ['sometimes', Rule::enum(CourseAccessModel::class)],
             'show_for_all_students' => ['sometimes', 'boolean'],
             'grade_ids' => ['sometimes', 'array'],
             'grade_ids.*' => [
@@ -136,6 +138,10 @@ class UpdateCourseRequest extends FormRequest
             'requires_video_approval' => [
                 'description' => 'Optional per-course override for video access approval. Null inherits center settings.',
                 'example' => false,
+            ],
+            'access_model' => [
+                'description' => 'Course access model. Use enrollment for the default flow or video_code for code-based access.',
+                'example' => 'enrollment',
             ],
             'show_for_all_students' => [
                 'description' => 'If true, course is visible to all students in the center. If false, education targets are used.',

@@ -77,6 +77,43 @@ it('attaches then detaches a ready video and keeps pivot ordering', function ():
     expect($pivot->section_id)->toBeNull();
 });
 
+it('allows attaching the same video to sections in different courses', function (): void {
+    $admin = $this->asAdmin();
+    $center = Center::factory()->create();
+    $courseA = Course::factory()->create(['center_id' => $center->id, 'created_by' => $admin->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id, 'created_by' => $admin->id]);
+    $sectionA = Section::factory()->create(['course_id' => $courseA->id]);
+    $sectionB = Section::factory()->create(['course_id' => $courseB->id]);
+    $uploadSession = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => VideoUploadStatus::Ready,
+        'expires_at' => now()->addHour(),
+    ]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_session_id' => $uploadSession->id,
+        'encoding_status' => VideoUploadStatus::Ready,
+        'lifecycle_status' => VideoLifecycleStatus::Ready,
+    ]);
+
+    $service = app(SectionStructureService::class);
+    $service->attachVideo($sectionA, $video, $admin);
+    $service->attachVideo($sectionB, $video, $admin);
+
+    expect(CourseVideo::query()
+        ->where('course_id', $courseA->id)
+        ->where('video_id', $video->id)
+        ->where('section_id', $sectionA->id)
+        ->exists())->toBeTrue();
+
+    expect(CourseVideo::query()
+        ->where('course_id', $courseB->id)
+        ->where('video_id', $video->id)
+        ->where('section_id', $sectionB->id)
+        ->exists())->toBeTrue();
+});
+
 it('attaches then detaches a ready pdf and keeps pivot ordering', function (): void {
     $admin = $this->asAdmin();
     $center = Center::factory()->create();

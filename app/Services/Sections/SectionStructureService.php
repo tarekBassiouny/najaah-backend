@@ -55,7 +55,6 @@ class SectionStructureService implements SectionStructureServiceInterface
     {
         $this->assertCenterScope($section, $actor);
         $this->assertSectionActive($section);
-        $this->assertVideoBelongsToCourse($section, $video);
         $this->videoAccessService->assertReadyForAttachment($video);
 
         $pivot = CourseVideo::withTrashed()
@@ -346,15 +345,6 @@ class SectionStructureService implements SectionStructureServiceInterface
 
         $section = new Section(['id' => $sectionId, 'course_id' => $courseId]);
         $this->syncPdfOrder($section, $ids);
-    }
-
-    private function assertVideoBelongsToCourse(Section $section, Video $video): void
-    {
-        $attachedToOtherCourse = $this->attachmentAccessService->isVideoAttachedToOtherCourse($section, $video);
-
-        if ($attachedToOtherCourse) {
-            throw new AttachmentNotAllowedException('Video is already attached to another course.', 422);
-        }
     }
 
     private function assertPdfBelongsToCourse(Section $section, Pdf $pdf): void

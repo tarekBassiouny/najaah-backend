@@ -17,21 +17,31 @@ use App\Models\Enrollment;
 use App\Models\User;
 use App\Models\Video;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 class ExploreCourseService
 {
     /**
+     * Explore courses for authenticated students or guest users.
+     *
      * @return LengthAwarePaginator<Course>
      */
-    public function explore(User $student, CourseFilters $filters): LengthAwarePaginator
+    public function explore(?User $student, CourseFilters $filters): LengthAwarePaginator
     {
         $query = Course::query()
             ->published()
-            ->with(['center', 'category', 'instructors'])
-            ->withEnrollmentMeta($student)
-            ->visibleToStudent($student)
-            ->matchingStudentEducation($student);
+            ->with(['center', 'category', 'primaryInstructor', 'instructors']);
+
+        // Apply student-specific scopes for authenticated users
+        if ($student instanceof User) {
+            $query->withEnrollmentMeta($student)
+                ->visibleToStudent($student)
+                ->matchingStudentEducation($student);
+        } else {
+            // Guest user - show published courses from active centers
+            $this->applyGuestVisibility($query);
+        }
 
         if ($filters->categoryId !== null) {
             $query->where('category_id', $filters->categoryId);
@@ -50,10 +60,13 @@ class ExploreCourseService
             });
         }
 
-        if ($filters->enrolled === true) {
-            $query->enrolledBy($student);
-        } elseif ($filters->enrolled === false) {
-            $query->notEnrolledBy($student);
+        // Enrollment filters only apply to authenticated users
+        if ($student instanceof User) {
+            if ($filters->enrolled === true) {
+                $query->accessibleBy($student);
+            } elseif ($filters->enrolled === false) {
+                $query->notAccessibleBy($student);
+            }
         }
 
         if ($filters->publishFrom !== null) {
@@ -83,13 +96,22 @@ class ExploreCourseService
         );
     }
 
-    public function show(User $student, Course $course): Course
+    /**
+     * Show course details for authenticated students or guest users.
+     */
+    public function show(?User $student, Course $course): Course
     {
-        $course = Course::query()
-            ->withEnrollmentMeta($student, true)
-            ->matchingStudentEducation($student)
-            ->whereKey($course->id)
-            ->first();
+        $query = Course::query()->whereKey($course->id);
+
+        if ($student instanceof User) {
+            $query->withEnrollmentMeta($student, true)
+                ->matchingStudentEducation($student);
+        } else {
+            // Guest user - apply guest education filter
+            $this->applyGuestEducationFilter();
+        }
+
+        $course = $query->first();
 
         if (! $course instanceof Course) {
             $this->notFound();
@@ -102,6 +124,7 @@ class ExploreCourseService
         $course->load([
             'center',
             'category',
+            'primaryInstructor',
             'instructors',
             'sections.videos',
             'sections.videos.uploadSession',
@@ -115,34 +138,75 @@ class ExploreCourseService
             $this->centerMismatch();
         }
 
-        if (is_numeric($student->center_id)) {
-            if ((int) $course->center_id !== (int) $student->center_id) {
-                $this->centerMismatch();
+        // Validate center access for authenticated students
+        if ($student instanceof User) {
+            if (is_numeric($student->center_id)) {
+                if ((int) $course->center_id !== (int) $student->center_id) {
+                    $this->centerMismatch();
+                }
+            } else {
+                $isUnbranded = Center::query()
+                    ->where('id', $course->center_id)
+                    ->where('type', CenterType::Unbranded->value)
+                    ->where('status', Center::STATUS_ACTIVE->value)
+                    ->exists();
+
+                if (! $isUnbranded) {
+                    $this->centerMismatch();
+                }
             }
         } else {
-            $isUnbranded = Center::query()
-                ->where('id', $course->center_id)
-                ->where('type', CenterType::Unbranded->value)
-                ->where('status', Center::STATUS_ACTIVE->value)
-                ->exists();
-
-            if (! $isUnbranded) {
+            // Guest user - course center must allow guest browsing
+            // Note: center is guaranteed to be non-null after the check on line 137
+            if ($course->center === null || ! $course->center->allow_guest_browsing) {
                 $this->centerMismatch();
             }
         }
 
-        $activeStatus = $course->active_enrollment_status ?? null;
-        $latestStatus = $course->latest_enrollment_status ?? null;
-        $statusValue = $activeStatus ?? $latestStatus;
+        // Set enrollment attributes
+        if ($student instanceof User) {
+            $activeStatus = $course->active_enrollment_status ?? null;
+            $latestStatus = $course->latest_enrollment_status ?? null;
+            $statusValue = $activeStatus ?? $latestStatus;
 
-        $course->setAttribute('is_enrolled', (bool) ($course->is_enrolled ?? false));
-        $course->setAttribute(
-            'enrollment_status',
-            $statusValue !== null ? (Enrollment::statusLabels()[$statusValue] ?? 'UNKNOWN') : null
-        );
+            $course->setAttribute('is_enrolled', (bool) ($course->is_enrolled ?? false));
+            $course->setAttribute(
+                'enrollment_status',
+                $statusValue !== null ? (Enrollment::statusLabels()[$statusValue] ?? 'UNKNOWN') : null
+            );
+        } else {
+            // Guest users are never enrolled
+            $course->setAttribute('is_enrolled', false);
+            $course->setAttribute('enrollment_status', null);
+        }
+
         $this->filterReadyVideos($course);
 
         return $course;
+    }
+
+    /**
+     * Apply visibility filter for guest users.
+     * Guests can see all published courses from active centers that allow guest browsing.
+     * Education filters are not applied to guests.
+     *
+     * @param  Builder<Course>  $query
+     */
+    private function applyGuestVisibility(Builder $query): void
+    {
+        $query->whereHas('center', function ($query): void {
+            $query->where('status', Center::STATUS_ACTIVE->value)
+                ->where('allow_guest_browsing', true);
+        });
+    }
+
+    /**
+     * Apply education filter for guest users.
+     * Guests see all courses without education restrictions.
+     */
+    private function applyGuestEducationFilter(): void
+    {
+        // No education filter for guests - they can see all published courses
     }
 
     private function filterReadyVideos(Course $course): void

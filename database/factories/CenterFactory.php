@@ -39,6 +39,7 @@ class CenterFactory extends Factory
             'allow_extra_view_requests' => true,
             'pdf_download_permission' => false,
             'device_limit' => 1,
+            'allow_guest_browsing' => false,
         ];
     }
 }

@@ -20,13 +20,27 @@ class CentersController extends Controller
 
     public function index(ListCentersRequest $request): JsonResponse
     {
+        /** @var User|null $student */
         $student = $request->user();
-        if (! $student instanceof User || $student->is_student === false) {
+
+        // For authenticated users, verify they are students
+        if ($student instanceof User && $student->is_student === false) {
             return response()->json([
                 'success' => false,
                 'error' => [
                     'code' => 'UNAUTHORIZED',
                     'message' => 'Only students can access centers.',
+                ],
+            ], 403);
+        }
+
+        // Branded students cannot list centers - they should only access their branded center
+        if ($student instanceof User && is_numeric($student->center_id)) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Branded students cannot list centers.',
                 ],
             ], 403);
         }
@@ -47,8 +61,11 @@ class CentersController extends Controller
 
     public function show(ShowCenterRequest $request, Center $center): JsonResponse
     {
+        /** @var User|null $student */
         $student = $request->user();
-        if (! $student instanceof User || $student->is_student === false) {
+
+        // For authenticated users, verify they are students
+        if ($student instanceof User && $student->is_student === false) {
             return response()->json([
                 'success' => false,
                 'error' => [

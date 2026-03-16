@@ -51,6 +51,8 @@ use App\Services\Education\GradeService;
 use App\Services\Education\SchoolService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
+use App\Services\Guest\Contracts\GuestAccessServiceInterface;
+use App\Services\Guest\GuestAccessService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
 use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
@@ -104,9 +106,13 @@ use App\Services\VideoAccess\Contracts\BulkWhatsAppServiceInterface;
 use App\Services\VideoAccess\Contracts\VideoApprovalCodeServiceInterface;
 use App\Services\VideoAccess\Contracts\VideoApprovalRequestServiceInterface;
 use App\Services\VideoAccess\Contracts\VideoApprovalServiceInterface;
+use App\Services\VideoAccess\Contracts\VideoCodeBatchServiceInterface;
+use App\Services\VideoAccess\Contracts\VideoCodeRedemptionServiceInterface;
 use App\Services\VideoAccess\VideoApprovalCodeService;
 use App\Services\VideoAccess\VideoApprovalRequestService;
 use App\Services\VideoAccess\VideoApprovalService;
+use App\Services\VideoAccess\VideoCodeBatchService;
+use App\Services\VideoAccess\VideoCodeRedemptionService;
 use App\Services\Videos\AdminVideoQueryService;
 use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
 use App\Services\Videos\Contracts\VideoServiceInterface;
@@ -163,6 +169,7 @@ class AppServiceProvider extends ServiceProvider
             SectionStructureServiceInterface::class => SectionStructureService::class,
             SectionWorkflowServiceInterface::class => SectionWorkflowService::class,
             EnrollmentServiceInterface::class => EnrollmentService::class,
+            GuestAccessServiceInterface::class => GuestAccessService::class,
             CenterServiceInterface::class => CenterService::class,
             CenterScopeServiceInterface::class => CenterScopeService::class,
             CenterSettingsServiceInterface::class => CenterSettingsService::class,
@@ -181,6 +188,8 @@ class AppServiceProvider extends ServiceProvider
             VideoApprovalServiceInterface::class => VideoApprovalService::class,
             VideoApprovalRequestServiceInterface::class => VideoApprovalRequestService::class,
             VideoApprovalCodeServiceInterface::class => VideoApprovalCodeService::class,
+            VideoCodeBatchServiceInterface::class => VideoCodeBatchService::class,
+            VideoCodeRedemptionServiceInterface::class => VideoCodeRedemptionService::class,
             BulkWhatsAppServiceInterface::class => BulkWhatsAppService::class,
             RoleServiceInterface::class => RoleService::class,
             PermissionServiceInterface::class => PermissionService::class,
@@ -279,6 +288,24 @@ class AppServiceProvider extends ServiceProvider
             $email = (string) $request->input('email', '');
 
             return Limit::perMinute(5)->by($request->ip().'|'.$email);
+        });
+
+        RateLimiter::for('video-code-redeem', static function (Request $request): array {
+            $userId = (string) ($request->user()?->id ?? 'guest');
+
+            return [
+                Limit::perMinute(10)->by('video-code-redeem:user:'.$userId),
+                Limit::perMinute(30)->by('video-code-redeem:ip:'.$request->ip()),
+            ];
+        });
+
+        RateLimiter::for('video-code-validate', static function (Request $request): array {
+            $userId = (string) ($request->user()?->id ?? 'guest');
+
+            return [
+                Limit::perMinute(20)->by('video-code-validate:user:'.$userId),
+                Limit::perMinute(60)->by('video-code-validate:ip:'.$request->ip()),
+            ];
         });
 
         $this->registerQueuePayloadContext();

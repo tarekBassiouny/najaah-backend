@@ -169,13 +169,18 @@ class CenterService implements CenterServiceInterface
     /**
      * @return LengthAwarePaginator<Center>
      */
-    public function listUnbranded(User $student, CenterFilters $filters): LengthAwarePaginator
+    public function listUnbranded(?User $student, CenterFilters $filters): LengthAwarePaginator
     {
         $query = Center::query()
             ->with('setting')
             ->where('type', CenterType::Unbranded->value)
             ->where('status', Center::STATUS_ACTIVE->value)
             ->orderByDesc('id');
+
+        // For guests, only show centers that allow guest browsing
+        if (! $student instanceof User) {
+            $query->where('allow_guest_browsing', true);
+        }
 
         if ($filters->search !== null && $filters->search !== '') {
             $query->whereTranslationLike(
@@ -282,7 +287,7 @@ class CenterService implements CenterServiceInterface
      * @return array{center: Center, courses: LengthAwarePaginator<Course>}
      */
     public function showWithCourses(
-        User $student,
+        ?User $student,
         Center $center,
         int $perPage = 15,
         ?int $categoryId = null,
@@ -303,12 +308,17 @@ class CenterService implements CenterServiceInterface
      * @return Builder<Course>
      */
     private function unbrandedCourseQuery(
-        User $student,
+        ?User $student,
         Center $center,
         ?int $categoryId = null,
         ?bool $isFeatured = null
     ): Builder {
         if ($center->type !== CenterType::Unbranded || $center->status !== Center::STATUS_ACTIVE) {
+            $this->notFound();
+        }
+
+        // For guests, center must allow guest browsing
+        if (! $student instanceof User && ! $center->allow_guest_browsing) {
             $this->notFound();
         }
 
@@ -331,7 +341,7 @@ class CenterService implements CenterServiceInterface
     /**
      * @return Builder<Course>
      */
-    private function unbrandedVisibleCourseQuery(User $student, bool $includeEnrollmentMeta = true): Builder
+    private function unbrandedVisibleCourseQuery(?User $student, bool $includeEnrollmentMeta = true): Builder
     {
         $query = Course::query()
             ->published()
@@ -351,8 +361,13 @@ class CenterService implements CenterServiceInterface
                     });
             });
 
-        if ($includeEnrollmentMeta) {
+        if ($includeEnrollmentMeta && $student instanceof User) {
             $query->withEnrollmentMeta($student);
+        }
+
+        // For guests, only show courses visible to all students
+        if (! $student instanceof User) {
+            $query->where('show_for_all_students', true);
         }
 
         return $query;
@@ -361,7 +376,7 @@ class CenterService implements CenterServiceInterface
     /**
      * @param  LengthAwarePaginator<Center>  $paginator
      */
-    private function attachCenterListCourses(User $student, LengthAwarePaginator $paginator): void
+    private function attachCenterListCourses(?User $student, LengthAwarePaginator $paginator): void
     {
         $centers = collect($paginator->items());
         if ($centers->isEmpty()) {
@@ -394,14 +409,18 @@ class CenterService implements CenterServiceInterface
             ->map(static fn (mixed $id): int => (int) $id)
             ->values();
 
-        $coursesByCenter = Course::query()
-            ->withEnrollmentMeta($student)
+        $courseQuery = Course::query()
             ->with(['category'])
             ->whereIn('id', $limitedCourseIds->all())
             ->orderByDesc('created_at')
-            ->orderByDesc('id')
-            ->get()
-            ->groupBy('center_id');
+            ->orderByDesc('id');
+
+        // Only add enrollment meta for authenticated users
+        if ($student instanceof User) {
+            $courseQuery->withEnrollmentMeta($student);
+        }
+
+        $coursesByCenter = $courseQuery->get()->groupBy('center_id');
 
         foreach ($centers as $center) {
             if (! $center instanceof Center) {

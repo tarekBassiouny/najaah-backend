@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Center;
 use App\Models\Course;
+use App\Models\ExtraViewRequest;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\UserDevice;
@@ -37,6 +38,7 @@ test('getRemainingViews returns correct count with view limit', function (): voi
     PlaybackSession::factory()->create([
         'user_id' => $user->id,
         'video_id' => $video->id,
+        'course_id' => $course->id,
         'device_id' => $device->id,
         'is_full_play' => true,
         'ended_at' => now(),
@@ -45,6 +47,7 @@ test('getRemainingViews returns correct count with view limit', function (): voi
     PlaybackSession::factory()->create([
         'user_id' => $user->id,
         'video_id' => $video->id,
+        'course_id' => $course->id,
         'device_id' => $device->id,
         'is_full_play' => true,
         'ended_at' => now(),
@@ -103,6 +106,7 @@ test('isLocked returns true when views exhausted', function (): void {
     PlaybackSession::factory()->create([
         'user_id' => $user->id,
         'video_id' => $video->id,
+        'course_id' => $course->id,
         'device_id' => $device->id,
         'is_full_play' => true,
         'ended_at' => now(),
@@ -124,4 +128,50 @@ test('isLocked returns false for unlimited videos', function (): void {
     $locked = $service->isLocked($user, $video, $course);
 
     expect($locked)->toBeFalse();
+});
+
+test('full play counts are scoped to the course when a video is shared', function (): void {
+    $center = Center::factory()->create(['default_view_limit' => 1]);
+    $courseA = Course::factory()->create(['center_id' => $center->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id]);
+    $upload = VideoUploadSession::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['upload_session_id' => $upload->id]);
+    $user = User::factory()->create(['center_id' => $center->id]);
+    $device = UserDevice::factory()->create(['user_id' => $user->id, 'status' => UserDevice::STATUS_ACTIVE]);
+
+    PlaybackSession::factory()->create([
+        'user_id' => $user->id,
+        'video_id' => $video->id,
+        'course_id' => $courseA->id,
+        'device_id' => $device->id,
+        'is_full_play' => true,
+        'ended_at' => now(),
+    ]);
+
+    $service = app(ViewLimitService::class);
+
+    expect($service->getRemainingViews($user, $video, $courseA))->toBe(0)
+        ->and($service->getRemainingViews($user, $video, $courseB))->toBe(1);
+});
+
+test('approved extra views are scoped to the course when a video is shared', function (): void {
+    $center = Center::factory()->create(['default_view_limit' => 1]);
+    $courseA = Course::factory()->create(['center_id' => $center->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['center_id' => $center->id]);
+    $user = User::factory()->create(['center_id' => $center->id]);
+
+    ExtraViewRequest::factory()->create([
+        'user_id' => $user->id,
+        'video_id' => $video->id,
+        'course_id' => $courseA->id,
+        'center_id' => $center->id,
+        'status' => ExtraViewRequest::STATUS_APPROVED,
+        'granted_views' => 2,
+    ]);
+
+    $service = app(ViewLimitService::class);
+
+    expect($service->getEffectiveLimit($user, $video, $courseA))->toBe(3)
+        ->and($service->getEffectiveLimit($user, $video, $courseB))->toBe(1);
 });
