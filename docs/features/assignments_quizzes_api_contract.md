@@ -24,6 +24,9 @@ It includes:
 - Required middleware for this module:
   - Quizzes: `require.permission:quiz.manage` + `scope.center`
   - Assignments: `require.permission:assignment.manage` + `scope.center`
+  - AI content create/list/show/discard: `require.permission:ai_content.generate` + `scope.center`
+  - AI content review/approve/publish: `require.permission:ai_content.review_publish` + `scope.center`
+  - `learning_asset.manage` exists as a permission, but admin CRUD endpoints for `learning_assets` are not part of this contract yet.
 
 ### Mobile APIs
 - Base prefix: `/api/v1`
@@ -263,6 +266,11 @@ Behavior:
 ## 12) Create AI content job
 - `POST /api/v1/admin/centers/{center}/ai-content/jobs`
 
+Implementation notes:
+- One job produces one target asset type.
+- Multi-asset generation in admin must create multiple jobs with the current API.
+- `target_id` is optional and is used for regenerate/update-existing flows.
+
 Body validation:
 - `course_id` required integer exists `courses.id`
 - `source_type` required enum `video|pdf|section|course`
@@ -307,6 +315,11 @@ Behavior:
 Behavior:
 - Job must be approved
 - Publishes into canonical target (`quiz`, `assignment`, or `learning_assets`)
+- Publishing currently makes canonical content live immediately:
+  - quiz => `is_active=true`
+  - assignment => `is_active=true`
+  - learning asset => `status=published` and `is_active=true`
+- If `target_id` points to an existing quiz, generated questions are appended to that quiz. Existing questions are not replaced.
 
 ## 18) Discard AI content job
 - `DELETE /api/v1/admin/centers/{center}/ai-content/jobs/{job}`

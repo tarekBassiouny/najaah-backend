@@ -23,6 +23,7 @@ class ListAIContentJobsRequest extends FormRequest
     {
         return [
             'course_id' => ['sometimes', 'integer', 'exists:courses,id'],
+            'batch_key' => ['sometimes', 'uuid'],
             'status' => ['sometimes', 'integer', Rule::enum(AIContentJobStatus::class)],
             'target_type' => ['sometimes', 'string', Rule::enum(AIContentTargetType::class)],
             'page' => ['sometimes', 'integer', 'min:1'],
@@ -39,6 +40,10 @@ class ListAIContentJobsRequest extends FormRequest
             'course_id' => [
                 'description' => 'Filter by course ID.',
                 'example' => '12',
+            ],
+            'batch_key' => [
+                'description' => 'Filter jobs by batch key.',
+                'example' => '8c7d3f6e-8a1c-4a1f-95fb-44d9208cb3ec',
             ],
             'status' => [
                 'description' => 'Filter by status enum value (0..6).',

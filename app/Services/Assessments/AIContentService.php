@@ -9,6 +9,7 @@ use App\Enums\AIContentSourceType;
 use App\Enums\AIContentTargetType;
 use App\Enums\LearningAssetStatus;
 use App\Enums\LearningAssetType;
+use App\Enums\QuestionType;
 use App\Exceptions\DomainException;
 use App\Models\AIContentJob;
 use App\Models\Assignment;
@@ -30,6 +31,7 @@ use App\Support\ErrorCodes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 final class AIContentService implements AIContentServiceInterface
 {
@@ -60,7 +62,7 @@ final class AIContentService implements AIContentServiceInterface
             ? (int) $data['target_id']
             : null;
         $this->validateSourceOwnership($center, $course, $sourceType, $sourceId);
-        $this->validateTargetOwnership($center, $course, $targetType, $targetId);
+        $this->validateTargetOwnership($center, $course, $sourceType, $sourceId, $targetType, $targetId);
 
         $resolvedConfig = $this->aiIntegrationService->resolveProviderAndModel(
             $center,
@@ -87,6 +89,7 @@ final class AIContentService implements AIContentServiceInterface
         return AIContentJob::query()->create([
             'center_id' => $center->id,
             'course_id' => $course->id,
+            'batch_key' => array_key_exists('batch_key', $data) && is_string($data['batch_key']) ? $data['batch_key'] : null,
             'source_type' => $sourceType,
             'source_id' => $sourceId,
             'target_type' => $targetType,
@@ -99,6 +102,41 @@ final class AIContentService implements AIContentServiceInterface
             'estimated_output_tokens' => $estimatedOutputTokens,
             'created_by' => $creator->id,
         ]);
+    }
+
+    /**
+     * @param  array<string,mixed>  $data
+     * @return array{batch_key:string,jobs:list<AIContentJob>}
+     */
+    public function createBatch(Center $center, array $data, User $creator): array
+    {
+        return DB::transaction(function () use ($center, $data, $creator): array {
+            $batchKey = (string) Str::uuid();
+            /** @var list<AIContentJob> $jobs */
+            $jobs = [];
+
+            /** @var array<int,array<string,mixed>> $assets */
+            $assets = $data['assets'];
+
+            foreach ($assets as $asset) {
+                $jobs[] = $this->createJob($center, [
+                    'course_id' => $data['course_id'],
+                    'batch_key' => $batchKey,
+                    'source_type' => $data['source_type'],
+                    'source_id' => $data['source_id'],
+                    'target_type' => $asset['target_type'],
+                    'target_id' => $asset['target_id'] ?? null,
+                    'ai_provider' => $asset['ai_provider'] ?? null,
+                    'ai_model' => $asset['ai_model'] ?? null,
+                    'generation_config' => $asset['generation_config'] ?? [],
+                ], $creator);
+            }
+
+            return [
+                'batch_key' => $batchKey,
+                'jobs' => $jobs,
+            ];
+        });
     }
 
     public function processJob(AIContentJob $job): void
@@ -270,6 +308,7 @@ final class AIContentService implements AIContentServiceInterface
             'id' => $job->id,
             'center_id' => $job->center_id,
             'course_id' => $job->course_id,
+            'batch_key' => $job->batch_key,
             'source_type' => $job->source_type->value,
             'source_id' => $job->source_id,
             'target_type' => $job->target_type->value,
@@ -332,6 +371,8 @@ final class AIContentService implements AIContentServiceInterface
     private function validateTargetOwnership(
         Center $center,
         Course $course,
+        AIContentSourceType $sourceType,
+        int $sourceId,
         AIContentTargetType $targetType,
         ?int $targetId
     ): void {
@@ -339,39 +380,55 @@ final class AIContentService implements AIContentServiceInterface
             return;
         }
 
-        $exists = match ($targetType) {
+        $target = match ($targetType) {
             AIContentTargetType::Quiz => Quiz::query()
                 ->whereKey($targetId)
                 ->where('center_id', $center->id)
                 ->where('course_id', $course->id)
-                ->exists(),
+                ->first(),
             AIContentTargetType::Assignment => Assignment::query()
                 ->whereKey($targetId)
                 ->where('center_id', $center->id)
                 ->where('course_id', $course->id)
-                ->exists(),
+                ->first(),
             AIContentTargetType::Summary => LearningAsset::query()
                 ->whereKey($targetId)
                 ->where('center_id', $center->id)
                 ->where('course_id', $course->id)
                 ->where('asset_type', LearningAssetType::Summary)
-                ->exists(),
+                ->first(),
             AIContentTargetType::Flashcards => LearningAsset::query()
                 ->whereKey($targetId)
                 ->where('center_id', $center->id)
                 ->where('course_id', $course->id)
                 ->where('asset_type', LearningAssetType::Flashcards)
-                ->exists(),
+                ->first(),
             AIContentTargetType::InteractiveActivity => LearningAsset::query()
                 ->whereKey($targetId)
                 ->where('center_id', $center->id)
                 ->where('course_id', $course->id)
                 ->where('asset_type', LearningAssetType::InteractiveActivity)
-                ->exists(),
+                ->first(),
         };
 
-        if (! $exists) {
+        if ($target === null) {
             throw new DomainException('Target does not belong to the specified center/course context.', ErrorCodes::NOT_FOUND, 422);
+        }
+
+        $attachableType = $target->getAttribute('attachable_type');
+        $attachableId = $target->getAttribute('attachable_id');
+
+        if ($attachableType !== null && $attachableId !== null) {
+            $matchesSource = (string) $attachableType === $sourceType->value
+                && (int) $attachableId === $sourceId;
+
+            if (! $matchesSource) {
+                throw new DomainException(
+                    'Target does not belong to the specified source item.',
+                    ErrorCodes::INVALID_STATE,
+                    422
+                );
+            }
         }
     }
 
@@ -702,86 +759,35 @@ PROMPT;
     private function publishQuiz(AIContentJob $job, User $publisher, array $payload): array
     {
         $course = Course::query()->findOrFail($job->course_id);
-
-        /** @var Quiz $quiz */
-        $quiz = $job->target_id !== null
+        $target = $job->target_id !== null
             ? Quiz::query()->whereKey($job->target_id)->where('center_id', $job->center_id)->firstOrFail()
+            : null;
+
+        $quiz = $target instanceof Quiz
+            ? $this->resolveQuizPublicationTarget($target, $publisher)
             : $this->quizService->create($course, [
                 'title_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.title'), 'AI Generated Quiz'),
                 'description_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.description')),
                 'attachable_type' => $job->source_type->value,
                 'attachable_id' => $job->source_id,
-                'is_active' => true,
+                'is_active' => false,
             ], $publisher);
 
-        if ($job->target_id !== null) {
-            $this->quizService->update($quiz, [
-                'title_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.title'), (string) $quiz->translate('title')),
-                'description_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.description')),
-                'attachable_type' => $job->source_type->value,
-                'attachable_id' => $job->source_id,
-            ]);
-        }
+        $quiz = $this->quizService->update($quiz, [
+            'title_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.title'), $quiz->translate('title')),
+            'description_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.description')),
+            'attachable_type' => $job->source_type->value,
+            'attachable_id' => $job->source_id,
+            'is_active' => true,
+        ]);
 
         $questions = data_get($payload, 'questions');
         if (! is_array($questions)) {
             throw new DomainException('Quiz payload must include questions array.', ErrorCodes::INVALID_STATE, 422);
         }
 
-        $maxOrder = (int) ($quiz->questions()->max('order_index') ?? -1);
-        $addedCount = 0;
-
-        foreach ($questions as $questionData) {
-            if (! is_array($questionData)) {
-                continue;
-            }
-
-            $questionText = data_get($questionData, 'question');
-            $options = data_get($questionData, 'options');
-
-            if (! is_string($questionText) || ! is_array($options) || $options === []) {
-                continue;
-            }
-
-            $maxOrder++;
-            $question = QuizQuestion::query()->create([
-                'quiz_id' => $quiz->id,
-                'question_translations' => $this->normalizeTranslations($questionText, 'Question'),
-                'question_type' => 0,
-                'explanation_translations' => $this->normalizeTranslations(data_get($questionData, 'explanation')),
-                'points' => is_numeric(data_get($questionData, 'points')) ? (float) data_get($questionData, 'points') : 1.00,
-                'order_index' => $maxOrder,
-                'is_active' => true,
-                'ai_generated' => true,
-                'ai_source_type' => $job->source_type->value,
-                'ai_source_id' => $job->source_id,
-            ]);
-
-            foreach (array_values($options) as $index => $option) {
-                if (is_string($option)) {
-                    $optionText = $option;
-                    $isCorrect = false;
-                } elseif (is_array($option)) {
-                    $optionText = (string) data_get($option, 'text', '');
-                    $isCorrect = (bool) data_get($option, 'is_correct', false);
-                } else {
-                    continue;
-                }
-
-                if ($optionText === '') {
-                    continue;
-                }
-
-                QuizAnswer::query()->create([
-                    'quiz_question_id' => $question->id,
-                    'answer_translations' => $this->normalizeTranslations($optionText, 'Option'),
-                    'is_correct' => $isCorrect,
-                    'order_index' => $index,
-                ]);
-            }
-
-            $addedCount++;
-        }
+        $addedCount = $this->replaceQuizQuestions($quiz, $questions, $job);
+        $this->deactivateConflictingQuizzes($quiz, $job);
 
         return [
             'target_type' => AIContentTargetType::Quiz->value,
@@ -817,14 +823,16 @@ PROMPT;
             'is_active' => true,
         ];
 
-        /** @var Assignment $assignment */
-        $assignment = $job->target_id !== null
+        $target = $job->target_id !== null
             ? Assignment::query()->whereKey($job->target_id)->where('center_id', $job->center_id)->firstOrFail()
-            : $this->assignmentService->create($course, $data, $publisher);
+            : null;
 
-        if ($job->target_id !== null) {
-            $assignment = $this->assignmentService->update($assignment, $data);
-        }
+        $assignment = $target instanceof Assignment
+            ? $this->resolveAssignmentPublicationTarget($target, $publisher)
+            : $this->assignmentService->create($course, [...$data, 'is_active' => false], $publisher);
+
+        $assignment = $this->assignmentService->update($assignment, [...$data, 'is_active' => true]);
+        $this->deactivateConflictingAssignments($assignment, $job);
 
         return [
             'target_type' => AIContentTargetType::Assignment->value,
@@ -845,14 +853,17 @@ PROMPT;
             default => throw new DomainException('Invalid learning asset target type.', ErrorCodes::INVALID_STATE, 422),
         };
 
-        /** @var LearningAsset|null $asset */
-        $asset = $job->target_id !== null
+        $target = $job->target_id !== null
             ? LearningAsset::query()
                 ->whereKey($job->target_id)
                 ->where('center_id', $job->center_id)
                 ->where('course_id', $job->course_id)
                 ->where('asset_type', $assetType)
                 ->first()
+            : null;
+
+        $asset = $target instanceof LearningAsset
+            ? $this->resolveLearningAssetPublicationTarget($target, $publisher)
             : null;
 
         $attributes = [
@@ -877,6 +888,20 @@ PROMPT;
         } else {
             $asset->update($attributes);
         }
+
+        LearningAsset::query()
+            ->where('center_id', $job->center_id)
+            ->where('course_id', $job->course_id)
+            ->where('attachable_type', $job->source_type->value)
+            ->where('attachable_id', $job->source_id)
+            ->where('asset_type', $assetType)
+            ->whereKeyNot($asset->id)
+            ->where('status', LearningAssetStatus::Published)
+            ->update([
+                'status' => LearningAssetStatus::Archived,
+                'is_active' => false,
+                'updated_by' => $publisher->id,
+            ]);
 
         return [
             'target_type' => $job->target_type->value,
@@ -931,5 +956,154 @@ PROMPT;
             ->all();
 
         return $normalized === [] ? [0] : $normalized;
+    }
+
+    private function resolveQuizPublicationTarget(Quiz $target, User $publisher): Quiz
+    {
+        if (! $target->is_active) {
+            return $target;
+        }
+
+        return $this->quizService->duplicate($target, $publisher);
+    }
+
+    private function resolveAssignmentPublicationTarget(Assignment $target, User $publisher): Assignment
+    {
+        if (! $target->is_active) {
+            return $target;
+        }
+
+        /** @var Assignment $clone */
+        $clone = $target->replicate(['created_by']);
+        $clone->created_by = $publisher->id;
+        $clone->is_active = false;
+        $clone->save();
+
+        return $clone;
+    }
+
+    private function resolveLearningAssetPublicationTarget(LearningAsset $target, User $publisher): LearningAsset
+    {
+        if (! $target->is_active && $target->status !== LearningAssetStatus::Published) {
+            return $target;
+        }
+
+        /** @var LearningAsset $clone */
+        $clone = $target->replicate(['created_by', 'published_by', 'published_at']);
+        $clone->created_by = $publisher->id;
+        $clone->updated_by = $publisher->id;
+        $clone->published_by = null;
+        $clone->published_at = null;
+        $clone->status = LearningAssetStatus::Draft;
+        $clone->is_active = false;
+        $clone->save();
+
+        return $clone;
+    }
+
+    /**
+     * @param  array<int,mixed>  $questions
+     */
+    private function replaceQuizQuestions(Quiz $quiz, array $questions, AIContentJob $job): int
+    {
+        $existingQuestions = $quiz->questions()->withTrashed()->get();
+        foreach ($existingQuestions as $existingQuestion) {
+            $existingQuestion->answers()->delete();
+            $existingQuestion->forceDelete();
+        }
+
+        $maxOrder = -1;
+        $addedCount = 0;
+
+        foreach ($questions as $questionData) {
+            if (! is_array($questionData)) {
+                continue;
+            }
+
+            $questionText = data_get($questionData, 'question');
+            $options = data_get($questionData, 'options');
+
+            if (! is_string($questionText) || ! is_array($options) || $options === []) {
+                continue;
+            }
+
+            $maxOrder++;
+            $questionType = $this->detectQuestionType($options);
+            $question = QuizQuestion::query()->create([
+                'quiz_id' => $quiz->id,
+                'question_translations' => $this->normalizeTranslations($questionText, 'Question'),
+                'question_type' => $questionType,
+                'explanation_translations' => $this->normalizeTranslations(data_get($questionData, 'explanation')),
+                'points' => is_numeric(data_get($questionData, 'points')) ? (float) data_get($questionData, 'points') : 1.00,
+                'order_index' => $maxOrder,
+                'is_active' => true,
+                'ai_generated' => true,
+                'ai_source_type' => $job->source_type->value,
+                'ai_source_id' => $job->source_id,
+            ]);
+
+            foreach (array_values($options) as $index => $option) {
+                if (is_string($option)) {
+                    $optionText = $option;
+                    $isCorrect = false;
+                } elseif (is_array($option)) {
+                    $optionText = (string) data_get($option, 'text', '');
+                    $isCorrect = (bool) data_get($option, 'is_correct', false);
+                } else {
+                    continue;
+                }
+
+                if ($optionText === '') {
+                    continue;
+                }
+
+                QuizAnswer::query()->create([
+                    'quiz_question_id' => $question->id,
+                    'answer_translations' => $this->normalizeTranslations($optionText, 'Option'),
+                    'is_correct' => $isCorrect,
+                    'order_index' => $index,
+                ]);
+            }
+
+            $addedCount++;
+        }
+
+        return $addedCount;
+    }
+
+    /**
+     * @param  array<int,mixed>  $options
+     */
+    private function detectQuestionType(array $options): int
+    {
+        $correctAnswers = collect($options)
+            ->filter(static fn (mixed $option): bool => is_array($option) && (bool) data_get($option, 'is_correct', false))
+            ->count();
+
+        return $correctAnswers > 1 ? QuestionType::MultipleChoice->value : QuestionType::SingleChoice->value;
+    }
+
+    private function deactivateConflictingQuizzes(Quiz $quiz, AIContentJob $job): void
+    {
+        Quiz::query()
+            ->where('center_id', $job->center_id)
+            ->where('course_id', $job->course_id)
+            ->where('attachable_type', $job->source_type->value)
+            ->where('attachable_id', $job->source_id)
+            ->whereKeyNot($quiz->id)
+            ->where('is_active', true)
+            ->update(['is_active' => false]);
+    }
+
+    private function deactivateConflictingAssignments(Assignment $assignment, AIContentJob $job): void
+    {
+        Assignment::query()
+            ->where('center_id', $job->center_id)
+            ->where('course_id', $job->course_id)
+            ->where('attachable_type', $job->source_type->value)
+            ->where('attachable_id', $job->source_id)
+            ->whereKeyNot($assignment->id)
+            ->where('is_active', true)
+            ->update(['is_active' => false]);
     }
 }
