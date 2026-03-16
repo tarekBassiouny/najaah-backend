@@ -10,6 +10,7 @@ use App\Models\ExtraViewRequest;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
+use App\Models\VideoAccess;
 use App\Services\Playback\Contracts\ViewLimitServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Support\ErrorCodes;
@@ -23,7 +24,7 @@ class ViewLimitService implements ViewLimitServiceInterface
     public function remaining(User $user, Video $video, Course $course, ?int $pivotOverride = null): int
     {
         $limit = $this->resolveLimit($user, $video, $course, $pivotOverride);
-        $fullPlays = $this->countFullPlays($user, $video);
+        $fullPlays = $this->countFullPlays($user, $video, $course);
 
         return $limit - $fullPlays;
     }
@@ -48,7 +49,7 @@ class ViewLimitService implements ViewLimitServiceInterface
             return null;
         }
 
-        $used = $this->countFullPlays($user, $video);
+        $used = $this->countFullPlays($user, $video, $course);
 
         return max(0, $limit - $used);
     }
@@ -64,6 +65,14 @@ class ViewLimitService implements ViewLimitServiceInterface
             return null;
         }
 
+        // For video code access model, use total_view_limit from VideoAccess
+        if ($course->usesVideoCodeAccess()) {
+            $limit = $this->resolveVideoCodeLimit($user, $video, $course);
+
+            return $limit > 0 ? $limit : null;
+        }
+
+        // For enrollment access model, use settings hierarchy
         $settings = $this->settingsResolver->resolve($user, $video, $course, $course->center);
         $limit = $settings['view_limit'] ?? null;
 
@@ -71,7 +80,7 @@ class ViewLimitService implements ViewLimitServiceInterface
             return null;
         }
 
-        $extra = $this->resolveExtraViews($user, $video);
+        $extra = $this->resolveExtraViews($user, $video, $course);
 
         return (int) $limit + $extra;
     }
@@ -107,6 +116,12 @@ class ViewLimitService implements ViewLimitServiceInterface
 
     private function resolveLimit(User $user, Video $video, Course $course, ?int $pivotOverride): int
     {
+        // For video code access model, use total_view_limit from VideoAccess
+        if ($course->usesVideoCodeAccess()) {
+            return $this->resolveVideoCodeLimit($user, $video, $course);
+        }
+
+        // For enrollment access model, use settings hierarchy
         $settings = $this->settingsResolver->resolve($user, $video, $course, $course->center);
         $limit = $settings['view_limit'] ?? null;
 
@@ -118,30 +133,72 @@ class ViewLimitService implements ViewLimitServiceInterface
             $limit = 0;
         }
 
-        $extra = $this->resolveExtraViews($user, $video);
+        $extra = $this->resolveExtraViews($user, $video, $course);
 
         return (int) $limit + $extra;
     }
 
-    private function resolveExtraViews(User $user, Video $video): int
+    /**
+     * Resolve view limit for video code access model.
+     * Uses total_view_limit from VideoAccess record (stacked from multiple code redemptions).
+     */
+    private function resolveVideoCodeLimit(User $user, Video $video, Course $course): int
+    {
+        /** @var VideoAccess|null $access */
+        $access = VideoAccess::query()
+            ->where('user_id', $user->id)
+            ->where('video_id', $video->id)
+            ->where('course_id', $course->id)
+            ->active()
+            ->first();
+
+        if ($access === null) {
+            return 0;
+        }
+
+        return $access->total_view_limit ?? 0;
+    }
+
+    private function resolveExtraViews(User $user, Video $video, Course $course): int
     {
         $settings = $user->studentSetting?->settings ?? [];
-        $extraViews = $settings['extra_views'][$video->id] ?? null;
+
+        $courseScopedExtraViews = data_get($settings, sprintf('extra_views_by_course.%d.%d', $course->id, $video->id));
+        $legacyExtraViews = $this->canUseLegacyExtraViews($video, $course)
+            ? data_get($settings, sprintf('extra_views.%d', $video->id))
+            : null;
+        $extraViews = is_numeric($courseScopedExtraViews) ? $courseScopedExtraViews : $legacyExtraViews;
 
         $base = is_numeric($extraViews) ? (int) $extraViews : 0;
 
         $approved = ExtraViewRequest::query()
-            ->approvedForUserAndVideo($user, $video)
+            ->approvedForUserAndCourseVideo($user, $video, $course)
             ->sum('granted_views');
 
         return $base + (int) $approved;
     }
 
-    private function countFullPlays(User $user, Video $video): int
+    private function countFullPlays(User $user, Video $video, Course $course): int
     {
         return PlaybackSession::query()
-            ->fullPlaysForUserAndVideo($user, $video)
+            ->fullPlaysForUserAndCourseVideo($user, $video, $course)
             ->notDeleted()
             ->count();
+    }
+
+    private function canUseLegacyExtraViews(Video $video, Course $course): bool
+    {
+        if ($video->relationLoaded('courses')) {
+            return $video->courses
+                ->pluck('id')
+                ->unique()
+                ->values()
+                ->all() === [$course->id];
+        }
+
+        return $video->courses()
+            ->whereKeyNot($course->id)
+            ->wherePivotNull('deleted_at')
+            ->doesntExist();
     }
 }

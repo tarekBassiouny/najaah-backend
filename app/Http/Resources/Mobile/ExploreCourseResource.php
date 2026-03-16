@@ -35,7 +35,9 @@ class ExploreCourseResource extends JsonResource
             'difficulty' => $course->difficulty_level ?? null,
             'language' => $course->language,
             'is_featured' => $course->is_featured,
-            'is_enrolled' => (bool) ($course->is_enrolled ?? false),
+            'access_model' => $course->access_model->value,
+            'is_enrolled' => $this->resolveHasAccess($course),
+            'has_access' => $this->resolveHasAccess($course),
             'thumbnail' => $thumbnailUrlResolver->resolve($course->thumbnail_url),
             'status' => $course->status->value,
             'status_key' => Str::snake($course->status->name),
@@ -45,8 +47,28 @@ class ExploreCourseResource extends JsonResource
             'duration_minutes' => $course->duration_minutes,
             'category' => new CategoryResource($this->whenLoaded('category')),
             'center' => new CenterResource($this->whenLoaded('center')),
+            'primary_instructor_id' => $course->primary_instructor_id,
+            'primary_instructor' => new InstructorResource($this->whenLoaded('primaryInstructor')),
             'instructors' => InstructorResource::collection($this->whenLoaded('instructors')),
 
         ];
+    }
+
+    /**
+     * Resolve whether the student has access to the course.
+     * This is the unified access flag that works for both access models:
+     * - Enrollment model: has active enrollment
+     * - Video code model: has at least one video code redemption
+     *
+     * Mobile can use this field (or is_enrolled) to show "enrolled/accessed" state.
+     */
+    private function resolveHasAccess(Course $course): bool
+    {
+        if ($course->usesEnrollmentAccess()) {
+            return (bool) ($course->is_enrolled ?? false);
+        }
+
+        // For video_code model, check if student has any code redemptions
+        return (bool) ($course->has_video_code_access ?? false);
     }
 }

@@ -96,5 +96,5 @@ test('PlaybackSession model has scope methods', function (): void {
     expect(method_exists($session, 'scopeActive'))->toBeTrue();
     expect(method_exists($session, 'scopeForUser'))->toBeTrue();
     expect(method_exists($session, 'scopeExpired'))->toBeTrue();
-    expect(method_exists($session, 'scopeFullPlaysForUserAndVideo'))->toBeTrue();
+    expect(method_exists($session, 'scopeFullPlaysForUserAndCourseVideo'))->toBeTrue();
 });

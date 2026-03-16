@@ -118,9 +118,22 @@ class VideoUploadService implements VideoUploadServiceInterface
             return null;
         }
 
-        $courseId = $video->courses()->value('courses.id');
+        if ($video->relationLoaded('courses')) {
+            $courseIds = $video->courses->pluck('id')->unique()->values();
 
-        return is_numeric($courseId) ? (int) $courseId : null;
+            return $courseIds->count() === 1 && is_numeric($courseIds->first())
+                ? (int) $courseIds->first()
+                : null;
+        }
+
+        $courseIds = $video->courses()
+            ->wherePivotNull('deleted_at')
+            ->limit(2)
+            ->pluck('courses.id');
+
+        return $courseIds->count() === 1 && is_numeric($courseIds->first())
+            ? (int) $courseIds->first()
+            : null;
     }
 
     private function resolveTitle(int $centerId, ?int $courseId, ?Video $video, string $originalFilename): string

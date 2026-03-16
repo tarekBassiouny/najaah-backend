@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\CenterType;
+use App\Enums\CourseAccessModel;
 use App\Enums\CourseStatus;
 use App\Enums\EnrollmentStatus;
 use App\Models\Concerns\HasTranslatableSearch;
@@ -37,6 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property CourseStatus $status
  * @property bool $is_published
  * @property bool|null $requires_video_approval
+ * @property CourseAccessModel $access_model
  * @property string|null $thumbnail_url
  * @property int|null $duration_minutes
  * @property bool $is_featured
@@ -92,6 +94,7 @@ class Course extends Model
         'status',
         'is_published',
         'requires_video_approval',
+        'access_model',
         'duration_minutes',
         'is_featured',
         'show_for_all_students',
@@ -108,6 +111,7 @@ class Course extends Model
         'tags' => 'array',
         'is_published' => 'boolean',
         'requires_video_approval' => 'boolean',
+        'access_model' => CourseAccessModel::class,
         'is_featured' => 'boolean',
         'show_for_all_students' => 'boolean',
         'is_demo' => 'boolean',
@@ -223,6 +227,12 @@ class Course extends Model
         return $this->hasMany(VideoAccess::class);
     }
 
+    /** @return HasMany<VideoCodeBatch, self> */
+    public function videoCodeBatches(): HasMany
+    {
+        return $this->hasMany(VideoCodeBatch::class);
+    }
+
     /** @return BelongsToMany<Grade, self> */
     public function grades(): BelongsToMany
     {
@@ -242,6 +252,22 @@ class Course extends Model
     {
         return $this->belongsToMany(College::class, 'course_colleges')
             ->withTimestamps();
+    }
+
+    /**
+     * Check if the course uses the video code access model.
+     */
+    public function usesVideoCodeAccess(): bool
+    {
+        return $this->access_model === CourseAccessModel::VideoCode;
+    }
+
+    /**
+     * Check if the course uses the enrollment access model.
+     */
+    public function usesEnrollmentAccess(): bool
+    {
+        return $this->access_model === CourseAccessModel::Enrollment;
     }
 
     /**
@@ -369,11 +395,21 @@ class Course extends Model
      */
     public function scopeWithEnrollmentMeta(Builder $query, User $student, bool $includeStatus = false): Builder
     {
+        // Check for active enrollment (enrollment access model)
         $query->withExists([
             'enrollments as is_enrolled' => function ($query) use ($student): void {
                 $query->where('user_id', $student->id)
                     ->where('status', EnrollmentStatus::Active->value)
                     ->whereNull('deleted_at');
+            },
+        ]);
+
+        // Check for video code redemptions (video_code access model)
+        $query->withExists([
+            'videoCodeBatches as has_video_code_access' => function ($query) use ($student): void {
+                $query->whereHas('redemptions', function ($q) use ($student): void {
+                    $q->where('user_id', $student->id);
+                });
             },
         ]);
 
@@ -396,5 +432,78 @@ class Course extends Model
                 ->orderByDesc('created_at')
                 ->limit(1),
         ]);
+    }
+
+    /**
+     * Scope to filter courses a student has access to via video codes.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeWithVideoCodeAccessBy(Builder $query, User $student): Builder
+    {
+        return $query->whereHas('videoCodeBatches.redemptions', function ($query) use ($student): void {
+            $query->where('user_id', $student->id);
+        });
+    }
+
+    /**
+     * Scope to filter courses student has access to (either via enrollment or video code).
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeAccessibleBy(Builder $query, User $student): Builder
+    {
+        return $query->where(function (Builder $q) use ($student): void {
+            // Enrollment-based access
+            $q->where(function (Builder $enrollmentQuery) use ($student): void {
+                $enrollmentQuery
+                    ->where('access_model', CourseAccessModel::Enrollment->value)
+                    ->whereHas('enrollments', function ($query) use ($student): void {
+                        $query->where('user_id', $student->id)
+                            ->where('status', EnrollmentStatus::Active->value)
+                            ->whereNull('deleted_at');
+                    });
+            })
+            // Video code-based access
+                ->orWhere(function (Builder $videoCodeQuery) use ($student): void {
+                    $videoCodeQuery
+                        ->where('access_model', CourseAccessModel::VideoCode->value)
+                        ->whereHas('videoCodeBatches.redemptions', function ($query) use ($student): void {
+                            $query->where('user_id', $student->id);
+                        });
+                });
+        });
+    }
+
+    /**
+     * Scope to filter courses student does NOT have access to.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeNotAccessibleBy(Builder $query, User $student): Builder
+    {
+        return $query->where(function (Builder $q) use ($student): void {
+            // Enrollment-based courses without active enrollment
+            $q->where(function (Builder $enrollmentQuery) use ($student): void {
+                $enrollmentQuery
+                    ->where('access_model', CourseAccessModel::Enrollment->value)
+                    ->whereDoesntHave('enrollments', function ($query) use ($student): void {
+                        $query->where('user_id', $student->id)
+                            ->where('status', EnrollmentStatus::Active->value)
+                            ->whereNull('deleted_at');
+                    });
+            })
+            // Video code-based courses without redemptions
+                ->orWhere(function (Builder $videoCodeQuery) use ($student): void {
+                    $videoCodeQuery
+                        ->where('access_model', CourseAccessModel::VideoCode->value)
+                        ->whereDoesntHave('videoCodeBatches.redemptions', function ($query) use ($student): void {
+                            $query->where('user_id', $student->id);
+                        });
+                });
+        });
     }
 }

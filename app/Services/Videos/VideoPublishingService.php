@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Videos;
 
+use App\Enums\MediaSourceType;
 use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Exceptions\PublishBlockedException;
@@ -16,6 +17,10 @@ class VideoPublishingService
     {
         if ($video->encoding_status !== VideoUploadStatus::Ready || $video->lifecycle_status !== VideoLifecycleStatus::Ready) {
             throw new PublishBlockedException('Video is not ready for publishing.', 422);
+        }
+
+        if ($video->source_type === MediaSourceType::Url) {
+            return;
         }
 
         if ($video->upload_session_id === null) {

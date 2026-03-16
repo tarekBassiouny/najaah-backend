@@ -37,6 +37,7 @@ use RuntimeException;
  * @property bool $allow_extra_view_requests
  * @property bool $pdf_download_permission
  * @property int $device_limit
+ * @property bool $allow_guest_browsing
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
@@ -112,6 +113,7 @@ class Center extends Model
         'allow_extra_view_requests',
         'pdf_download_permission',
         'device_limit',
+        'allow_guest_browsing',
     ];
 
     protected $casts = [
@@ -131,6 +133,7 @@ class Center extends Model
         'pdf_download_permission' => 'boolean',
         'default_view_limit' => 'integer',
         'device_limit' => 'integer',
+        'allow_guest_browsing' => 'boolean',
     ];
 
     /** @var array<int, string> */

@@ -6,12 +6,14 @@ use App\Exceptions\DomainException;
 use App\Http\Middleware\EnsureActiveEnrollment;
 use App\Http\Middleware\EnsureBrandedCenter;
 use App\Http\Middleware\EnsureCenterScope;
+use App\Http\Middleware\EnsureGuestBrowsingAllowed;
 use App\Http\Middleware\EnsureSystemScope;
 use App\Http\Middleware\EnsureUnbrandedStudent;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
 use App\Http\Middleware\LocalizeApiResponse;
 use App\Http\Middleware\NormalizeAdminApiResponse;
+use App\Http\Middleware\OptionalJwtMobileMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\RequirePermission;
 use App\Http\Middleware\RequireRole;
@@ -73,6 +75,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/video-access-requests.php';
                         require __DIR__.'/../routes/api/v1/admin/video-accesses.php';
                         require __DIR__.'/../routes/api/v1/admin/video-access-codes.php';
+                        require __DIR__.'/../routes/api/v1/admin/video-code-batches.php';
                         require __DIR__.'/../routes/api/v1/admin/bulk-whatsapp-jobs.php';
                         require __DIR__.'/../routes/api/v1/admin/device-change-requests.php';
                         require __DIR__.'/../routes/api/v1/admin/agents.php';
@@ -117,7 +120,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Middleware aliases
         $middleware->alias([
             'jwt.mobile' => JwtMobileMiddleware::class,
+            'jwt.mobile.optional' => OptionalJwtMobileMiddleware::class,
             'jwt.admin' => JwtAdminMiddleware::class,
+            'guest.browsing' => EnsureGuestBrowsingAllowed::class,
             'enrollment.active' => EnsureActiveEnrollment::class,
             'ensure.unbranded.student' => EnsureUnbrandedStudent::class,
             'require.permission' => RequirePermission::class,

@@ -52,6 +52,7 @@ class CenterResource extends JsonResource
             'allow_extra_view_requests' => $center->allow_extra_view_requests,
             'pdf_download_permission' => $center->pdf_download_permission,
             'device_limit' => $center->device_limit,
+            'allow_guest_browsing' => $center->allow_guest_browsing,
             'setting' => $center->setting,
         ];
     }

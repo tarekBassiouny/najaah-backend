@@ -156,6 +156,62 @@ it('blocks duplicate pending extra view requests', function (): void {
         ->assertJsonPath('error.code', 'PENDING_REQUEST_EXISTS');
 });
 
+it('allows a pending extra view request for the same video in another course', function (): void {
+    [$center, $courseA, $video] = buildExtraViewRequestContext(0);
+
+    $courseB = Course::factory()->create([
+        'status' => 3,
+        'is_published' => true,
+        'center_id' => $center->id,
+    ]);
+
+    CourseVideo::create([
+        'course_id' => $courseB->id,
+        'video_id' => $video->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $student = $this->apiUser;
+    $student->center_id = $center->id;
+    $student->save();
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+    $this->asApiUser($student);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $courseA->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $courseB->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    ExtraViewRequest::create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $courseA->id,
+        'center_id' => $center->id,
+        'status' => ExtraViewRequest::STATUS_PENDING,
+    ]);
+
+    $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$courseB->id}/videos/{$video->id}/extra-view");
+
+    $response->assertOk()
+        ->assertJsonPath('success', true);
+
+    $this->assertDatabaseHas('extra_view_requests', [
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $courseB->id,
+        'status' => ExtraViewRequest::STATUS_PENDING,
+    ]);
+});
+
 it('blocks extra view request without enrollment', function (): void {
     [$center, $course, $video] = buildExtraViewRequestContext(0);
 

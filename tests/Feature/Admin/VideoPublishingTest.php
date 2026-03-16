@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\MediaSourceType;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pivots\CourseVideo;
@@ -68,6 +69,30 @@ it('allows publishing when videos are ready and latest session ready', function 
     $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/publish", [], $this->adminHeaders());
 
     $response->assertOk()
+        ->assertJsonPath('data.status', 3);
+});
+
+it('allows publishing when the course only has a ready url video without an upload session', function (): void {
+    $center = Center::factory()->create();
+    $admin = $this->asAdmin();
+    $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0]);
+    Section::factory()->create(['course_id' => $course->id]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'source_type' => MediaSourceType::Url,
+        'source_url' => 'https://www.youtube.com/watch?v=abc123xyz',
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => null,
+        'created_by' => $admin->id,
+    ]);
+    attachVideoToCourseForPublishing($course, $video);
+
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/publish", [], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
         ->assertJsonPath('data.status', 3);
 });
 

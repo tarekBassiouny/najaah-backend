@@ -158,7 +158,7 @@ class PlaybackService implements PlaybackServiceInterface
         Video $video,
         Course $course,
         UserDevice $device,
-        int $enrollmentId,
+        ?int $enrollmentId,
         ?array $embedTokenData = null,
         ?\DateTimeInterface $embedTokenExpiresAt = null
     ): PlaybackSession {
@@ -372,8 +372,12 @@ class PlaybackService implements PlaybackServiceInterface
         return min($max, max($min, $ttl));
     }
 
-    private function resolveEnrollmentId(User $student, Course $course): int
+    private function resolveEnrollmentId(User $student, Course $course): ?int
     {
+        if ($course->usesVideoCodeAccess()) {
+            return null;
+        }
+
         $enrollment = $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
 
         return (int) $enrollment->id;

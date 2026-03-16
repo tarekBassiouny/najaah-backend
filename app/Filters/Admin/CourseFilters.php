@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filters\Admin;
 
+use App\Enums\CourseAccessModel;
+
 class CourseFilters
 {
     public function __construct(
@@ -12,6 +14,7 @@ class CourseFilters
         public readonly ?int $centerId,
         public readonly ?int $categoryId,
         public readonly ?int $primaryInstructorId,
-        public readonly ?string $search
+        public readonly ?string $search,
+        public readonly ?CourseAccessModel $accessModel
     ) {}
 }

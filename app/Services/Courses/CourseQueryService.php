@@ -42,6 +42,10 @@ class CourseQueryService
             );
         }
 
+        if ($filters->accessModel !== null) {
+            $query->where('access_model', $filters->accessModel->value);
+        }
+
         if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
                 $query->where('center_id', $filters->centerId);
@@ -94,6 +98,10 @@ class CourseQueryService
                 $filters->search,
                 ['en', 'ar']
             );
+        }
+
+        if ($filters->accessModel !== null) {
+            $query->where('access_model', $filters->accessModel->value);
         }
 
         return $query->paginate(

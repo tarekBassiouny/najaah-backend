@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Courses;
 
+use App\Enums\CourseAccessModel;
 use App\Filters\Admin\CourseFilters;
 use App\Http\Requests\Admin\AdminListRequest;
 use App\Support\Filters\FilterInput;
+use Illuminate\Validation\Rule;
 
 class ListCoursesRequest extends AdminListRequest
 {
@@ -16,7 +18,7 @@ class ListCoursesRequest extends AdminListRequest
     }
 
     /**
-     * @return array<string, array<int, string>|string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
@@ -24,6 +26,7 @@ class ListCoursesRequest extends AdminListRequest
             'category_id' => ['sometimes', 'integer'],
             'primary_instructor_id' => ['sometimes', 'integer'],
             'search' => ['sometimes', 'string'],
+            'access_model' => ['sometimes', Rule::enum(CourseAccessModel::class)],
         ]);
     }
 
@@ -53,6 +56,10 @@ class ListCoursesRequest extends AdminListRequest
                 'description' => 'Search courses by title.',
                 'example' => 'Biology',
             ],
+            'access_model' => [
+                'description' => 'Filter courses by access model (`enrollment` or `video_code`).',
+                'example' => 'video_code',
+            ],
         ];
     }
 
@@ -75,7 +82,10 @@ class ListCoursesRequest extends AdminListRequest
             centerId: null,
             categoryId: FilterInput::intOrNull($data, 'category_id'),
             primaryInstructorId: FilterInput::intOrNull($data, 'primary_instructor_id'),
-            search: FilterInput::stringOrNull($data, 'search')
+            search: FilterInput::stringOrNull($data, 'search'),
+            accessModel: isset($data['access_model']) && is_string($data['access_model'])
+                ? CourseAccessModel::tryFrom($data['access_model'])
+                : null
         );
     }
 }

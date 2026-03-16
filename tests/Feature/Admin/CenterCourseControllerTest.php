@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CourseAccessModel;
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\CenterSetting;
@@ -59,6 +60,7 @@ it('creates course in center', function (): void {
         'difficulty' => 'beginner',
         'language' => 'en',
         'requires_video_approval' => true,
+        'access_model' => 'video_code',
     ];
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses", $payload, $this->adminHeaders());
@@ -68,13 +70,15 @@ it('creates course in center', function (): void {
         ->assertJsonPath('data.title', 'Sample Course')
         ->assertJsonPath('data.title_translations.en', 'Sample Course')
         ->assertJsonPath('data.title_translations.ar', 'دورة نموذجية')
-        ->assertJsonPath('data.requires_video_approval', true);
+        ->assertJsonPath('data.requires_video_approval', true)
+        ->assertJsonPath('data.access_model', 'video_code');
     $this->assertDatabaseHas('courses', [
         'center_id' => $center->id,
         'status' => 0,
         'is_published' => 0,
         'publish_at' => null,
         'requires_video_approval' => 1,
+        'access_model' => 'video_code',
         'show_for_all_students' => 1,
     ]);
 });
@@ -144,7 +148,8 @@ it('shows course in center', function (): void {
 
     $response->assertOk()
         ->assertJsonPath('data.id', $course->id)
-        ->assertJsonPath('data.requires_video_approval', false);
+        ->assertJsonPath('data.requires_video_approval', false)
+        ->assertJsonPath('data.access_model', 'enrollment');
 });
 
 it('falls back requires_video_approval to center settings when course override is null', function (): void {
@@ -169,7 +174,12 @@ it('falls back requires_video_approval to center settings when course override i
 
 it('updates course in center', function (): void {
     $center = Center::factory()->create();
-    $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0, 'is_published' => false]);
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 0,
+        'is_published' => false,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
 
     $response = $this->putJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [
         'title_translations' => [
@@ -177,17 +187,58 @@ it('updates course in center', function (): void {
             'ar' => 'العنوان المحدث',
         ],
         'requires_video_approval' => false,
+        'access_model' => 'video_code',
     ], $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('data.title', 'Updated Title')
         ->assertJsonPath('data.title_translations.en', 'Updated Title')
-        ->assertJsonPath('data.requires_video_approval', false);
+        ->assertJsonPath('data.requires_video_approval', false)
+        ->assertJsonPath('data.access_model', 'video_code');
 
     $this->assertDatabaseHas('courses', [
         'id' => $course->id,
         'requires_video_approval' => 0,
+        'access_model' => 'video_code',
     ]);
+});
+
+it('blocks switching a course to video_code after creation', function (): void {
+    $center = Center::factory()->create();
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'access_model' => CourseAccessModel::Enrollment,
+    ]);
+
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [
+        'access_model' => 'video_code',
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'INVALID_STATE')
+        ->assertJsonPath(
+            'error.message',
+            'Course access model cannot be changed after creation. Create a new course instead.'
+        );
+});
+
+it('blocks switching a course back to enrollment after creation', function (): void {
+    $center = Center::factory()->create();
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
+
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [
+        'access_model' => 'enrollment',
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'INVALID_STATE')
+        ->assertJsonPath(
+            'error.message',
+            'Course access model cannot be changed after creation. Create a new course instead.'
+        );
 });
 
 it('switches targeted course to show for all and clears targets', function (): void {

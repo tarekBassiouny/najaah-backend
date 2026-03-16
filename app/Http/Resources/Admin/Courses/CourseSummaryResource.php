@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Courses;
 
+use App\Enums\CourseAccessModel;
 use App\Http\Resources\Concerns\ResolvesCourseRequiresVideoApproval;
 use App\Models\Course;
 use App\Services\Courses\CourseThumbnailUrlResolver;
@@ -40,6 +41,9 @@ class CourseSummaryResource extends JsonResource
             'status_label' => $course->status->name,
             'is_published' => (bool) $course->is_published,
             'requires_video_approval' => $this->resolveRequiresVideoApproval($course),
+            'access_model' => $course->access_model instanceof CourseAccessModel
+                ? $course->access_model->value
+                : CourseAccessModel::Enrollment->value,
             'show_for_all_students' => (bool) $course->show_for_all_students,
             'published_at' => $course->publish_at,
         ];

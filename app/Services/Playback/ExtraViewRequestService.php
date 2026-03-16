@@ -69,7 +69,7 @@ class ExtraViewRequestService
             $this->enrollmentAccessService->assertActiveEnrollment($student, $course);
 
             $pending = ExtraViewRequest::query()
-                ->pendingForUserAndVideo($student, $video)
+                ->pendingForUserAndCourseVideo($student, $video, $course)
                 ->lockForUpdate()
                 ->exists();
 
@@ -145,7 +145,7 @@ class ExtraViewRequestService
 
         return DB::transaction(function () use ($admin, $student, $course, $video, $grantedViews, $reason, $decisionReason): ExtraViewRequest {
             $pending = ExtraViewRequest::query()
-                ->pendingForUserAndVideo($student, $video)
+                ->pendingForUserAndCourseVideo($student, $video, $course)
                 ->lockForUpdate()
                 ->exists();
 

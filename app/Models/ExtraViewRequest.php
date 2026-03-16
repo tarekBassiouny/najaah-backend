@@ -125,6 +125,17 @@ class ExtraViewRequest extends Model
     }
 
     /**
+     * Scope to filter requests for a specific course.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForCourse(Builder $query, Course $course): Builder
+    {
+        return $query->where('course_id', $course->id);
+    }
+
+    /**
      * Scope to filter pending requests.
      *
      * @param  Builder<self>  $query
@@ -152,10 +163,11 @@ class ExtraViewRequest extends Model
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
-    public function scopePendingForUserAndVideo(Builder $query, User $user, Video $video): Builder
+    public function scopePendingForUserAndCourseVideo(Builder $query, User $user, Video $video, Course $course): Builder
     {
         return $query->forUser($user)
             ->forVideo($video)
+            ->forCourse($course)
             ->pending()
             ->notDeleted();
     }
@@ -166,10 +178,11 @@ class ExtraViewRequest extends Model
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
-    public function scopeApprovedForUserAndVideo(Builder $query, User $user, Video $video): Builder
+    public function scopeApprovedForUserAndCourseVideo(Builder $query, User $user, Video $video, Course $course): Builder
     {
         return $query->forUser($user)
             ->forVideo($video)
+            ->forCourse($course)
             ->approved()
             ->notDeleted();
     }

@@ -169,6 +169,17 @@ class PlaybackSession extends Model
     }
 
     /**
+     * Scope to filter sessions for a specific course.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForCourse(Builder $query, Course $course): Builder
+    {
+        return $query->where('course_id', $course->id);
+    }
+
+    /**
      * Scope to filter expired sessions.
      *
      * @param  Builder<self>  $query
@@ -186,10 +197,11 @@ class PlaybackSession extends Model
      * @param  Builder<self>  $query
      * @return Builder<self>
      */
-    public function scopeFullPlaysForUserAndVideo(Builder $query, User $user, Video $video): Builder
+    public function scopeFullPlaysForUserAndCourseVideo(Builder $query, User $user, Video $video, Course $course): Builder
     {
         return $query->forUser($user)
             ->forVideo($video)
+            ->forCourse($course)
             ->where('is_full_play', true);
     }
 }

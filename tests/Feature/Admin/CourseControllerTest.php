@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CourseAccessModel;
 use App\Enums\PdfUploadStatus;
 use App\Enums\VideoUploadStatus;
 use App\Models\Category;
@@ -102,6 +103,31 @@ it('filters courses by category and primary instructor', function (): void {
     $response->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.title', 'Filtered Course');
+});
+
+it('filters courses by access model', function (): void {
+    $center = Center::factory()->create();
+
+    Course::factory()->create([
+        'center_id' => $center->id,
+        'access_model' => CourseAccessModel::Enrollment,
+        'title_translations' => ['en' => 'Enrollment Course'],
+    ]);
+    Course::factory()->create([
+        'center_id' => $center->id,
+        'access_model' => CourseAccessModel::VideoCode,
+        'title_translations' => ['en' => 'Video Code Course'],
+    ]);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/courses?access_model=video_code",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Video Code Course')
+        ->assertJsonPath('data.0.access_model', 'video_code');
 });
 
 it('allows super admin to list courses for specific center', function (): void {
