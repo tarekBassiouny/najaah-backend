@@ -61,18 +61,18 @@ class SyncPermissions extends Command
                     'name' => $name,
                     'description' => $description,
                 ]);
-                $this->line("  <fg=green>+ Created:</> {$name} <fg=gray>(id: {$newPermission->id})</>");
+                $this->line(sprintf('  <fg=green>+ Created:</> %s <fg=gray>(id: %s)</>', $name, $newPermission->id));
                 $created++;
             } elseif ($permission->trashed()) {
                 // Restore with SAME original ID
                 $permission->restore();
                 $permission->update(['description' => $description]);
-                $this->line("  <fg=yellow>↻ Restored:</> {$name} <fg=gray>(id: {$permission->id} preserved)</>");
+                $this->line(sprintf('  <fg=yellow>↻ Restored:</> %s <fg=gray>(id: %d preserved)</>', $name, $permission->id));
                 $updated++;
             } elseif ($permission->description !== $description) {
                 // Update description only - ID unchanged
                 $permission->update(['description' => $description]);
-                $this->line("  <fg=blue>~ Updated:</> {$name} <fg=gray>(id: {$permission->id} preserved)</>");
+                $this->line(sprintf('  <fg=blue>~ Updated:</> %s <fg=gray>(id: %d preserved)</>', $name, $permission->id));
                 $updated++;
             } else {
                 $unchanged++;
@@ -81,16 +81,16 @@ class SyncPermissions extends Command
 
         $this->newLine();
         $this->info('Summary:');
-        $this->line("  Created: {$created}");
-        $this->line("  Updated: {$updated}");
-        $this->line("  Unchanged: {$unchanged}");
+        $this->line('  Created: ' . $created);
+        $this->line('  Updated: ' . $updated);
+        $this->line('  Unchanged: ' . $unchanged);
         $this->line('  Total in config: '.count($permissions));
 
         $dbCount = Permission::count();
         if ($dbCount > count($permissions)) {
             $extra = $dbCount - count($permissions);
             $this->newLine();
-            $this->warn("Note: {$extra} permission(s) in database not in config (kept for safety)");
+            $this->warn(sprintf('Note: %s permission(s) in database not in config (kept for safety)', $extra));
         }
 
         $this->newLine();
