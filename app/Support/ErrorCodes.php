@@ -84,6 +84,8 @@ final class ErrorCodes
 
     public const VIDEO_CODE_BATCH_NOT_FOUND = 'VIDEO_CODE_BATCH_NOT_FOUND';
 
+    public const VIDEO_CODE_VIDEO_MISMATCH = 'VIDEO_CODE_VIDEO_MISMATCH';
+
     public const STUDENT_NO_PHONE = 'STUDENT_NO_PHONE';
 
     public const WHATSAPP_SEND_FAILED = 'WHATSAPP_SEND_FAILED';

@@ -346,6 +346,7 @@ test('student redeems a batch code and creates a video access row without enroll
 
     $response = $this->apiPost('/api/v1/video-codes/redeem', [
         'code' => $code,
+        'video_id' => $video->id,
     ]);
 
     $response->assertOk()
@@ -367,6 +368,28 @@ test('student redeems a batch code and creates a video access row without enroll
         'sequence_number' => 1,
         'user_id' => $student->id,
     ]);
+});
+
+test('redeeming a batch code with wrong video_id returns video mismatch error', function (): void {
+    [$center, $course, $video, $student] = buildBatchCodeRedemptionContext($this);
+
+    $batch = VideoCodeBatch::factory()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'quantity' => 5,
+        'view_limit_per_code' => 3,
+    ]);
+
+    $code = app(VideoCodeGenerator::class)->generateCode($batch, 1);
+
+    $response = $this->apiPost('/api/v1/video-codes/redeem', [
+        'code' => $code,
+        'video_id' => 99999,
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VIDEO_CODE_VIDEO_MISMATCH');
 });
 
 test('redeeming a batch code for one course does not unlock the same video in another course', function (): void {
@@ -398,6 +421,7 @@ test('redeeming a batch code for one course does not unlock the same video in an
 
     $this->apiPost('/api/v1/video-codes/redeem', [
         'code' => $code,
+        'video_id' => $video->id,
     ])->assertOk();
 
     $allowed = $this->apiPost(
@@ -437,10 +461,12 @@ test('redeeming multiple batch codes stacks total view limit on the same video a
 
     $this->apiPost('/api/v1/video-codes/redeem', [
         'code' => $generator->generateCode($batch, 1),
+        'video_id' => $video->id,
     ])->assertOk();
 
     $this->apiPost('/api/v1/video-codes/redeem', [
         'code' => $generator->generateCode($batch, 2),
+        'video_id' => $video->id,
     ])->assertOk();
 
     $this->assertDatabaseCount('video_accesses', 1);
@@ -450,6 +476,29 @@ test('redeeming multiple batch codes stacks total view limit on the same video a
         'course_id' => $course->id,
         'total_view_limit' => 4,
     ]);
+});
+
+test('validate batch code with wrong video_id returns video mismatch', function (): void {
+    [$center, $course, $video] = buildBatchCodeRedemptionContext($this);
+
+    $batch = VideoCodeBatch::factory()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'quantity' => 5,
+    ]);
+
+    $code = app(VideoCodeGenerator::class)->generateCode($batch, 1);
+
+    $response = $this->apiPost('/api/v1/video-codes/validate', [
+        'code' => $code,
+        'video_id' => 99999,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.valid', false)
+        ->assertJsonPath('data.reason', 'This code does not belong to this video.');
 });
 
 test('validate batch code returns already redeemed by you when the same student checks it again', function (): void {
@@ -466,10 +515,12 @@ test('validate batch code returns already redeemed by you when the same student 
 
     $this->apiPost('/api/v1/video-codes/redeem', [
         'code' => $code,
+        'video_id' => $video->id,
     ])->assertOk();
 
     $response = $this->apiPost('/api/v1/video-codes/validate', [
         'code' => $code,
+        'video_id' => $video->id,
     ]);
 
     $response->assertOk()
@@ -492,6 +543,7 @@ test('validate batch code returns already redeemed when another student checks a
 
     $this->apiPost('/api/v1/video-codes/redeem', [
         'code' => $code,
+        'video_id' => $video->id,
     ])->assertOk();
 
     $otherStudent = User::factory()->create([
@@ -509,6 +561,7 @@ test('validate batch code returns already redeemed when another student checks a
 
     $response = $this->apiPost('/api/v1/video-codes/validate', [
         'code' => $code,
+        'video_id' => $video->id,
     ]);
 
     $response->assertOk()
@@ -532,6 +585,7 @@ test('validate batch code returns batch limit reached when the batch can no long
 
     $response = $this->apiPost('/api/v1/video-codes/validate', [
         'code' => $code,
+        'video_id' => $video->id,
     ]);
 
     $response->assertOk()
@@ -579,10 +633,12 @@ test('my redemptions supports pagination, course filtering, and full code output
 
     $this->apiPost('/api/v1/video-codes/redeem', [
         'code' => $firstCode,
+        'video_id' => $video->id,
     ])->assertOk();
 
     $this->apiPost('/api/v1/video-codes/redeem', [
         'code' => $secondCode,
+        'video_id' => $secondVideo->id,
     ])->assertOk();
 
     VideoCodeRedemption::query()

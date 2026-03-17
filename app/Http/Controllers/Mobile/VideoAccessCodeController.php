@@ -72,7 +72,7 @@ class VideoAccessCodeController extends Controller
             ], 401);
         }
 
-        $result = $this->batchCodeService->redeemCode($student, (string) $request->input('code'));
+        $result = $this->batchCodeService->redeemCode($student, (string) $request->input('code'), $request->integer('video_id'));
 
         $videoAccess = $result['video_access'];
         $batch = $result['batch'];
@@ -119,7 +119,7 @@ class VideoAccessCodeController extends Controller
             ], 401);
         }
 
-        $result = $this->batchCodeService->validateCode($student, (string) $request->input('code'));
+        $result = $this->batchCodeService->validateCode($student, (string) $request->input('code'), $request->integer('video_id'));
 
         // Always return 200 with valid flag per frontend guide
         if (! $result['valid']) {

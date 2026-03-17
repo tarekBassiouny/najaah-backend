@@ -42,7 +42,7 @@ class VideoCodeRedemptionService implements VideoCodeRedemptionServiceInterface
         private readonly StudentAccessService $studentAccessService
     ) {}
 
-    public function redeemCode(User $student, string $code): array
+    public function redeemCode(User $student, string $code, int $videoId): array
     {
         $this->studentAccessService->assertStudent(
             $student,
@@ -63,6 +63,15 @@ class VideoCodeRedemptionService implements VideoCodeRedemptionServiceInterface
 
         // Verify center eligibility - student must belong to the batch's center
         $this->assertStudentCenterEligibility($student, $batch);
+
+        // Verify the code belongs to the expected video
+        if ((int) $batch->video_id !== $videoId) {
+            $this->deny(
+                ErrorCodes::VIDEO_CODE_VIDEO_MISMATCH,
+                'This code does not belong to this video.',
+                422
+            );
+        }
 
         return DB::transaction(function () use ($student, $batch, $sequence): array {
             // Lock the batch for update
@@ -137,7 +146,7 @@ class VideoCodeRedemptionService implements VideoCodeRedemptionServiceInterface
     /**
      * @return ValidationResult
      */
-    public function validateCode(User $student, string $code): array
+    public function validateCode(User $student, string $code, int $videoId): array
     {
         $this->studentAccessService->assertStudent(
             $student,
@@ -176,6 +185,15 @@ class VideoCodeRedemptionService implements VideoCodeRedemptionServiceInterface
                 batch: $batch,
                 sequence: $sequence,
                 reason: 'This code is not valid for your center.'
+            );
+        }
+
+        // Check video mismatch
+        if ((int) $batch->video_id !== $videoId) {
+            return $this->invalidValidationResult(
+                batch: $batch,
+                sequence: $sequence,
+                reason: 'This code does not belong to this video.'
             );
         }
 
