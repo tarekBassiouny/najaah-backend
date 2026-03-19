@@ -116,6 +116,7 @@ Each source includes:
 - `id`
 - `title`
 - `order_index`
+- `ai_readiness`
 - `section`
 - `assets[]`
 
@@ -132,6 +133,15 @@ Example slot states already exercised by tests:
 - `published`
 
 The frontend should not infer slot state from raw jobs. Use `slot_state` directly.
+
+`ai_readiness` is the source-of-truth contract for disabling generation before submit.
+
+`ai_readiness` includes:
+- `is_ready`
+- `code`
+- `badge`
+- `title`
+- `message`
 
 ## Source Row UX
 
@@ -155,6 +165,15 @@ For PDF:
 - `Extraction Failed`
 
 These should be visible before opening generation modals.
+
+For transcript-missing videos, the current backend message is:
+- title: `Transcript required`
+- message: `This video is not AI-ready yet. Add a transcript from the Videos page before generating assets.`
+
+Frontend rule:
+- if `ai_readiness.is_ready === false`, disable the `Generate` action
+- show `ai_readiness.badge` on the source row
+- show `ai_readiness.title` and `ai_readiness.message` in the empty/blocked state without inventing different copy
 
 ## Slot Card UX
 
