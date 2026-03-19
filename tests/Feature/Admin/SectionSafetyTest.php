@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\PdfUploadStatus;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pdf;
@@ -116,7 +117,7 @@ it('bulk attaches a pdf to a section even when the same pdf is attached to anoth
     $sectionB = Section::factory()->create(['course_id' => $courseB->id]);
     $uploadSession = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
-        'upload_status' => 3,
+        'upload_status' => PdfUploadStatus::Ready,
         'expires_at' => now()->addHour(),
     ]);
     $pdf = Pdf::factory()->create([
