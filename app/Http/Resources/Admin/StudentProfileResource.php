@@ -40,8 +40,9 @@ class StudentProfileResource extends JsonResource
                 );
         });
 
+        /** @var \Illuminate\Support\Collection<int, \App\Models\Course> $accessibleCourses */
         $accessibleCourses = $student->relationLoaded('accessibleCourses')
-            ? collect($student->getRelation('accessibleCourses'))
+            ? $student->getRelation('accessibleCourses')
             : collect();
         $enrollmentsByCourseId = $student->enrollments
             ->filter(static fn ($enrollment): bool => $enrollment->course !== null)

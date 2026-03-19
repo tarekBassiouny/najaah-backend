@@ -16,9 +16,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-/**
- * @mixin array<string, mixed>
- */
 class StudentCourseAccessResource extends JsonResource
 {
     private ?User $student = null;

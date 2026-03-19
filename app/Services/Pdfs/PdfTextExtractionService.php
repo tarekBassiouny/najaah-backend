@@ -101,7 +101,7 @@ final class PdfTextExtractionService implements PdfTextExtractionServiceInterfac
     private function writeTempPdf(string $contents): string
     {
         $path = tempnam(sys_get_temp_dir(), 'pdf-text-');
-        if (! is_string($path) || $path === '') {
+        if (! is_string($path)) {
             throw new RuntimeException('Unable to allocate a temporary PDF file.');
         }
 
