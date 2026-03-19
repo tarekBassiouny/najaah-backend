@@ -676,7 +676,7 @@ interface AssessmentProgressServiceInterface
 |--------|----------|-------------|
 | GET | `/api/v1/centers/{center}/courses/{course}/quizzes` | List available quizzes |
 | GET | `/api/v1/centers/{center}/quizzes/{quiz}` | Get quiz info (before starting) |
-| POST | `/api/v1/centers/{center}/quizzes/{quiz}/start` | Start attempt |
+| POST | `/api/v1/centers/{center}/assets/quiz/{quiz}/attempts` | Start attempt |
 | GET | `/api/v1/centers/{center}/quiz-attempts/{attempt}` | Get current attempt |
 | POST | `/api/v1/centers/{center}/quiz-attempts/{attempt}/answer` | Save answer |
 | POST | `/api/v1/centers/{center}/quiz-attempts/{attempt}/submit` | Submit attempt |
@@ -689,21 +689,21 @@ interface AssessmentProgressServiceInterface
 |--------|----------|-------------|
 | GET | `/api/v1/centers/{center}/courses/{course}/assignments` | List assignments |
 | GET | `/api/v1/centers/{center}/assignments/{assignment}` | Get assignment details |
-| POST | `/api/v1/centers/{center}/assignments/{assignment}/submissions` | Create/update draft |
-| POST | `/api/v1/centers/{center}/submissions/{submission}/files` | Upload file |
-| DELETE | `/api/v1/centers/{center}/submissions/{submission}/files/{file}` | Remove file |
-| POST | `/api/v1/centers/{center}/submissions/{submission}/submit` | Submit assignment |
+| POST | `/api/v1/centers/{center}/assets/assignment/{assignment}/submission` | Create/update draft |
+| POST | `/api/v1/centers/{center}/assets/assignment/submissions/{submission}/files` | Upload file |
+| DELETE | `/api/v1/centers/{center}/assets/assignment/submissions/{submission}/files/{file}` | Remove file |
+| POST | `/api/v1/centers/{center}/assets/assignment/submissions/{submission}/submit` | Submit assignment |
 | GET | `/api/v1/centers/{center}/assignments/{assignment}/my-submission` | My submission |
 
 ### Mobile - Groups (for group assignments)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/v1/centers/{center}/assignments/{assignment}/groups` | List available groups |
-| POST | `/api/v1/centers/{center}/assignments/{assignment}/groups` | Create group |
-| POST | `/api/v1/centers/{center}/assignment-groups/{group}/join` | Join group |
-| POST | `/api/v1/centers/{center}/assignment-groups/{group}/leave` | Leave group |
-| GET | `/api/v1/centers/{center}/assignment-groups/{group}` | Group details |
+| GET | `/api/v1/centers/{center}/assets/assignment/{assignment}/groups` | List available groups |
+| POST | `/api/v1/centers/{center}/assets/assignment/{assignment}/groups` | Create group |
+| POST | `/api/v1/centers/{center}/assets/assignment/groups/{group}/join` | Join group |
+| POST | `/api/v1/centers/{center}/assets/assignment/groups/{group}/leave` | Leave group |
+| GET | `/api/v1/centers/{center}/assets/assignment/groups/{group}` | Group details |
 
 ---
 

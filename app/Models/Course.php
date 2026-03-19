@@ -55,6 +55,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Video> $videos
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Pdf> $pdfs
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, LearningAsset> $learningAssets
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Instructor> $instructors
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessRequest> $videoAccessRequests
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccessCode> $videoAccessCodes
@@ -207,6 +208,12 @@ class Course extends Model
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    /** @return HasMany<LearningAsset, self> */
+    public function learningAssets(): HasMany
+    {
+        return $this->hasMany(LearningAsset::class);
     }
 
     /** @return HasMany<VideoAccessRequest, self> */

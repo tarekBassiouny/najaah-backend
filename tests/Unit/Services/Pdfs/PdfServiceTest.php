@@ -3,17 +3,22 @@
 declare(strict_types=1);
 
 use App\Enums\PdfUploadStatus;
+use App\Enums\TextExtractionStatus;
+use App\Jobs\ExtractPdfTextJob;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
 use App\Services\Pdfs\PdfService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Tests\Helpers\AdminTestHelper;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class, AdminTestHelper::class)->group('pdfs', 'services');
 
 it('creates pdf from a ready upload session', function (): void {
+    Queue::fake();
+
     $admin = $this->asAdmin();
     $center = Center::factory()->create();
     $session = PdfUploadSession::factory()->create([
@@ -36,6 +41,9 @@ it('creates pdf from a ready upload session', function (): void {
     expect((int) $pdf->upload_session_id)->toBe($session->id);
     expect($pdf->source_id)->toBe($session->object_key);
     expect($pdf->tags)->toBe(['notes', 'intro']);
+    expect($pdf->text_extraction_status)->toBe(TextExtractionStatus::Pending);
+
+    Queue::assertPushed(ExtractPdfTextJob::class);
 });
 
 it('updates and deletes pdf', function (): void {

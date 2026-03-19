@@ -591,7 +591,7 @@ Response `data`:
 ## Mobile: Quiz Attempt Lifecycle
 
 ## 34) Start attempt (or resume existing)
-- `POST /api/v1/centers/{center}/quizzes/{quiz}/start`
+- `POST /api/v1/centers/{center}/assets/quiz/{quiz}/attempts`
 - Body: none
 
 Behavior:
@@ -732,7 +732,7 @@ Common errors:
 ## Mobile: Assignment Submission Lifecycle
 
 ## 42) Create/update draft
-- `POST /api/v1/centers/{center}/assignments/{assignment}/submissions`
+- `POST /api/v1/centers/{center}/assets/assignment/{assignment}/submission`
 
 Body validation:
 - `submission_type` optional enum SubmissionType
@@ -758,7 +758,7 @@ Common errors:
 - `400 ALREADY_SUBMITTED`
 
 ## 43) Upload file to submission
-- `POST /api/v1/centers/{center}/submissions/{submission}/files`
+- `POST /api/v1/centers/{center}/assets/assignment/submissions/{submission}/files`
 - Content-Type: `multipart/form-data`
 
 Body validation:
@@ -781,14 +781,14 @@ Common errors:
 - `400 FILE_TOO_LARGE`
 
 ## 44) Remove file
-- `DELETE /api/v1/centers/{center}/submissions/{submission}/files/{file}`
+- `DELETE /api/v1/centers/{center}/assets/assignment/submissions/{submission}/files/{file}`
 
 Rules:
 - same ownership/editability checks as upload
 - file must belong to submission
 
 ## 45) Submit assignment
-- `POST /api/v1/centers/{center}/submissions/{submission}/submit`
+- `POST /api/v1/centers/{center}/assets/assignment/submissions/{submission}/submit`
 
 Business validation:
 - ownership + center checks
@@ -810,7 +810,7 @@ Common errors:
 ## Mobile: Assignment Groups
 
 ## 46) List groups for assignment
-- `GET /api/v1/centers/{center}/assignments/{assignment}/groups`
+- `GET /api/v1/centers/{center}/assets/assignment/{assignment}/groups`
 
 Rules:
 - assignment must belong to center
@@ -822,7 +822,7 @@ Response `data`:
 - `max_group_size`
 
 ## 47) Create group
-- `POST /api/v1/centers/{center}/assignments/{assignment}/groups`
+- `POST /api/v1/centers/{center}/assets/assignment/{assignment}/groups`
 
 Body validation:
 - `name` required string min 2 max 100
@@ -835,17 +835,17 @@ Response:
 - `201`, `data` = AssignmentGroupResource
 
 ## 48) Group details
-- `GET /api/v1/centers/{center}/assignment-groups/{group}`
+- `GET /api/v1/centers/{center}/assets/assignment/groups/{group}`
 
 ## 49) Join group
-- `POST /api/v1/centers/{center}/assignment-groups/{group}/join`
+- `POST /api/v1/centers/{center}/assets/assignment/groups/{group}/join`
 
 Rules:
 - student must not already be in another group for same assignment
 - group capacity must not be exceeded
 
 ## 50) Leave group
-- `POST /api/v1/centers/{center}/assignment-groups/{group}/leave`
+- `POST /api/v1/centers/{center}/assets/assignment/groups/{group}/leave`
 
 Rules:
 - student must be member of group

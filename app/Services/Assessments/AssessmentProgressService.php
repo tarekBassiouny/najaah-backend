@@ -8,6 +8,8 @@ use App\Enums\QuizAttemptStatus;
 use App\Enums\SubmissionStatus;
 use App\Models\Assignment;
 use App\Models\Course;
+use App\Models\LearningAsset;
+use App\Models\LearningAssetProgress;
 use App\Models\Quiz;
 use App\Models\User;
 use App\Services\Assessments\Contracts\AssessmentProgressServiceInterface;
@@ -78,7 +80,9 @@ final class AssessmentProgressService implements AssessmentProgressServiceInterf
      * @return array{
      *     quizzes: array{total: int, completed: int, passed: int, required: int, required_passed: int},
      *     assignments: array{total: int, completed: int, passed: int, required: int, required_passed: int},
+     *     learning_assets: array{total: int, completed: int, in_progress: int},
      *     overall_completion_percentage: float,
+     *     overall_content_completion_percentage: float,
      *     all_required_passed: bool
      * }
      */
@@ -91,9 +95,14 @@ final class AssessmentProgressService implements AssessmentProgressServiceInterf
         $assignments = Assignment::where('course_id', $course->id)
             ->where('is_active', true)
             ->get();
+        $learningAssets = LearningAsset::query()
+            ->where('course_id', $course->id)
+            ->published()
+            ->get();
 
         $quizStats = $this->calculateQuizStats($student, $quizzes);
         $assignmentStats = $this->calculateAssignmentStats($student, $assignments);
+        $learningAssetStats = $this->calculateLearningAssetStats($student, $learningAssets);
 
         $totalRequired = $quizStats['required'] + $assignmentStats['required'];
         $totalRequiredPassed = $quizStats['required_passed'] + $assignmentStats['required_passed'];
@@ -101,11 +110,18 @@ final class AssessmentProgressService implements AssessmentProgressServiceInterf
         $overallCompletion = $totalRequired > 0
             ? round(($totalRequiredPassed / $totalRequired) * 100, 2)
             : 100.0;
+        $totalTrackableAssets = $quizStats['total'] + $assignmentStats['total'] + $learningAssetStats['total'];
+        $completedTrackableAssets = $quizStats['completed'] + $assignmentStats['completed'] + $learningAssetStats['completed'];
+        $overallContentCompletion = $totalTrackableAssets > 0
+            ? round(($completedTrackableAssets / $totalTrackableAssets) * 100, 2)
+            : 100.0;
 
         return [
             'quizzes' => $quizStats,
             'assignments' => $assignmentStats,
+            'learning_assets' => $learningAssetStats,
             'overall_completion_percentage' => $overallCompletion,
+            'overall_content_completion_percentage' => $overallContentCompletion,
             'all_required_passed' => $totalRequired === $totalRequiredPassed,
         ];
     }
@@ -203,6 +219,49 @@ final class AssessmentProgressService implements AssessmentProgressServiceInterf
             'passed' => $passed,
             'required' => $required,
             'required_passed' => $requiredPassed,
+        ];
+    }
+
+    /**
+     * @param  Collection<int, LearningAsset>  $learningAssets
+     * @return array{total: int, completed: int, in_progress: int}
+     */
+    private function calculateLearningAssetStats(User $student, Collection $learningAssets): array
+    {
+        $total = $learningAssets->count();
+
+        if ($total === 0) {
+            return [
+                'total' => 0,
+                'completed' => 0,
+                'in_progress' => 0,
+            ];
+        }
+
+        $progressRecords = LearningAssetProgress::query()
+            ->where('user_id', $student->id)
+            ->whereIn('learning_asset_id', $learningAssets->pluck('id'))
+            ->get()
+            ->keyBy('learning_asset_id');
+
+        $completed = $learningAssets->filter(function (LearningAsset $asset) use ($progressRecords): bool {
+            /** @var LearningAssetProgress|null $progress */
+            $progress = $progressRecords->get($asset->id);
+
+            return $progress?->completed_at !== null;
+        })->count();
+
+        $inProgress = $learningAssets->filter(function (LearningAsset $asset) use ($progressRecords): bool {
+            /** @var LearningAssetProgress|null $progress */
+            $progress = $progressRecords->get($asset->id);
+
+            return $progress !== null && $progress->completed_at === null;
+        })->count();
+
+        return [
+            'total' => $total,
+            'completed' => $completed,
+            'in_progress' => $inProgress,
         ];
     }
 

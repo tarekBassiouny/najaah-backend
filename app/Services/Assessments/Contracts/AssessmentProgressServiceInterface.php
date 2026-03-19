@@ -37,7 +37,9 @@ interface AssessmentProgressServiceInterface
      * @return array{
      *     quizzes: array{total: int, completed: int, passed: int, required: int, required_passed: int},
      *     assignments: array{total: int, completed: int, passed: int, required: int, required_passed: int},
+     *     learning_assets: array{total: int, completed: int, in_progress: int},
      *     overall_completion_percentage: float,
+     *     overall_content_completion_percentage: float,
      *     all_required_passed: bool
      * }
      */

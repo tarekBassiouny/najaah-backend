@@ -40,6 +40,17 @@ class AnalyticsOverviewResource extends JsonResource
                 'active_enrollments' => (int) data_get($resource, 'overview.active_enrollments', 0),
                 'daily_active_learners' => (int) data_get($resource, 'overview.daily_active_learners', 0),
             ],
+            'trends' => data_get($resource, 'trends', []),
+            'previous_period' => [
+                'total_centers' => (int) data_get($resource, 'previous_period.total_centers', 0),
+                'active_centers' => (int) data_get($resource, 'previous_period.active_centers', 0),
+                'total_courses' => (int) data_get($resource, 'previous_period.total_courses', 0),
+                'published_courses' => (int) data_get($resource, 'previous_period.published_courses', 0),
+                'total_enrollments' => (int) data_get($resource, 'previous_period.total_enrollments', 0),
+                'active_enrollments' => (int) data_get($resource, 'previous_period.active_enrollments', 0),
+                'daily_active_learners' => (int) data_get($resource, 'previous_period.daily_active_learners', 0),
+            ],
+            'labels' => data_get($resource, 'labels', []),
         ];
     }
 }

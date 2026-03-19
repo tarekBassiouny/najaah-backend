@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 use App\Enums\MediaSourceType;
 use App\Enums\PdfUploadStatus;
+use App\Enums\TextExtractionStatus;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Tests\Helpers\AdminTestHelper;
 
 uses(RefreshDatabase::class, AdminTestHelper::class)->group('pdfs', 'admin');
@@ -18,6 +20,8 @@ afterEach(function (): void {
 });
 
 it('creates pdf from upload session', function (): void {
+    Queue::fake();
+
     $center = Center::factory()->create();
     $admin = $this->asCenterAdmin($center);
 
@@ -55,14 +59,18 @@ it('creates pdf from upload session', function (): void {
     $response->assertCreated()
         ->assertJsonPath('data.title', 'Doc')
         ->assertJsonPath('data.tags.0', 'notes')
-        ->assertJsonPath('data.tags.1', 'starter');
+        ->assertJsonPath('data.tags.1', 'starter')
+        ->assertJsonPath('data.has_extracted_text', false)
+        ->assertJsonPath('data.text_extraction_status', TextExtractionStatus::Pending->value)
+        ->assertJsonPath('data.text_extraction_status_label', TextExtractionStatus::Pending->label());
 
     $pdf = Pdf::first();
     expect($pdf)->not->toBeNull()
         ->and($pdf?->source_type)->toBe(MediaSourceType::Upload)
         ->and($pdf?->source_provider)->toBe('spaces')
         ->and($pdf?->source_id)->toBe($session->object_key)
-        ->and($pdf?->tags)->toBe(['notes', 'starter']);
+        ->and($pdf?->tags)->toBe(['notes', 'starter'])
+        ->and($pdf?->text_extraction_status)->toBe(TextExtractionStatus::Pending);
 });
 
 it('fails finalize when uploaded object is missing', function (): void {
@@ -94,6 +102,8 @@ it('fails finalize when uploaded object is missing', function (): void {
 });
 
 it('finalizes upload session and creates pdf when object exists', function (): void {
+    Queue::fake();
+
     $center = Center::factory()->create();
     $admin = $this->asCenterAdmin($center);
     $session = PdfUploadSession::factory()->create([

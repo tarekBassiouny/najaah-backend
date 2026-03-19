@@ -38,7 +38,7 @@ it('lists assignments for enrolled student', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assignments");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=assignment");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -67,7 +67,7 @@ it('returns empty list when no assignments exist', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assignments");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=assignment");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -90,7 +90,7 @@ it('denies assignment list for non-enrolled student', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assignments");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=assignment");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -111,7 +111,7 @@ it('denies assignment list for non-student users', function (): void {
 
     $this->asApiUser($user);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assignments");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=assignment");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -142,7 +142,7 @@ it('excludes inactive assignments from list', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assignments");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=assignment");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -173,7 +173,7 @@ it('shows assignment details for enrolled student', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/assignments/{$assignment->id}");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/assignment/{$assignment->id}");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -196,7 +196,7 @@ it('denies assignment details for non-enrolled student', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/assignments/{$assignment->id}");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/assignment/{$assignment->id}");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -226,7 +226,7 @@ it('returns not found for inactive assignment', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/assignments/{$assignment->id}");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/assignment/{$assignment->id}");
 
     $response->assertStatus(400)
         ->assertJsonPath('success', false)
@@ -250,14 +250,14 @@ it('returns not found for assignment from wrong center', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/assignments/{$assignment->id}");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/assignment/{$assignment->id}");
 
     $response->assertStatus(404)
         ->assertJsonPath('success', false)
         ->assertJsonPath('error.code', 'NOT_FOUND');
 });
 
-it('returns my submission for an assignment', function (): void {
+it('includes my submission inside assignment asset detail', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create([
         'center_id' => $center->id,
@@ -289,14 +289,14 @@ it('returns my submission for an assignment', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/assignments/{$assignment->id}/my-submission");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/assignment/{$assignment->id}");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('data.id', $submission->id);
+        ->assertJsonPath('data.payload.my_submission.id', $submission->id);
 });
 
-it('returns not found when no submission exists', function (): void {
+it('returns null submission when no assignment submission exists', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create([
         'center_id' => $center->id,
@@ -308,15 +308,22 @@ it('returns not found when no submission exists', function (): void {
         'center_id' => $center->id,
     ]);
 
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
     $assignment = Assignment::factory()->forCourse($course)->active()->create();
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/assignments/{$assignment->id}/my-submission");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/assignment/{$assignment->id}");
 
-    $response->assertStatus(404)
-        ->assertJsonPath('success', false)
-        ->assertJsonPath('error.code', 'NO_SUBMISSION');
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.payload.my_submission', null);
 });
 
 it('returns assignments ordered by order_index', function (): void {
@@ -344,7 +351,7 @@ it('returns assignments ordered by order_index', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assignments");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=assignment");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -354,7 +361,7 @@ it('returns assignments ordered by order_index', function (): void {
         ->assertJsonPath('data.2.id', $assignment3->id);
 });
 
-it('denies my submission for non-student users', function (): void {
+it('denies assignment asset detail for non-student users', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create([
         'center_id' => $center->id,
@@ -370,7 +377,7 @@ it('denies my submission for non-student users', function (): void {
 
     $this->asApiUser($user);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/assignments/{$assignment->id}/my-submission");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/assignment/{$assignment->id}");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)

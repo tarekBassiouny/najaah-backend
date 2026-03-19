@@ -1,0 +1,4 @@
+interface:
+  display_name: "Najaah PR Workflow"
+  short_description: "Help with Najaah PR Workflow tasks"
+  default_prompt: "Use $najaah-pr-workflow to review this diff and prepare it for commit or pull request."

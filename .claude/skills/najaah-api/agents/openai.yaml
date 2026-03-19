@@ -1,0 +1,4 @@
+interface:
+  display_name: "Najaah API"
+  short_description: "Help with Najaah API tasks"
+  default_prompt: "Use $najaah-api to freeze the exact backend contract for this task and publish the request, response, and scope details other lanes depend on."

@@ -29,7 +29,7 @@ class AnalyticsDevicesRequestsService implements AnalyticsDevicesRequestsService
      */
     public function handle(User $admin, AnalyticsFilters $filters): array
     {
-        return $this->support->remember('devices_requests', $admin, $filters, function () use ($admin, $filters): array {
+        return $this->support->remember('devices_requests_v2', $admin, $filters, function () use ($admin, $filters): array {
             $centerIds = $this->support->resolveCenterScope($admin, $filters->centerId);
 
             $deviceQuery = UserDevice::query()
@@ -40,7 +40,7 @@ class AnalyticsDevicesRequestsService implements AnalyticsDevicesRequestsService
                     ->whereNull('users.deleted_at');
             }
 
-            $deviceCounts = $deviceQuery
+            $deviceCounts = (clone $deviceQuery)
                 ->selectRaw('user_devices.status, COUNT(*) as total')
                 ->groupBy('user_devices.status')
                 ->pluck('total', 'user_devices.status')
@@ -109,6 +109,9 @@ class AnalyticsDevicesRequestsService implements AnalyticsDevicesRequestsService
                 ->whereBetween('enrolled_at', [$filters->from, $filters->to])
                 ->count();
 
+            $deviceTrends = $this->computeDeviceTrends($centerIds, $filters);
+            $extraViewTrends = $this->computeExtraViewTrends($centerIds, $filters);
+
             return [
                 'meta' => $this->support->meta($filters),
                 'devices' => [
@@ -127,6 +130,7 @@ class AnalyticsDevicesRequestsService implements AnalyticsDevicesRequestsService
                             'admin' => DeviceChangeRequestSource::Admin->value,
                         ]),
                     ],
+                    'trends' => $deviceTrends,
                 ],
                 'requests' => [
                     'extra_views' => [
@@ -135,6 +139,7 @@ class AnalyticsDevicesRequestsService implements AnalyticsDevicesRequestsService
                         'rejected' => $this->support->countValue($extraViewCounts, ExtraViewRequestStatus::Rejected->value),
                         'approval_rate' => $approvalRate,
                         'avg_decision_hours' => $avgDecisionHours,
+                        'trends' => $extraViewTrends,
                     ],
                     'enrollment' => [
                         'pending' => $pendingEnrollments,
@@ -144,6 +149,66 @@ class AnalyticsDevicesRequestsService implements AnalyticsDevicesRequestsService
                 ],
             ];
         });
+    }
+
+    /**
+     * @param  array<int>|null  $centerIds
+     * @return array<string, array<int, array{date: string, count: int}>>
+     */
+    private function computeDeviceTrends(?array $centerIds, AnalyticsFilters $filters): array
+    {
+        $timezone = $this->support->resolveTimezone($filters->timezone);
+
+        $query = UserDevice::query()
+            ->whereBetween('user_devices.created_at', [$filters->from, $filters->to])
+            ->select(['user_devices.created_at']);
+
+        if ($centerIds !== null) {
+            $query->join('users', 'users.id', '=', 'user_devices.user_id')
+                ->whereIn('users.center_id', $centerIds)
+                ->whereNull('users.deleted_at');
+        }
+
+        $devicesByDate = $this->support->bucketDateCounts(
+            $query->cursor(),
+            'created_at',
+            $timezone
+        );
+
+        return [
+            'registrations_over_time' => $this->support->generateDateSeries($filters, $devicesByDate),
+        ];
+    }
+
+    /**
+     * @param  array<int>|null  $centerIds
+     * @return array<string, array<int, array<string, int|string>>>
+     */
+    private function computeExtraViewTrends(?array $centerIds, AnalyticsFilters $filters): array
+    {
+        $timezone = $this->support->resolveTimezone($filters->timezone);
+
+        $statusMap = [
+            'pending' => ExtraViewRequestStatus::Pending->value,
+            'approved' => ExtraViewRequestStatus::Approved->value,
+            'rejected' => ExtraViewRequestStatus::Rejected->value,
+        ];
+
+        $dateStatusCounts = $this->support->bucketStatusDateCounts(
+            ExtraViewRequest::query()
+                ->when($centerIds !== null, fn (Builder $query): Builder => $query->whereIn('center_id', $centerIds))
+                ->whereBetween('created_at', [$filters->from, $filters->to])
+                ->select(['created_at', 'status'])
+                ->cursor(),
+            'created_at',
+            'status',
+            $statusMap,
+            $timezone
+        );
+
+        return [
+            'over_time' => $this->support->generateStatusDateSeries($filters, $dateStatusCounts, array_keys($statusMap)),
+        ];
     }
 
     /**

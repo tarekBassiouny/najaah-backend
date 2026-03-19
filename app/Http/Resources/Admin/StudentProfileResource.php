@@ -6,6 +6,7 @@ namespace App\Http\Resources\Admin;
 
 use App\Enums\UserStatus;
 use App\Http\Resources\Mobile\DeviceResource;
+use App\Models\LearningAssetProgress;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,7 +31,13 @@ class StudentProfileResource extends JsonResource
         // Build enrollment resources with context
         $enrollmentResources = $student->enrollments->map(function ($enrollment) use ($student): \App\Http\Resources\Admin\StudentEnrollmentResource {
             return (new StudentEnrollmentResource($enrollment))
-                ->setContext($student, $student->playbackSessions);
+                ->setContext(
+                    $student,
+                    $student->playbackSessions,
+                    $student->relationLoaded('learningAssetProgressRecords')
+                        ? $student->learningAssetProgressRecords
+                        : collect()
+                );
         });
 
         // Get active device (first one, already ordered by last_used_at desc)
@@ -103,6 +110,14 @@ class StudentProfileResource extends JsonResource
             $latestSession = $student->playbackSessions->sortByDesc('updated_at')->first();
             if ($latestSession !== null && $latestSession->updated_at !== null) {
                 $timestamps[] = $latestSession->updated_at;
+            }
+        }
+
+        if ($student->relationLoaded('learningAssetProgressRecords') && $student->learningAssetProgressRecords->isNotEmpty()) {
+            /** @var LearningAssetProgress|null $latestProgress */
+            $latestProgress = $student->learningAssetProgressRecords->sortByDesc('last_interacted_at')->first();
+            if ($latestProgress !== null && $latestProgress->last_interacted_at !== null) {
+                $timestamps[] = $latestProgress->last_interacted_at;
             }
         }
 

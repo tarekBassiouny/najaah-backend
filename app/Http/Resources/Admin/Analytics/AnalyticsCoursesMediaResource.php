@@ -64,6 +64,7 @@ class AnalyticsCoursesMediaResource extends JsonResource
                     ],
                 ],
             ],
+            'labels' => data_get($resource, 'labels', []),
         ];
     }
 }

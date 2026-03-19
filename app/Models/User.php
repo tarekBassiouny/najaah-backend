@@ -45,6 +45,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, JwtToken> $tokens
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PlaybackSession> $playbackSessions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, LearningAssetProgress> $learningAssetProgressRecords
  * @property-read StudentSetting|null $studentSetting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, AuditLog> $auditLogs
  * @property-read \Illuminate\Database\Eloquent\Collection<int, ExtraViewRequest> $extraViewRequests
@@ -208,6 +209,12 @@ class User extends Authenticatable implements JWTSubject
     public function playbackSessions(): HasMany
     {
         return $this->hasMany(PlaybackSession::class);
+    }
+
+    /** @return HasMany<LearningAssetProgress, self> */
+    public function learningAssetProgressRecords(): HasMany
+    {
+        return $this->hasMany(LearningAssetProgress::class);
     }
 
     /** @return HasMany<AuditLog, self> */

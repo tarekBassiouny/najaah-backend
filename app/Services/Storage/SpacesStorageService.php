@@ -97,6 +97,17 @@ class SpacesStorageService implements StorageServiceInterface
         return $this->disk->exists($path);
     }
 
+    public function getContents(string $path): string
+    {
+        $contents = $this->disk->get($path);
+
+        if (! is_string($contents)) {
+            throw new RuntimeException('Failed to read file contents.');
+        }
+
+        return $contents;
+    }
+
     public function delete(string $path): void
     {
         $this->disk->delete($path);

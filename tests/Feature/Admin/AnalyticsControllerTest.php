@@ -12,6 +12,7 @@ use App\Models\Enrollment;
 use App\Models\Permission;
 use App\Models\PlaybackSession;
 use App\Models\Role;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
@@ -431,4 +432,57 @@ it('returns analytics responses with expected shapes', function (): void {
             ],
         ],
     ]);
+});
+
+it('defaults analytics timezone to the filtered center timezone and buckets DST dates correctly', function (): void {
+    $this->asAdmin();
+
+    $center = Center::factory()->create([
+        'timezone' => 'America/New_York',
+    ]);
+    $course = Course::factory()->for($center, 'center')->create([
+        'center_id' => $center->id,
+        'category_id' => Category::factory()->for($center, 'center'),
+        'created_by' => User::factory()->for($center, 'center'),
+        'status' => CourseStatus::Published->value,
+        'is_published' => true,
+    ]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => EnrollmentStatus::Active->value,
+        'enrolled_at' => '2026-03-08 04:30:00',
+    ]);
+
+    $response = $this->getJson(
+        "/api/v1/admin/analytics/overview?center_id={$center->id}&from=2026-03-07&to=2026-03-08",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('data.meta.timezone', 'America/New_York')
+        ->assertJsonPath('data.trends.enrollments_over_time.0.date', '2026-03-07')
+        ->assertJsonPath('data.trends.enrollments_over_time.0.count', 1)
+        ->assertJsonPath('data.trends.enrollments_over_time.1.date', '2026-03-08')
+        ->assertJsonPath('data.trends.enrollments_over_time.1.count', 0);
+});
+
+it('falls back to the system timezone for analytics when no center timezone is in scope', function (): void {
+    $this->asAdmin();
+
+    SystemSetting::query()->updateOrCreate(
+        ['key' => 'timezone'],
+        ['value' => ['timezone' => 'Africa/Cairo']]
+    );
+
+    $response = $this->getJson('/api/v1/admin/analytics/overview?from=2026-03-07&to=2026-03-08', $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.meta.timezone', 'Africa/Cairo');
 });

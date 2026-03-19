@@ -19,6 +19,8 @@ interface StorageServiceInterface
 
     public function exists(string $path): bool;
 
+    public function getContents(string $path): string;
+
     public function delete(string $path): void;
 
     public function download(string $path, string $filename): StreamedResponse;

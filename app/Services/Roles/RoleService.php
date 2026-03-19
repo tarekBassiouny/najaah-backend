@@ -189,7 +189,7 @@ class RoleService implements RoleServiceInterface
     private function prepareRoleData(array $data, ?Role $role = null): array
     {
         $nameTranslations = $data['name_translations'] ?? $role?->name_translations ?? [];
-        $name = $nameTranslations['en'] ?? $role?->name ?? '';
+        $name = $nameTranslations['en'] ?? $nameTranslations[array_key_first($nameTranslations) ?? 'en'] ?? $role?->name ?? '';
 
         $data['name'] = $name;
         $data['slug'] = $data['slug'] ?? $role?->slug ?? '';

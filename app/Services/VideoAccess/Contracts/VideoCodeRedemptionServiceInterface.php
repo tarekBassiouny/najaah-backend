@@ -25,7 +25,7 @@ interface VideoCodeRedemptionServiceInterface
      *
      * @throws \App\Exceptions\DomainException If code is invalid or cannot be redeemed
      */
-    public function redeemCode(User $student, string $code): array;
+    public function redeemCode(User $student, string $code, int $videoId): array;
 
     /**
      * Validate a code without redeeming it.
@@ -45,7 +45,7 @@ interface VideoCodeRedemptionServiceInterface
      *   reason: string|null
      * }
      */
-    public function validateCode(User $student, string $code): array;
+    public function validateCode(User $student, string $code, int $videoId): array;
 
     /**
      * Get all codes redeemed by a student.

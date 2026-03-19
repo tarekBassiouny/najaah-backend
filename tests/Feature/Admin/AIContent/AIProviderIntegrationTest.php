@@ -126,7 +126,10 @@ it('blocks ai job creation when daily job limit is exceeded', function (): void 
 
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create(['center_id' => $center->id]);
-    $video = Video::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'transcript' => 'Lesson transcript',
+    ]);
     $course->videos()->attach($video->id, [
         'section_id' => null,
         'order_index' => 1,
