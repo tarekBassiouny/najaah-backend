@@ -1,0 +1,4 @@
+interface:
+  display_name: "Najaah Orchestrator"
+  short_description: "Help with Najaah Orchestrator tasks"
+  default_prompt: "Use $najaah-orchestrator to build a shared plan, maintain working memory, and coordinate safe parallel execution for this Najaah LMS backend task."
