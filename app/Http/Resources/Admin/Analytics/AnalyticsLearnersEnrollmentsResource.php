@@ -32,6 +32,7 @@ class AnalyticsLearnersEnrollmentsResource extends JsonResource
                 'active_students' => (int) data_get($resource, 'learners.active_students', 0),
                 'new_students' => (int) data_get($resource, 'learners.new_students', 0),
                 'by_center' => data_get($resource, 'learners.by_center', []),
+                'trends' => data_get($resource, 'learners.trends', []),
             ],
             'enrollments' => [
                 'by_status' => [
@@ -41,7 +42,9 @@ class AnalyticsLearnersEnrollmentsResource extends JsonResource
                     'cancelled' => (int) data_get($resource, 'enrollments.by_status.cancelled', 0),
                 ],
                 'top_courses' => data_get($resource, 'enrollments.top_courses', []),
+                'trends' => data_get($resource, 'enrollments.trends', []),
             ],
+            'labels' => data_get($resource, 'labels', []),
         ];
     }
 }

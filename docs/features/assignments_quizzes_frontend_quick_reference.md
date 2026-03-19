@@ -165,7 +165,7 @@ Notes:
 - `GET /centers/{center}/quizzes/{quiz}/my-attempts`
 
 ## Attempt lifecycle
-- Start/resume: `POST /centers/{center}/quizzes/{quiz}/start`
+- Start/resume: `POST /centers/{center}/assets/quiz/{quiz}/attempts`
 - Attempt details: `GET /centers/{center}/quiz-attempts/{attempt}`
 - Save answer: `POST /centers/{center}/quiz-attempts/{attempt}/answer`
   - Required: `question_id`, `answer_ids[]`
@@ -182,17 +182,17 @@ Notes:
 - `GET /centers/{center}/assignments/{assignment}/my-submission`
 
 ## Submission lifecycle
-- Create/update draft: `POST /centers/{center}/assignments/{assignment}/submissions`
-- Upload file: `POST /centers/{center}/submissions/{submission}/files` (multipart)
-- Remove file: `DELETE /centers/{center}/submissions/{submission}/files/{file}`
-- Submit final: `POST /centers/{center}/submissions/{submission}/submit`
+- Create/update draft: `POST /centers/{center}/assets/assignment/{assignment}/submission`
+- Upload file: `POST /centers/{center}/assets/assignment/submissions/{submission}/files` (multipart)
+- Remove file: `DELETE /centers/{center}/assets/assignment/submissions/{submission}/files/{file}`
+- Submit final: `POST /centers/{center}/assets/assignment/submissions/{submission}/submit`
 
 ## Groups (group assignments only)
-- `GET /centers/{center}/assignments/{assignment}/groups`
-- `POST /centers/{center}/assignments/{assignment}/groups`
-- `GET /centers/{center}/assignment-groups/{group}`
-- `POST /centers/{center}/assignment-groups/{group}/join`
-- `POST /centers/{center}/assignment-groups/{group}/leave`
+- `GET /centers/{center}/assets/assignment/{assignment}/groups`
+- `POST /centers/{center}/assets/assignment/{assignment}/groups`
+- `GET /centers/{center}/assets/assignment/groups/{group}`
+- `POST /centers/{center}/assets/assignment/groups/{group}/join`
+- `POST /centers/{center}/assets/assignment/groups/{group}/leave`
 
 ---
 

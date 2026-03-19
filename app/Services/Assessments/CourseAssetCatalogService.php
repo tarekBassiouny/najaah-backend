@@ -8,6 +8,7 @@ use App\Enums\AIContentJobStatus;
 use App\Enums\AIContentTargetType;
 use App\Enums\LearningAssetStatus;
 use App\Enums\LearningAssetType;
+use App\Enums\TextExtractionStatus;
 use App\Models\AIContentJob;
 use App\Models\Assignment;
 use App\Models\Course;
@@ -135,6 +136,7 @@ final class CourseAssetCatalogService
                 'id' => (int) $item->id,
                 'title' => $item->translate('title'),
                 'order_index' => (int) ($item->pivot->order_index ?? 0),
+                'ai_readiness' => $this->resolveSourceReadiness($type, $item),
                 'section' => $section === null ? null : [
                     'id' => (int) $section->id,
                     'title' => $section->translate('title'),
@@ -298,5 +300,108 @@ final class CourseAssetCatalogService
     private function sourceKey(string $type, int $id): string
     {
         return sprintf('%s:%d', $type, $id);
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function resolveSourceReadiness(string $type, object $item): array
+    {
+        return match ($type) {
+            'video' => $this->resolveVideoReadiness($item),
+            'pdf' => $this->resolvePdfReadiness($item),
+            default => [
+                'is_ready' => true,
+                'code' => 'READY',
+                'badge' => 'Ready',
+                'title' => null,
+                'message' => null,
+            ],
+        };
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function resolveVideoReadiness(object $item): array
+    {
+        /** @var mixed $transcript */
+        $transcript = data_get($item, 'transcript');
+
+        if (is_string($transcript) && trim($transcript) !== '') {
+            return [
+                'is_ready' => true,
+                'code' => 'READY',
+                'badge' => 'Transcript Ready',
+                'title' => null,
+                'message' => null,
+            ];
+        }
+
+        return [
+            'is_ready' => false,
+            'code' => 'TRANSCRIPT_REQUIRED',
+            'badge' => 'Transcript Missing',
+            'title' => 'Transcript required',
+            'message' => 'This video is not AI-ready yet. Add a transcript from the Videos page before generating assets.',
+        ];
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function resolvePdfReadiness(object $item): array
+    {
+        $status = data_get($item, 'text_extraction_status');
+        if (! $status instanceof TextExtractionStatus) {
+            $status = null;
+        }
+
+        $textContent = data_get($item, 'text_content');
+        if (
+            $status === TextExtractionStatus::Completed
+            && is_string($textContent)
+            && trim($textContent) !== ''
+        ) {
+            return [
+                'is_ready' => true,
+                'code' => 'READY',
+                'badge' => 'Extraction Ready',
+                'title' => null,
+                'message' => null,
+            ];
+        }
+
+        return match ($status) {
+            TextExtractionStatus::Pending => [
+                'is_ready' => false,
+                'code' => 'PDF_NOT_READY',
+                'badge' => 'Extraction Pending',
+                'title' => 'PDF extraction pending',
+                'message' => 'This PDF is not AI-ready yet. Wait for text extraction to complete before generating assets.',
+            ],
+            TextExtractionStatus::Processing => [
+                'is_ready' => false,
+                'code' => 'PDF_NOT_READY',
+                'badge' => 'Extraction Processing',
+                'title' => 'PDF extraction in progress',
+                'message' => 'This PDF is not AI-ready yet. Wait for text extraction to complete before generating assets.',
+            ],
+            TextExtractionStatus::Failed,
+            TextExtractionStatus::Skipped => [
+                'is_ready' => false,
+                'code' => 'PDF_TEXT_EXTRACTION_FAILED',
+                'badge' => 'Extraction Failed',
+                'title' => 'PDF extraction failed',
+                'message' => 'This PDF is not AI-ready yet. Re-upload it or fix text extraction before generating assets.',
+            ],
+            default => [
+                'is_ready' => false,
+                'code' => 'PDF_NOT_READY',
+                'badge' => 'Extraction Pending',
+                'title' => 'PDF extraction pending',
+                'message' => 'This PDF is not AI-ready yet. Wait for text extraction to complete before generating assets.',
+            ],
+        };
     }
 }

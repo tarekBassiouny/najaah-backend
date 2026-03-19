@@ -29,7 +29,7 @@ class AnalyticsCoursesMediaService implements AnalyticsCoursesMediaServiceInterf
      */
     public function handle(User $admin, AnalyticsFilters $filters): array
     {
-        return $this->support->remember('courses_media', $admin, $filters, function () use ($admin, $filters): array {
+        $cached = $this->support->remember('courses_media_v2', $admin, $filters, function () use ($admin, $filters): array {
             $centerIds = $this->support->resolveCenterScope($admin, $filters->centerId);
 
             $courseStatusCounts = Course::query()
@@ -127,6 +127,24 @@ class AnalyticsCoursesMediaService implements AnalyticsCoursesMediaServiceInterf
                 ],
             ];
         });
+
+        $cached['labels'] = [
+            'draft' => __('analytics.draft'),
+            'uploading' => __('analytics.uploading'),
+            'ready' => __('analytics.ready'),
+            'published' => __('analytics.published'),
+            'archived' => __('analytics.archived'),
+            'pending' => __('analytics.pending'),
+            'processing' => __('analytics.processing'),
+            'failed' => __('analytics.failed'),
+            'videos' => __('analytics.videos'),
+            'pdfs' => __('analytics.pdfs'),
+            'ready_to_publish' => __('analytics.ready_to_publish'),
+            'blocked_by_media' => __('analytics.blocked_by_media'),
+            'top_by_enrollments' => __('analytics.top_by_enrollments'),
+        ];
+
+        return $cached;
     }
 
     /**

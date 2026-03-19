@@ -6,6 +6,7 @@ namespace App\Http\Requests\Admin\Analytics;
 
 use App\Filters\Admin\AnalyticsFilters;
 use App\Models\Center;
+use App\Services\Timezone\Contracts\TimezoneServiceInterface;
 use App\Support\Filters\FilterInput;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -69,7 +70,7 @@ final class CenterAnalyticsRequest extends FormRequest
         /** @var array<string, mixed> $data */
         $data = $this->validated();
 
-        $timezone = FilterInput::stringOrNull($data, 'timezone') ?? 'UTC';
+        $timezone = $this->resolveAnalyticsTimezone($data);
         $now = Carbon::now($timezone);
 
         $from = isset($data['from'])
@@ -117,5 +118,38 @@ final class CenterAnalyticsRequest extends FormRequest
         }
 
         return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function resolveAnalyticsTimezone(array $data): string
+    {
+        $timezoneService = app(TimezoneServiceInterface::class);
+
+        $explicitTimezone = FilterInput::stringOrNull($data, 'timezone');
+        if (is_string($explicitTimezone) && $timezoneService->isValidTimezone($explicitTimezone)) {
+            return $explicitTimezone;
+        }
+
+        $routeCenter = $this->route('center');
+        if ($routeCenter instanceof Center) {
+            return $timezoneService->getCenterTimezone($routeCenter);
+        }
+
+        $routeCenterId = $this->getRouteCenterId();
+        if ($routeCenterId !== null) {
+            $center = Center::query()->find($routeCenterId);
+            if ($center instanceof Center) {
+                return $timezoneService->getCenterTimezone($center);
+            }
+        }
+
+        $requestTimezone = $this->attributes->get('timezone');
+        if (is_string($requestTimezone) && $timezoneService->isValidTimezone($requestTimezone)) {
+            return $requestTimezone;
+        }
+
+        return $timezoneService->getSystemTimezone();
     }
 }

@@ -197,7 +197,7 @@ class SurveyResponseService implements SurveyResponseServiceInterface
 
         foreach ($survey->questions as $question) {
             if ($question->is_required && ! in_array($question->id, $answeredQuestionIds, true)) {
-                $questionName = $question->question_translations['en'] ?? (string) $question->id;
+                $questionName = $question->translate('question') ?: (string) $question->id;
                 throw new \InvalidArgumentException(sprintf("Question '%s' is required", $questionName));
             }
         }

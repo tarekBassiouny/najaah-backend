@@ -8,10 +8,12 @@ use App\Enums\AIContentTargetType;
 use App\Enums\CenterType;
 use App\Enums\LearningAssetStatus;
 use App\Enums\LearningAssetType;
+use App\Enums\TextExtractionStatus;
 use App\Models\AIContentJob;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\LearningAsset;
+use App\Models\Pdf;
 use App\Models\Quiz;
 use App\Models\Section;
 use App\Models\Video;
@@ -93,6 +95,13 @@ it('returns source-bound asset catalog for course builder', function (): void {
     expect($assets['flashcards']['slot_state'])->toBe('generating');
     expect($assets['flashcards']['latest_job']['id'])->toBe($job->id);
     expect($assets['assignment']['slot_state'])->toBe('missing');
+    expect($source['ai_readiness'])->toBe([
+        'is_ready' => false,
+        'code' => 'TRANSCRIPT_REQUIRED',
+        'badge' => 'Transcript Missing',
+        'title' => 'Transcript required',
+        'message' => 'This video is not AI-ready yet. Add a transcript from the Videos page before generating assets.',
+    ]);
 });
 
 it('shows draft when only inactive canonical asset exists', function (): void {
@@ -126,4 +135,63 @@ it('shows draft when only inactive canonical asset exists', function (): void {
     $response->assertOk()
         ->assertJsonPath('data.sources.0.assets.2.asset_type', 'flashcards')
         ->assertJsonPath('data.sources.0.assets.2.slot_state', 'draft');
+});
+
+it('marks video sources as ai-ready when a transcript exists', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'transcript' => 'Lesson transcript.',
+    ]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/courses/{$course->id}/asset-catalog?source_type=video&source_id={$video->id}",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('data.sources.0.ai_readiness.is_ready', true)
+        ->assertJsonPath('data.sources.0.ai_readiness.code', 'READY')
+        ->assertJsonPath('data.sources.0.ai_readiness.badge', 'Transcript Ready')
+        ->assertJsonPath('data.sources.0.ai_readiness.title', null)
+        ->assertJsonPath('data.sources.0.ai_readiness.message', null);
+});
+
+it('marks pdf sources as not ai-ready while extraction is pending', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'text_extraction_status' => TextExtractionStatus::Pending,
+        'text_content' => null,
+    ]);
+    $course->pdfs()->attach($pdf->id, [
+        'section_id' => null,
+        'video_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/courses/{$course->id}/asset-catalog?source_type=pdf&source_id={$pdf->id}",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('data.sources.0.ai_readiness.is_ready', false)
+        ->assertJsonPath('data.sources.0.ai_readiness.code', 'PDF_NOT_READY')
+        ->assertJsonPath('data.sources.0.ai_readiness.badge', 'Extraction Pending')
+        ->assertJsonPath('data.sources.0.ai_readiness.title', 'PDF extraction pending')
+        ->assertJsonPath('data.sources.0.ai_readiness.message', 'This PDF is not AI-ready yet. Wait for text extraction to complete before generating assets.');
 });

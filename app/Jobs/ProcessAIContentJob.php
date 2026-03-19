@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Enums\AIContentJobStatus;
 use App\Models\AIContentJob;
 use App\Services\Assessments\Contracts\AIContentServiceInterface;
 use Illuminate\Bus\Queueable;
@@ -23,7 +24,8 @@ class ProcessAIContentJob implements ShouldQueue
 
     public int $timeout = 300;
 
-    public int $backoff = 60;
+    /** @var array<int> */
+    public array $backoff = [30, 90, 270];
 
     public function __construct(
         public readonly AIContentJob $aiContentJob
@@ -34,6 +36,20 @@ class ProcessAIContentJob implements ShouldQueue
     public function handle(AIContentServiceInterface $service): void
     {
         $service->processJob($this->aiContentJob);
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        $job = AIContentJob::query()->find($this->aiContentJob->id);
+        if (! $job instanceof AIContentJob) {
+            return;
+        }
+
+        $job->update([
+            'status' => AIContentJobStatus::Failed,
+            'error_message' => $exception->getMessage(),
+            'completed_at' => now(),
+        ]);
     }
 
     /**

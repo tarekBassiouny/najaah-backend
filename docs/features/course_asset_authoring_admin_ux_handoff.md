@@ -18,6 +18,7 @@ Related docs:
 - `/docs/features/assignments_quizzes_frontend_quick_reference.md`
 - `/docs/features/course_asset_authoring_frontend_implementation_checklist.md`
 - `/docs/features/course_asset_authoring_frontend_wireframes.md`
+- `/docs/features/course_asset_ai_generation_dashboard_handoff.md`
 
 ---
 

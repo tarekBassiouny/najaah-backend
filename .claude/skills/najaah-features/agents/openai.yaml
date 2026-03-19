@@ -1,0 +1,4 @@
+interface:
+  display_name: "Najaah Features"
+  short_description: "Help with Najaah Features tasks"
+  default_prompt: "Use $najaah-features to own the service-layer workflow and authorization for this task, then record downstream API and testing implications."

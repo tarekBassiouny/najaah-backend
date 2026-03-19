@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\DeviceChangeRequestStatus;
 use App\Enums\EnrollmentStatus;
+use App\Enums\LearningAssetType;
 use App\Enums\UserDeviceStatus;
 use App\Enums\UserStatus;
 use App\Models\Category;
@@ -11,6 +12,8 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\DeviceChangeRequest;
 use App\Models\Enrollment;
+use App\Models\LearningAsset;
+use App\Models\LearningAssetProgress;
 use App\Models\Permission;
 use App\Models\PlaybackSession;
 use App\Models\Role;
@@ -168,6 +171,14 @@ it('returns student profile with courses and videos', function (): void {
                             'title',
                             'thumbnail_url',
                             'video_count',
+                            'learning_asset_count',
+                            'learning_assets_progress' => [
+                                'total',
+                                'completed',
+                                'in_progress',
+                                'not_started',
+                                'progress_percentage',
+                            ],
                             'videos' => [
                                 '*' => [
                                     'id',
@@ -203,6 +214,110 @@ it('returns student profile with courses and videos', function (): void {
     expect($videoData['id'])->toBe($video->id);
     expect($videoData['watch_count'])->toBe(1); // Only one full play
     expect((float) $videoData['watch_progress_percentage'])->toBe(90.0); // Latest session progress
+    expect($response->json('data.enrollments.0.course.learning_asset_count'))->toBe(0);
+    expect((float) $response->json('data.enrollments.0.course.learning_assets_progress.progress_percentage'))->toBe(0.0);
+});
+
+it('includes learning asset progress in student course analytics', function (): void {
+    $this->asAdmin();
+
+    $center = Center::factory()->create();
+    $category = Category::factory()->for($center, 'center')->create();
+    $creator = User::factory()->for($center, 'center')->create(['is_student' => false]);
+
+    $course = Course::factory()->for($center, 'center')->create([
+        'category_id' => $category->id,
+        'created_by' => $creator->id,
+    ]);
+
+    $section = Section::factory()->for($course, 'course')->create([
+        'order_index' => 1,
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'duration_seconds' => 600,
+    ]);
+
+    $section->videos()->attach($video->id, [
+        'course_id' => $course->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $summary = LearningAsset::factory()->published()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'asset_type' => LearningAssetType::Summary,
+    ]);
+    $flashcards = LearningAsset::factory()->published()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'asset_type' => LearningAssetType::Flashcards,
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'phone' => '19990000115',
+        'status' => UserStatus::Active->value,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $student->id,
+        'status' => UserDeviceStatus::Active->value,
+    ]);
+
+    $enrollment = Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => EnrollmentStatus::Active->value,
+        'enrolled_at' => now()->subDay(),
+    ]);
+
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'started_at' => now()->subHours(2),
+        'ended_at' => now()->subHour(),
+        'progress_percent' => 80,
+        'is_full_play' => false,
+    ]);
+
+    LearningAssetProgress::factory()->completed()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'learning_asset_id' => $summary->id,
+        'user_id' => $student->id,
+        'enrollment_id' => $enrollment->id,
+        'last_interacted_at' => now()->subMinutes(10),
+    ]);
+    LearningAssetProgress::factory()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'learning_asset_id' => $flashcards->id,
+        'user_id' => $student->id,
+        'enrollment_id' => $enrollment->id,
+        'progress_percent' => 50,
+        'last_interacted_at' => now()->subMinutes(5),
+    ]);
+
+    $response = $this->getJson("/api/v1/admin/students/{$student->id}/profile", $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.enrollments.0.course.learning_asset_count', 2)
+        ->assertJsonPath('data.enrollments.0.course.learning_assets_progress.total', 2)
+        ->assertJsonPath('data.enrollments.0.course.learning_assets_progress.completed', 1)
+        ->assertJsonPath('data.enrollments.0.course.learning_assets_progress.in_progress', 1)
+        ->assertJsonPath('data.enrollments.0.course.learning_assets_progress.not_started', 0);
+
+    expect((float) $response->json('data.enrollments.0.course.learning_assets_progress.progress_percentage'))->toBe(75.0);
+    expect((float) $response->json('data.enrollments.0.progress_percentage'))->toBe(76.7);
+    expect($response->json('data.last_activity_at'))->not->toBeNull();
 });
 
 it('returns empty enrollments for student with no enrollments', function (): void {

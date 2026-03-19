@@ -40,6 +40,11 @@ class StudentProfileQueryService
                                         },
                                     ]);
                             },
+                            'learningAssets' => function ($query): void {
+                                $query->published()
+                                    ->orderByDesc('published_at')
+                                    ->orderByDesc('id');
+                            },
                             'setting',
                             'center',
                         ]);
@@ -49,6 +54,18 @@ class StudentProfileQueryService
             'playbackSessions' => function ($query): void {
                 $query->select('id', 'user_id', 'video_id', 'course_id', 'progress_percent', 'is_full_play', 'updated_at')
                     ->notDeleted();
+            },
+            'learningAssetProgressRecords' => function ($query): void {
+                $query->select(
+                    'id',
+                    'user_id',
+                    'learning_asset_id',
+                    'course_id',
+                    'status',
+                    'progress_percent',
+                    'last_interacted_at',
+                    'completed_at'
+                );
             },
         ]);
 

@@ -21,10 +21,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $source_id
  * @property AIContentTargetType $target_type
  * @property int|null $target_id
+ * @property string $language
  * @property AIContentJobStatus $status
  * @property array<string,mixed>|null $generation_config
  * @property array<string,mixed>|null $generated_payload
  * @property array<string,mixed>|null $reviewed_payload
+ * @property array<int,string>|null $validation_warnings
  * @property string|null $ai_provider
  * @property string|null $ai_model
  * @property int $estimated_input_tokens
@@ -61,10 +63,12 @@ class AIContentJob extends Model
         'source_id',
         'target_type',
         'target_id',
+        'language',
         'status',
         'generation_config',
         'generated_payload',
         'reviewed_payload',
+        'validation_warnings',
         'ai_provider',
         'ai_model',
         'estimated_input_tokens',
@@ -85,9 +89,11 @@ class AIContentJob extends Model
         'target_type' => AIContentTargetType::class,
         'status' => AIContentJobStatus::class,
         'batch_key' => 'string',
+        'language' => 'string',
         'generation_config' => 'array',
         'generated_payload' => 'array',
         'reviewed_payload' => 'array',
+        'validation_warnings' => 'array',
         'estimated_input_tokens' => 'integer',
         'estimated_output_tokens' => 'integer',
         'started_at' => 'datetime',

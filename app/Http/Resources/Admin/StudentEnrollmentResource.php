@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin;
 
 use App\Models\Enrollment;
+use App\Models\LearningAssetProgress;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Services\Courses\CourseThumbnailUrlResolver;
@@ -23,13 +24,18 @@ class StudentEnrollmentResource extends JsonResource
     /** @var Collection<int, PlaybackSession>|null */
     private ?Collection $playbackSessions = null;
 
+    /** @var Collection<int, LearningAssetProgress>|null */
+    private ?Collection $learningAssetProgressRecords = null;
+
     /**
      * @param  Collection<int, PlaybackSession>  $playbackSessions
+     * @param  Collection<int, LearningAssetProgress>  $learningAssetProgressRecords
      */
-    public function setContext(User $student, Collection $playbackSessions): self
+    public function setContext(User $student, Collection $playbackSessions, Collection $learningAssetProgressRecords): self
     {
         $this->student = $student;
         $this->playbackSessions = $playbackSessions;
+        $this->learningAssetProgressRecords = $learningAssetProgressRecords;
 
         return $this;
     }
@@ -59,6 +65,10 @@ class StudentEnrollmentResource extends JsonResource
         // Collect all videos from all sections
         $videos = $course->sections->flatMap(fn ($section) => $section->videos);
         $videoCount = $videos->count();
+        $learningAssets = $course->relationLoaded('learningAssets')
+            ? $course->learningAssets
+            : collect();
+        $learningAssetCount = $learningAssets->count();
 
         // Build video resources with context and collect progress data
         $videoProgressData = [];
@@ -76,9 +86,36 @@ class StudentEnrollmentResource extends JsonResource
             return $resource;
         });
 
-        // Calculate enrollment progress as average of video progress
-        $progressPercentage = $videoCount > 0 && ! empty($videoProgressData)
-            ? round(array_sum($videoProgressData) / count($videoProgressData), 1)
+        $learningAssetProgressRecords = $this->learningAssetProgressRecords
+            ? $this->learningAssetProgressRecords->where('course_id', $course->id)->keyBy('learning_asset_id')
+            : collect();
+
+        $learningAssetProgressData = $learningAssets->map(function ($asset) use ($learningAssetProgressRecords): int {
+            /** @var LearningAssetProgress|null $progress */
+            $progress = $learningAssetProgressRecords->get($asset->id);
+
+            return $progress?->progress_percent ?? 0;
+        })->all();
+
+        $learningAssetsCompleted = $learningAssets->filter(function ($asset) use ($learningAssetProgressRecords): bool {
+            /** @var LearningAssetProgress|null $progress */
+            $progress = $learningAssetProgressRecords->get($asset->id);
+
+            return $progress?->completed_at !== null;
+        })->count();
+
+        $learningAssetsInProgress = $learningAssets->filter(function ($asset) use ($learningAssetProgressRecords): bool {
+            /** @var LearningAssetProgress|null $progress */
+            $progress = $learningAssetProgressRecords->get($asset->id);
+
+            return $progress !== null && $progress->completed_at === null;
+        })->count();
+
+        $trackableProgressData = [...$videoProgressData, ...$learningAssetProgressData];
+
+        // Calculate enrollment progress as average of all trackable course content
+        $progressPercentage = $trackableProgressData !== []
+            ? round(array_sum($trackableProgressData) / count($trackableProgressData), 1)
             : 0.0;
 
         return [
@@ -101,6 +138,16 @@ class StudentEnrollmentResource extends JsonResource
                 'status_label' => $course->status->name,
                 'is_published' => (bool) $course->is_published,
                 'video_count' => $videoCount,
+                'learning_asset_count' => $learningAssetCount,
+                'learning_assets_progress' => [
+                    'total' => $learningAssetCount,
+                    'completed' => $learningAssetsCompleted,
+                    'in_progress' => $learningAssetsInProgress,
+                    'not_started' => max(0, $learningAssetCount - $learningAssetsCompleted - $learningAssetsInProgress),
+                    'progress_percentage' => $learningAssetCount > 0
+                        ? round(array_sum($learningAssetProgressData) / $learningAssetCount, 1)
+                        : 0.0,
+                ],
                 'videos' => $videoResources,
             ],
         ];

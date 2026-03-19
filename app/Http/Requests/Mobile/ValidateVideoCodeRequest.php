@@ -20,6 +20,7 @@ class ValidateVideoCodeRequest extends FormRequest
     {
         return [
             'code' => ['required', 'string', 'min:12', 'max:14', 'regex:/^[A-HJ-NP-Z2-9-]+$/i'],
+            'video_id' => ['required', 'integer', 'min:1'],
         ];
     }
 
@@ -32,6 +33,10 @@ class ValidateVideoCodeRequest extends FormRequest
             'code' => [
                 'description' => 'The video access code to validate.',
                 'example' => 'ABC2-DEF4-GHJ7',
+            ],
+            'video_id' => [
+                'description' => 'The ID of the video the student expects to unlock.',
+                'example' => 1,
             ],
         ];
     }

@@ -10,19 +10,26 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Services\Analytics\Contracts\AnalyticsSupportServiceInterface;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Timezone\Contracts\TimezoneServiceInterface;
+use BackedEnum;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class AnalyticsSupportService implements AnalyticsSupportServiceInterface
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly TimezoneServiceInterface $timezoneService
+    ) {}
 
     /**
      * @return array<string, mixed>
      */
     public function meta(AnalyticsFilters $filters): array
     {
-        $from = $filters->from->copy()->setTimezone($filters->timezone)->toDateString();
-        $to = $filters->to->copy()->setTimezone($filters->timezone)->toDateString();
+        $timezone = $this->resolveTimezone($filters->timezone);
+        $from = $filters->from->copy()->setTimezone($timezone)->toDateString();
+        $to = $filters->to->copy()->setTimezone($timezone)->toDateString();
 
         return [
             'range' => [
@@ -30,8 +37,8 @@ class AnalyticsSupportService implements AnalyticsSupportServiceInterface
                 'to' => $to,
             ],
             'center_id' => $filters->centerId,
-            'timezone' => $filters->timezone,
-            'generated_at' => now()->toIso8601String(),
+            'timezone' => $timezone,
+            'generated_at' => now()->setTimezone($timezone)->toIso8601String(),
         ];
     }
 
@@ -161,12 +168,189 @@ class AnalyticsSupportService implements AnalyticsSupportServiceInterface
         })->values()->all();
     }
 
+    public function resolveTimezone(?string $timezone): string
+    {
+        if (is_string($timezone) && $this->timezoneService->isValidTimezone($timezone)) {
+            return $timezone;
+        }
+
+        return $this->timezoneService->getSystemTimezone();
+    }
+
+    /**
+     * @param  iterable<mixed>  $rows
+     * @return array<string, int>
+     */
+    public function bucketDateCounts(iterable $rows, string $timestampField, string $timezone, ?string $countField = null): array
+    {
+        $counts = [];
+
+        foreach ($rows as $row) {
+            $dateKey = $this->resolveDateKey(data_get($row, $timestampField), $timezone);
+            if ($dateKey === null) {
+                continue;
+            }
+
+            $increment = $countField !== null ? (int) data_get($row, $countField, 0) : 1;
+            $counts[$dateKey] = ($counts[$dateKey] ?? 0) + max($increment, 0);
+        }
+
+        return $counts;
+    }
+
+    /**
+     * @param  iterable<mixed>  $rows
+     * @return array<string, int>
+     */
+    public function bucketDistinctDateCounts(iterable $rows, string $timestampField, string $distinctField, string $timezone): array
+    {
+        $seen = [];
+
+        foreach ($rows as $row) {
+            $dateKey = $this->resolveDateKey(data_get($row, $timestampField), $timezone);
+            $distinctValue = data_get($row, $distinctField);
+
+            if ($dateKey === null || $distinctValue === null) {
+                continue;
+            }
+
+            $seen[$dateKey][(string) $distinctValue] = true;
+        }
+
+        $counts = [];
+        foreach ($seen as $dateKey => $values) {
+            $counts[$dateKey] = count($values);
+        }
+
+        return $counts;
+    }
+
+    /**
+     * @param  iterable<mixed>  $rows
+     * @param  array<string, int|string>  $statusMap
+     * @return array<string, array<string, int>>
+     */
+    public function bucketStatusDateCounts(
+        iterable $rows,
+        string $timestampField,
+        string $statusField,
+        array $statusMap,
+        string $timezone,
+        ?string $countField = null
+    ): array {
+        $reverseMap = [];
+        foreach ($statusMap as $statusName => $rawValue) {
+            $reverseMap[(string) $rawValue] = $statusName;
+        }
+
+        $counts = [];
+
+        foreach ($rows as $row) {
+            $dateKey = $this->resolveDateKey(data_get($row, $timestampField), $timezone);
+            if ($dateKey === null) {
+                continue;
+            }
+
+            $rawStatus = data_get($row, $statusField);
+            if ($rawStatus instanceof BackedEnum) {
+                $rawStatus = $rawStatus->value;
+            }
+
+            $statusName = $reverseMap[(string) $rawStatus] ?? null;
+            if ($statusName === null) {
+                continue;
+            }
+
+            $increment = $countField !== null ? (int) data_get($row, $countField, 0) : 1;
+            $counts[$dateKey][$statusName] = ($counts[$dateKey][$statusName] ?? 0) + max($increment, 0);
+        }
+
+        return $counts;
+    }
+
+    /**
+     * @param  array<string, int>  $dateCounts
+     * @return array<int, array{date: string, count: int}>
+     */
+    public function generateDateSeries(AnalyticsFilters $filters, array $dateCounts): array
+    {
+        $series = [];
+        $timezone = $this->resolveTimezone($filters->timezone);
+        $current = $filters->from->copy()->setTimezone($timezone)->startOfDay();
+        $end = $filters->to->copy()->setTimezone($timezone)->startOfDay();
+
+        while ($current->lte($end)) {
+            $dateKey = $current->toDateString();
+            $series[] = [
+                'date' => $dateKey,
+                'count' => $dateCounts[$dateKey] ?? 0,
+            ];
+            $current->addDay();
+        }
+
+        return $series;
+    }
+
+    /**
+     * @param  array<string, array<string, int>>  $dateStatusCounts
+     * @param  array<int, string>  $statuses
+     * @return array<int, array<string, int|string>>
+     */
+    public function generateStatusDateSeries(AnalyticsFilters $filters, array $dateStatusCounts, array $statuses): array
+    {
+        $series = [];
+        $timezone = $this->resolveTimezone($filters->timezone);
+        $current = $filters->from->copy()->setTimezone($timezone)->startOfDay();
+        $end = $filters->to->copy()->setTimezone($timezone)->startOfDay();
+        $zeroRow = array_fill_keys($statuses, 0);
+
+        while ($current->lte($end)) {
+            $dateKey = $current->toDateString();
+            $row = ['date' => $dateKey];
+            $dayCounts = $dateStatusCounts[$dateKey] ?? [];
+            foreach ($zeroRow as $status => $zero) {
+                $row[$status] = $dayCounts[$status] ?? $zero;
+            }
+
+            $series[] = $row;
+            $current->addDay();
+        }
+
+        return $series;
+    }
+
+    /**
+     * @return array{from: \Illuminate\Support\Carbon, to: \Illuminate\Support\Carbon}
+     */
+    public function previousPeriodDates(AnalyticsFilters $filters): array
+    {
+        $durationSeconds = $filters->from->diffInSeconds($filters->to);
+
+        return [
+            'from' => $filters->from->copy()->subSeconds((int) $durationSeconds)->subSecond(),
+            'to' => $filters->from->copy()->subSecond(),
+        ];
+    }
+
     private function cacheKey(string $key, User $admin, AnalyticsFilters $filters): string
     {
         $centerPart = $filters->centerId !== null ? (string) $filters->centerId : 'all';
         $from = $filters->from->toDateString();
         $to = $filters->to->toDateString();
 
-        return implode(':', ['analytics', $key, (string) $admin->id, $centerPart, $from, $to, $filters->timezone]);
+        return implode(':', ['analytics', $key, (string) $admin->id, $centerPart, $from, $to, $this->resolveTimezone($filters->timezone)]);
+    }
+
+    private function resolveDateKey(mixed $timestamp, string $timezone): ?string
+    {
+        if ($timestamp === null || $timestamp === '') {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($timestamp)->setTimezone($timezone)->toDateString();
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

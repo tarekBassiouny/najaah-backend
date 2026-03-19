@@ -16,8 +16,10 @@ use App\Services\Assessments\Contracts\AIContentServiceInterface;
 use App\Services\Assessments\Contracts\AssessmentProgressServiceInterface;
 use App\Services\Assessments\Contracts\AssignmentServiceInterface;
 use App\Services\Assessments\Contracts\AssignmentSubmissionServiceInterface;
+use App\Services\Assessments\Contracts\MobileCourseAssetServiceInterface;
 use App\Services\Assessments\Contracts\QuizAttemptServiceInterface;
 use App\Services\Assessments\Contracts\QuizServiceInterface;
+use App\Services\Assessments\MobileCourseAssetService;
 use App\Services\Assessments\QuizAttemptService;
 use App\Services\Assessments\QuizService;
 use App\Services\Auth\AdminAuthService;
@@ -63,9 +65,11 @@ use App\Services\Pdfs\AdminPdfQueryService;
 use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
 use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
 use App\Services\Pdfs\Contracts\PdfServiceInterface;
+use App\Services\Pdfs\Contracts\PdfTextExtractionServiceInterface;
 use App\Services\Pdfs\Contracts\PdfUploadSessionServiceInterface;
 use App\Services\Pdfs\PdfAccessService;
 use App\Services\Pdfs\PdfService;
+use App\Services\Pdfs\PdfTextExtractionService;
 use App\Services\Pdfs\PdfUploadSessionService;
 use App\Services\Permissions\Contracts\PermissionServiceInterface;
 use App\Services\Permissions\PermissionService;
@@ -115,8 +119,10 @@ use App\Services\VideoAccess\VideoCodeBatchService;
 use App\Services\VideoAccess\VideoCodeRedemptionService;
 use App\Services\Videos\AdminVideoQueryService;
 use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
+use App\Services\Videos\Contracts\TranscriptServiceInterface;
 use App\Services\Videos\Contracts\VideoServiceInterface;
 use App\Services\Videos\Contracts\VideoUploadServiceInterface;
+use App\Services\Videos\TranscriptService;
 use App\Services\Videos\VideoService;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -163,6 +169,7 @@ class AppServiceProvider extends ServiceProvider
             QuizAttemptServiceInterface::class => QuizAttemptService::class,
             AssignmentServiceInterface::class => AssignmentService::class,
             AssignmentSubmissionServiceInterface::class => AssignmentSubmissionService::class,
+            MobileCourseAssetServiceInterface::class => MobileCourseAssetService::class,
             AIContentServiceInterface::class => AIContentService::class,
             AssessmentProgressServiceInterface::class => AssessmentProgressService::class,
             SectionServiceInterface::class => SectionService::class,
@@ -177,10 +184,12 @@ class AppServiceProvider extends ServiceProvider
             SystemSettingServiceInterface::class => SystemSettingService::class,
             ViewLimitServiceInterface::class => ViewLimitService::class,
             PdfServiceInterface::class => PdfService::class,
+            PdfTextExtractionServiceInterface::class => PdfTextExtractionService::class,
             PdfUploadSessionServiceInterface::class => PdfUploadSessionService::class,
             PdfAccessServiceInterface::class => PdfAccessService::class,
             AdminPdfQueryServiceInterface::class => AdminPdfQueryService::class,
             VideoServiceInterface::class => VideoService::class,
+            TranscriptServiceInterface::class => TranscriptService::class,
             VideoUploadServiceInterface::class => VideoUploadService::class,
             AdminVideoQueryServiceInterface::class => AdminVideoQueryService::class,
             PlaybackServiceInterface::class => PlaybackService::class,

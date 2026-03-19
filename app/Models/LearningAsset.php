@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -117,6 +118,12 @@ class LearningAsset extends Model
     public function attachable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /** @return HasMany<LearningAssetProgress, self> */
+    public function progressRecords(): HasMany
+    {
+        return $this->hasMany(LearningAssetProgress::class);
     }
 
     /**
