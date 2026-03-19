@@ -148,3 +148,38 @@ it('attaches then detaches a ready pdf and keeps pivot ordering', function (): v
     expect($pivot)->not()->toBeNull();
     expect($pivot->section_id)->toBeNull();
 });
+
+it('allows attaching the same pdf to sections in different courses', function (): void {
+    $admin = $this->asAdmin();
+    $center = Center::factory()->create();
+    $courseA = Course::factory()->create(['center_id' => $center->id, 'created_by' => $admin->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id, 'created_by' => $admin->id]);
+    $sectionA = Section::factory()->create(['course_id' => $courseA->id]);
+    $sectionB = Section::factory()->create(['course_id' => $courseB->id]);
+    $uploadSession = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => \App\Enums\PdfUploadStatus::Ready,
+        'expires_at' => now()->addHour(),
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_session_id' => $uploadSession->id,
+    ]);
+
+    $service = app(SectionStructureService::class);
+    $service->attachPdf($sectionA, $pdf, $admin);
+    $service->attachPdf($sectionB, $pdf, $admin);
+
+    expect(CoursePdf::query()
+        ->where('course_id', $courseA->id)
+        ->where('pdf_id', $pdf->id)
+        ->where('section_id', $sectionA->id)
+        ->exists())->toBeTrue();
+
+    expect(CoursePdf::query()
+        ->where('course_id', $courseB->id)
+        ->where('pdf_id', $pdf->id)
+        ->where('section_id', $sectionB->id)
+        ->exists())->toBeTrue();
+});

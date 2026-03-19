@@ -79,3 +79,30 @@ it('assigns and removes pdf via pivot model', function (): void {
     $service->removePdf($course, $pdf->id, $actor);
     expect(CoursePdf::withTrashed()->where('course_id', $course->id)->where('pdf_id', $pdf->id)->first())->not()->toBeNull();
 });
+
+it('assigns a ready pdf even when its upload session has expired', function (): void {
+    $service = new CourseAttachmentService(
+        new CenterScopeService,
+        new VideoAccessService,
+        new PdfAccessService,
+        new AuditLogService
+    );
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $actor = User::factory()->create(['center_id' => $center->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $actor->id,
+        'upload_status' => PdfUploadStatus::Ready,
+        'expires_at' => now()->subHour(),
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $actor->id,
+        'upload_session_id' => $session->id,
+    ]);
+
+    $service->assignPdf($course, $pdf->id, $actor);
+
+    expect(CoursePdf::where('course_id', $course->id)->where('pdf_id', $pdf->id)->exists())->toBeTrue();
+});

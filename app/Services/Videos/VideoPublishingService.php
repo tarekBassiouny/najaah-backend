@@ -9,7 +9,6 @@ use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Exceptions\PublishBlockedException;
 use App\Models\Video;
-use Illuminate\Support\Facades\Log;
 
 class VideoPublishingService
 {
@@ -31,14 +30,6 @@ class VideoPublishingService
 
         if ($session !== null && $session->upload_status !== VideoUploadStatus::Ready) {
             throw new PublishBlockedException('Latest upload session is not ready.', 422);
-        }
-
-        if ($session !== null && $session->expires_at !== null && $session->expires_at->isPast()) {
-            Log::channel('domain')->warning('upload_session_expired', [
-                'video_id' => $video->id,
-                'session_id' => $session->id,
-            ]);
-            throw new PublishBlockedException('Latest upload session has expired.', 422);
         }
     }
 }

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CourseAccessModel;
 use App\Enums\DeviceChangeRequestStatus;
 use App\Enums\EnrollmentStatus;
 use App\Enums\LearningAssetType;
@@ -21,6 +22,7 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Models\VideoAccess;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 
@@ -145,6 +147,7 @@ it('returns student profile with courses and videos', function (): void {
                     'device_id',
                 ],
                 'total_enrollments',
+                'total_accessible_courses',
                 'device_changes_count',
                 'device_change_log' => [
                     '*' => [
@@ -191,6 +194,42 @@ it('returns student profile with courses and videos', function (): void {
                         ],
                     ],
                 ],
+                'course_accesses' => [
+                    '*' => [
+                        'access_type',
+                        'access_sources',
+                        'has_access',
+                        'granted_at',
+                        'last_activity_at',
+                        'progress_percentage',
+                        'enrollment',
+                        'video_code_access',
+                        'course' => [
+                            'id',
+                            'title',
+                            'thumbnail_url',
+                            'access_model',
+                            'video_count',
+                            'learning_asset_count',
+                            'learning_assets_progress' => [
+                                'total',
+                                'completed',
+                                'in_progress',
+                                'not_started',
+                                'progress_percentage',
+                            ],
+                            'videos' => [
+                                '*' => [
+                                    'id',
+                                    'title',
+                                    'watch_count',
+                                    'watch_limit',
+                                    'watch_progress_percentage',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ]);
 
@@ -200,6 +239,7 @@ it('returns student profile with courses and videos', function (): void {
     expect($response->json('data.active_device.device_name'))->toBe('Galaxy Phone');
     expect($response->json('data.active_device.device_type'))->toBe('Android');
     expect($response->json('data.total_enrollments'))->toBe(1);
+    expect($response->json('data.total_accessible_courses'))->toBe(1);
     expect($response->json('data.device_changes_count'))->toBe(1);
     expect($response->json('data.device_change_log.0.device_name'))->toBe('iPhone 14 Pro');
 
@@ -216,6 +256,90 @@ it('returns student profile with courses and videos', function (): void {
     expect((float) $videoData['watch_progress_percentage'])->toBe(90.0); // Latest session progress
     expect($response->json('data.enrollments.0.course.learning_asset_count'))->toBe(0);
     expect((float) $response->json('data.enrollments.0.course.learning_assets_progress.progress_percentage'))->toBe(0.0);
+    expect($response->json('data.course_accesses.0.access_type'))->toBe('enrollment');
+    expect($response->json('data.course_accesses.0.access_sources'))->toBe(['enrollment']);
+    expect($response->json('data.course_accesses.0.course.id'))->toBe($course->id);
+});
+
+it('includes video code access courses in student profile course accesses', function (): void {
+    $this->asAdmin();
+
+    $center = Center::factory()->create();
+    $category = Category::factory()->for($center, 'center')->create();
+    $creator = User::factory()->for($center, 'center')->create(['is_student' => false]);
+
+    $course = Course::factory()->for($center, 'center')->create([
+        'category_id' => $category->id,
+        'created_by' => $creator->id,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
+
+    $section = Section::factory()->for($course, 'course')->create([
+        'order_index' => 1,
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'duration_seconds' => 600,
+    ]);
+
+    $section->videos()->attach($video->id, [
+        'course_id' => $course->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'phone' => '19990000111',
+        'status' => UserStatus::Active->value,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $student->id,
+        'status' => UserDeviceStatus::Active->value,
+        'last_used_at' => now()->subMinutes(20),
+    ]);
+
+    VideoAccess::query()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'total_view_limit' => 3,
+        'granted_at' => now()->subDay(),
+    ]);
+
+    PlaybackSession::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'device_id' => $device->id,
+        'started_at' => now()->subHours(2),
+        'ended_at' => now()->subHour(),
+        'progress_percent' => 55,
+        'is_full_play' => false,
+    ]);
+
+    $response = $this->getJson("/api/v1/admin/students/{$student->id}/profile", $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.total_enrollments', 0)
+        ->assertJsonPath('data.total_accessible_courses', 1)
+        ->assertJsonPath('data.enrollments', [])
+        ->assertJsonPath('data.course_accesses.0.access_type', 'video_code')
+        ->assertJsonPath('data.course_accesses.0.access_sources', ['video_code'])
+        ->assertJsonPath('data.course_accesses.0.has_access', true)
+        ->assertJsonPath('data.course_accesses.0.video_code_access.active_video_access_count', 1)
+        ->assertJsonPath('data.course_accesses.0.video_code_access.granted_videos_count', 1)
+        ->assertJsonPath('data.course_accesses.0.video_code_access.total_view_limit', 3)
+        ->assertJsonPath('data.course_accesses.0.course.id', $course->id)
+        ->assertJsonPath('data.course_accesses.0.course.access_model', CourseAccessModel::VideoCode->value)
+        ->assertJsonPath('data.course_accesses.0.course.video_count', 1);
+
+    expect((float) $response->json('data.course_accesses.0.progress_percentage'))->toBe(55.0);
 });
 
 it('includes learning asset progress in student course analytics', function (): void {

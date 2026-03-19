@@ -10,6 +10,7 @@ use App\Models\Course;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\User;
+use App\Models\VideoAccess;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
@@ -28,7 +29,7 @@ class PdfAccessService implements PdfAccessServiceInterface
 
     public function download(User $student, Course $course, int $pdfId): StreamedResponse
     {
-        $this->enforceEnrollment($student, $course);
+        $this->enforceCourseAccess($student, $course);
 
         $pivot = CoursePdf::query()
             ->forCourse($course)
@@ -67,7 +68,7 @@ class PdfAccessService implements PdfAccessServiceInterface
      */
     public function signedUrl(User $student, Course $course, int $pdfId, int $expiresInSeconds): array
     {
-        $this->enforceEnrollment($student, $course);
+        $this->enforceCourseAccess($student, $course);
 
         $pivot = CoursePdf::query()
             ->forCourse($course)
@@ -103,7 +104,7 @@ class PdfAccessService implements PdfAccessServiceInterface
         ];
     }
 
-    private function enforceEnrollment(User $student, Course $course): void
+    private function enforceCourseAccess(User $student, Course $course): void
     {
         $center = $course->center;
         if (! $center instanceof Center || $center->status !== Center::STATUS_ACTIVE) {
@@ -118,8 +119,21 @@ class PdfAccessService implements PdfAccessServiceInterface
             throw new AccessDeniedHttpException('Course does not belong to your center.');
         }
 
-        $enrollment = $this->enrollmentService->getActiveEnrollment($student, $course);
+        if ($course->usesVideoCodeAccess()) {
+            $hasAccess = VideoAccess::query()
+                ->where('user_id', $student->id)
+                ->where('course_id', $course->id)
+                ->active()
+                ->exists();
 
+            if (! $hasAccess) {
+                throw new AccessDeniedHttpException('Please redeem a valid access code for this course.');
+            }
+
+            return;
+        }
+
+        $enrollment = $this->enrollmentService->getActiveEnrollment($student, $course);
         if ($enrollment === null) {
             throw new AccessDeniedHttpException('Active enrollment is required.');
         }

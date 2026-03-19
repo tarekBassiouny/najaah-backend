@@ -1,12 +1,14 @@
 <?php
 
 use App\Enums\CourseStatus;
+use App\Enums\PdfUploadStatus;
 use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Exceptions\PublishBlockedException;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pdf;
+use App\Models\PdfUploadSession;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
@@ -43,6 +45,68 @@ it('publishes course when ready', function (): void {
     CourseVideo::create([
         'course_id' => $course->id,
         'video_id' => $video->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $published = $service->publishCourse($course, $actor);
+
+    expect($published->status)->toBe(CourseStatus::Published);
+    expect($published->is_published)->toBeTrue();
+});
+
+it('publishes course when an uploaded video is already ready even if its upload session expired', function (): void {
+    $service = new CourseWorkflowService(new CenterScopeService, new AuditLogService);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0, 'is_published' => false]);
+    $actor = User::factory()->create(['center_id' => $course->center_id]);
+    Section::factory()->create(['course_id' => $course->id]);
+    $session = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'uploaded_by' => $actor->id,
+        'upload_status' => 3,
+        'progress_percent' => 100,
+        'expires_at' => now()->subDay(),
+    ]);
+    $video = Video::factory()->create([
+        'lifecycle_status' => VideoLifecycleStatus::Ready,
+        'encoding_status' => VideoUploadStatus::Ready,
+        'upload_session_id' => $session->id,
+    ]);
+    $video->update(['center_id' => $center->id]);
+    CourseVideo::create([
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $published = $service->publishCourse($course, $actor);
+
+    expect($published->status)->toBe(CourseStatus::Published);
+    expect($published->is_published)->toBeTrue();
+});
+
+it('publishes course when an uploaded pdf is already ready even if its upload session expired', function (): void {
+    $service = new CourseWorkflowService(new CenterScopeService, new AuditLogService);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id, 'status' => 0, 'is_published' => false]);
+    $actor = User::factory()->create(['center_id' => $course->center_id]);
+    Section::factory()->create(['course_id' => $course->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $actor->id,
+        'upload_status' => PdfUploadStatus::Ready,
+        'expires_at' => now()->subDay(),
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $actor->id,
+        'upload_session_id' => $session->id,
+    ]);
+    CoursePdf::create([
+        'course_id' => $course->id,
+        'pdf_id' => $pdf->id,
         'order_index' => 1,
         'visible' => true,
     ]);

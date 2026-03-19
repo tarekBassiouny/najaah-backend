@@ -129,15 +129,6 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
                 ]);
                 throw new PublishBlockedException('PDF upload session is not ready.', 422);
             }
-
-            if ($session->expires_at !== null && $session->expires_at <= now()) {
-                Log::channel('domain')->warning('course_publish_blocked', [
-                    'course_id' => $course->id,
-                    'center_id' => $course->center_id,
-                    'reason' => 'pdf_session_expired',
-                ]);
-                throw new PublishBlockedException('PDF upload session has expired.', 422);
-            }
         }
 
         $course->status = CourseStatus::Published;

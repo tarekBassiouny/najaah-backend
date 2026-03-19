@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pdf;
+use App\Models\PdfUploadSession;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
@@ -102,6 +103,51 @@ it('bulk attaches a video to a section even when the same video is attached to a
     $this->assertDatabaseHas('course_video', [
         'course_id' => $courseB->id,
         'video_id' => $video->id,
+        'section_id' => $sectionB->id,
+        'deleted_at' => null,
+    ]);
+});
+
+it('bulk attaches a pdf to a section even when the same pdf is attached to another course', function (): void {
+    $center = Center::factory()->create();
+    $courseA = Course::factory()->create(['center_id' => $center->id]);
+    $courseB = Course::factory()->create(['center_id' => $center->id]);
+    $sectionA = Section::factory()->create(['course_id' => $courseA->id]);
+    $sectionB = Section::factory()->create(['course_id' => $courseB->id]);
+    $uploadSession = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => 3,
+        'expires_at' => now()->addHour(),
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $courseA->created_by,
+        'upload_session_id' => $uploadSession->id,
+    ]);
+
+    CoursePdf::create([
+        'course_id' => $courseA->id,
+        'pdf_id' => $pdf->id,
+        'section_id' => $sectionA->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/courses/{$courseB->id}/sections/{$sectionB->id}/pdfs/bulk-attach",
+        ['pdf_ids' => [$pdf->id]],
+        $this->adminHeaders()
+    );
+
+    $response->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.attached', 1)
+        ->assertJsonPath('data.failed', 0)
+        ->assertJsonPath('data.details.attached_ids.0', $pdf->id);
+
+    $this->assertDatabaseHas('course_pdf', [
+        'course_id' => $courseB->id,
+        'pdf_id' => $pdf->id,
         'section_id' => $sectionB->id,
         'deleted_at' => null,
     ]);

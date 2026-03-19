@@ -15,13 +15,14 @@ It reflects current implementation and enforced guards.
 - Note: there is no `published` flag on sections in the current model.
 
 ### C3 — Video Readiness (ALL attached videos)
-- `video.upload_session_id` is present.
+- URL videos do not require an upload session.
+- Uploaded videos require `video.upload_session_id`.
 - Upload session exists.
 - `upload_session.upload_status == READY`.
-- `upload_session.expires_at` is null or in the future.
 - `video.encoding_status == READY`.
 - `video.lifecycle_status >= READY`.
 - `video.center_id == course.center_id`.
+- Once an uploaded video is already fully ready, later upload-session expiry does not block course publish.
 
 ### C4 — PDF Readiness (ALL attached PDFs)
 - `pdf.upload_session_id` is present.
@@ -31,7 +32,7 @@ It reflects current implementation and enforced guards.
 - `pdf.center_id == course.center_id`.
 
 ### C5 — No Bypasses
-- Publishing fails if any upload session is missing, failed, or expired.
+- Publishing fails if any required upload session is missing or failed.
 - Publishing fails if any video is still encoding or any PDF was created without a session.
 
 ## Section Readiness
@@ -48,8 +49,10 @@ It reflects current implementation and enforced guards.
 ## Video Readiness
 
 - `encoding_status == READY`.
-- `upload_session_id` is required.
-- Session must be READY and not expired.
+- URL videos do not require an upload session.
+- Uploaded videos require `upload_session_id`.
+- Session must be READY.
+- Session expiry does not block publish once the uploaded video is already READY.
 
 ## PDF Readiness
 

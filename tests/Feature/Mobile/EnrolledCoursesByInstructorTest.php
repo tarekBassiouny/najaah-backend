@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CourseAccessModel;
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\Course;
@@ -10,6 +11,9 @@ use App\Models\Instructor;
 use App\Models\Pivots\CourseVideo;
 use App\Models\User;
 use App\Models\Video;
+use App\Models\VideoAccess;
+use App\Models\VideoCodeBatch;
+use App\Models\VideoCodeRedemption;
 use App\Models\VideoUploadSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Helpers\ApiTestHelper;
@@ -449,4 +453,159 @@ test('it returns validation error for invalid category_id', function (): void {
     $response = $this->apiGet('/api/v1/courses/enrolled/by-instructor?category_id=invalid');
 
     $response->assertStatus(422);
+});
+
+test('it returns video_code courses grouped by instructor', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-key']);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $instructor = Instructor::factory()->create(['center_id' => $center->id]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
+    $course->instructors()->attach($instructor->id);
+
+    $video = createReadyVideo($center);
+    attachVideoToCourse($course, $video);
+
+    $batch = VideoCodeBatch::factory()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'quantity' => 5,
+        'view_limit_per_code' => 3,
+    ]);
+
+    $access = VideoAccess::factory()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'total_view_limit' => 3,
+    ]);
+
+    VideoCodeRedemption::factory()->create([
+        'batch_id' => $batch->id,
+        'sequence_number' => 1,
+        'user_id' => $student->id,
+        'video_access_id' => $access->id,
+        'redeemed_at' => now(),
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/courses/enrolled/by-instructor');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data');
+
+    $instructorData = $response->json('data.0');
+    expect($instructorData['id'])->toBe($instructor->id);
+    expect(count($instructorData['courses']))->toBe(1);
+    expect($instructorData['courses'][0]['id'])->toBe($course->id);
+    expect($instructorData['courses'][0]['has_access'])->toBeTrue();
+    expect($instructorData['courses'][0]['is_enrolled'])->toBeTrue();
+});
+
+test('it includes courses linked only via primary_instructor_id', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-key']);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $instructor = Instructor::factory()->create(['center_id' => $center->id]);
+
+    // Course linked ONLY via primary_instructor_id (no pivot entry)
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'primary_instructor_id' => $instructor->id,
+    ]);
+    attachVideoToCourse($course, createReadyVideo($center));
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/courses/enrolled/by-instructor');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data');
+
+    $instructorData = $response->json('data.0');
+    expect($instructorData['id'])->toBe($instructor->id);
+    expect(count($instructorData['courses']))->toBe(1);
+    expect($instructorData['courses'][0]['id'])->toBe($course->id);
+    expect($instructorData['courses'][0]['has_access'])->toBeTrue();
+    expect($instructorData['courses'][0]['is_enrolled'])->toBeTrue();
+});
+
+test('it deduplicates instructor linked via both pivot and primary_instructor_id', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-key']);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $instructor = Instructor::factory()->create(['center_id' => $center->id]);
+
+    // Course linked via BOTH primary_instructor_id AND pivot
+    $course1 = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'primary_instructor_id' => $instructor->id,
+    ]);
+    $course1->instructors()->attach($instructor->id);
+    attachVideoToCourse($course1, createReadyVideo($center));
+
+    // Course linked only via pivot
+    $course2 = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+    ]);
+    $course2->instructors()->attach($instructor->id);
+    attachVideoToCourse($course2, createReadyVideo($center));
+
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course1->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course2->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/courses/enrolled/by-instructor');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data'); // Instructor appears ONCE
+
+    $instructorData = $response->json('data.0');
+    expect($instructorData['id'])->toBe($instructor->id);
+    expect(count($instructorData['courses']))->toBe(2); // Both courses present, no duplicates
 });

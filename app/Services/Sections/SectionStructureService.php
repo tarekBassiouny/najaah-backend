@@ -11,7 +11,6 @@ use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
-use App\Services\Access\AttachmentAccessService;
 use App\Services\Access\PdfAccessService;
 use App\Services\Access\VideoAccessService;
 use App\Services\Audit\AuditLogService;
@@ -25,7 +24,6 @@ class SectionStructureService implements SectionStructureServiceInterface
 {
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly AttachmentAccessService $attachmentAccessService,
         private readonly VideoAccessService $videoAccessService,
         private readonly PdfAccessService $pdfAccessService,
         private readonly AuditLogService $auditLogService
@@ -133,7 +131,6 @@ class SectionStructureService implements SectionStructureServiceInterface
     {
         $this->assertCenterScope($section, $actor);
         $this->assertSectionActive($section);
-        $this->assertPdfBelongsToCourse($section, $pdf);
         $this->pdfAccessService->assertReadyForAttachment($pdf);
 
         $pivot = CoursePdf::withTrashed()
@@ -345,15 +342,6 @@ class SectionStructureService implements SectionStructureServiceInterface
 
         $section = new Section(['id' => $sectionId, 'course_id' => $courseId]);
         $this->syncPdfOrder($section, $ids);
-    }
-
-    private function assertPdfBelongsToCourse(Section $section, Pdf $pdf): void
-    {
-        $attachedToOtherCourse = $this->attachmentAccessService->isPdfAttachedToOtherCourse($section, $pdf);
-
-        if ($attachedToOtherCourse) {
-            throw new AttachmentNotAllowedException('PDF is already attached to another course.', 422);
-        }
     }
 
     private function assertCenterScope(Section $section, ?User $actor): void
