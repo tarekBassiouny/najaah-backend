@@ -805,7 +805,7 @@ GET /centers/{center}/quizzes/{quiz}
 
 ### Start Quiz Attempt
 ```http
-POST /centers/{center}/quizzes/{quiz}/start
+POST /centers/{center}/assets/quiz/{quiz}/attempts
 ```
 
 **Response:** `201 Created`
@@ -1060,7 +1060,7 @@ GET /centers/{center}/assignments/{assignment}
 
 ### Create/Update Submission Draft
 ```http
-POST /centers/{center}/assignments/{assignment}/submissions
+POST /centers/{center}/assets/assignment/{assignment}/submission
 ```
 
 **Request Body:**
@@ -1102,7 +1102,7 @@ POST /centers/{center}/assignments/{assignment}/submissions
 
 ### Upload File
 ```http
-POST /centers/{center}/submissions/{submission}/files
+POST /centers/{center}/assets/assignment/submissions/{submission}/files
 Content-Type: multipart/form-data
 ```
 
@@ -1125,14 +1125,14 @@ Content-Type: multipart/form-data
 
 ### Remove File
 ```http
-DELETE /centers/{center}/submissions/{submission}/files/{file}
+DELETE /centers/{center}/assets/assignment/submissions/{submission}/files/{file}
 ```
 
 **Response:** `200 OK`
 
 ### Submit Assignment
 ```http
-POST /centers/{center}/submissions/{submission}/submit
+POST /centers/{center}/assets/assignment/submissions/{submission}/submit
 ```
 
 **Response:**
@@ -1162,7 +1162,7 @@ GET /centers/{center}/assignments/{assignment}/my-submission
 
 #### List Available Groups
 ```http
-GET /centers/{center}/assignments/{assignment}/groups
+GET /centers/{center}/assets/assignment/{assignment}/groups
 ```
 
 **Response:**
@@ -1192,7 +1192,7 @@ GET /centers/{center}/assignments/{assignment}/groups
 
 #### Create Group
 ```http
-POST /centers/{center}/assignments/{assignment}/groups
+POST /centers/{center}/assets/assignment/{assignment}/groups
 ```
 
 **Request Body:**
@@ -1206,12 +1206,12 @@ POST /centers/{center}/assignments/{assignment}/groups
 
 #### Get Group Details
 ```http
-GET /centers/{center}/assignment-groups/{group}
+GET /centers/{center}/assets/assignment/groups/{group}
 ```
 
 #### Join Group
 ```http
-POST /centers/{center}/assignment-groups/{group}/join
+POST /centers/{center}/assets/assignment/groups/{group}/join
 ```
 
 **Response:**
@@ -1225,7 +1225,7 @@ POST /centers/{center}/assignment-groups/{group}/join
 
 #### Leave Group
 ```http
-POST /centers/{center}/assignment-groups/{group}/leave
+POST /centers/{center}/assets/assignment/groups/{group}/leave
 ```
 
 ---

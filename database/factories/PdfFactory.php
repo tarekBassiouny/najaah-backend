@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Enums\MediaSourceType;
+use App\Enums\TextExtractionStatus;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\User;
@@ -40,6 +41,7 @@ class PdfFactory extends Factory
             'source_url' => 'https://example.com/file.pdf',
             'file_size_kb' => 1024,
             'file_extension' => 'pdf',
+            'text_extraction_status' => TextExtractionStatus::Pending,
             'created_by' => User::factory()->for($center, 'center'),
         ];
     }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\MediaSourceType;
+use App\Enums\TranscriptFormat;
+use App\Enums\TranscriptSource;
 use App\Enums\VideoLifecycleStatus;
 use App\Enums\VideoUploadStatus;
 use App\Models\Concerns\HasTranslatableSearch;
@@ -40,6 +42,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $thumbnail_url
  * @property string|null $custom_thumbnail_url
  * @property array<string, string>|null $thumbnail_urls
+ * @property string|null $transcript
+ * @property TranscriptFormat|null $transcript_format
+ * @property TranscriptSource|null $transcript_source
  * @property-read User $creator
  * @property-read Center $center
  * @property-read VideoUploadSession|null $uploadSession
@@ -83,6 +88,9 @@ class Video extends Model
         'thumbnail_url',
         'custom_thumbnail_url',
         'thumbnail_urls',
+        'transcript',
+        'transcript_format',
+        'transcript_source',
         'views_count',
     ];
 
@@ -98,6 +106,9 @@ class Video extends Model
         'is_demo' => 'boolean',
         'library_id' => 'integer',
         'thumbnail_urls' => 'array',
+        'transcript' => 'string',
+        'transcript_format' => TranscriptFormat::class,
+        'transcript_source' => TranscriptSource::class,
         'views_count' => 'integer',
     ];
 

@@ -62,4 +62,28 @@ interface AnalyticsSupportServiceInterface
      * @return array<int, array<string, int|string|null>>
      */
     public function mapTopCourses(iterable $rows): array;
+
+    /**
+     * Generate a date series with zero-filled gaps for every day in the range.
+     *
+     * @param  array<string, int>  $dateCounts  Date (YYYY-MM-DD in request timezone) => count
+     * @return array<int, array{date: string, count: int}>
+     */
+    public function generateDateSeries(AnalyticsFilters $filters, array $dateCounts): array;
+
+    /**
+     * Generate a multi-status date series with zero-filled gaps.
+     *
+     * @param  array<string, array<string, int>>  $dateStatusCounts  Date => [status => count]
+     * @param  array<int, string>  $statuses  List of status keys to include
+     * @return array<int, array<string, int|string>>
+     */
+    public function generateStatusDateSeries(AnalyticsFilters $filters, array $dateStatusCounts, array $statuses): array;
+
+    /**
+     * Compute previous period date range of equal length preceding the current range.
+     *
+     * @return array{from: \Illuminate\Support\Carbon, to: \Illuminate\Support\Carbon}
+     */
+    public function previousPeriodDates(AnalyticsFilters $filters): array;
 }

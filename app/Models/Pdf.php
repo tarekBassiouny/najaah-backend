@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\MediaSourceType;
+use App\Enums\TextExtractionStatus;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CoursePdf;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $source_url
  * @property int|null $file_size_kb
  * @property string $file_extension
+ * @property string|null $text_content
+ * @property TextExtractionStatus $text_extraction_status
  * @property int|null $upload_session_id
  * @property int $created_by
  * @property-read User $creator
@@ -52,6 +55,8 @@ class Pdf extends Model
         'source_url',
         'file_size_kb',
         'file_extension',
+        'text_content',
+        'text_extraction_status',
         'upload_session_id',
         'is_demo',
         'created_by',
@@ -64,6 +69,8 @@ class Pdf extends Model
         'tags' => 'array',
         'file_size_kb' => 'integer',
         'source_type' => MediaSourceType::class,
+        'text_content' => 'string',
+        'text_extraction_status' => TextExtractionStatus::class,
         'is_demo' => 'boolean',
         'upload_session_id' => 'integer',
     ];

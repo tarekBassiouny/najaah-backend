@@ -126,5 +126,9 @@ final class ErrorCodes
 
     public const AI_LIMIT_OUTPUT_TOO_LARGE = 'AI_LIMIT_OUTPUT_TOO_LARGE';
 
+    public const TRANSCRIPT_NOT_FOUND = 'TRANSCRIPT_NOT_FOUND';
+
+    public const PDF_TEXT_EXTRACTION_FAILED = 'PDF_TEXT_EXTRACTION_FAILED';
+
     private function __construct() {}
 }

@@ -36,7 +36,7 @@ Do **not** use WebView for quiz attempts.
 - `GET /api/v1/centers/{center}/quizzes/{quiz}`
 
 ## 2) Start/resume attempt
-- `POST /api/v1/centers/{center}/quizzes/{quiz}/start`
+- `POST /api/v1/centers/{center}/assets/quiz/{quiz}/attempts`
 
 ## 3) Save answer (autosave + manual next)
 - `POST /api/v1/centers/{center}/quiz-attempts/{attempt}/answer`
@@ -195,7 +195,7 @@ Show:
 
 Action:
 - if `can_resume=true` -> `Resume`
-  - call `POST /quizzes/{quiz}/start` (backend returns existing in-progress)
+  - call `POST /assets/quiz/{quiz}/attempts` (backend returns existing in-progress)
 
 ---
 
@@ -339,7 +339,7 @@ Recommended save strategy:
 
 ## On resume
 - Always call `POST start`
-- Backend returns existing in-progress attempt if present
+- Backend returns existing in-progress attempt if present from `POST /assets/quiz/{quiz}/attempts`
 - Replace local attempt state with response payload
 
 ---
@@ -464,4 +464,3 @@ Required:
 2. Avoid optimistic final submit without server confirmation.
 3. For answer save requests, cancel previous in-flight save for same `question_id` and keep latest only.
 4. If using React Native, prefer `react-query` + lightweight local state store for pager interaction.
-

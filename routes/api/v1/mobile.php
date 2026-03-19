@@ -2,24 +2,22 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Mobile\AssignmentController;
 use App\Http\Controllers\Mobile\AssignmentGroupController;
 use App\Http\Controllers\Mobile\AssignmentSubmissionController;
 use App\Http\Controllers\Mobile\AuthController;
 use App\Http\Controllers\Mobile\CategoryController;
 use App\Http\Controllers\Mobile\CentersController;
+use App\Http\Controllers\Mobile\CourseAssetController;
 use App\Http\Controllers\Mobile\DeviceChangeRequestController;
 use App\Http\Controllers\Mobile\EnrolledCoursesController;
 use App\Http\Controllers\Mobile\EnrollmentRequestController;
 use App\Http\Controllers\Mobile\ExploreController;
 use App\Http\Controllers\Mobile\ExtraViewRequestController;
 use App\Http\Controllers\Mobile\InstructorController;
-use App\Http\Controllers\Mobile\LearningAssetController;
 use App\Http\Controllers\Mobile\MeController;
 use App\Http\Controllers\Mobile\PdfController;
 use App\Http\Controllers\Mobile\PlaybackController;
 use App\Http\Controllers\Mobile\QuizAttemptController;
-use App\Http\Controllers\Mobile\QuizController;
 use App\Http\Controllers\Mobile\SearchController;
 use App\Http\Controllers\Mobile\SurveyController;
 use App\Http\Controllers\Mobile\VideoAccessCodeController;
@@ -211,52 +209,43 @@ Route::middleware('jwt.mobile')->group(function (): void {
 
     /*
     |--------------------------------------------------------------------------
+    | Course Assets (Unified Read Surface)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/centers/{center}/courses/{course}/assets', [CourseAssetController::class, 'index']);
+    Route::get('/centers/{center}/assets/{type}/{id}', [CourseAssetController::class, 'show']);
+    Route::post('/centers/{center}/assets/{type}/{id}/progress', [CourseAssetController::class, 'trackProgress']);
+
+    /*
+    |--------------------------------------------------------------------------
     | Quizzes
     |--------------------------------------------------------------------------
     */
-    Route::get('/centers/{center}/courses/{course}/quizzes', [QuizController::class, 'index']);
-    Route::get('/centers/{center}/quizzes/{quiz}', [QuizController::class, 'show']);
-    Route::get('/centers/{center}/quizzes/{quiz}/my-attempts', [QuizController::class, 'myAttempts']);
-    Route::post('/centers/{center}/quizzes/{quiz}/start', [QuizAttemptController::class, 'start']);
-    Route::get('/centers/{center}/quiz-attempts/{attempt}', [QuizAttemptController::class, 'show']);
-    Route::post('/centers/{center}/quiz-attempts/{attempt}/answer', [QuizAttemptController::class, 'answer']);
-    Route::post('/centers/{center}/quiz-attempts/{attempt}/submit', [QuizAttemptController::class, 'submit']);
-    Route::get('/centers/{center}/quiz-attempts/{attempt}/results', [QuizAttemptController::class, 'results']);
+    Route::post('/centers/{center}/assets/quiz/{quiz}/attempts', [QuizAttemptController::class, 'start']);
+    Route::get('/centers/{center}/assets/quiz/attempts/{attempt}', [QuizAttemptController::class, 'show']);
+    Route::post('/centers/{center}/assets/quiz/attempts/{attempt}/answers', [QuizAttemptController::class, 'answer']);
+    Route::post('/centers/{center}/assets/quiz/attempts/{attempt}/submit', [QuizAttemptController::class, 'submit']);
+    Route::get('/centers/{center}/assets/quiz/attempts/{attempt}/results', [QuizAttemptController::class, 'results']);
 
     /*
     |--------------------------------------------------------------------------
     | Assignments
     |--------------------------------------------------------------------------
     */
-    Route::get('/centers/{center}/courses/{course}/assignments', [AssignmentController::class, 'index']);
-    Route::get('/centers/{center}/assignments/{assignment}', [AssignmentController::class, 'show']);
-    Route::get('/centers/{center}/assignments/{assignment}/my-submission', [AssignmentController::class, 'mySubmission']);
-    Route::post('/centers/{center}/assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store']);
-    Route::post('/centers/{center}/submissions/{submission}/files', [AssignmentSubmissionController::class, 'uploadFile']);
-    Route::delete('/centers/{center}/submissions/{submission}/files/{file}', [AssignmentSubmissionController::class, 'removeFile']);
-    Route::post('/centers/{center}/submissions/{submission}/submit', [AssignmentSubmissionController::class, 'submit']);
+    Route::post('/centers/{center}/assets/assignment/{assignment}/submission', [AssignmentSubmissionController::class, 'store']);
+    Route::post('/centers/{center}/assets/assignment/submissions/{submission}/files', [AssignmentSubmissionController::class, 'uploadFile']);
+    Route::delete('/centers/{center}/assets/assignment/submissions/{submission}/files/{file}', [AssignmentSubmissionController::class, 'removeFile']);
+    Route::post('/centers/{center}/assets/assignment/submissions/{submission}/submit', [AssignmentSubmissionController::class, 'submit']);
 
     /*
     |--------------------------------------------------------------------------
     | Assignment Groups
     |--------------------------------------------------------------------------
     */
-    Route::get('/centers/{center}/assignments/{assignment}/groups', [AssignmentGroupController::class, 'index']);
-    Route::post('/centers/{center}/assignments/{assignment}/groups', [AssignmentGroupController::class, 'store']);
-    Route::get('/centers/{center}/assignment-groups/{group}', [AssignmentGroupController::class, 'show']);
-    Route::post('/centers/{center}/assignment-groups/{group}/join', [AssignmentGroupController::class, 'join']);
-    Route::post('/centers/{center}/assignment-groups/{group}/leave', [AssignmentGroupController::class, 'leave']);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Learning Assets (Published Only)
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/centers/{center}/courses/{course}/summaries', [LearningAssetController::class, 'summaries']);
-    Route::get('/centers/{center}/summaries/{asset}', [LearningAssetController::class, 'summary']);
-    Route::get('/centers/{center}/courses/{course}/flashcards', [LearningAssetController::class, 'flashcards']);
-    Route::get('/centers/{center}/flashcards/{asset}', [LearningAssetController::class, 'flashcardSet']);
-    Route::get('/centers/{center}/courses/{course}/interactive-activities', [LearningAssetController::class, 'interactiveActivities']);
-    Route::get('/centers/{center}/interactive-activities/{asset}', [LearningAssetController::class, 'interactiveActivity']);
+    Route::get('/centers/{center}/assets/assignment/{assignment}/groups', [AssignmentGroupController::class, 'index']);
+    Route::post('/centers/{center}/assets/assignment/{assignment}/groups', [AssignmentGroupController::class, 'store']);
+    Route::get('/centers/{center}/assets/assignment/groups/{group}', [AssignmentGroupController::class, 'show']);
+    Route::post('/centers/{center}/assets/assignment/groups/{group}/join', [AssignmentGroupController::class, 'join']);
+    Route::post('/centers/{center}/assets/assignment/groups/{group}/leave', [AssignmentGroupController::class, 'leave']);
 
 });

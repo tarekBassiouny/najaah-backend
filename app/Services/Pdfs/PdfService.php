@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Pdfs;
 
 use App\Enums\MediaSourceType;
+use App\Enums\TextExtractionStatus;
+use App\Jobs\ExtractPdfTextJob;
 use App\Models\Center;
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
@@ -73,11 +75,19 @@ class PdfService implements PdfServiceInterface
         /** @var Pdf $pdf */
         $pdf = Pdf::create($payload);
 
+        if ($pdf->source_type === MediaSourceType::Upload && strtolower((string) $pdf->file_extension) === 'pdf') {
+            $pdf->update([
+                'text_extraction_status' => TextExtractionStatus::Pending,
+            ]);
+
+            ExtractPdfTextJob::dispatch($pdf);
+        }
+
         $this->auditLogService->log($admin, $pdf, AuditActions::PDF_CREATED, [
             'center_id' => $center->id,
         ]);
 
-        return $pdf;
+        return $pdf->fresh(['creator', 'uploadSession']) ?? $pdf;
     }
 
     /**

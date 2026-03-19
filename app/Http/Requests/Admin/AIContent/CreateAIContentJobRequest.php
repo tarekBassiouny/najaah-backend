@@ -7,14 +7,27 @@ namespace App\Http\Requests\Admin\AIContent;
 use App\Enums\AIContentSourceType;
 use App\Enums\AIContentTargetType;
 use App\Enums\AIProvider;
+use App\Http\Requests\Admin\AIContent\Concerns\ValidatesAIContentGenerationConfig;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class CreateAIContentJobRequest extends FormRequest
 {
+    use ValidatesAIContentGenerationConfig;
+
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if (! $this->has('language')) {
+            $this->merge([
+                'language' => 'ar',
+            ]);
+        }
     }
 
     /**
@@ -28,10 +41,23 @@ class CreateAIContentJobRequest extends FormRequest
             'source_id' => ['required', 'integer', 'min:1'],
             'target_type' => ['required', 'string', Rule::enum(AIContentTargetType::class)],
             'target_id' => ['sometimes', 'nullable', 'integer', 'min:1'],
+            'language' => ['required', 'string', Rule::in(['en', 'ar', 'both'])],
             'ai_provider' => ['sometimes', 'string', Rule::in(AIProvider::values())],
             'ai_model' => ['sometimes', 'string', 'max:100'],
             'generation_config' => ['sometimes', 'array'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $this->validateGenerationConfig(
+                $validator,
+                'generation_config',
+                (string) $this->input('target_type', ''),
+                $this->input('generation_config', [])
+            );
+        });
     }
 
     /**
@@ -59,6 +85,10 @@ class CreateAIContentJobRequest extends FormRequest
             'target_id' => [
                 'description' => 'Optional existing target entity ID to update/publish into.',
                 'example' => '55',
+            ],
+            'language' => [
+                'description' => 'Output language preference: en, ar, or both. Defaults to ar.',
+                'example' => 'ar',
             ],
             'ai_provider' => [
                 'description' => 'Optional AI provider override for this job.',

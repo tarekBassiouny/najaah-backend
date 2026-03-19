@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Videos\VideoController;
+use App\Http\Controllers\Admin\Videos\VideoTranscriptController;
 use App\Http\Controllers\Admin\Videos\VideoUploadSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,9 @@ Route::middleware(['require.permission:video.manage', 'scope.center'])->group(fu
     Route::post('/centers/{center}/videos/{video}/thumbnail', [VideoController::class, 'uploadThumbnail'])->whereNumber(['center', 'video']);
     Route::delete('/centers/{center}/videos/{video}/thumbnail', [VideoController::class, 'clearThumbnail'])->whereNumber(['center', 'video']);
     Route::post('/centers/{center}/videos/{video}/preview', [VideoController::class, 'preview'])->whereNumber(['center', 'video']);
+    Route::post('/centers/{center}/videos/{video}/transcript', [VideoTranscriptController::class, 'store'])->whereNumber(['center', 'video']);
+    Route::get('/centers/{center}/videos/{video}/transcript', [VideoTranscriptController::class, 'show'])->whereNumber(['center', 'video']);
+    Route::delete('/centers/{center}/videos/{video}/transcript', [VideoTranscriptController::class, 'destroy'])->whereNumber(['center', 'video']);
 });
 
 Route::middleware(['require.permission:video.upload', 'scope.center'])->group(function (): void {

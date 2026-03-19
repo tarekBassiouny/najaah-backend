@@ -43,6 +43,7 @@ class AnalyticsDevicesRequestsResource extends JsonResource
                         'admin' => (int) data_get($resource, 'devices.changes.by_source.admin', 0),
                     ],
                 ],
+                'trends' => data_get($resource, 'devices.trends', []),
             ],
             'requests' => [
                 'extra_views' => [
@@ -51,6 +52,7 @@ class AnalyticsDevicesRequestsResource extends JsonResource
                     'rejected' => (int) data_get($resource, 'requests.extra_views.rejected', 0),
                     'approval_rate' => (float) data_get($resource, 'requests.extra_views.approval_rate', 0),
                     'avg_decision_hours' => (float) data_get($resource, 'requests.extra_views.avg_decision_hours', 0),
+                    'trends' => data_get($resource, 'requests.extra_views.trends', []),
                 ],
                 'enrollment' => [
                     'pending' => (int) data_get($resource, 'requests.enrollment.pending', 0),
@@ -58,6 +60,7 @@ class AnalyticsDevicesRequestsResource extends JsonResource
                     'rejected' => (int) data_get($resource, 'requests.enrollment.rejected', 0),
                 ],
             ],
+            'labels' => data_get($resource, 'labels', []),
         ];
     }
 }

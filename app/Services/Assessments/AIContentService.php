@@ -10,7 +10,9 @@ use App\Enums\AIContentTargetType;
 use App\Enums\LearningAssetStatus;
 use App\Enums\LearningAssetType;
 use App\Enums\QuestionType;
+use App\Enums\TextExtractionStatus;
 use App\Exceptions\DomainException;
+use App\Exceptions\RateLimitException;
 use App\Models\AIContentJob;
 use App\Models\Assignment;
 use App\Models\Center;
@@ -27,7 +29,15 @@ use App\Services\AI\Contracts\AIIntegrationServiceInterface;
 use App\Services\Assessments\Contracts\AIContentServiceInterface;
 use App\Services\Assessments\Contracts\AssignmentServiceInterface;
 use App\Services\Assessments\Contracts\QuizServiceInterface;
+use App\Services\Assessments\Validators\AIOutputValidatorInterface;
+use App\Services\Assessments\Validators\AssignmentOutputValidator;
+use App\Services\Assessments\Validators\FlashcardsOutputValidator;
+use App\Services\Assessments\Validators\InteractiveActivityOutputValidator;
+use App\Services\Assessments\Validators\QuizOutputValidator;
+use App\Services\Assessments\Validators\SummaryOutputValidator;
 use App\Support\ErrorCodes;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -38,7 +48,8 @@ final class AIContentService implements AIContentServiceInterface
     public function __construct(
         private readonly QuizServiceInterface $quizService,
         private readonly AssignmentServiceInterface $assignmentService,
-        private readonly AIIntegrationServiceInterface $aiIntegrationService
+        private readonly AIIntegrationServiceInterface $aiIntegrationService,
+        private readonly PromptBuilder $promptBuilder
     ) {}
 
     /**
@@ -94,6 +105,7 @@ final class AIContentService implements AIContentServiceInterface
             'source_id' => $sourceId,
             'target_type' => $targetType,
             'target_id' => $targetId,
+            'language' => is_string($data['language'] ?? null) ? $data['language'] : 'ar',
             'status' => AIContentJobStatus::Pending,
             'generation_config' => $data['generation_config'] ?? [],
             'ai_provider' => $provider,
@@ -126,6 +138,7 @@ final class AIContentService implements AIContentServiceInterface
                     'source_id' => $data['source_id'],
                     'target_type' => $asset['target_type'],
                     'target_id' => $asset['target_id'] ?? null,
+                    'language' => $data['language'] ?? 'ar',
                     'ai_provider' => $asset['ai_provider'] ?? null,
                     'ai_model' => $asset['ai_model'] ?? null,
                     'generation_config' => $asset['generation_config'] ?? [],
@@ -154,7 +167,10 @@ final class AIContentService implements AIContentServiceInterface
             'status' => AIContentJobStatus::Processing,
             'started_at' => now(),
             'error_message' => null,
+            'validation_warnings' => null,
         ]);
+
+        $validationWarnings = [];
 
         try {
             $content = $this->extractSourceContent($job);
@@ -162,7 +178,7 @@ final class AIContentService implements AIContentServiceInterface
                 throw new \RuntimeException('Unable to extract source content for AI generation.');
             }
 
-            $prompt = $this->buildPrompt($job, $content);
+            $prompts = $this->promptBuilder->build($job, $content);
             $provider = is_string($job->ai_provider) ? $job->ai_provider : '';
             $model = is_string($job->ai_model) ? $job->ai_model : '';
             if ($provider === '' || $model === '') {
@@ -176,7 +192,27 @@ final class AIContentService implements AIContentServiceInterface
                 throw new \RuntimeException(sprintf('API key is not configured for provider [%s].', $provider));
             }
 
-            $payload = $this->callAIProvider($prompt, $provider, $model, $apiKey);
+            $payload = $this->callAIProvider($prompts['system'], $prompts['user'], $provider, $model, $apiKey);
+            $promptHistory = $prompts;
+            $validationWarnings = $this->validateOutputPayload($job, $payload);
+
+            if ($validationWarnings !== []) {
+                $retryPrompts = $this->promptBuilder->buildRetryPrompt($job, $content, $validationWarnings);
+                $payload = $this->callAIProvider($retryPrompts['system'], $retryPrompts['user'], $provider, $model, $apiKey);
+
+                $retryValidationErrors = $this->validateOutputPayload($job, $payload);
+                if ($retryValidationErrors !== []) {
+                    $validationWarnings = array_values(array_unique([...$validationWarnings, ...$retryValidationErrors]));
+
+                    throw new \RuntimeException('AI output validation failed after retry.');
+                }
+
+                $promptHistory = [
+                    'initial' => $prompts,
+                    'retry' => $retryPrompts,
+                ];
+            }
+
             $encodedPayload = json_encode($payload, JSON_UNESCAPED_UNICODE);
             $outputChars = is_string($encodedPayload) ? mb_strlen($encodedPayload) : 0;
             $actualOutputTokens = $this->aiIntegrationService->estimateTokensFromChars($outputChars);
@@ -196,7 +232,8 @@ final class AIContentService implements AIContentServiceInterface
                 'ai_model' => $model,
                 'estimated_input_tokens' => $estimatedInputTokens,
                 'estimated_output_tokens' => $actualOutputTokens,
-                'prompt_used' => $prompt,
+                'prompt_used' => $this->encodePromptHistory($promptHistory),
+                'validation_warnings' => $validationWarnings === [] ? null : $validationWarnings,
                 'completed_at' => now(),
             ]);
         } catch (\Throwable $throwable) {
@@ -205,9 +242,21 @@ final class AIContentService implements AIContentServiceInterface
                 'error' => $throwable->getMessage(),
             ]);
 
+            if ($this->shouldRetryProviderFailure($throwable)) {
+                $job->update([
+                    'status' => AIContentJobStatus::Pending,
+                    'error_message' => $throwable->getMessage(),
+                    'validation_warnings' => $validationWarnings === [] ? null : $validationWarnings,
+                    'completed_at' => null,
+                ]);
+
+                throw $throwable;
+            }
+
             $job->update([
                 'status' => AIContentJobStatus::Failed,
                 'error_message' => $throwable->getMessage(),
+                'validation_warnings' => $validationWarnings === [] ? null : $validationWarnings,
                 'completed_at' => now(),
             ]);
         }
@@ -224,6 +273,15 @@ final class AIContentService implements AIContentServiceInterface
 
         if ($reviewedPayload === []) {
             throw new DomainException('reviewed_payload is required.', ErrorCodes::INVALID_STATE, 422);
+        }
+
+        $validationErrors = $this->validateOutputPayload($job, $reviewedPayload);
+        if ($validationErrors !== []) {
+            throw new DomainException(
+                'Reviewed payload is invalid: '.implode(' ', $validationErrors),
+                ErrorCodes::INVALID_STATE,
+                422
+            );
         }
 
         $job->update([
@@ -318,6 +376,7 @@ final class AIContentService implements AIContentServiceInterface
             'generation_config' => $job->generation_config,
             'generated_payload' => $job->generated_payload,
             'reviewed_payload' => $job->reviewed_payload,
+            'validation_warnings' => $job->validation_warnings,
             'ai_provider' => $job->ai_provider,
             'ai_model' => $job->ai_model,
             'estimated_input_tokens' => $job->estimated_input_tokens,
@@ -457,6 +516,7 @@ final class AIContentService implements AIContentServiceInterface
             ->whereKey($sourceId)
             ->where('center_id', $centerId)
             ->firstOrFail();
+        $this->assertVideoSourceReady($video);
 
         /** @var mixed $transcript */
         $transcript = $video->getAttribute('transcript');
@@ -474,6 +534,7 @@ final class AIContentService implements AIContentServiceInterface
             ->whereKey($sourceId)
             ->where('center_id', $centerId)
             ->firstOrFail();
+        $this->assertPdfSourceReady($pdf);
 
         /** @var mixed $textContent */
         $textContent = $pdf->getAttribute('text_content');
@@ -483,6 +544,52 @@ final class AIContentService implements AIContentServiceInterface
             'PDF description: '.($pdf->translate('description') ?? ''),
             is_string($textContent) ? $textContent : null,
         ])));
+    }
+
+    private function assertVideoSourceReady(Video $video): void
+    {
+        /** @var mixed $transcript */
+        $transcript = $video->getAttribute('transcript');
+
+        if (! is_string($transcript) || trim($transcript) === '') {
+            throw new DomainException(
+                'Video transcript is required before AI generation.',
+                ErrorCodes::TRANSCRIPT_NOT_FOUND,
+                422
+            );
+        }
+    }
+
+    private function assertPdfSourceReady(Pdf $pdf): void
+    {
+        $status = $pdf->text_extraction_status;
+
+        if ($status === null || $status === TextExtractionStatus::Pending || $status === TextExtractionStatus::Processing) {
+            throw new DomainException(
+                'PDF text extraction is still in progress.',
+                ErrorCodes::PDF_NOT_READY,
+                422
+            );
+        }
+
+        if ($status === TextExtractionStatus::Failed || $status === TextExtractionStatus::Skipped) {
+            throw new DomainException(
+                'PDF text extraction failed or returned no usable text.',
+                ErrorCodes::PDF_TEXT_EXTRACTION_FAILED,
+                422
+            );
+        }
+
+        /** @var mixed $textContent */
+        $textContent = $pdf->getAttribute('text_content');
+
+        if (! is_string($textContent) || trim($textContent) === '') {
+            throw new DomainException(
+                'PDF text extraction failed or returned no usable text.',
+                ErrorCodes::PDF_TEXT_EXTRACTION_FAILED,
+                422
+            );
+        }
     }
 
     private function extractSectionContent(int $courseId, int $sourceId): string
@@ -524,7 +631,7 @@ final class AIContentService implements AIContentServiceInterface
         $course = Course::query()
             ->whereKey($sourceId)
             ->where('center_id', $centerId)
-            ->with(['sections.videos', 'sections.pdfs'])
+            ->with(['videos', 'pdfs', 'sections.videos', 'sections.pdfs'])
             ->firstOrFail();
 
         $parts = [
@@ -532,108 +639,66 @@ final class AIContentService implements AIContentServiceInterface
             'Course description: '.($course->translate('description') ?? ''),
         ];
 
+        $directVideos = $course->videos->filter(static fn (Video $video): bool => $video->pivot?->section_id === null);
+        foreach ($directVideos as $video) {
+            /** @var mixed $transcript */
+            $transcript = $video->getAttribute('transcript');
+            $parts[] = 'Video: '.$video->translate('title');
+            if (is_string($transcript) && $transcript !== '') {
+                $parts[] = $transcript;
+            }
+        }
+
+        $directPdfs = $course->pdfs->filter(static fn (Pdf $pdf): bool => $pdf->pivot?->section_id === null);
+        foreach ($directPdfs as $pdf) {
+            /** @var mixed $textContent */
+            $textContent = $pdf->getAttribute('text_content');
+            $parts[] = 'PDF: '.$pdf->translate('title');
+            if (is_string($textContent) && $textContent !== '') {
+                $parts[] = $textContent;
+            }
+        }
+
         foreach ($course->sections as $section) {
             $parts[] = 'Section: '.$section->translate('title');
 
             foreach ($section->videos as $video) {
+                /** @var mixed $transcript */
+                $transcript = $video->getAttribute('transcript');
                 $parts[] = 'Video: '.$video->translate('title');
+                if (is_string($transcript) && $transcript !== '') {
+                    $parts[] = $transcript;
+                }
             }
 
             foreach ($section->pdfs as $pdf) {
+                /** @var mixed $textContent */
+                $textContent = $pdf->getAttribute('text_content');
                 $parts[] = 'PDF: '.$pdf->translate('title');
+                if (is_string($textContent) && $textContent !== '') {
+                    $parts[] = $textContent;
+                }
             }
         }
 
         return trim(implode("\n\n", $parts));
     }
 
-    private function buildPrompt(AIContentJob $job, string $content): string
-    {
-        $jsonShape = match ($job->target_type) {
-            AIContentTargetType::Quiz => <<<'JSON'
-{
-  "quiz": {
-    "title": "string",
-    "description": "string"
-  },
-  "questions": [
-    {
-      "question": "string",
-      "options": [
-        {"text": "string", "is_correct": true},
-        {"text": "string", "is_correct": false},
-        {"text": "string", "is_correct": false},
-        {"text": "string", "is_correct": false}
-      ],
-      "explanation": "string",
-      "points": 1
-    }
-  ]
-}
-JSON,
-            AIContentTargetType::Assignment => <<<'JSON'
-{
-  "assignment": {
-    "title": "string",
-    "description": "string",
-    "submission_types": [0,1,2],
-    "max_points": 100,
-    "passing_score": 60
-  }
-}
-JSON,
-            AIContentTargetType::Summary => <<<'JSON'
-{
-  "title": "string",
-  "content": "string"
-}
-JSON,
-            AIContentTargetType::Flashcards => <<<'JSON'
-{
-  "title": "string",
-  "cards": [
-    {"front": "string", "back": "string"}
-  ]
-}
-JSON,
-            AIContentTargetType::InteractiveActivity => <<<'JSON'
-{
-  "title": "string",
-  "instructions": "string",
-  "steps": [
-    {"title": "string", "description": "string", "estimated_seconds": 60}
-  ]
-}
-JSON,
-        };
-
-        return <<<PROMPT
-You are an educational content specialist.
-Generate structured {$job->target_type->value} content from the source content below.
-
-SOURCE CONTENT:
-{$content}
-
-RULES:
-- Output valid JSON only.
-- Keep it concise and pedagogically useful.
-- Use clear language suitable for high-school and college learners.
-
-OUTPUT JSON SHAPE:
-{$jsonShape}
-PROMPT;
-    }
-
     /**
      * @return array<string,mixed>
      */
-    private function callAIProvider(string $prompt, string $provider, string $model, string $apiKey): array
-    {
+    private function callAIProvider(
+        string $systemPrompt,
+        string $userPrompt,
+        string $provider,
+        string $model,
+        string $apiKey
+    ): array {
         /** @var array<string,mixed> $payload */
         $payload = match ($provider) {
-            'anthropic' => $this->callAnthropic($prompt, $model, $apiKey),
-            'gemini' => $this->callGemini($prompt, $model, $apiKey),
-            default => $this->callOpenAI($prompt, $model, $apiKey),
+            'anthropic' => $this->callAnthropic($systemPrompt, $userPrompt, $model, $apiKey),
+            'gemini' => $this->callGemini($systemPrompt, $userPrompt, $model, $apiKey),
+            default => $this->callOpenAI($systemPrompt, $userPrompt, $model, $apiKey),
         };
 
         return $payload;
@@ -642,22 +707,24 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callOpenAI(string $prompt, string $model, string $apiKey): array
+    private function callOpenAI(string $systemPrompt, string $userPrompt, string $model, string $apiKey): array
     {
-        $response = Http::withHeaders([
+        $response = Http::timeout(120)->withHeaders([
             'Authorization' => 'Bearer '.$apiKey,
             'Content-Type' => 'application/json',
         ])->post('https://api.openai.com/v1/chat/completions', [
             'model' => $model,
             'messages' => [
-                ['role' => 'user', 'content' => $prompt],
+                ['role' => 'system', 'content' => $systemPrompt],
+                ['role' => 'user', 'content' => $userPrompt],
+            ],
+            'response_format' => [
+                'type' => 'json_object',
             ],
             'temperature' => 0.4,
         ]);
 
-        if (! $response->successful()) {
-            throw new \RuntimeException('OpenAI API request failed: '.$response->body());
-        }
+        $this->assertProviderResponseSuccessful($response, 'OpenAI');
 
         $content = $response->json('choices.0.message.content');
         if (! is_string($content) || $content === '') {
@@ -670,23 +737,22 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callAnthropic(string $prompt, string $model, string $apiKey): array
+    private function callAnthropic(string $systemPrompt, string $userPrompt, string $model, string $apiKey): array
     {
-        $response = Http::withHeaders([
+        $response = Http::timeout(120)->withHeaders([
             'x-api-key' => $apiKey,
             'Content-Type' => 'application/json',
             'anthropic-version' => '2023-06-01',
         ])->post('https://api.anthropic.com/v1/messages', [
             'model' => $model,
             'max_tokens' => 4096,
+            'system' => $systemPrompt."\nReturn JSON only with no markdown or extra commentary.",
             'messages' => [
-                ['role' => 'user', 'content' => $prompt],
+                ['role' => 'user', 'content' => $userPrompt],
             ],
         ]);
 
-        if (! $response->successful()) {
-            throw new \RuntimeException('Anthropic API request failed: '.$response->body());
-        }
+        $this->assertProviderResponseSuccessful($response, 'Anthropic');
 
         $content = $response->json('content.0.text');
         if (! is_string($content) || $content === '') {
@@ -699,31 +765,35 @@ PROMPT;
     /**
      * @return array<string,mixed>
      */
-    private function callGemini(string $prompt, string $model, string $apiKey): array
+    private function callGemini(string $systemPrompt, string $userPrompt, string $model, string $apiKey): array
     {
         $endpoint = sprintf(
             'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent',
             rawurlencode($model)
         );
 
-        $response = Http::withHeaders([
+        $response = Http::timeout(120)->withHeaders([
             'Content-Type' => 'application/json',
         ])->post($endpoint.'?key='.$apiKey, [
+            'systemInstruction' => [
+                'parts' => [
+                    ['text' => $systemPrompt],
+                ],
+            ],
             'contents' => [
                 [
                     'parts' => [
-                        ['text' => $prompt],
+                        ['text' => $userPrompt],
                     ],
                 ],
             ],
             'generationConfig' => [
+                'responseMimeType' => 'application/json',
                 'temperature' => 0.4,
             ],
         ]);
 
-        if (! $response->successful()) {
-            throw new \RuntimeException('Gemini API request failed: '.$response->body());
-        }
+        $this->assertProviderResponseSuccessful($response, 'Gemini');
 
         $content = $response->json('candidates.0.content.parts.0.text');
         if (! is_string($content) || $content === '') {
@@ -752,6 +822,31 @@ PROMPT;
         return $decoded;
     }
 
+    private function assertProviderResponseSuccessful(Response $response, string $providerLabel): void
+    {
+        if ($response->status() === 429) {
+            throw new RateLimitException(
+                strtolower($providerLabel),
+                sprintf('%s rate limit exceeded.', $providerLabel)
+            );
+        }
+
+        if (! $response->successful()) {
+            throw new \RuntimeException(sprintf(
+                '%s API request failed with status %d: %s',
+                $providerLabel,
+                $response->status(),
+                $response->body()
+            ));
+        }
+    }
+
+    private function shouldRetryProviderFailure(\Throwable $throwable): bool
+    {
+        return $throwable instanceof RateLimitException
+            || $throwable instanceof ConnectionException;
+    }
+
     /**
      * @param  array<string,mixed>  $payload
      * @return array<string,mixed>
@@ -766,16 +861,16 @@ PROMPT;
         $quiz = $target instanceof Quiz
             ? $this->resolveQuizPublicationTarget($target, $publisher)
             : $this->quizService->create($course, [
-                'title_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.title'), 'AI Generated Quiz'),
-                'description_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.description')),
+                'title_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.title'), 'AI Generated Quiz', $job->language),
+                'description_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.description'), null, $job->language),
                 'attachable_type' => $job->source_type->value,
                 'attachable_id' => $job->source_id,
                 'is_active' => false,
             ], $publisher);
 
         $quiz = $this->quizService->update($quiz, [
-            'title_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.title'), $quiz->translate('title')),
-            'description_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.description')),
+            'title_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.title'), $quiz->translate('title'), $job->language),
+            'description_translations' => $this->normalizeTranslations(data_get($payload, 'quiz.description'), null, $job->language),
             'attachable_type' => $job->source_type->value,
             'attachable_id' => $job->source_id,
             'is_active' => true,
@@ -809,8 +904,8 @@ PROMPT;
         }
 
         $data = [
-            'title_translations' => $this->normalizeTranslations(data_get($assignmentPayload, 'title'), 'AI Generated Assignment'),
-            'description_translations' => $this->normalizeTranslations(data_get($assignmentPayload, 'description')),
+            'title_translations' => $this->normalizeTranslations(data_get($assignmentPayload, 'title'), 'AI Generated Assignment', $job->language),
+            'description_translations' => $this->normalizeTranslations(data_get($assignmentPayload, 'description'), null, $job->language),
             'attachable_type' => $job->source_type->value,
             'attachable_id' => $job->source_id,
             'submission_types' => $this->normalizeSubmissionTypes(data_get($assignmentPayload, 'submission_types')),
@@ -873,8 +968,8 @@ PROMPT;
             'attachable_id' => $job->source_id,
             'asset_type' => $assetType,
             'status' => LearningAssetStatus::Published,
-            'title_translations' => $this->normalizeTranslations(data_get($payload, 'title'), ucfirst(str_replace('_', ' ', $assetType->value))),
-            'content_translations' => $this->normalizeTranslations(data_get($payload, 'content')),
+            'title_translations' => $this->normalizeTranslations(data_get($payload, 'title'), ucfirst(str_replace('_', ' ', $assetType->value)), $job->language),
+            'content_translations' => $this->normalizeTranslations(data_get($payload, 'content'), null, $job->language),
             'payload' => $payload,
             'is_active' => true,
             'published_by' => $publisher->id,
@@ -910,9 +1005,56 @@ PROMPT;
     }
 
     /**
+     * @param  array{system:string,user:string}  $prompts
+     */
+    private function encodePrompts(array $prompts): string
+    {
+        $encoded = json_encode($prompts, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+        return is_string($encoded)
+            ? $encoded
+            : "SYSTEM:\n".$prompts['system']."\n\nUSER:\n".$prompts['user'];
+    }
+
+    /**
+     * @param  array{system:string,user:string}|array{initial:array{system:string,user:string},retry:array{system:string,user:string}}  $promptHistory
+     */
+    private function encodePromptHistory(array $promptHistory): string
+    {
+        if (isset($promptHistory['system'], $promptHistory['user'])) {
+            /** @var array{system:string,user:string} $promptHistory */
+            return $this->encodePrompts($promptHistory);
+        }
+
+        $encoded = json_encode($promptHistory, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+        return is_string($encoded) ? $encoded : '';
+    }
+
+    /**
+     * @param  array<string,mixed>  $payload
+     * @return array<int,string>
+     */
+    private function validateOutputPayload(AIContentJob $job, array $payload): array
+    {
+        return $this->resolveOutputValidator($job)->validate($job, $payload);
+    }
+
+    private function resolveOutputValidator(AIContentJob $job): AIOutputValidatorInterface
+    {
+        return app(match ($job->target_type) {
+            AIContentTargetType::Quiz => QuizOutputValidator::class,
+            AIContentTargetType::Assignment => AssignmentOutputValidator::class,
+            AIContentTargetType::Summary => SummaryOutputValidator::class,
+            AIContentTargetType::Flashcards => FlashcardsOutputValidator::class,
+            AIContentTargetType::InteractiveActivity => InteractiveActivityOutputValidator::class,
+        });
+    }
+
+    /**
      * @return array<string,string>|null
      */
-    private function normalizeTranslations(mixed $value, ?string $fallback = null): ?array
+    private function normalizeTranslations(mixed $value, ?string $fallback = null, string $language = 'ar'): ?array
     {
         if (is_array($value)) {
             $translations = [];
@@ -924,16 +1066,32 @@ PROMPT;
             }
 
             if ($translations !== []) {
-                return $translations;
+                return match ($language) {
+                    'en' => isset($translations['en'])
+                        ? ['en' => $translations['en']]
+                        : (isset($translations['ar']) ? ['en' => $translations['ar']] : null),
+                    'both' => $translations,
+                    default => isset($translations['ar'])
+                        ? ['ar' => $translations['ar']]
+                        : (isset($translations['en']) ? ['ar' => $translations['en']] : null),
+                };
             }
         }
 
         if (is_string($value) && $value !== '') {
-            return ['en' => $value];
+            return match ($language) {
+                'en' => ['en' => $value],
+                'both' => ['ar' => $value, 'en' => $value],
+                default => ['ar' => $value],
+            };
         }
 
         if (is_string($fallback) && $fallback !== '') {
-            return ['en' => $fallback];
+            return match ($language) {
+                'en' => ['en' => $fallback],
+                'both' => ['ar' => $fallback, 'en' => $fallback],
+                default => ['ar' => $fallback],
+            };
         }
 
         return null;
@@ -1023,7 +1181,7 @@ PROMPT;
             $questionText = data_get($questionData, 'question');
             $options = data_get($questionData, 'options');
 
-            if (! is_string($questionText) || ! is_array($options) || $options === []) {
+            if (! $this->hasLocalizableTextNode($questionText) || ! is_array($options) || $options === []) {
                 continue;
             }
 
@@ -1031,9 +1189,9 @@ PROMPT;
             $questionType = $this->detectQuestionType($options);
             $question = QuizQuestion::query()->create([
                 'quiz_id' => $quiz->id,
-                'question_translations' => $this->normalizeTranslations($questionText, 'Question'),
+                'question_translations' => $this->normalizeTranslations($questionText, 'Question', $job->language),
                 'question_type' => $questionType,
-                'explanation_translations' => $this->normalizeTranslations(data_get($questionData, 'explanation')),
+                'explanation_translations' => $this->normalizeTranslations(data_get($questionData, 'explanation'), null, $job->language),
                 'points' => is_numeric(data_get($questionData, 'points')) ? (float) data_get($questionData, 'points') : 1.00,
                 'order_index' => $maxOrder,
                 'is_active' => true,
@@ -1047,19 +1205,19 @@ PROMPT;
                     $optionText = $option;
                     $isCorrect = false;
                 } elseif (is_array($option)) {
-                    $optionText = (string) data_get($option, 'text', '');
+                    $optionText = data_get($option, 'text');
                     $isCorrect = (bool) data_get($option, 'is_correct', false);
                 } else {
                     continue;
                 }
 
-                if ($optionText === '') {
+                if (! $this->hasLocalizableTextNode($optionText)) {
                     continue;
                 }
 
                 QuizAnswer::query()->create([
                     'quiz_question_id' => $question->id,
-                    'answer_translations' => $this->normalizeTranslations($optionText, 'Option'),
+                    'answer_translations' => $this->normalizeTranslations($optionText, 'Option', $job->language),
                     'is_correct' => $isCorrect,
                     'order_index' => $index,
                 ]);
@@ -1069,6 +1227,26 @@ PROMPT;
         }
 
         return $addedCount;
+    }
+
+    private function hasLocalizableTextNode(mixed $value): bool
+    {
+        if (is_string($value)) {
+            return trim($value) !== '';
+        }
+
+        if (! is_array($value)) {
+            return false;
+        }
+
+        foreach (['ar', 'en'] as $locale) {
+            $localized = data_get($value, $locale);
+            if (is_string($localized) && trim($localized) !== '') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

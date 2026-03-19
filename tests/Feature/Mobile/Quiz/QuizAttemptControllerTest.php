@@ -73,7 +73,7 @@ it('starts a new quiz attempt', function (): void {
     $setup = createQuizSetup();
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quizzes/{$setup['quiz']->id}/start");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/{$setup['quiz']->id}/attempts");
 
     $response->assertStatus(201)
         ->assertJsonPath('success', true)
@@ -101,7 +101,7 @@ it('resumes existing in-progress attempt instead of starting new', function (): 
         'started_at' => now(),
     ]);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quizzes/{$setup['quiz']->id}/start");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/{$setup['quiz']->id}/attempts");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -120,7 +120,7 @@ it('denies start for non-enrolled student', function (): void {
     ]);
     $this->asApiUser($otherStudent);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quizzes/{$setup['quiz']->id}/start");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/{$setup['quiz']->id}/attempts");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -132,7 +132,7 @@ it('denies start for inactive quiz', function (): void {
     $setup['quiz']->update(['is_active' => false]);
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quizzes/{$setup['quiz']->id}/start");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/{$setup['quiz']->id}/attempts");
 
     $response->assertStatus(400)
         ->assertJsonPath('success', false)
@@ -155,7 +155,7 @@ it('denies start when no attempts remaining', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quizzes/{$setup['quiz']->id}/start");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/{$setup['quiz']->id}/attempts");
 
     $response->assertStatus(400)
         ->assertJsonPath('success', false)
@@ -177,7 +177,7 @@ it('shows attempt details', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}");
+    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -202,7 +202,7 @@ it('denies showing attempt from different student', function (): void {
     ]);
     $this->asApiUser($otherStudent);
 
-    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}");
+    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}");
 
     $response->assertStatus(404)
         ->assertJsonPath('success', false)
@@ -224,7 +224,7 @@ it('saves an answer during attempt', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/answer", [
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/answers", [
         'question_id' => $setup['question']->id,
         'answer_ids' => [$setup['correctAnswer']->id],
     ]);
@@ -253,7 +253,7 @@ it('denies saving answer to closed attempt', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/answer", [
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/answers", [
         'question_id' => $setup['question']->id,
         'answer_ids' => [$setup['correctAnswer']->id],
     ]);
@@ -281,7 +281,7 @@ it('denies saving answer to other students attempt', function (): void {
     ]);
     $this->asApiUser($otherStudent);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/answer", [
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/answers", [
         'question_id' => $setup['question']->id,
         'answer_ids' => [$setup['correctAnswer']->id],
     ]);
@@ -311,7 +311,7 @@ it('denies saving answer with invalid question', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/answer", [
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/answers", [
         'question_id' => $otherQuestion->id,
         'answer_ids' => [$otherAnswer->id],
     ]);
@@ -336,7 +336,7 @@ it('submits a quiz attempt', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/submit");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/submit");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -362,7 +362,7 @@ it('denies submitting already submitted attempt', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/submit");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/submit");
 
     $response->assertStatus(400)
         ->assertJsonPath('success', false)
@@ -387,7 +387,7 @@ it('denies submitting other students attempt', function (): void {
     ]);
     $this->asApiUser($otherStudent);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/submit");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/submit");
 
     $response->assertStatus(404)
         ->assertJsonPath('success', false)
@@ -411,7 +411,7 @@ it('gets results of completed attempt', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/results");
+    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/results");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -434,7 +434,7 @@ it('denies results of in-progress attempt', function (): void {
 
     $this->asApiUser($setup['student']);
 
-    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}/results");
+    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}/results");
 
     $response->assertStatus(400)
         ->assertJsonPath('success', false)
@@ -449,7 +449,7 @@ it('denies non-student users from starting quiz', function (): void {
     ]);
     $this->asApiUser($nonStudent);
 
-    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/quizzes/{$setup['quiz']->id}/start");
+    $response = $this->apiPost("/api/v1/centers/{$setup['center']->id}/assets/quiz/{$setup['quiz']->id}/attempts");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -474,7 +474,7 @@ it('denies non-student users from viewing attempt', function (): void {
     ]);
     $this->asApiUser($nonStudent);
 
-    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/quiz-attempts/{$attempt->id}");
+    $response = $this->apiGet("/api/v1/centers/{$setup['center']->id}/assets/quiz/attempts/{$attempt->id}");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)

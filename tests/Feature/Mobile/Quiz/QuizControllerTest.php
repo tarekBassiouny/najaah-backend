@@ -63,7 +63,7 @@ it('lists quizzes for enrolled student', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/quizzes");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=quiz");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -92,7 +92,7 @@ it('returns empty list when no quizzes exist', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/quizzes");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=quiz");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -115,7 +115,7 @@ it('denies quiz list for non-enrolled student', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/quizzes");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=quiz");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -136,7 +136,7 @@ it('denies quiz list for non-student users', function (): void {
 
     $this->asApiUser($user);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/quizzes");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=quiz");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -167,7 +167,7 @@ it('excludes inactive quizzes from list', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/quizzes");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=quiz");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
@@ -198,12 +198,12 @@ it('shows quiz info for enrolled student', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/quizzes/{$quiz->id}");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/quiz/{$quiz->id}");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.id', $quiz->id)
-        ->assertJsonPath('data.total_questions', 5);
+        ->assertJsonPath('data.payload.total_questions', 5);
 });
 
 it('denies quiz info for non-enrolled student', function (): void {
@@ -222,7 +222,7 @@ it('denies quiz info for non-enrolled student', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/quizzes/{$quiz->id}");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/quiz/{$quiz->id}");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -252,7 +252,7 @@ it('returns not found for inactive quiz', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/quizzes/{$quiz->id}");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/quiz/{$quiz->id}");
 
     $response->assertStatus(400)
         ->assertJsonPath('success', false)
@@ -276,14 +276,14 @@ it('returns not found for quiz from wrong center', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/quizzes/{$quiz->id}");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/quiz/{$quiz->id}");
 
     $response->assertStatus(404)
         ->assertJsonPath('success', false)
         ->assertJsonPath('error.code', 'NOT_FOUND');
 });
 
-it('returns my attempts for a quiz', function (): void {
+it('includes my attempts inside quiz asset detail', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create([
         'center_id' => $center->id,
@@ -295,24 +295,31 @@ it('returns my attempts for a quiz', function (): void {
         'center_id' => $center->id,
     ]);
 
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
     $quiz = createQuizWithQuestions($course);
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/quizzes/{$quiz->id}/my-attempts");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/quiz/{$quiz->id}");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('data.attempts', [])
-        ->assertJsonPath('data.stats.lowest_score', null)
-        ->assertJsonPath('data.stats.average_score', null)
-        ->assertJsonPath('data.stats.highest_score', null)
-        ->assertJsonPath('data.stats.opened_count', 0)
-        ->assertJsonPath('data.stats.completed_count', 0)
-        ->assertJsonPath('data.stats.failed_count', 0);
+        ->assertJsonPath('data.payload.attempts', [])
+        ->assertJsonPath('data.payload.stats.lowest_score', null)
+        ->assertJsonPath('data.payload.stats.average_score', null)
+        ->assertJsonPath('data.payload.stats.highest_score', null)
+        ->assertJsonPath('data.payload.stats.opened_count', 0)
+        ->assertJsonPath('data.payload.stats.completed_count', 0)
+        ->assertJsonPath('data.payload.stats.failed_count', 0);
 });
 
-it('returns attempt stats and per-attempt progress details', function (): void {
+it('includes attempt stats and progress details inside quiz asset detail', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create([
         'center_id' => $center->id,
@@ -386,23 +393,23 @@ it('returns attempt stats and per-attempt progress details', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/quizzes/{$quiz->id}/my-attempts");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/quiz/{$quiz->id}");
 
     $response->assertOk()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('data.attempts.0.attempt_number', 1)
-        ->assertJsonPath('data.attempts.0.answered_questions', 2)
-        ->assertJsonPath('data.attempts.0.total_questions', 4)
-        ->assertJsonPath('data.attempts.0.can_resume', true)
-        ->assertJsonPath('data.stats.lowest_score', 50)
-        ->assertJsonPath('data.stats.average_score', 65)
-        ->assertJsonPath('data.stats.highest_score', 80)
-        ->assertJsonPath('data.stats.opened_count', 4)
-        ->assertJsonPath('data.stats.completed_count', 3)
-        ->assertJsonPath('data.stats.failed_count', 2);
+        ->assertJsonPath('data.payload.attempts.0.attempt_number', 1)
+        ->assertJsonPath('data.payload.attempts.0.answered_questions', 2)
+        ->assertJsonPath('data.payload.attempts.0.total_questions', 4)
+        ->assertJsonPath('data.payload.attempts.0.can_resume', true)
+        ->assertJsonPath('data.payload.stats.lowest_score', 50)
+        ->assertJsonPath('data.payload.stats.average_score', 65)
+        ->assertJsonPath('data.payload.stats.highest_score', 80)
+        ->assertJsonPath('data.payload.stats.opened_count', 4)
+        ->assertJsonPath('data.payload.stats.completed_count', 3)
+        ->assertJsonPath('data.payload.stats.failed_count', 2);
 });
 
-it('denies my attempts for non-student users', function (): void {
+it('denies quiz asset detail for non-student users', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create([
         'center_id' => $center->id,
@@ -418,7 +425,7 @@ it('denies my attempts for non-student users', function (): void {
 
     $this->asApiUser($user);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/quizzes/{$quiz->id}/my-attempts");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/assets/quiz/{$quiz->id}");
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
@@ -450,7 +457,7 @@ it('returns quizzes ordered by order_index', function (): void {
 
     $this->asApiUser($student);
 
-    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/quizzes");
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/assets?type=quiz");
 
     $response->assertOk()
         ->assertJsonPath('success', true)

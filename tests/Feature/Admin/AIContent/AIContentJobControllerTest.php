@@ -8,13 +8,17 @@ use App\Enums\AIContentTargetType;
 use App\Enums\CenterType;
 use App\Enums\LearningAssetStatus;
 use App\Enums\LearningAssetType;
+use App\Enums\TextExtractionStatus;
 use App\Jobs\ProcessAIContentJob;
 use App\Models\AIContentJob;
+use App\Models\AIProviderConfig;
 use App\Models\Center;
 use App\Models\Course;
+use App\Models\Pdf;
 use App\Models\Quiz;
 use App\Models\QuizAnswer;
 use App\Models\QuizQuestion;
+use App\Models\Section;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -22,12 +26,31 @@ use Tests\Helpers\AdminTestHelper;
 
 uses(RefreshDatabase::class, AdminTestHelper::class)->group('admin', 'ai-content');
 
+function configureAiProvider(string $provider = 'openai', ?string $model = null): void
+{
+    $resolvedModel = $model ?? match ($provider) {
+        'gemini' => 'gemini-1.5-flash',
+        default => 'gpt-4o-mini',
+    };
+
+    AIProviderConfig::factory()->create([
+        'provider_key' => $provider,
+        'display_name' => ucfirst($provider),
+        'default_model' => $resolvedModel,
+        'models' => [$resolvedModel],
+        'api_key' => 'test-api-key',
+    ]);
+}
+
 it('creates and queues ai content generation job', function (): void {
     Queue::fake();
 
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create(['center_id' => $center->id]);
-    $video = Video::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'transcript' => 'Lesson transcript',
+    ]);
     $course->videos()->attach($video->id, [
         'section_id' => null,
         'order_index' => 1,
@@ -36,6 +59,7 @@ it('creates and queues ai content generation job', function (): void {
     ]);
 
     $this->asCenterAdmin($center);
+    configureAiProvider();
 
     $response = $this->postJson(
         "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
@@ -54,6 +78,7 @@ it('creates and queues ai content generation job', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.center_id', $center->id)
         ->assertJsonPath('data.course_id', $course->id)
+        ->assertJsonPath('data.language', 'ar')
         ->assertJsonPath('data.ai_provider', 'openai')
         ->assertJsonPath('data.ai_model', 'gpt-4o-mini');
 
@@ -63,6 +88,7 @@ it('creates and queues ai content generation job', function (): void {
         'source_type' => AIContentSourceType::Video->value,
         'source_id' => $video->id,
         'target_type' => AIContentTargetType::Summary->value,
+        'language' => 'ar',
         'ai_provider' => 'openai',
         'ai_model' => 'gpt-4o-mini',
     ]);
@@ -75,7 +101,10 @@ it('creates ai content job with gemini provider and model', function (): void {
 
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create(['center_id' => $center->id]);
-    $video = Video::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'transcript' => 'Lesson transcript',
+    ]);
     $course->videos()->attach($video->id, [
         'section_id' => null,
         'order_index' => 1,
@@ -84,6 +113,7 @@ it('creates ai content job with gemini provider and model', function (): void {
     ]);
 
     $this->asCenterAdmin($center);
+    configureAiProvider('gemini', 'gemini-1.5-flash');
 
     $response = $this->postJson(
         "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
@@ -100,6 +130,7 @@ it('creates ai content job with gemini provider and model', function (): void {
 
     $response->assertStatus(202)
         ->assertJsonPath('success', true)
+        ->assertJsonPath('data.language', 'ar')
         ->assertJsonPath('data.ai_provider', 'gemini')
         ->assertJsonPath('data.ai_model', 'gemini-1.5-flash');
 
@@ -109,6 +140,7 @@ it('creates ai content job with gemini provider and model', function (): void {
         'source_type' => AIContentSourceType::Video->value,
         'source_id' => $video->id,
         'target_type' => AIContentTargetType::Summary->value,
+        'language' => 'ar',
         'ai_provider' => 'gemini',
         'ai_model' => 'gemini-1.5-flash',
     ]);
@@ -168,6 +200,73 @@ it('returns 422 for source mismatch during ai job creation', function (): void {
     $response->assertStatus(422)
         ->assertJsonPath('success', false)
         ->assertJsonPath('error.code', 'INVALID_STATE');
+});
+
+it('returns 422 when generating from a video source without transcript', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'transcript' => null,
+    ]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+    configureAiProvider();
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $video->id,
+            'target_type' => AIContentTargetType::Summary->value,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'TRANSCRIPT_NOT_FOUND');
+});
+
+it('returns 422 when generating from a pdf source before extraction completes', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'text_content' => null,
+        'text_extraction_status' => TextExtractionStatus::Pending,
+    ]);
+    $course->pdfs()->attach($pdf->id, [
+        'section_id' => null,
+        'video_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $this->asCenterAdmin($center);
+    configureAiProvider();
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Pdf->value,
+            'source_id' => $pdf->id,
+            'target_type' => AIContentTargetType::Summary->value,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'PDF_NOT_READY');
 });
 
 it('reviews approves and publishes ai summary job', function (): void {
@@ -247,7 +346,10 @@ it('creates and queues ai content generation batch', function (): void {
 
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create(['center_id' => $center->id]);
-    $video = Video::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'transcript' => 'Lesson transcript',
+    ]);
     $course->videos()->attach($video->id, [
         'section_id' => null,
         'order_index' => 1,
@@ -256,6 +358,7 @@ it('creates and queues ai content generation batch', function (): void {
     ]);
 
     $this->asCenterAdmin($center);
+    configureAiProvider();
 
     $response = $this->postJson(
         "/api/v1/admin/centers/{$center->id}/ai-content/batches",
@@ -288,6 +391,7 @@ it('creates and queues ai content generation batch', function (): void {
 
     $response->assertStatus(202)
         ->assertJsonPath('success', true)
+        ->assertJsonPath('data.jobs.0.language', 'ar')
         ->assertJsonCount(2, 'data.jobs');
 
     $batchKey = $response->json('data.batch_key');
@@ -306,6 +410,197 @@ it('creates and queues ai content generation batch', function (): void {
     ]);
 
     Queue::assertPushed(ProcessAIContentJob::class, 2);
+});
+
+it('defaults language to arabic for single jobs and persists it', function (): void {
+    Queue::fake();
+
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'transcript' => 'Lesson transcript',
+    ]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+    configureAiProvider();
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $video->id,
+            'target_type' => AIContentTargetType::Summary->value,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(202)
+        ->assertJsonPath('data.language', 'ar');
+
+    $this->assertDatabaseHas('ai_content_jobs', [
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'source_type' => AIContentSourceType::Video->value,
+        'source_id' => $video->id,
+        'target_type' => AIContentTargetType::Summary->value,
+        'language' => 'ar',
+    ]);
+});
+
+it('validates language on single jobs', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['center_id' => $center->id]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $video->id,
+            'target_type' => AIContentTargetType::Summary->value,
+            'language' => 'fr',
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+});
+
+it('applies shared generation config validation to single jobs', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create(['center_id' => $center->id]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $video->id,
+            'target_type' => AIContentTargetType::Quiz->value,
+            'generation_config' => [
+                'question_count' => 50,
+            ],
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+});
+
+it('supports section source and interactive activity in batch jobs', function (): void {
+    Queue::fake();
+
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $section = Section::factory()->create(['course_id' => $course->id]);
+
+    $this->asCenterAdmin($center);
+    configureAiProvider();
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/batches",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Section->value,
+            'source_id' => $section->id,
+            'language' => 'both',
+            'assets' => [
+                [
+                    'target_type' => AIContentTargetType::InteractiveActivity->value,
+                ],
+                [
+                    'target_type' => AIContentTargetType::Summary->value,
+                ],
+            ],
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(202)
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.jobs.0.language', 'both')
+        ->assertJsonCount(2, 'data.jobs');
+
+    $batchKey = $response->json('data.batch_key');
+
+    $jobs = AIContentJob::query()
+        ->where('batch_key', $batchKey)
+        ->orderBy('id')
+        ->get();
+
+    expect($jobs)->toHaveCount(2);
+    expect($jobs->pluck('source_type')->map->value->unique()->all())->toBe([
+        AIContentSourceType::Section->value,
+    ]);
+    expect($jobs->pluck('target_type')->map->value->all())->toBe([
+        AIContentTargetType::InteractiveActivity->value,
+        AIContentTargetType::Summary->value,
+    ]);
+    expect($jobs->pluck('language')->unique()->all())->toBe(['both']);
+
+    Queue::assertPushed(ProcessAIContentJob::class, 2);
+});
+
+it('supports course source in batch jobs', function (): void {
+    Queue::fake();
+
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $course = Course::factory()->create(['center_id' => $center->id]);
+
+    $this->asCenterAdmin($center);
+    configureAiProvider();
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/batches",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Course->value,
+            'source_id' => $course->id,
+            'assets' => [
+                [
+                    'target_type' => AIContentTargetType::Summary->value,
+                ],
+            ],
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(202)
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.jobs.0.source_type', AIContentSourceType::Course->value)
+        ->assertJsonPath('data.jobs.0.language', 'ar');
+
+    Queue::assertPushed(ProcessAIContentJob::class);
 });
 
 it('filters ai content jobs by batch key', function (): void {
@@ -430,6 +725,7 @@ it('publishes ai quiz into a new draft version when target quiz is live', functi
         'source_id' => $video->id,
         'target_type' => AIContentTargetType::Quiz,
         'target_id' => $liveQuiz->id,
+        'language' => 'en',
         'status' => AIContentJobStatus::Approved,
         'generation_config' => [],
         'reviewed_payload' => [
