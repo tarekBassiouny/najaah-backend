@@ -1009,11 +1009,19 @@ final class AIContentService implements AIContentServiceInterface
      */
     private function encodePrompts(array $prompts): string
     {
-        $encoded = json_encode($prompts, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $encoded = json_encode([
+            'system' => $this->promptAuditData($prompts['system']),
+            'user' => $this->promptAuditData($prompts['user']),
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-        return is_string($encoded)
-            ? $encoded
-            : "SYSTEM:\n".$prompts['system']."\n\nUSER:\n".$prompts['user'];
+        if (is_string($encoded)) {
+            return $encoded;
+        }
+
+        return json_encode([
+            'system' => ['chars' => mb_strlen($prompts['system'])],
+            'user' => ['chars' => mb_strlen($prompts['user'])],
+        ], JSON_UNESCAPED_UNICODE) ?: '';
     }
 
     /**
@@ -1026,9 +1034,36 @@ final class AIContentService implements AIContentServiceInterface
             return $this->encodePrompts($promptHistory);
         }
 
-        $encoded = json_encode($promptHistory, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $encoded = json_encode([
+            'initial' => [
+                'system' => $this->promptAuditData($promptHistory['initial']['system']),
+                'user' => $this->promptAuditData($promptHistory['initial']['user']),
+            ],
+            'retry' => [
+                'system' => $this->promptAuditData($promptHistory['retry']['system']),
+                'user' => $this->promptAuditData($promptHistory['retry']['user']),
+            ],
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
         return is_string($encoded) ? $encoded : '';
+    }
+
+    /**
+     * @return array{chars:int,sha256:string,preview:string,tail_preview:?string,truncated:bool}
+     */
+    private function promptAuditData(string $prompt): array
+    {
+        $length = mb_strlen($prompt);
+        $preview = Str::limit($prompt, 4000, '...[truncated]');
+        $tailPreview = $length > 1000 ? mb_substr($prompt, -1000) : null;
+
+        return [
+            'chars' => $length,
+            'sha256' => hash('sha256', $prompt),
+            'preview' => $preview,
+            'tail_preview' => $tailPreview,
+            'truncated' => $length > mb_strlen($preview),
+        ];
     }
 
     /**
