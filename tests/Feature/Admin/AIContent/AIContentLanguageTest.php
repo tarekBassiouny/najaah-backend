@@ -84,6 +84,61 @@ it('processes openai jobs with separated system and user prompts', function (): 
     });
 });
 
+it('stores a bounded prompt audit even when source content is very large', function (): void {
+    $center = Center::factory()->create();
+    $admin = $this->asCenterAdmin($center);
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'description_translations' => [
+            'en' => str_repeat('Large PDF-like extracted content. ', 5000),
+        ],
+    ]);
+
+    AIProviderConfig::factory()->create([
+        'provider_key' => 'openai',
+        'api_key' => 'test-api-key',
+        'default_model' => 'gpt-4o-mini',
+        'models' => ['gpt-4o-mini'],
+    ]);
+
+    $job = AIContentJob::factory()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'source_type' => AIContentSourceType::Course,
+        'source_id' => $course->id,
+        'target_type' => AIContentTargetType::Summary,
+        'language' => 'en',
+        'status' => AIContentJobStatus::Pending,
+        'ai_provider' => 'openai',
+        'ai_model' => 'gpt-4o-mini',
+        'created_by' => $admin->id,
+    ]);
+
+    Http::fake([
+        'https://api.openai.com/v1/chat/completions' => Http::response([
+            'choices' => [[
+                'message' => [
+                    'content' => json_encode([
+                        'title' => 'Large summary',
+                        'content' => 'Generated successfully.',
+                    ], JSON_UNESCAPED_UNICODE),
+                ],
+            ]],
+        ], 200),
+    ]);
+
+    app(AIContentService::class)->processJob($job);
+
+    $job->refresh();
+
+    expect($job->status)->toBe(AIContentJobStatus::Completed)
+        ->and($job->prompt_used)->toBeString()
+        ->and(mb_strlen((string) $job->prompt_used))->toBeLessThan(20000)
+        ->and($job->prompt_used)->toContain('"sha256"')
+        ->and($job->prompt_used)->toContain('"truncated"');
+});
+
 it('publishes arabic summary strings into arabic translations', function (): void {
     $center = Center::factory()->create();
     $admin = $this->asCenterAdmin($center);

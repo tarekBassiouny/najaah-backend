@@ -35,13 +35,26 @@ class ProcessAIContentJob implements ShouldQueue
 
     public function handle(AIContentServiceInterface $service): void
     {
-        $service->processJob($this->aiContentJob);
+        $job = AIContentJob::query()->find($this->aiContentJob->id);
+        if (! $job instanceof AIContentJob) {
+            return;
+        }
+
+        if (! in_array($job->status, [AIContentJobStatus::Pending, AIContentJobStatus::Failed], true)) {
+            return;
+        }
+
+        $service->processJob($job);
     }
 
     public function failed(\Throwable $exception): void
     {
         $job = AIContentJob::query()->find($this->aiContentJob->id);
         if (! $job instanceof AIContentJob) {
+            return;
+        }
+
+        if (! in_array($job->status, [AIContentJobStatus::Pending, AIContentJobStatus::Processing, AIContentJobStatus::Failed], true)) {
             return;
         }
 
