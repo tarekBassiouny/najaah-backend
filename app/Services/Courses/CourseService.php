@@ -257,36 +257,74 @@ class CourseService implements CourseServiceInterface
     /**
      * Get courses the student has access to, grouped by instructor.
      *
+     * Finds instructors linked via the course_instructors pivot OR via
+     * primary_instructor_id, deduplicates them, and attaches only the
+     * accessible courses (also deduplicated) to each instructor.
+     *
      * @return Collection<int, Instructor>
      */
     public function enrolledGroupedByInstructor(User $student, CourseFilters $filters): Collection
     {
-        $query = Course::query()
-            ->published()
-            ->accessibleBy($student)
-            ->visibleToStudent($student);
+        $query = $this->mobileBaseQuery($student)
+            ->accessibleBy($student);
 
         if ($filters->categoryId !== null) {
             $query->where('category_id', $filters->categoryId);
         }
 
-        $accessibleCourseIds = $query->pluck('id');
+        $accessibleCourses = $query
+            ->with(['center', 'category', 'instructors'])
+            ->get();
 
-        if ($accessibleCourseIds->isEmpty()) {
+        if ($accessibleCourses->isEmpty()) {
             return collect();
         }
 
-        return Instructor::query()
-            ->whereHas('courses', function (Builder $query) use ($accessibleCourseIds): void {
-                $query->whereIn('courses.id', $accessibleCourseIds);
+        $accessibleCourseIds = $accessibleCourses->pluck('id');
+
+        // Instructors linked via pivot
+        $pivotInstructors = Instructor::query()
+            ->whereHas('courses', function (Builder $q) use ($accessibleCourseIds): void {
+                $q->whereIn('courses.id', $accessibleCourseIds);
             })
-            ->with([
-                'courses' => function ($query) use ($accessibleCourseIds): void {
-                    $query->whereIn('courses.id', $accessibleCourseIds)
-                        ->with(['center', 'category', 'instructors']);
-                },
-            ])
             ->get();
+
+        // Instructors linked only via primary_instructor_id
+        $primaryInstructorIds = $accessibleCourses
+            ->pluck('primary_instructor_id')
+            ->filter()
+            ->unique();
+
+        $missingPrimaryIds = $primaryInstructorIds->diff($pivotInstructors->pluck('id'));
+
+        $primaryOnlyInstructors = $missingPrimaryIds->isNotEmpty()
+            ? Instructor::query()->whereIn('id', $missingPrimaryIds)->get()
+            : collect();
+
+        // Merge and deduplicate instructors
+        $allInstructors = $pivotInstructors->merge($primaryOnlyInstructors)->unique('id');
+
+        // Build a map of instructor ID → accessible courses (deduplicated)
+        $instructorCoursesMap = [];
+        foreach ($accessibleCourses as $course) {
+            // Courses linked via pivot
+            foreach ($course->instructors as $instructor) {
+                $instructorCoursesMap[$instructor->id][$course->id] = $course;
+            }
+
+            // Courses linked via primary_instructor_id
+            if ($course->primary_instructor_id !== null) {
+                $instructorCoursesMap[$course->primary_instructor_id][$course->id] = $course;
+            }
+        }
+
+        // Attach deduplicated courses to each instructor
+        foreach ($allInstructors as $instructor) {
+            $courses = collect($instructorCoursesMap[$instructor->id] ?? [])->values();
+            $instructor->setRelation('courses', $courses);
+        }
+
+        return $allInstructors->values();
     }
 
     /**

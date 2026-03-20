@@ -9,14 +9,11 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\Video;
-use App\Services\Access\AttachmentAccessService;
 use App\Services\Sections\Contracts\SectionAttachmentServiceInterface;
 use Illuminate\Validation\ValidationException;
 
 class SectionAttachmentService implements SectionAttachmentServiceInterface
 {
-    public function __construct(private readonly AttachmentAccessService $attachmentAccessService) {}
-
     public function moveVideoToSection(Video $video, Section $section): void
     {
         $pivot = CourseVideo::withTrashed()
@@ -56,8 +53,6 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
 
     public function movePdfToSection(Pdf $pdf, Section $section): void
     {
-        $this->assertPdfBelongsToCourse($section, $pdf);
-
         $pivot = CoursePdf::withTrashed()
             ->where('pdf_id', $pdf->id)
             ->where('course_id', $section->course_id)
@@ -134,16 +129,5 @@ class SectionAttachmentService implements SectionAttachmentServiceInterface
             ->max('order_index');
 
         return is_numeric($maxOrder) ? (int) $maxOrder + 1 : 1;
-    }
-
-    private function assertPdfBelongsToCourse(Section $section, Pdf $pdf): void
-    {
-        $attachedToOtherCourse = $this->attachmentAccessService->isPdfAttachedToOtherCourse($section, $pdf);
-
-        if ($attachedToOtherCourse) {
-            throw ValidationException::withMessages([
-                'course_id' => ['PDF is already attached to another course.'],
-            ]);
-        }
     }
 }

@@ -23,4 +23,22 @@ class UploadTranscriptRequest extends FormRequest
             'transcript_text' => ['nullable', 'string', 'max:200000', 'required_without:file'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'file' => [
+                'description' => 'Transcript file upload. Accepted formats: txt, vtt, srt.',
+                'type' => 'file',
+                'example' => null,
+            ],
+            'transcript_text' => [
+                'description' => 'Raw transcript text. Required when no file is uploaded.',
+                'example' => 'Welcome to lesson one. Today we will cover algebra basics.',
+            ],
+        ];
+    }
 }

@@ -28,4 +28,37 @@ class ListLearningAssetsRequest extends FormRequest
             'status' => ['sometimes', 'integer', Rule::enum(LearningAssetStatus::class)],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function queryParameters(): array
+    {
+        return [
+            'attachable_type' => [
+                'description' => 'Filter learning assets by source type.',
+                'example' => 'video',
+            ],
+            'attachable_id' => [
+                'description' => 'Filter learning assets by source entity ID.',
+                'example' => '34',
+            ],
+            'asset_type' => [
+                'description' => 'Filter by asset type.',
+                'example' => LearningAssetType::Summary->value,
+            ],
+            'status' => [
+                'description' => 'Filter by asset status enum value.',
+                'example' => (string) LearningAssetStatus::Published->value,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
+    }
 }

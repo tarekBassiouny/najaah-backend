@@ -24,4 +24,17 @@ class UpdateLearningAssetStatusRequest extends FormRequest
             'status' => ['required', 'integer', Rule::enum(LearningAssetStatus::class)],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'status' => [
+                'description' => 'New learning asset status enum value.',
+                'example' => LearningAssetStatus::Published->value,
+            ],
+        ];
+    }
 }

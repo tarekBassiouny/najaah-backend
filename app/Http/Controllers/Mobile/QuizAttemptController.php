@@ -272,7 +272,7 @@ class QuizAttemptController extends Controller
 
         try {
             $attempt = $this->attemptService->submit($attempt);
-            $attempt = $this->attemptService->grade($attempt);
+            $attempt->load(['quiz', 'answers.question.answers']);
 
             return response()->json([
                 'success' => true,

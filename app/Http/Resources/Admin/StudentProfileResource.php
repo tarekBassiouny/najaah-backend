@@ -40,6 +40,43 @@ class StudentProfileResource extends JsonResource
                 );
         });
 
+        /** @var \Illuminate\Support\Collection<int, \App\Models\Course> $accessibleCourses */
+        $accessibleCourses = $student->relationLoaded('accessibleCourses')
+            ? $student->getRelation('accessibleCourses')
+            : collect();
+        $enrollmentsByCourseId = $student->enrollments
+            ->filter(static fn ($enrollment): bool => $enrollment->course !== null)
+            ->keyBy('course_id');
+        $videoAccessesByCourseId = $student->relationLoaded('videoAccesses')
+            ? $student->videoAccesses->groupBy('course_id')
+            : collect();
+
+        $courseAccessResources = $accessibleCourses->map(function ($course) use (
+            $student,
+            $enrollmentsByCourseId,
+            $videoAccessesByCourseId
+        ): \App\Http\Resources\Admin\StudentCourseAccessResource {
+            $enrollment = $enrollmentsByCourseId->get($course->id);
+            $videoAccesses = $course->usesVideoCodeAccess()
+                ? $videoAccessesByCourseId->get($course->id, collect())
+                : collect();
+            $accessSources = $course->usesVideoCodeAccess() ? ['video_code'] : ['enrollment'];
+
+            return (new StudentCourseAccessResource([
+                'course' => $course,
+                'access_type' => $course->usesVideoCodeAccess() ? 'video_code' : 'enrollment',
+                'access_sources' => $accessSources,
+                'enrollment' => $enrollment,
+                'video_accesses' => $videoAccesses,
+            ]))->setContext(
+                $student,
+                $student->playbackSessions,
+                $student->relationLoaded('learningAssetProgressRecords')
+                    ? $student->learningAssetProgressRecords
+                    : collect()
+            );
+        })->values();
+
         // Get active device (first one, already ordered by last_used_at desc)
         $activeDevice = $student->relationLoaded('devices') ? $student->devices->first() : null;
 
@@ -66,6 +103,7 @@ class StudentProfileResource extends JsonResource
             'last_activity_at' => $lastActivityAt,
             'active_device' => $activeDevice !== null ? new DeviceResource($activeDevice) : null,
             'total_enrollments' => $student->enrollments->count(),
+            'total_accessible_courses' => $courseAccessResources->count(),
             'device_changes_count' => $deviceChangeRequests->count(),
 
             // Device change log
@@ -90,6 +128,7 @@ class StudentProfileResource extends JsonResource
                 ),
             ],
             'enrollments' => $enrollmentResources,
+            'course_accesses' => $courseAccessResources,
         ];
     }
 

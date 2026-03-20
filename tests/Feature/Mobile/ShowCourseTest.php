@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CourseAccessModel;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
@@ -14,6 +15,8 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Models\VideoCodeBatch;
+use App\Models\VideoCodeRedemption;
 use App\Models\VideoUploadSession;
 use App\Services\Storage\StoragePathResolver;
 use App\Services\Videos\VideoThumbnailUrlResolver;
@@ -338,6 +341,67 @@ it('returns not found when course does not match student education profile', fun
 
     $response->assertStatus(404)
         ->assertJsonPath('error.code', 'NOT_FOUND');
+});
+
+it('shows video_code course details when the student redeemed access even if education does not match', function (): void {
+    $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
+    $grade12 = Grade::factory()->create(['center_id' => $center->id]);
+    $grade11 = Grade::factory()->create(['center_id' => $center->id]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'grade_id' => $grade12->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'status' => 3,
+        'is_published' => true,
+        'show_for_all_students' => false,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
+    $course->grades()->sync([$grade11->id]);
+
+    $readySession = VideoUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'upload_status' => 3,
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'library_id' => 55,
+        'source_id' => 'video-code-show-course',
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => $readySession->id,
+    ]);
+
+    $batch = VideoCodeBatch::factory()->create([
+        'center_id' => $center->id,
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'quantity' => 5,
+        'view_limit_per_code' => 3,
+    ]);
+
+    VideoCodeRedemption::factory()->create([
+        'batch_id' => $batch->id,
+        'sequence_number' => 1,
+        'user_id' => $student->id,
+        'video_access_id' => null,
+        'redeemed_at' => now(),
+    ]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}");
+
+    $response->assertOk()
+        ->assertJsonPath('data.id', $course->id)
+        ->assertJsonPath('data.has_access', true)
+        ->assertJsonPath('data.is_enrolled', true);
 });
 
 it('returns not found for unpublished courses', function (): void {
