@@ -23,6 +23,7 @@ class PdfResource extends JsonResource
         /** @var Pdf $pdf */
         $pdf = $this->resource;
         $hasExtractedText = is_string($pdf->text_content) && trim($pdf->text_content) !== '';
+        $textExtractionStatus = $pdf->text_extraction_status;
 
         return [
             'id' => $pdf->id,
@@ -39,8 +40,8 @@ class PdfResource extends JsonResource
             'file_extension' => $pdf->file_extension,
             'file_size_kb' => $pdf->file_size_kb,
             'has_extracted_text' => $hasExtractedText,
-            'text_extraction_status' => $pdf->text_extraction_status?->value,
-            'text_extraction_status_label' => $pdf->text_extraction_status?->label(),
+            'text_extraction_status' => $textExtractionStatus->value,
+            'text_extraction_status_label' => $textExtractionStatus->label(),
             'creator' => new UserSummaryResource($this->whenLoaded('creator')),
             'created_at' => $pdf->created_at,
             'updated_at' => $pdf->updated_at,

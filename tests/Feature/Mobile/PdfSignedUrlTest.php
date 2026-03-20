@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\CourseAccessModel;
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
@@ -9,6 +10,7 @@ use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Section;
 use App\Models\User;
+use App\Models\VideoAccess;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -171,4 +173,59 @@ it('blocks system students from accessing branded center pdf content', function 
     );
 
     $response->assertStatus(403);
+});
+
+it('returns signed url for video code course students with active video access', function (): void {
+    $center = Center::factory()->create(['pdf_download_permission' => true]);
+    $creator = User::factory()->create(['center_id' => $center->id, 'is_student' => false]);
+    $student = User::factory()->create([
+        'center_id' => $center->id,
+        'is_student' => true,
+        'password' => 'secret123',
+    ]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $creator->id,
+        'status' => 3,
+        'is_published' => true,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
+    $section = Section::factory()->create(['course_id' => $course->id, 'order_index' => 1]);
+
+    $path = 'centers/'.$center->id.'/pdfs/video-code.pdf';
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $creator->id,
+        'source_id' => $path,
+        'source_url' => null,
+    ]);
+
+    CoursePdf::create([
+        'course_id' => $course->id,
+        'pdf_id' => $pdf->id,
+        'section_id' => $section->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    VideoAccess::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+    ]);
+
+    $storage = Mockery::mock(StorageServiceInterface::class);
+    $storage->shouldReceive('exists')->once()->with($path)->andReturn(true);
+    $storage->shouldReceive('temporaryUrl')->once()->with($path, 300)->andReturn('https://signed.test/pdf');
+    $this->app->instance(StorageServiceInterface::class, $storage);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet("/api/v1/centers/{$center->id}/courses/{$course->id}/pdfs/{$pdf->id}/signed-url");
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.url', 'https://signed.test/pdf')
+        ->assertJsonPath('data.expires_in', 300);
 });

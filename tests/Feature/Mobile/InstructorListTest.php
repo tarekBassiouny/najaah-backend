@@ -7,6 +7,7 @@ use App\Models\Instructor;
 use App\Models\User;
 use App\Services\Instructors\InstructorAvatarUrlResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Tests\Helpers\ApiTestHelper;
 
@@ -123,6 +124,7 @@ it('resolves stored avatar path into a frontend-usable url', function (): void {
     Storage::fake('local');
     config()->set('filesystems.default', 'local');
     config()->set('filesystems.disks.local.url', 'https://storage.test');
+    Carbon::setTestNow(now());
 
     $center = Center::factory()->create(['type' => 1, 'api_key' => 'center-a-key']);
     $student = User::factory()->create([

@@ -8,7 +8,6 @@ use App\Enums\PdfUploadStatus;
 use App\Exceptions\AttachmentNotAllowedException;
 use App\Exceptions\UploadNotReadyException;
 use App\Models\Pdf;
-use Illuminate\Support\Facades\Log;
 
 class PdfAccessService
 {
@@ -23,14 +22,6 @@ class PdfAccessService
 
         if ($session === null) {
             throw new UploadNotReadyException('PDF upload session is required.', 422);
-        }
-
-        if ($session->expires_at !== null && $session->expires_at <= now()) {
-            Log::channel('domain')->warning('upload_session_expired', [
-                'pdf_id' => $pdf->id,
-                'session_id' => $session->id,
-            ]);
-            throw new UploadNotReadyException('PDF upload session has expired.', 422);
         }
 
         if ($session->upload_status !== PdfUploadStatus::Ready) {

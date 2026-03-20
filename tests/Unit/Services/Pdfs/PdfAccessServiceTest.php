@@ -7,6 +7,7 @@ use App\Models\Enrollment;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
 use App\Models\User;
+use App\Models\VideoAccess;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Pdfs\PdfAccessService;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
@@ -140,3 +141,44 @@ it('denies signed url when download permission is disabled', function (): void {
     $service = app(PdfAccessService::class);
     $service->signedUrl($student, $course, $pdf->id, 300);
 })->throws(AccessDeniedHttpException::class);
+
+it('returns signed url for video code course access without enrollment', function (): void {
+    $student = User::factory()->create(['is_student' => true]);
+    $course = Course::factory()->create([
+        'center_id' => $student->center_id,
+        'access_model' => \App\Enums\CourseAccessModel::VideoCode,
+    ]);
+    $pdf = Pdf::factory()->create(['center_id' => $course->center_id, 'source_id' => 'path/to/doc.pdf']);
+    CoursePdf::create([
+        'course_id' => $course->id,
+        'pdf_id' => $pdf->id,
+        'section_id' => null,
+        'video_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+    VideoAccess::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $course->center_id,
+    ]);
+
+    $this->mock(EnrollmentServiceInterface::class, function (MockInterface $mock): void {
+        $mock->shouldReceive('getActiveEnrollment')->never();
+    });
+    $this->mock(SettingsResolverServiceInterface::class, function (MockInterface $mock): void {
+        $mock->shouldReceive('resolve')
+            ->once()
+            ->andReturn(['pdf_download_permission' => true]);
+    });
+    $this->mock(StorageServiceInterface::class, function (MockInterface $mock): void {
+        $mock->shouldReceive('exists')->once()->andReturn(true);
+        $mock->shouldReceive('temporaryUrl')->once()->andReturn('https://signed.example/doc.pdf');
+    });
+
+    $service = app(PdfAccessService::class);
+    $result = $service->signedUrl($student, $course, $pdf->id, 300);
+
+    expect($result['url'])->toBe('https://signed.example/doc.pdf');
+    expect((int) $result['expires_in'])->toBe(300);
+});
