@@ -28,4 +28,35 @@ class UpdateLearningAssetRequest extends FormRequest
             'payload' => ['sometimes', 'array'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'title_translations' => [
+                'description' => 'Localized asset titles keyed by locale.',
+                'example' => [
+                    'en' => 'Chapter Summary',
+                    'ar' => 'ملخص الفصل',
+                ],
+            ],
+            'content_translations' => [
+                'description' => 'Localized asset body content keyed by locale.',
+                'example' => [
+                    'en' => 'This lesson focuses on the core ideas...',
+                    'ar' => 'يركز هذا الدرس على الأفكار الأساسية...',
+                ],
+            ],
+            'payload' => [
+                'description' => 'Optional structured payload for asset-specific content such as cards, quiz metadata, or activity schema.',
+                'example' => [
+                    'cards' => [
+                        ['front' => 'Term', 'back' => 'Definition'],
+                    ],
+                ],
+            ],
+        ];
+    }
 }
