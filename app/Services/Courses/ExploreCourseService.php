@@ -105,7 +105,12 @@ class ExploreCourseService
 
         if ($student instanceof User) {
             $query->withEnrollmentMeta($student, true)
-                ->matchingStudentEducation($student);
+                ->where(function (Builder $visibilityQuery) use ($student): void {
+                    $visibilityQuery->matchingStudentEducation($student)
+                        ->orWhere(function (Builder $accessQuery) use ($student): void {
+                            $accessQuery->accessibleBy($student);
+                        });
+                });
         } else {
             // Guest user - apply guest education filter
             $this->applyGuestEducationFilter();

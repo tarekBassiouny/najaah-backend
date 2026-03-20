@@ -78,4 +78,65 @@ class CreateAIContentBatchRequest extends FormRequest
             }
         });
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'course_id' => [
+                'description' => 'Course ID for batch ownership and source validation.',
+                'example' => 12,
+            ],
+            'source_type' => [
+                'description' => 'Shared source type for the whole batch: video, pdf, section, or course.',
+                'example' => AIContentSourceType::Video->value,
+            ],
+            'source_id' => [
+                'description' => 'Shared source entity ID according to source_type.',
+                'example' => 34,
+            ],
+            'language' => [
+                'description' => 'Output language preference for all generated assets. Defaults to ar.',
+                'example' => 'ar',
+            ],
+            'assets' => [
+                'description' => 'Assets to generate from the same source. Each target_type may appear only once.',
+                'example' => [
+                    [
+                        'target_type' => AIContentTargetType::Summary->value,
+                    ],
+                    [
+                        'target_type' => AIContentTargetType::Quiz->value,
+                        'generation_config' => [
+                            'question_count' => 10,
+                        ],
+                    ],
+                ],
+            ],
+            'assets.*.target_type' => [
+                'description' => 'Target generated content type.',
+                'example' => AIContentTargetType::Quiz->value,
+            ],
+            'assets.*.target_id' => [
+                'description' => 'Optional existing target entity ID to update instead of creating a new one.',
+                'example' => 55,
+            ],
+            'assets.*.generation_config' => [
+                'description' => 'Optional target-specific generation options.',
+                'example' => [
+                    'question_count' => 10,
+                ],
+            ],
+            'assets.*.ai_provider' => [
+                'description' => 'Optional provider override for this specific asset in the batch.',
+                'example' => 'gemini',
+            ],
+            'assets.*.ai_model' => [
+                'description' => 'Optional model override for this specific asset in the batch.',
+                'example' => 'gpt-4o-mini',
+            ],
+        ];
+    }
 }

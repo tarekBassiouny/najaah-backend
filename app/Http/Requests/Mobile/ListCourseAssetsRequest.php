@@ -24,4 +24,25 @@ class ListCourseAssetsRequest extends FormRequest
             'type' => ['sometimes', 'string', Rule::enum(AIContentTargetType::class)],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function queryParameters(): array
+    {
+        return [
+            'type' => [
+                'description' => 'Filter returned course assets by type.',
+                'example' => AIContentTargetType::Quiz->value,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
+    }
 }
