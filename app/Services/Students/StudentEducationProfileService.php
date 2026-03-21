@@ -56,9 +56,11 @@ class StudentEducationProfileService
             'enable_grade' => true,
             'enable_school' => true,
             'enable_college' => true,
+            'enable_parent_phone' => true,
             'require_grade' => false,
             'require_school' => false,
             'require_college' => false,
+            'require_parent_phone' => false,
         ];
     }
 }

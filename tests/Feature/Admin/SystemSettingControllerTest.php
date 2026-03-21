@@ -13,50 +13,53 @@ beforeEach(function (): void {
 
 it('lists system settings with filters', function (): void {
     SystemSetting::factory()->create([
-        'key' => 'student.default_country_code',
-        'value' => ['code' => '+20'],
+        'key' => 'support_email',
+        'value' => ['email' => 'ops@example.com'],
         'is_public' => true,
     ]);
     SystemSetting::factory()->create([
-        'key' => 'internal.jwt_ttl',
-        'value' => ['minutes' => 60],
+        'key' => 'attendance_required',
+        'value' => ['enabled' => true],
         'is_public' => false,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/settings?page=1&per_page=20&search=student&is_public=1', $this->adminHeaders());
+    $response = $this->getJson('/api/v1/admin/settings?page=1&per_page=20&search=support&is_public=1', $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.key', 'student.default_country_code')
+        ->assertJsonPath('data.0.key', 'support_email')
         ->assertJsonPath('meta.page', 1)
         ->assertJsonPath('meta.per_page', 20)
-        ->assertJsonPath('meta.total', 1);
+        ->assertJsonPath('meta.total', 1)
+        ->assertJsonPath('meta.catalog.support_email.scope', 'system')
+        ->assertJsonPath('meta.catalog_groups.general.0', 'site_name')
+        ->assertJsonPath('meta.defaults.support_email', 'ops@example.com');
 });
 
 it('creates a system setting', function (): void {
     $response = $this->postJson('/api/v1/admin/settings', [
-        'key' => 'student.default_country_code',
-        'value' => ['code' => '+20'],
+        'key' => 'support_email',
+        'value' => ['email' => 'support@example.com'],
         'is_public' => true,
     ], $this->adminHeaders());
 
     $response->assertCreated()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('data.key', 'student.default_country_code')
-        ->assertJsonPath('data.value.code', '+20')
+        ->assertJsonPath('data.key', 'support_email')
+        ->assertJsonPath('data.value.email', 'support@example.com')
         ->assertJsonPath('data.is_public', true);
 
     $this->assertDatabaseHas('system_settings', [
-        'key' => 'student.default_country_code',
+        'key' => 'support_email',
         'is_public' => 1,
     ]);
 });
 
 it('shows a system setting', function (): void {
     $setting = SystemSetting::factory()->create([
-        'key' => 'student.default_country_code',
-        'value' => ['code' => '+20'],
+        'key' => 'max_device_limit',
+        'value' => ['value' => 3],
         'is_public' => true,
     ]);
 
@@ -65,26 +68,26 @@ it('shows a system setting', function (): void {
     $response->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.id', $setting->id)
-        ->assertJsonPath('data.key', 'student.default_country_code')
-        ->assertJsonPath('data.value.code', '+20');
+        ->assertJsonPath('data.key', 'max_device_limit')
+        ->assertJsonPath('data.value.value', 3);
 });
 
 it('updates a system setting', function (): void {
     $setting = SystemSetting::factory()->create([
-        'key' => 'student.default_country_code',
-        'value' => ['code' => '+20'],
+        'key' => 'max_device_limit',
+        'value' => ['value' => 3],
         'is_public' => true,
     ]);
 
     $response = $this->putJson("/api/v1/admin/settings/{$setting->id}", [
-        'value' => ['code' => '+966'],
+        'value' => ['value' => 5],
         'is_public' => false,
     ], $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.id', $setting->id)
-        ->assertJsonPath('data.value.code', '+966')
+        ->assertJsonPath('data.value.value', 5)
         ->assertJsonPath('data.is_public', false);
 
     $this->assertDatabaseHas('system_settings', [
@@ -106,12 +109,23 @@ it('deletes a system setting', function (): void {
 
 it('validates required fields on create', function (): void {
     $response = $this->postJson('/api/v1/admin/settings', [
-        'value' => ['code' => '+20'],
+        'value' => ['email' => 'support@example.com'],
     ], $this->adminHeaders());
 
     $response->assertStatus(422)
         ->assertJsonPath('error.code', 'VALIDATION_ERROR')
         ->assertJsonPath('error.details.key.0', 'The key field is required.');
+});
+
+it('rejects unknown system setting keys', function (): void {
+    $response = $this->postJson('/api/v1/admin/settings', [
+        'key' => 'student.default_country_code',
+        'value' => ['code' => '+20'],
+        'is_public' => true,
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
 });
 
 it('requires authentication', function (): void {

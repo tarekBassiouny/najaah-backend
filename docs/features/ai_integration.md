@@ -12,7 +12,7 @@
 - Allow system to configure providers/models/keys once.
 - Allow per-center enable/disable and model selection.
 - Allow per-center AI usage limits and enforce them at runtime.
-- Provide frontend dropdown endpoints so UI is dynamic, not hardcoded.
+- Provide backend-driven provider/model metadata so frontend is dynamic, not hardcoded.
 
 ## Locked Decisions
 - API keys are never returned in API responses.
@@ -94,20 +94,30 @@
 - `POST /api/v1/admin/centers/{center}/ai-content/jobs/{job}/publish`
 - `DELETE /api/v1/admin/centers/{center}/ai-content/jobs/{job}`
 
-### B) New Dropdown + Configuration APIs (planned)
+### B) Provider Configuration APIs
 - `GET /api/v1/admin/centers/{center}/ai/options`
-  - frontend dropdown source
+  - frontend dropdown source for AI content job creation
   - returns effective center options
 - `GET /api/v1/admin/ai/providers`
   - system-level provider list/config
 - `PUT /api/v1/admin/ai/providers/{provider}`
   - system-level provider config update
 - `GET /api/v1/admin/centers/{center}/ai/providers`
-  - center-level provider settings
+  - legacy focused center-level provider settings
 - `PUT /api/v1/admin/centers/{center}/ai/providers/{provider}`
-  - center-level enable/disable + allowed models + limits
+  - legacy focused provider update endpoint
+- `GET /api/v1/admin/centers/{center}/settings`
+  - preferred settings-page source
+  - system admin gets full AI policy payload
+  - center admin gets simplified AI settings payload
+- `PATCH /api/v1/admin/centers/{center}/settings`
+  - preferred grouped settings update endpoint
+  - system admin can update provider enablement, allowlists, default model, and limits
+  - center admin can update only `default_model`
 
-## Frontend Contract (Dropdown)
+## Frontend Contract
+
+### A) AI content job dropdowns
 
 ### Response shape (planned)
 ```json
@@ -178,6 +188,89 @@
 }
 ```
 6. Use returned limits to show UI guardrails before submit (char counters, disabled submit when exceeded).
+
+### B) Settings pages
+
+Frontend should not use hard-coded provider lists or AI policy fields on settings pages.
+
+Use grouped center settings instead:
+
+- `GET /api/v1/admin/centers/{center}/settings`
+- `PATCH /api/v1/admin/centers/{center}/settings`
+
+System admin view:
+- reads `data.sections.ai.providers`
+- can edit `is_enabled`, `allowed_models`, `default_model`, and `limits`
+- should also respect top-level `data.features.ai_content`
+
+Center admin view:
+- reads simplified `data.sections.ai.providers`
+- can edit only `default_model`
+- should use `data.summaries` for plain-language policy notices
+- should not show raw provider limits or allowlists
+
+Example system-admin AI section from grouped center settings:
+
+```json
+{
+  "sections": {
+    "ai": {
+      "feature_enabled": true,
+      "providers": [
+        {
+          "key": "openai",
+          "label": "OpenAI",
+          "enabled": true,
+          "configured": true,
+          "default_model": "gpt-4o-mini",
+          "models": ["gpt-4o-mini", "gpt-4.1-mini"],
+          "allowed_models": ["gpt-4o-mini"],
+          "limits": {
+            "daily_job_limit": 20
+          },
+          "editable_fields": [
+            "is_enabled",
+            "allowed_models",
+            "default_model",
+            "limits"
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+Example center-admin AI section from grouped center settings:
+
+```json
+{
+  "sections": {
+    "ai": {
+      "feature_enabled": true,
+      "providers": [
+        {
+          "key": "openai",
+          "label": "OpenAI",
+          "enabled": true,
+          "configured": true,
+          "default_model": "gpt-4o-mini",
+          "models": ["gpt-4o-mini"],
+          "managed_by": "platform",
+          "editable_fields": ["default_model"]
+        }
+      ]
+    }
+  },
+  "summaries": [
+    {
+      "type": "info",
+      "title": "AI provider managed by platform",
+      "message": "OpenAI is configured for your center. Provider availability and limits are managed by platform admin."
+    }
+  ]
+}
+```
 
 ## Env Keys (Current)
 ```env
@@ -250,7 +343,9 @@ GEMINI_API_KEY=
 - [ ] Oversized input/output payload -> blocked with expected error code.
 
 ## Notes for Frontend Team
-- Backend will provide final dropdown endpoint; do not hardcode provider/model lists.
-- Frontend should treat provider/model metadata as dynamic.
-- If provider is configured `false`, hide it from user selection and show admin warning only in system settings UI.
-- Frontend should read center limits from options response and enforce pre-submit UX guards (counter + disable + message).
+- Do not hardcode provider keys or model lists anywhere.
+- Use `GET /ai/options` for AI job creation UX.
+- Use grouped center settings for AI settings pages.
+- Treat `editable_fields` as the source of truth for which AI controls are writable.
+- If `features.ai_content` is off for a center, settings UI should show a platform-managed status instead of editable AI controls.
+- Frontend should read center limits from backend responses and enforce pre-submit UX guards when limits are exposed.

@@ -202,6 +202,53 @@ it('returns 422 for source mismatch during ai job creation', function (): void {
         ->assertJsonPath('error.code', 'INVALID_STATE');
 });
 
+it('blocks ai content generation when the center ai_content feature is disabled', function (): void {
+    Queue::fake();
+
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $center->setting()->create([
+        'settings' => [
+            'features' => [
+                'ai_content' => false,
+            ],
+        ],
+    ]);
+
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'transcript' => 'Lesson transcript',
+    ]);
+    $course->videos()->attach($video->id, [
+        'section_id' => null,
+        'order_index' => 1,
+        'visible' => true,
+        'view_limit_override' => null,
+    ]);
+
+    $this->asCenterAdmin($center);
+    configureAiProvider();
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/ai-content/jobs",
+        [
+            'course_id' => $course->id,
+            'source_type' => AIContentSourceType::Video->value,
+            'source_id' => $video->id,
+            'target_type' => AIContentTargetType::Summary->value,
+            'ai_provider' => 'openai',
+            'ai_model' => 'gpt-4o-mini',
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(403)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'FORBIDDEN');
+
+    Queue::assertNothingPushed();
+});
+
 it('returns 422 when generating from a video source without transcript', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
     $course = Course::factory()->create(['center_id' => $center->id]);

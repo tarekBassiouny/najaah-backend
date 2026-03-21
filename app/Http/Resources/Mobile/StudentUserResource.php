@@ -37,6 +37,7 @@ class StudentUserResource extends JsonResource
             'id' => $user->id,
             'name' => $user->name,
             'phone' => $user->phone,
+            'parent_phone' => $user->parent_phone,
             'email' => $user->email,
             'status' => $status?->value ?? $user->status,
             'status_key' => $status !== null ? Str::snake($status->name) : null,

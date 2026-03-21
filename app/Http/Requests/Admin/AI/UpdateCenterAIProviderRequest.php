@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\AI;
 
+use App\Services\Centers\CenterScopeService;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -20,6 +21,12 @@ class UpdateCenterAIProviderRequest extends FormRequest
      */
     public function rules(): array
     {
+        if (! $this->isSystemAdmin()) {
+            return [
+                'default_model' => ['sometimes', 'nullable', 'string', 'max:120'],
+            ];
+        }
+
         return [
             'is_enabled' => ['sometimes', 'boolean'],
             'allowed_models' => ['sometimes', 'nullable', 'array'],
@@ -73,6 +80,10 @@ class UpdateCenterAIProviderRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
+            if (! $this->isSystemAdmin()) {
+                return;
+            }
+
             $limits = $this->input('limits');
             if (! is_array($limits)) {
                 return;
@@ -117,5 +128,12 @@ class UpdateCenterAIProviderRequest extends FormRequest
                 'details' => $validator->errors(),
             ],
         ], 422));
+    }
+
+    private function isSystemAdmin(): bool
+    {
+        $user = $this->user();
+
+        return $user !== null && app(CenterScopeService::class)->isSystemSuperAdmin($user);
     }
 }

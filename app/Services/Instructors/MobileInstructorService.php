@@ -9,10 +9,15 @@ use App\Models\Center;
 use App\Models\Instructor;
 use App\Models\User;
 use App\Services\Instructors\Contracts\MobileInstructorServiceInterface;
+use App\Services\Settings\PolicySettingsService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class MobileInstructorService implements MobileInstructorServiceInterface
 {
+    public function __construct(
+        private readonly PolicySettingsService $policySettingsService
+    ) {}
+
     /**
      * @return LengthAwarePaginator<Instructor>
      */
@@ -25,9 +30,11 @@ class MobileInstructorService implements MobileInstructorServiceInterface
             $query->visibleToStudent($student);
         } else {
             // Guest user - show instructors from centers that allow guest browsing
-            $query->whereHas('center', function ($query): void {
-                $query->where('status', Center::STATUS_ACTIVE->value)
-                    ->where('allow_guest_browsing', true);
+            $policySettingsService = $this->policySettingsService;
+
+            $query->whereHas('center', function ($query) use ($policySettingsService): void {
+                $query->where('status', Center::STATUS_ACTIVE->value);
+                $policySettingsService->applyGuestBrowsingFilter($query);
             });
         }
 

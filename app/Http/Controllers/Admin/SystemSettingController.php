@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\Settings\UpdateSystemSettingRequest;
 use App\Http\Resources\Admin\Settings\SystemSettingResource;
 use App\Models\SystemSetting;
 use App\Services\Settings\Contracts\SystemSettingServiceInterface;
+use App\Services\Settings\PolicySettingsService;
 use Illuminate\Http\JsonResponse;
 
 class SystemSettingController extends Controller
@@ -19,7 +20,8 @@ class SystemSettingController extends Controller
     use AdminAuthenticates;
 
     public function __construct(
-        private readonly SystemSettingServiceInterface $systemSettingService
+        private readonly SystemSettingServiceInterface $systemSettingService,
+        private readonly PolicySettingsService $policySettingsService
     ) {}
 
     /**
@@ -38,6 +40,9 @@ class SystemSettingController extends Controller
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
                 'last_page' => $paginator->lastPage(),
+                'catalog' => $this->policySettingsService->systemSettingsCatalog(),
+                'catalog_groups' => $this->policySettingsService->systemSettingGroups(),
+                'defaults' => $this->policySettingsService->systemDefaults(),
             ],
         ]);
     }

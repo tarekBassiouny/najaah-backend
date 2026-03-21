@@ -12,6 +12,7 @@ Then load only the next skill you need:
 - `.claude/skills/najaah-orchestrator/SKILL.md`
 - `.claude/skills/najaah-architecture/SKILL.md`
 - `.claude/skills/najaah-features/SKILL.md`
+- `.claude/skills/najaah-settings/SKILL.md`
 - `.claude/skills/najaah-api/SKILL.md`
 - `.claude/skills/najaah-quality/SKILL.md`
 
@@ -19,6 +20,7 @@ Then load only the next skill you need:
 - This backend is multi-tenant. Center scoping is default behavior, not an optional filter.
 - Mobile student auth is JWT and device-bound. Admin auth is Sanctum/session based.
 - Settings resolve from broader scope to narrower scope, with later overrides winning.
+- System settings are owned by system admin, center settings are owned by center admin, and per-center feature flags are owned by system admin.
 - Keep admin output human-readable and locale-aware.
 - Preserve existing contracts unless the task explicitly approves a contract change.
 - Once an orchestrated task has a plan, the orchestrator working memory becomes the live coordination source for later phases and handoffs.
@@ -33,6 +35,7 @@ Then load only the next skill you need:
 1. Read this file.
 2. Inspect similar implementation in the codebase.
 3. Load the one specialist skill needed for the current phase.
-4. If the task is coordinated by the orchestrator, read from and write to the working memory instead of re-deriving settled decisions.
-5. Keep changes aligned with the domain rules and standards references.
-6. Update the relevant reference if you introduce a stable new pattern.
+4. If the task touches configuration, feature availability, or admin-managed defaults, load `.claude/skills/najaah-settings/SKILL.md`.
+5. If the task is coordinated by the orchestrator, read from and write to the working memory instead of re-deriving settled decisions.
+6. Keep changes aligned with the domain rules and standards references.
+7. Update the relevant reference if you introduce a stable new pattern.

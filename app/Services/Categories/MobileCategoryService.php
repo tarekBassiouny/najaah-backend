@@ -10,10 +10,15 @@ use App\Filters\Mobile\CategoryFilters;
 use App\Models\Category;
 use App\Models\Center;
 use App\Models\User;
+use App\Services\Settings\PolicySettingsService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class MobileCategoryService
 {
+    public function __construct(
+        private readonly PolicySettingsService $policySettingsService
+    ) {}
+
     /**
      * @return LengthAwarePaginator<Category>
      */
@@ -27,11 +32,13 @@ class MobileCategoryService
             $query->visibleToStudent($student);
         } else {
             // Guest user - show categories from centers that allow guest browsing
-            $query->where(function ($query): void {
+            $policySettingsService = $this->policySettingsService;
+
+            $query->where(function ($query) use ($policySettingsService): void {
                 $query->whereNull('center_id')
-                    ->orWhereHas('center', function ($query): void {
-                        $query->where('status', Center::STATUS_ACTIVE->value)
-                            ->where('allow_guest_browsing', true);
+                    ->orWhereHas('center', function ($query) use ($policySettingsService): void {
+                        $query->where('status', Center::STATUS_ACTIVE->value);
+                        $policySettingsService->applyGuestBrowsingFilter($query);
                     });
             });
         }
@@ -56,9 +63,13 @@ class MobileCategoryService
     /**
      * @return LengthAwarePaginator<Category>
      */
-    public function listForCenter(Center $center, CategoryFilters $filters): LengthAwarePaginator
+    public function listForCenter(Center $center, CategoryFilters $filters, ?User $student = null): LengthAwarePaginator
     {
         if ($center->type !== CenterType::Unbranded || $center->status !== Center::STATUS_ACTIVE) {
+            throw new NotFoundException('Center not found.', 404);
+        }
+
+        if (! $student instanceof User && ! $this->policySettingsService->centerAllowsGuestBrowsing($center)) {
             throw new NotFoundException('Center not found.', 404);
         }
 

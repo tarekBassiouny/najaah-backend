@@ -63,7 +63,7 @@ class CategoryController extends Controller
         }
 
         $filters = $request->filters();
-        $paginator = $this->service->listForCenter($center, $filters);
+        $paginator = $this->service->listForCenter($center, $filters, $student);
 
         return response()->json([
             'success' => true,

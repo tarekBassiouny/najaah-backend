@@ -123,6 +123,33 @@ class GuestBrowsingFeatureTest extends TestCase
             ->assertJsonPath('error.code', 'GUEST_BROWSING_NOT_ALLOWED');
     }
 
+    public function test_guest_cannot_see_center_or_courses_when_guest_browsing_feature_flag_is_disabled(): void
+    {
+        $this->centerWithGuestBrowsing->setting()->create([
+            'settings' => [
+                'features' => [
+                    'guest_browsing' => false,
+                ],
+            ],
+        ]);
+
+        $centerList = $this->getJson('/api/v1/centers');
+
+        $centerList->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $centerIds = collect($centerList->json('data'))->pluck('id');
+        $this->assertFalse($centerIds->contains($this->centerWithGuestBrowsing->id));
+
+        $courses = $this->getJson('/api/v1/courses/explore');
+
+        $courses->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $courseIds = collect($courses->json('data'))->pluck('id');
+        $this->assertFalse($courseIds->contains($this->publishedCourse->id));
+    }
+
     public function test_guest_can_list_categories(): void
     {
         CategoryFactory::new()->create([

@@ -16,6 +16,7 @@ use App\Models\Course;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
+use App\Services\Settings\PolicySettingsService;
 use App\Services\Timezone\Contracts\TimezoneServiceInterface;
 use App\Support\AuditActions;
 use App\Support\Guards\RejectNonScalarInput;
@@ -31,6 +32,7 @@ class CenterService implements CenterServiceInterface
     public function __construct(
         private readonly AuditLogService $auditLogService,
         private readonly TimezoneServiceInterface $timezoneService,
+        private readonly PolicySettingsService $policySettingsService,
     ) {}
 
     /**
@@ -179,7 +181,7 @@ class CenterService implements CenterServiceInterface
 
         // For guests, only show centers that allow guest browsing
         if (! $student instanceof User) {
-            $query->where('allow_guest_browsing', true);
+            $this->policySettingsService->applyGuestBrowsingFilter($query);
         }
 
         if ($filters->search !== null && $filters->search !== '') {
@@ -318,7 +320,7 @@ class CenterService implements CenterServiceInterface
         }
 
         // For guests, center must allow guest browsing
-        if (! $student instanceof User && ! $center->allow_guest_browsing) {
+        if (! $student instanceof User && ! $this->policySettingsService->centerAllowsGuestBrowsing($center)) {
             $this->notFound();
         }
 

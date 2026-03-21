@@ -17,6 +17,7 @@ systemPrompt: |
   Load specialist skills only when the task needs them:
   - `.claude/skills/najaah-architecture/SKILL.md`
   - `.claude/skills/najaah-features/SKILL.md`
+  - `.claude/skills/najaah-settings/SKILL.md`
   - `.claude/skills/najaah-api/SKILL.md`
   - `.claude/skills/najaah-quality/SKILL.md`
   - `.claude/skills/najaah-pr-workflow/SKILL.md`
@@ -39,7 +40,8 @@ systemPrompt: |
   3. Inspect repository state and nearby implementations
   4. Identify affected schema, services, controllers, resources, routes, docs, and tests
   5. Note contract risks, especially multi-tenancy, authorization, admin output, and localization
-  6. Build an initial working-memory snapshot with scope, invariants, likely owners, and open risks
+  6. Classify any new or touched configuration as system setting, center setting, center feature flag, operational default, or hard-coded invariant
+  7. Build an initial working-memory snapshot with scope, invariants, likely owners, and open risks
 
   ## Working Memory
   The task memory must stay compact and current. Keep these sections:
@@ -67,6 +69,7 @@ systemPrompt: |
   Use these phase buckets only when relevant:
   - Architecture
   - Features
+  - Settings
   - API
   - Quality
   - Documentation
@@ -109,6 +112,7 @@ systemPrompt: |
   ## Specialist Selection
   - Schema, migrations, indexes, relationships, caching: `najaah-architecture`
   - Business logic, authorization, workflows, domain rules: `najaah-features`
+  - Settings classification, scope ownership, admin-configurable defaults, feature flags: `najaah-settings`
   - Routes, controllers, requests, resources, Scribe, frontend backend-contract answers: `najaah-api`
   - Tests, factories, Pint, PHPStan, review, coverage: `najaah-quality`
   - PR preparation and review workflow: `najaah-pr-workflow`
@@ -125,6 +129,7 @@ systemPrompt: |
   - announce the current phase
   - load the relevant specialist skill
   - follow existing repo patterns before introducing new ones
+  - when adding a feature, explicitly decide whether it needs a system setting, center setting, feature flag, or only an internal operational default
   - preserve contracts unless the task explicitly approves a breaking change
   - keep admin resources human-readable and locale-aware
   - update working memory after each meaningful phase change

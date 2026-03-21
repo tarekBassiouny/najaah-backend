@@ -12,10 +12,10 @@ use App\Jobs\ProcessBulkWhatsAppJob;
 use App\Models\BulkWhatsAppJob;
 use App\Models\BulkWhatsAppJobItem;
 use App\Models\Center;
-use App\Models\CenterSetting;
 use App\Models\User;
 use App\Models\VideoAccessCode;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Settings\PolicySettingsService;
 use App\Services\VideoAccess\Contracts\BulkWhatsAppServiceInterface;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
@@ -24,7 +24,8 @@ use Illuminate\Support\Facades\DB;
 class BulkWhatsAppService implements BulkWhatsAppServiceInterface
 {
     public function __construct(
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly PolicySettingsService $policySettingsService
     ) {}
 
     public function initiate(User $admin, int $centerId, array $codeIds, WhatsAppCodeFormat $format): BulkWhatsAppJob
@@ -41,6 +42,10 @@ class BulkWhatsAppService implements BulkWhatsAppServiceInterface
         $center = Center::query()->find($centerId);
         if (! $center instanceof Center) {
             $this->deny(ErrorCodes::NOT_FOUND, 'Center not found.', 404);
+        }
+
+        if (! $this->policySettingsService->isFeatureEnabled($center, 'whatsapp_bulk')) {
+            $this->deny(ErrorCodes::FORBIDDEN, 'Bulk WhatsApp is disabled for this center.', 403);
         }
 
         $availableCodeIds = VideoAccessCode::query()
@@ -64,7 +69,7 @@ class BulkWhatsAppService implements BulkWhatsAppServiceInterface
                 'status' => BulkJobStatus::Pending,
                 'format' => $format,
                 'created_by' => $admin->id,
-                'settings' => $this->resolveSettings($center),
+                'settings' => $this->resolveSettings(),
             ]);
 
             foreach ($availableCodeIds as $codeId) {
@@ -171,12 +176,12 @@ class BulkWhatsAppService implements BulkWhatsAppServiceInterface
     /**
      * @return array<string, int>
      */
-    private function resolveSettings(Center $center): array
+    private function resolveSettings(): array
     {
-        /** @var CenterSetting|null $setting */
-        $setting = $center->setting()->first();
-        $settings = $setting instanceof CenterSetting && is_array($setting->settings) ? $setting->settings : [];
-        $bulkSettings = is_array($settings['whatsapp_bulk_settings'] ?? null) ? $settings['whatsapp_bulk_settings'] : [];
+        $bulkSettings = $this->policySettingsService->systemValue('whatsapp_bulk_settings');
+        if (! is_array($bulkSettings)) {
+            $bulkSettings = [];
+        }
 
         return [
             'delay_seconds' => is_numeric($bulkSettings['delay_seconds'] ?? null) ? max(0, (int) $bulkSettings['delay_seconds']) : 3,
