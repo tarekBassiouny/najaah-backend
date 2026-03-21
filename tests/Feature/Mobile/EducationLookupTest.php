@@ -348,9 +348,11 @@ it('returns aggregated education settings and enabled lookups for mobile', funct
                 'enable_grade' => true,
                 'enable_school' => false,
                 'enable_college' => true,
+                'enable_parent_phone' => true,
                 'require_grade' => true,
                 'require_school' => false,
                 'require_college' => true,
+                'require_parent_phone' => true,
             ],
         ],
     ]);
@@ -373,9 +375,11 @@ it('returns aggregated education settings and enabled lookups for mobile', funct
         ->assertJsonPath('data.settings.enable_grade', true)
         ->assertJsonPath('data.settings.enable_school', false)
         ->assertJsonPath('data.settings.enable_college', true)
+        ->assertJsonPath('data.settings.enable_parent_phone', true)
         ->assertJsonPath('data.settings.require_grade', true)
         ->assertJsonPath('data.settings.require_school', false)
         ->assertJsonPath('data.settings.require_college', true)
+        ->assertJsonPath('data.settings.require_parent_phone', true)
         ->assertJsonPath('data.lookups.grades.0.id', $grade->id)
         ->assertJsonCount(0, 'data.lookups.schools')
         ->assertJsonPath('data.lookups.colleges.0.id', $college->id);

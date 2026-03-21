@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Settings;
 
+use App\Services\Settings\PolicySettingsService;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -27,6 +28,7 @@ class StoreSystemSettingRequest extends FormRequest
                 'string',
                 'max:190',
                 'regex:/^[a-zA-Z0-9._-]+$/',
+                Rule::in($this->policySettingsService()->systemSettingKeys()),
                 Rule::unique('system_settings', 'key'),
             ],
             'value' => ['nullable', 'array'],
@@ -41,12 +43,12 @@ class StoreSystemSettingRequest extends FormRequest
     {
         return [
             'key' => [
-                'description' => 'Unique system setting key.',
-                'example' => 'student.default_country_code',
+                'description' => 'Unique system setting key from the central settings registry.',
+                'example' => 'support_email',
             ],
             'value' => [
                 'description' => 'JSON object value for this setting.',
-                'example' => ['code' => '+20'],
+                'example' => ['email' => 'support@example.com'],
             ],
             'is_public' => [
                 'description' => 'Whether this setting can be exposed publicly.',
@@ -70,6 +72,11 @@ class StoreSystemSettingRequest extends FormRequest
         $this->merge([
             'is_public' => $normalized,
         ]);
+    }
+
+    private function policySettingsService(): PolicySettingsService
+    {
+        return app(PolicySettingsService::class);
     }
 
     protected function failedValidation(Validator $validator): void

@@ -30,3 +30,8 @@ Route::middleware(['require.permission:settings.manage', 'scope.center'])->group
     Route::get('/centers/{center}/settings', [CenterOperationsController::class, 'show'])->whereNumber('center');
     Route::patch('/centers/{center}/settings', [CenterOperationsController::class, 'update'])->whereNumber('center');
 });
+
+Route::middleware(['require.permission:settings.manage', 'scope.system'])->group(function (): void {
+    Route::get('/centers/{center}/features', [CenterOperationsController::class, 'showFeatures'])->whereNumber('center');
+    Route::patch('/centers/{center}/features', [CenterOperationsController::class, 'updateFeatures'])->whereNumber('center');
+});

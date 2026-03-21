@@ -218,6 +218,68 @@ it('returns actionable error when evolution instance is disconnected', function 
         );
 });
 
+it('blocks bulk whatsapp when the center whatsapp_bulk feature is disabled', function (): void {
+    $center = Center::factory()->create();
+    $center->setting()->create([
+        'settings' => [
+            'features' => [
+                'whatsapp_bulk' => false,
+            ],
+        ],
+    ]);
+
+    $admin = $this->asCenterAdmin($center);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+        'country_code' => '+20',
+        'phone' => '1012345678',
+    ]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+    ]);
+
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+    ]);
+
+    $enrollment = Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $code = VideoAccessCode::query()->create([
+        'user_id' => $student->id,
+        'video_id' => $video->id,
+        'course_id' => $course->id,
+        'center_id' => $center->id,
+        'enrollment_id' => $enrollment->id,
+        'video_access_request_id' => null,
+        'code' => 'AB12CD34',
+        'status' => VideoAccessCodeStatus::Active,
+        'generated_by' => $admin->id,
+        'generated_at' => now(),
+        'expires_at' => now()->addDays(30),
+    ]);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/video-access-codes/bulk-send-whatsapp",
+        [
+            'code_ids' => [$code->id],
+            'format' => 'text_code',
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'FORBIDDEN');
+});
+
 it('returns actionable error when evolution returns truncated undefined-reading error', function (): void {
     config(['evolution.otp_instance_name' => 'otp-instance']);
 

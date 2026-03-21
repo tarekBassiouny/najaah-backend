@@ -7,9 +7,14 @@ namespace App\Services\Guest;
 use App\Models\Center;
 use App\Models\User;
 use App\Services\Guest\Contracts\GuestAccessServiceInterface;
+use App\Services\Settings\PolicySettingsService;
 
 final class GuestAccessService implements GuestAccessServiceInterface
 {
+    public function __construct(
+        private readonly PolicySettingsService $policySettingsService
+    ) {}
+
     /**
      * Check if the given user (or null for guest) can browse content.
      * Authenticated users can always browse.
@@ -35,10 +40,12 @@ final class GuestAccessService implements GuestAccessServiceInterface
         // No specific center context (Najaah app / unbranded browsing)
         // Allow guest browsing by default for discovery
         if ($center === null) {
-            return true;
+            $constraints = $this->policySettingsService->systemConstraints();
+
+            return ($constraints['force_disable_guest_browsing'] ?? false) !== true;
         }
 
-        return $center->allow_guest_browsing;
+        return $this->policySettingsService->centerAllowsGuestBrowsing($center);
     }
 
     /**

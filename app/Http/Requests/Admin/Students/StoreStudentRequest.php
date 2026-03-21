@@ -60,6 +60,7 @@ class StoreStudentRequest extends FormRequest
                     }),
             ],
             'country_code' => ['required', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
+            'parent_phone' => ['nullable', 'string', 'max:24', 'regex:/^[\d+\s().-]+$/'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
     }
@@ -116,6 +117,10 @@ class StoreStudentRequest extends FormRequest
                 'description' => 'Optional center assignment for student.',
                 'example' => 12,
             ],
+            'parent_phone' => [
+                'description' => 'Optional parent phone number for notifications.',
+                'example' => '+201001234567',
+            ],
         ];
     }
 
@@ -135,10 +140,14 @@ class StoreStudentRequest extends FormRequest
     {
         $phone = preg_replace('/\D+/', '', (string) $this->input('phone'));
         $countryCode = preg_replace('/[^\d+]+/', '', (string) $this->input('country_code'));
+        $parentPhone = preg_replace('/[^\d+]+/', '', (string) $this->input('parent_phone'));
 
         $this->merge([
             'phone' => trim((string) $phone),
             'country_code' => trim((string) $countryCode),
+            'parent_phone' => $parentPhone !== null && $parentPhone !== ''
+                ? trim((string) $parentPhone)
+                : null,
         ]);
     }
 }

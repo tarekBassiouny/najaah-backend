@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
+use App\Services\Settings\PolicySettingsService;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use App\Support\Guards\RejectNonScalarInput;
@@ -27,7 +28,8 @@ class CourseService implements CourseServiceInterface
 {
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly PolicySettingsService $policySettingsService
     ) {}
 
     /** @return LengthAwarePaginator<Course> */
@@ -360,12 +362,14 @@ class CourseService implements CourseServiceInterface
      */
     private function guestBaseQuery(): Builder
     {
+        $policySettingsService = $this->policySettingsService;
+
         $query = Course::query()
             ->published()
             ->with(['center', 'category', 'instructors'])
-            ->whereHas('center', function ($query): void {
-                $query->where('status', \App\Models\Center::STATUS_ACTIVE->value)
-                    ->where('allow_guest_browsing', true);
+            ->whereHas('center', function (Builder $query) use ($policySettingsService): void {
+                $query->where('status', \App\Models\Center::STATUS_ACTIVE->value);
+                $policySettingsService->applyGuestBrowsingFilter($query);
             })
             ->where('show_for_all_students', true);
 

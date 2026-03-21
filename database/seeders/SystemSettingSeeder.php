@@ -41,5 +41,47 @@ class SystemSettingSeeder extends Seeder
             'value' => ['enabled' => false],
             'is_public' => true,
         ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'whatsapp_bulk_settings',
+            'value' => [
+                'delay_seconds' => 3,
+                'batch_size' => 50,
+                'batch_pause_seconds' => 60,
+                'max_retries' => 2,
+                'max_failures_before_pause' => 10,
+            ],
+            'is_public' => false,
+        ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'max_view_limit',
+            'value' => ['value' => 10],
+            'is_public' => true,
+        ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'max_device_limit',
+            'value' => ['value' => 3],
+            'is_public' => true,
+        ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'force_disable_extra_view_requests',
+            'value' => ['enabled' => false],
+            'is_public' => true,
+        ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'force_disable_pdf_download',
+            'value' => ['enabled' => false],
+            'is_public' => true,
+        ]);
+
+        SystemSetting::factory()->create([
+            'key' => 'force_disable_guest_browsing',
+            'value' => ['enabled' => false],
+            'is_public' => true,
+        ]);
     }
 }

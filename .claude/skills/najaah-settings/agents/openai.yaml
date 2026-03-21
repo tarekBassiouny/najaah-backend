@@ -1,0 +1,4 @@
+interface:
+  display_name: "Najaah Settings"
+  short_description: "Help with settings scope, feature flags, and configuration governance"
+  default_prompt: "Use $najaah-settings to classify a behavior as a system setting, center setting, feature flag, operational default, or invariant, then wire the required backend settings surfaces."

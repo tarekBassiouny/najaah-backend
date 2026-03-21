@@ -73,9 +73,9 @@ it('updates system ai provider settings without exposing api key', function (): 
     ]);
 });
 
-it('updates center ai provider settings and returns effective options', function (): void {
+it('system admin updates center ai provider settings and returns effective options', function (): void {
     $center = Center::factory()->create(['type' => CenterType::Branded]);
-    $admin = $this->asCenterAdmin($center);
+    $admin = $this->asAdmin();
 
     AIProviderConfig::factory()->create([
         'provider_key' => 'openai',
@@ -119,6 +119,89 @@ it('updates center ai provider settings and returns effective options', function
         ->assertJsonPath('data.providers.0.enabled', true)
         ->assertJsonPath('data.providers.0.configured', true)
         ->assertJsonPath('data.providers.0.default_model', 'gpt-4o-mini');
+});
+
+it('center admin can only update default model for center ai provider settings', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $this->asCenterAdmin($center);
+
+    AIProviderConfig::factory()->create([
+        'provider_key' => 'openai',
+        'display_name' => 'OpenAI',
+        'is_enabled' => true,
+        'default_model' => 'gpt-4o-mini',
+        'models' => ['gpt-4o-mini', 'gpt-4.1-mini'],
+        'api_key' => 'sk-system-key',
+    ]);
+
+    $response = $this->putJson(
+        "/api/v1/admin/centers/{$center->id}/ai/providers/openai",
+        [
+            'default_model' => 'gpt-4o-mini',
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('data.default_model', 'gpt-4o-mini');
+});
+
+it('blocks center ai options when ai content is disabled for the center', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $center->setting()->create([
+        'settings' => [
+            'features' => [
+                'ai_content' => false,
+            ],
+        ],
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    AIProviderConfig::factory()->create([
+        'provider_key' => 'openai',
+        'display_name' => 'OpenAI',
+        'is_enabled' => true,
+        'default_model' => 'gpt-4o-mini',
+        'models' => ['gpt-4o-mini'],
+        'api_key' => 'sk-system-key',
+    ]);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/ai/options?enabled_only=true",
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'FORBIDDEN');
+});
+
+it('blocks center admin from updating ai limits and provider availability', function (): void {
+    $center = Center::factory()->create(['type' => CenterType::Branded]);
+    $this->asCenterAdmin($center);
+
+    AIProviderConfig::factory()->create([
+        'provider_key' => 'openai',
+        'display_name' => 'OpenAI',
+        'is_enabled' => true,
+        'default_model' => 'gpt-4o-mini',
+        'models' => ['gpt-4o-mini', 'gpt-4.1-mini'],
+        'api_key' => 'sk-system-key',
+    ]);
+
+    $response = $this->putJson(
+        "/api/v1/admin/centers/{$center->id}/ai/providers/openai",
+        [
+            'is_enabled' => false,
+            'limits' => [
+                'daily_job_limit' => 5,
+            ],
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
 });
 
 it('blocks ai job creation when daily job limit is exceeded', function (): void {

@@ -16,4 +16,11 @@ interface CenterSettingsServiceInterface
     public function update(User $actor, Center $center, array $settings): CenterSetting;
 
     public function get(User $actor, Center $center): CenterSetting;
+
+    /**
+     * Update feature flags for a center (system admin only).
+     *
+     * @param  array<string, bool>  $features
+     */
+    public function updateFeatures(User $actor, Center $center, array $features): CenterSetting;
 }

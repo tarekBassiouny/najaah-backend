@@ -44,6 +44,8 @@ it('returns resolved center policy with system fallbacks', function (): void {
         ->assertJsonPath('data.resolved_settings.education_profile.enable_grade', true)
         ->assertJsonPath('data.resolved_settings.education_profile.enable_school', true)
         ->assertJsonPath('data.resolved_settings.education_profile.enable_college', true)
+        ->assertJsonPath('data.resolved_settings.education_profile.enable_parent_phone', true)
+        ->assertJsonPath('data.resolved_settings.education_profile.require_parent_phone', false)
         ->assertJsonPath('data.resolved_settings.timezone', 'Africa/Cairo')
         ->assertJsonPath('data.resolved_settings.support_email', 'ops@example.com')
         ->assertJsonPath('data.system_defaults.timezone', 'Africa/Cairo')
@@ -76,4 +78,32 @@ it('syncs center columns when center settings are updated', function (): void {
         'device_limit' => 3,
         'primary_color' => '#123456',
     ]);
+});
+
+it('resolves feature-gated settings as disabled when the feature flag is off', function (): void {
+    $center = Center::factory()->create([
+        'allow_guest_browsing' => true,
+        'pdf_download_permission' => true,
+    ]);
+
+    $center->setting()->create([
+        'settings' => [
+            'allow_guest_browsing' => true,
+            'pdf_download_permission' => true,
+            'video_code_expiry_days' => 30,
+            'features' => [
+                'guest_browsing' => false,
+                'pdf_downloads' => false,
+                'codes_access' => false,
+            ],
+        ],
+    ]);
+
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/settings", $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('data.settings.features.guest_browsing', false)
+        ->assertJsonPath('data.resolved_settings.allow_guest_browsing', false)
+        ->assertJsonPath('data.resolved_settings.pdf_download_permission', false)
+        ->assertJsonPath('data.resolved_settings.video_code_expiry_days', null);
 });

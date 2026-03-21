@@ -47,12 +47,14 @@ it('allows super admin to create students and rejects deleting them', function (
         'email' => 'student.one@example.com',
         'phone' => '1225291841',
         'country_code' => '+20',
+        'parent_phone' => '+20 100 123 4567',
         'center_id' => $center->id,
     ], $this->adminHeaders());
 
     $create->assertCreated()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('data.name', 'Student One');
+        ->assertJsonPath('data.name', 'Student One')
+        ->assertJsonPath('data.parent_phone', '+201001234567');
 
     $studentId = $create->json('data.id');
 
@@ -60,6 +62,7 @@ it('allows super admin to create students and rejects deleting them', function (
         'id' => $studentId,
         'is_student' => true,
         'center_id' => $center->id,
+        'parent_phone' => '+201001234567',
     ]);
 
     $this->assertDatabaseHas('user_centers', [

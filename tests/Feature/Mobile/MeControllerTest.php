@@ -422,6 +422,100 @@ test('updates student profile name', function (): void {
     ]);
 });
 
+test('updates student parent phone on profile endpoint', function (): void {
+    $center = Center::factory()->create([
+        'api_key' => 'center-parent-phone-update-key',
+    ]);
+
+    \App\Models\CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'education_profile' => [
+                'enable_grade' => true,
+                'enable_school' => true,
+                'enable_college' => true,
+                'enable_parent_phone' => true,
+                'require_grade' => false,
+                'require_school' => false,
+                'require_college' => false,
+                'require_parent_phone' => true,
+            ],
+        ],
+    ]);
+
+    $user = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'name' => 'Student Name',
+        'center_id' => $center->id,
+        'parent_phone' => null,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $access = JWTAuth::fromUser($user);
+
+    JwtToken::create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'access_token' => $access,
+        'refresh_token' => 'refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDays(30),
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/me', [
+        'parent_phone' => '+20 100 123 4567',
+    ], authHeaders($access, 'center-parent-phone-update-key'));
+
+    $response->assertOk()
+        ->assertJsonPath('data.parent_phone', '+201001234567')
+        ->assertJsonPath('data.is_complete_profile', true)
+        ->assertJsonPath('data.profile_completion.missing_steps', []);
+
+    $this->assertDatabaseHas('users', [
+        'id' => $user->id,
+        'parent_phone' => '+201001234567',
+    ]);
+});
+
+test('rejects blank name updates on profile endpoint', function (): void {
+    $center = Center::factory()->create([
+        'api_key' => 'center-blank-name-update-key',
+    ]);
+
+    $user = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'name' => 'Student Name',
+        'center_id' => $center->id,
+    ]);
+
+    $device = UserDevice::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $access = JWTAuth::fromUser($user);
+
+    JwtToken::create([
+        'user_id' => $user->id,
+        'device_id' => $device->id,
+        'access_token' => $access,
+        'refresh_token' => 'refresh-token',
+        'expires_at' => now()->addMinutes(30),
+        'refresh_expires_at' => now()->addDays(30),
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/me', [
+        'name' => '   ',
+    ], authHeaders($access, 'center-blank-name-update-key'));
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR');
+});
+
 test('returns incomplete completion state on /auth/me/profile when placeholder name and required education are missing', function (): void {
     $center = Center::factory()->create([
         'api_key' => 'center-me-profile-completion-key',
@@ -434,9 +528,11 @@ test('returns incomplete completion state on /auth/me/profile when placeholder n
                 'enable_grade' => true,
                 'enable_school' => true,
                 'enable_college' => true,
+                'enable_parent_phone' => true,
                 'require_grade' => true,
                 'require_school' => false,
                 'require_college' => false,
+                'require_parent_phone' => true,
             ],
         ],
     ]);
@@ -468,6 +564,6 @@ test('returns incomplete completion state on /auth/me/profile when placeholder n
 
     $response->assertOk()
         ->assertJsonPath('data.is_complete_profile', false)
-        ->assertJsonPath('data.profile_completion.missing_steps', ['name', 'education'])
-        ->assertJsonPath('data.profile_completion.missing_fields', ['name', 'grade_id']);
+        ->assertJsonPath('data.profile_completion.missing_steps', ['name', 'parent', 'education'])
+        ->assertJsonPath('data.profile_completion.missing_fields', ['name', 'parent_phone', 'grade_id']);
 });

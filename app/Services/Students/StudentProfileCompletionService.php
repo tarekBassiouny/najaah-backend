@@ -24,13 +24,19 @@ class StudentProfileCompletionService
     {
         $missingSteps = [];
         $missingFields = [];
+        $settings = $this->educationProfileService->resolveSettings($student, $resolvedCenterId);
 
         if ($this->requiresNameCompletion($student)) {
             $missingSteps[] = 'name';
             $missingFields[] = 'name';
         }
 
-        $missingEducationFields = $this->missingEducationFields($student, $resolvedCenterId);
+        if ($this->requiresParentPhoneCompletion($student, $settings)) {
+            $missingSteps[] = 'parent';
+            $missingFields[] = 'parent_phone';
+        }
+
+        $missingEducationFields = $this->missingEducationFields($student, $settings);
 
         if ($missingEducationFields !== []) {
             $missingSteps[] = 'education';
@@ -52,12 +58,26 @@ class StudentProfileCompletionService
     }
 
     /**
+     * @param  array<string, bool>  $settings
+     */
+    private function requiresParentPhoneCompletion(User $student, array $settings): bool
+    {
+        if (($settings['enable_parent_phone'] ?? true) !== true) {
+            return false;
+        }
+
+        if (($settings['require_parent_phone'] ?? false) !== true) {
+            return false;
+        }
+
+        return Str::of((string) $student->parent_phone)->trim()->value() === '';
+    }
+
+    /**
      * @return array<int, string>
      */
-    private function missingEducationFields(User $student, ?int $resolvedCenterId): array
+    private function missingEducationFields(User $student, array $settings): array
     {
-        $settings = $this->educationProfileService->resolveSettings($student, $resolvedCenterId);
-
         $requiredFields = [
             'grade_id' => ['enable' => 'enable_grade', 'require' => 'require_grade'],
             'school_id' => ['enable' => 'enable_school', 'require' => 'require_school'],

@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Center;
 use App\Models\User;
+use App\Services\Settings\PolicySettingsService;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +26,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EnsureGuestBrowsingAllowed
 {
+    public function __construct(
+        private readonly PolicySettingsService $policySettingsService
+    ) {}
+
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
@@ -32,6 +37,12 @@ class EnsureGuestBrowsingAllowed
         // Authenticated users are always allowed
         if ($user instanceof User) {
             return $next($request);
+        }
+
+        // System-level force-disable overrides all centers
+        $constraints = $this->policySettingsService->systemConstraints();
+        if ($constraints['force_disable_guest_browsing'] === true) {
+            return $this->denyGuestAccess();
         }
 
         // Guest user - check if guest browsing is allowed
@@ -45,7 +56,7 @@ class EnsureGuestBrowsingAllowed
         $routeCenter = $request->route('center');
 
         if ($routeCenter instanceof Center) {
-            if (! $routeCenter->allow_guest_browsing) {
+            if (! $this->policySettingsService->centerAllowsGuestBrowsing($routeCenter)) {
                 return $this->denyGuestAccess();
             }
 
@@ -58,7 +69,7 @@ class EnsureGuestBrowsingAllowed
         if (is_numeric($resolvedCenterId)) {
             $center = Center::find((int) $resolvedCenterId);
 
-            if ($center instanceof Center && ! $center->allow_guest_browsing) {
+            if ($center instanceof Center && ! $this->policySettingsService->centerAllowsGuestBrowsing($center)) {
                 return $this->denyGuestAccess();
             }
         }
