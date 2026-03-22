@@ -1,6 +1,6 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Not Started
+## Current Phase: Phase 0A (complete — pending PR)
 ## Last Updated: 2026-03-22
 
 ---
@@ -19,8 +19,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | not started | — | Start Phase 0A |
-| Admin Frontend | not started | Backend Phase 0A | Wait for 0A contract |
+| Backend | Phase 0A complete | — | Create PR, generate 0A contract |
+| Admin Frontend | not started | Backend Phase 0A PR | Wait for 0A contract |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
 ---
@@ -29,7 +29,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Phase | Lane | Status | PR | Contract Shared | Notes |
 |-------|------|--------|-----|----------------|-------|
-| 0A — Catalog-driven services | Backend | pending | — | — | |
+| 0A — Catalog-driven services | Backend | complete | — | — | All 8 tasks done, normalizeSystemValue refactored to catalog-driven |
 | 0B — Settings UI cards | Admin FE | pending | — | — | blocked by 0A |
 | 0C — Retroactive cleanup | Backend + Admin FE | pending | — | — | blocked by 0A+0B |
 | 1 — Schema & models | Backend | pending | — | — | blocked by 0 |
@@ -43,6 +43,93 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 ---
 
+## Phase Review Gate
+
+No phase moves to implementation until this gate is completed for that phase.
+
+### Standard Gate
+
+| Check | Required |
+|-------|----------|
+| Phase plan re-read | yes |
+| Nearby code inspected | yes |
+| Affected files/modules listed | yes |
+| Contract impact checked | yes |
+| Tests/verification approach identified | yes |
+| Phase adjustments recorded before coding | yes |
+| Explicit approval to implement | yes |
+
+### Gate Record Template
+
+```text
+PHASE
+- <phase name>
+
+PLAN REVIEWED
+- yes | no
+
+CODE INSPECTED
+- files/modules:
+
+CONTRACT IMPACT
+- none | settings | auth | student API | parent API | admin API
+
+RISKS / ADJUSTMENTS
+- concrete change from plan after code review
+
+VERIFICATION PLAN
+- exact tests/checks to run for this phase
+
+APPROVED TO IMPLEMENT
+- yes | no
+- approved by:
+- date:
+```
+
+### Gate Record: Phase 0A
+
+```text
+PHASE
+- 0A — Backend: Catalog-Driven Services
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- config/settings_catalog.php
+- app/Services/Settings/PolicySettingsService.php
+- app/Services/Settings/CenterSettingsService.php
+- app/Services/Settings/SettingsResolverService.php
+- app/Services/Settings/CenterSettingsPageService.php
+
+CONTRACT IMPACT
+- settings — API adds sections.feature_groups; catalog entries gain value_key + feature_group
+
+RISKS / ADJUSTMENTS
+- value_key is metadata only; normalizeSystemValue() keeps per-key match
+- CenterSettingsService features guard kept separate from catalog-driven limits
+- SettingsResolverService handles view_limit <-> default_view_limit via key swap
+- depends_on metadata added for future web_playback -> web_access cascade
+
+VERIFICATION PLAN
+- PHPStan level 7: passed (0 errors)
+- Pint: passed (all files)
+- New tests: system_limit, system_override, feature_flag, feature_groups API
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-22
+```
+
+### Gate Rule
+
+- `pending` means not reviewed yet.
+- `reviewed` means code was inspected and phase adjustments are recorded, but coding has not started.
+- `in_progress` is allowed only after the gate record is filled and approval is explicit.
+
+---
+
 ## Frontend Contract Tracker
 
 Backend publishes a contract doc after each phase that adds/changes endpoints.
@@ -50,11 +137,11 @@ Frontend can start building from the contract before the backend PR is merged.
 
 | Contract | Generated After | Location | Status | Frontend Can Start |
 |----------|----------------|----------|--------|--------------------|
-| Settings API (feature_groups) | Phase 0A | `docs/contracts/web-portal/settings-feature-groups.md` | not started | Phase 0B |
-| Auth API (student + parent) | Phase 2 | `docs/contracts/web-portal/web-auth-api.md` | not started | Portal scaffold + auth pages |
-| Student Web API | Phase 3 | `docs/contracts/web-portal/web-student-api.md` | not started | Student dashboard + pages |
-| Parent Web API | Phase 4 | `docs/contracts/web-portal/web-parent-api.md` | not started | Parent dashboard + pages |
-| Admin Parent API | Phase 5A | `docs/contracts/web-portal/admin-parent-api.md` | not started | Phase 5B admin UI |
+| Settings API (feature_groups) | Phase 0A | `docs/contracts/student-parent-web-portal/settings-feature-groups.md` | draft | Phase 0B |
+| Auth API (student + parent) | Phase 2 | `docs/contracts/student-parent-web-portal/web-auth-api.md` | draft | Portal scaffold + auth pages |
+| Student Web API | Phase 3 | `docs/contracts/student-parent-web-portal/web-student-api.md` | draft | Student dashboard + pages |
+| Parent Web API | Phase 4 | `docs/contracts/student-parent-web-portal/web-parent-api.md` | draft | Parent dashboard + pages |
+| Admin Parent API | Phase 5A | `docs/contracts/student-parent-web-portal/admin-parent-api.md` | draft | Phase 5B admin UI |
 | Full Handoff Doc | Phase 7 | `docs/feature/student-parent-web-portal-api.md` | not started | Final integration |
 
 ---
@@ -77,6 +164,7 @@ Week N+6: Backend Phase 6
 
 **Rules:**
 - Backend publishes contract doc BEFORE starting implementation (from plan + route design)
+- Backend completes the Phase Review Gate BEFORE starting implementation for that phase
 - Frontend builds against contract, flags mismatches during integration
 - Contract doc is the source of truth until the real API is live
 - Once API is live, contract doc becomes the handoff doc (Phase 7)

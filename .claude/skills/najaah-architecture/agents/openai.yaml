@@ -1,4 +1,0 @@
-interface:
-  display_name: "Najaah Architecture"
-  short_description: "Help with Najaah Architecture tasks"
-  default_prompt: "Use $najaah-architecture to own schema decisions for this change and publish clear handoffs for downstream service, API, and test work."

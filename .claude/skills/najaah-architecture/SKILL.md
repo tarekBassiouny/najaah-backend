@@ -11,8 +11,8 @@ description: Design Najaah LMS schema, migrations, relationships, indexes, and s
 - changing query shape or tenant scoping
 - planning schema support for a feature
 
-## Prerequisite
-Read `.claude/skills/najaah/SKILL.md` first.
+## Context
+Multi-tenant Laravel 11 backend (center_id scoping). JWT+device for mobile students, Sanctum for admin. Layered: Controller → Action → Service → Model. For full context, read `.claude/skills/najaah/SKILL.md`.
 
 ## Default Workflow
 1. Inspect the current schema, model, factories, and related queries.

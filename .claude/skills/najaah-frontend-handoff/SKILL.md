@@ -49,7 +49,7 @@ docs/feature/
 Example for web portal:
 ```
 docs/contracts/
-  web-portal/
+  student-parent-web-portal/
     settings-feature-groups.md
     web-auth-api.md
     web-student-api.md

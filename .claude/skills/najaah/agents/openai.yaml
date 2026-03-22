@@ -1,4 +1,0 @@
-interface:
-  display_name: "Najaah"
-  short_description: "Help with Najaah tasks and workflows"
-  default_prompt: "Use $najaah to load the core Najaah project context and invariants before any specialist or orchestrated task."

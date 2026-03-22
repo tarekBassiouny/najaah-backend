@@ -11,10 +11,9 @@ Load this skill before any specialist skill.
 Then load only the next skill you need:
 - `.claude/skills/najaah-orchestrator/SKILL.md`
 - `.claude/skills/najaah-architecture/SKILL.md`
-- `.claude/skills/najaah-features/SKILL.md`
-- `.claude/skills/najaah-settings/SKILL.md`
+- `.claude/skills/najaah-features/SKILL.md` (includes settings classification)
 - `.claude/skills/najaah-api/SKILL.md`
-- `.claude/skills/najaah-quality/SKILL.md`
+- `.claude/skills/najaah-quality/SKILL.md` (includes PR workflow)
 
 ## Stable Invariants
 - This backend is multi-tenant. Center scoping is default behavior, not an optional filter.
@@ -35,7 +34,7 @@ Then load only the next skill you need:
 1. Read this file.
 2. Inspect similar implementation in the codebase.
 3. Load the one specialist skill needed for the current phase.
-4. If the task touches configuration, feature availability, or admin-managed defaults, load `.claude/skills/najaah-settings/SKILL.md`.
+4. If the task touches configuration, feature availability, or admin-managed defaults, load `.claude/skills/najaah-features/references/settings-classification.md`.
 5. If the task is coordinated by the orchestrator, read from and write to the working memory instead of re-deriving settled decisions.
 6. Keep changes aligned with the domain rules and standards references.
 7. Update the relevant reference if you introduce a stable new pattern.

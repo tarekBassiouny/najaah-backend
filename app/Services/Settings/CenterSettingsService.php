@@ -157,22 +157,21 @@ class CenterSettingsService implements CenterSettingsServiceInterface
 
         $constraints = $this->policySettingsService->systemConstraints();
 
-        if (isset($settings['default_view_limit']) && is_numeric($settings['default_view_limit'])) {
-            $max = (int) $constraints['max_view_limit'];
-            if ((int) $settings['default_view_limit'] > $max) {
-                throw new DomainException(
-                    sprintf('View limit cannot exceed the system maximum of %d.', $max),
-                    ErrorCodes::SYSTEM_LIMIT_EXCEEDED,
-                    422
-                );
+        foreach ($this->policySettingsService->centerSettingsCatalog() as $key => $definition) {
+            $systemLimit = $definition['system_limit'] ?? null;
+            if (! is_string($systemLimit)) {
+                continue;
             }
-        }
 
-        if (isset($settings['device_limit']) && is_numeric($settings['device_limit'])) {
-            $max = (int) $constraints['max_device_limit'];
-            if ((int) $settings['device_limit'] > $max) {
+            if (! isset($settings[$key]) || ! is_numeric($settings[$key])) {
+                continue;
+            }
+
+            $max = (int) ($constraints[$systemLimit] ?? $definition['default']);
+            if ((int) $settings[$key] > $max) {
+                $label = str_replace('_', ' ', ucfirst($key));
                 throw new DomainException(
-                    sprintf('Device limit cannot exceed the system maximum of %d.', $max),
+                    sprintf('%s cannot exceed the system maximum of %d.', $label, $max),
                     ErrorCodes::SYSTEM_LIMIT_EXCEEDED,
                     422
                 );

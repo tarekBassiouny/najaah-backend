@@ -42,6 +42,11 @@ The entire system uses JWT guards. Web portals follow the same pattern:
 - New `parent_student_links` pivot table connects parent → student(s) per center (many-to-many)
 - Reuses existing JWT + OTP auth infrastructure entirely
 - A parent can have multiple students (siblings), a student can have multiple parents (mother + father)
+- Identity resolution is **center-scoped by phone**:
+  - If a user already exists in the same center with the same phone, parent registration reuses that row
+    and sets `is_parent = true`
+  - If that existing row is also a student, the same row becomes a dual-role user
+  - Only when no matching row exists does registration create a new parent user
 
 ### AD-3: Parent-Student Linking — Dual Path
 
@@ -50,7 +55,7 @@ The entire system uses JWT guards. Web portals follow the same pattern:
 - Admin can explicitly create parent-student links from admin panel
 
 **Path B — Parent Self-Registration with Auto-Link**
-- Parent registers with phone + OTP → new User with `is_parent = true`
+- Parent registers with phone + OTP → resolve existing same-center user by phone first, otherwise create a new User with `is_parent = true`
 - System checks: any students in this center have `parent_phone` matching parent's phone?
   - YES → auto-create `parent_student_links` row (status=Active, method=AutoMatched)
   - NO → parent has no linked students yet
@@ -60,8 +65,11 @@ The entire system uses JWT guards. Web portals follow the same pattern:
 ### AD-4: Web Device Binding — Separate Pool (Option B)
 
 - Web browser registers as a `UserDevice` with `device_type = web`
-- Separate `web_device_limit` center setting (default: 1)
-- Mobile `device_limit` remains independent
+- Web pool is capped by `web_device_limit` (default: 1)
+- Mobile pool is capped by the existing `device_limit`
+- `user_devices` stays a shared table, but active-device checks become **platform-aware**
+- Web login must never revoke mobile devices, and mobile login must never revoke web devices
+- Each pool enforces its own max limit independently
 - Concurrency enforcement: no two active playback sessions across any platform
 
 ### AD-5: Parent Portal — Read-Only
@@ -88,6 +96,13 @@ Parents see full question/answer detail on graded quiz attempts:
 - Question text, selected answers, correct answers, explanation
 - Score, points earned, pass/fail status
 - Respects quiz `show_correct_answers` setting
+
+### AD-7: Student Web Login — Same Identity Resolution as Mobile
+
+- Student web login follows the existing mobile OTP identity resolution rules
+- If OTP resolves an existing student in the scoped center, reuse that student
+- If OTP resolves no student in the scoped center, create the same placeholder student that mobile would create
+- Web login changes the delivery surface, not the student identity model
 
 ---
 
@@ -179,6 +194,7 @@ Feature-as-Section-Header pattern so feature flags and their governed settings a
       - Backfill `value_key` on ALL existing system settings (not just new ones) —
         currently no catalog entries have this field
       - Enables `normalizeSystemValue()` to resolve any setting generically
+      - Use the same metadata to validate expected `value` payload shape in system setting requests
 
 0A.2. Add `feature_group` metadata to catalog entries
       - Links center settings, system limits, system overrides, and feature flags into logical groups
@@ -210,6 +226,7 @@ Feature-as-Section-Header pattern so feature flags and their governed settings a
 
 0A.8. Update API response: include `feature_group` in catalog and `sections.feature_groups`
       - New response field: `sections.feature_groups` built dynamically from catalog `feature_group` metadata
+      - Replace remaining hardcoded settings-page grouping for feature-managed settings with catalog-derived output
       - Each feature group contains:
         ```json
         {
@@ -306,6 +323,8 @@ groups, fields, or layout. The backend `catalog` + `sections` response drives ev
 1.2. Model: Update `UserDevice` — cast existing `device_type` string to `DeviceType` enum,
      add `scopeWeb()` / `scopeMobile()` scopes. No migration needed (column already exists).
      Update `DeviceService.register()` to normalize incoming `device_type` to enum values.
+     - Device registration becomes platform-aware: mobile writes only affect mobile devices,
+       web writes only affect web devices
 1.3. Migration: Add `platform` column to `jwt_tokens` table after `device_id`
      (TINYINT: 0=mobile, 1=web — so middleware knows which device pool)
 1.4. Migration: Create `parent_student_links` table
@@ -369,7 +388,10 @@ groups, fields, or layout. The backend `catalog` + `sections` response drives ev
      - On subsequent logins from same browser, frontend sends stored UUID → backend validates
      - If UUID missing (new browser), backend generates new one → checks `web_device_limit`
 2.6. Update `UserDevice` service: handle web device registration with `device_type = web`
+     - Must not revoke or invalidate mobile devices during web registration
 2.7. Update device binding logic: respect `web_device_limit` separately from mobile `device_limit`
+     - Mobile pool allows active devices up to `device_limit`
+     - Web allows multiple active browsers up to `web_device_limit`
 2.8. JWT token platform tracking:
      - On web login, set `platform = web` on `JwtToken` record
      - Middleware reads token platform to route to correct device pool
@@ -381,8 +403,10 @@ groups, fields, or layout. The backend `catalog` + `sections` response drives ev
        (4) call `JwtService.create(user, device, platform)` — device is mandatory for token creation;
        extend `create()` signature to accept optional `TokenPlatform` param (defaults to Mobile
        for backward compat), sets `platform` on the `JwtToken` record
-2.10. Service: `ParentRegistrationService` — register parent user (`is_parent = true`),
+2.10. Service: `ParentRegistrationService` — resolve-or-register parent user (`is_parent = true`),
       auto-link by matching `parent_phone` in same center, handle additional link requests
+      - Resolve existing same-center user by phone before creating a new row
+      - If an existing student row matches, upgrade it to dual-role instead of creating a duplicate user
 2.11. Controller: `Web/Auth/StudentAuthController` — send OTP, verify/login, refresh, logout
 2.12. Controller: `Web/Auth/ParentAuthController` — register, send OTP, verify/login, refresh, logout
 2.13. FormRequest: `WebLoginRequest`, `ParentRegisterRequest`
@@ -409,6 +433,7 @@ groups, fields, or layout. The backend `catalog` + `sections` response drives ev
         not per-center. For multi-center users this means logout revokes all tokens
         for that platform across centers. Acceptable for MVP.
 2.18. Dual identity: A user can be both `is_student = true` AND `is_parent = true`
+      - Parent registration should prefer upgrading the existing same-center user row when phones match
       - They log in as student via `web-student` guard (gets student token with platform=web)
       - They log in as parent via `web-parent` guard (gets separate parent token with platform=web)
       - Two separate JWT tokens, two separate sessions
@@ -802,7 +827,7 @@ tests/Unit/
 
 ```
 1. Admin creates student, optionally sets parent_phone
-2. Parent registers with phone + OTP → new User (is_parent=true)
+2. Parent registers with phone + OTP → resolve existing same-center user by phone, otherwise create new User (is_parent=true)
 3. System checks: any students in this center have parent_phone = parent's phone?
    → YES: auto-create parent_student_links row (status=Active, method=AutoMatched)
    → NO: parent has no linked students yet
@@ -825,11 +850,11 @@ tests/Unit/
 | Concurrent playback web + mobile | Server-side enforcement via `PlaybackSession` check across all device types |
 | Parent phone collision across centers | `parent_student_links` is center-scoped, auto-match scoped to center |
 | Breaking existing mobile API | Separate route group `/api/v1/web/*` reuses same controllers with guard swap — zero changes to mobile routes or controllers |
-| Same student on mobile + web | `platform` field on `JwtToken` distinguishes token origin; separate device pools |
+| Same student on mobile + web | `platform` field on `JwtToken` distinguishes token origin; device registration and validation are pool-specific, not global |
 | Phone enumeration via link requests | Rate limiting on parent link request endpoint |
 | `parent_phone` change on student | Existing links preserved; optionally trigger new auto-match for new phone |
 | CORS for web portal | Configure allowed origins in `config/cors.php`; JWT in headers avoids cookie complexity |
-| User is both student and parent | Separate guards, separate tokens, separate sessions; frontend handles role context |
+| User is both student and parent | Reuse the same same-center user row when phones match, set both flags, then issue separate guard-specific tokens/sessions |
 
 ---
 

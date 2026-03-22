@@ -1,4 +1,0 @@
-interface:
-  display_name: "Najaah Quality"
-  short_description: "Help with Najaah Quality tasks"
-  default_prompt: "Use $najaah-quality to build the regression and verification plan for this change, then record what is proven versus still unverified."
