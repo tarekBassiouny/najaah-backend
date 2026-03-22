@@ -564,8 +564,8 @@ class PolicySettingsService
     {
         return match ($definition['type'] ?? null) {
             'boolean' => false,
-            'integer' => $definition['default'] ?? 0,
-            'string' => $definition['default'] ?? null,
+            'integer' => array_key_exists('default', $definition) ? $definition['default'] : 0,
+            'string' => array_key_exists('default', $definition) ? $definition['default'] : null,
             default => [],
         };
     }
