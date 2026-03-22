@@ -2,6 +2,13 @@
 name: feature-builder
 description: End-to-end backend feature builder. Reads a phase plan, then chains architecture → features → API → quality in sequence. Use for implementing planned feature phases.
 model: sonnet
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Glob
+  - Grep
 skills:
   - najaah
   - najaah-orchestrator
