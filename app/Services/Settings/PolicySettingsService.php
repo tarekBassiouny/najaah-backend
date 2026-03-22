@@ -562,13 +562,9 @@ class PolicySettingsService
      */
     private function disabledValueForDefinition(array $definition): mixed
     {
-        if (array_key_exists('default', $definition)) {
-            return $definition['default'];
-        }
-
         return match ($definition['type'] ?? null) {
             'boolean' => false,
-            'integer' => null,
+            'integer' => 0,
             'string' => null,
             default => [],
         };
