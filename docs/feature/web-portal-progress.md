@@ -1,6 +1,6 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Not Started
+## Current Phase: Phase 0A (complete — pending PR)
 ## Last Updated: 2026-03-22
 
 ---
@@ -19,8 +19,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | not started | — | Start Phase 0A |
-| Admin Frontend | not started | Backend Phase 0A | Wait for 0A contract |
+| Backend | Phase 0A complete | — | Create PR, generate 0A contract |
+| Admin Frontend | not started | Backend Phase 0A PR | Wait for 0A contract |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
 ---
@@ -29,7 +29,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Phase | Lane | Status | PR | Contract Shared | Notes |
 |-------|------|--------|-----|----------------|-------|
-| 0A — Catalog-driven services | Backend | pending | — | — | |
+| 0A — Catalog-driven services | Backend | complete | — | — | All 8 tasks done, normalizeSystemValue refactored to catalog-driven |
 | 0B — Settings UI cards | Admin FE | pending | — | — | blocked by 0A |
 | 0C — Retroactive cleanup | Backend + Admin FE | pending | — | — | blocked by 0A+0B |
 | 1 — Schema & models | Backend | pending | — | — | blocked by 0 |
@@ -84,6 +84,42 @@ APPROVED TO IMPLEMENT
 - yes | no
 - approved by:
 - date:
+```
+
+### Gate Record: Phase 0A
+
+```text
+PHASE
+- 0A — Backend: Catalog-Driven Services
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- config/settings_catalog.php
+- app/Services/Settings/PolicySettingsService.php
+- app/Services/Settings/CenterSettingsService.php
+- app/Services/Settings/SettingsResolverService.php
+- app/Services/Settings/CenterSettingsPageService.php
+
+CONTRACT IMPACT
+- settings — API adds sections.feature_groups; catalog entries gain value_key + feature_group
+
+RISKS / ADJUSTMENTS
+- value_key is metadata only; normalizeSystemValue() keeps per-key match
+- CenterSettingsService features guard kept separate from catalog-driven limits
+- SettingsResolverService handles view_limit <-> default_view_limit via key swap
+- depends_on metadata added for future web_playback -> web_access cascade
+
+VERIFICATION PLAN
+- PHPStan level 7: passed (0 errors)
+- Pint: passed (all files)
+- New tests: system_limit, system_override, feature_flag, feature_groups API
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-22
 ```
 
 ### Gate Rule

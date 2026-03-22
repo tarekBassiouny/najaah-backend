@@ -109,6 +109,7 @@ class CenterSettingsPageService
                     'groups' => $this->groupSettings($payload['settings']),
                     'resolved_groups' => $this->groupSettings($resolvedSettings),
                 ],
+                'feature_groups' => $this->policySettingsService->featureGroups($features),
                 'ai' => [
                     'feature_enabled' => (bool) ($features['ai_content'] ?? true),
                     'providers' => $this->transformProvidersForActor($providers, $isSystemAdmin),

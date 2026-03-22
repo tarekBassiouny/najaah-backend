@@ -16,22 +16,34 @@ use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 
 class SettingsResolverService implements SettingsResolverServiceInterface
 {
-    /** @var array<int, string> */
-    private array $allowedKeys = [
-        'view_limit',
-        'allow_extra_view_requests',
-        'requires_video_approval',
-        'video_code_expiry_days',
-        'pdf_download_permission',
-        'device_limit',
-        'allow_guest_browsing',
-        'branding',
-        'education_profile',
-    ];
+    /** @var array<int, string>|null */
+    private ?array $allowedKeys = null;
 
     public function __construct(
         private readonly PolicySettingsService $policySettingsService
     ) {}
+
+    /**
+     * Derive allowed resolver keys from the catalog.
+     *
+     * Maps catalog key `default_view_limit` to resolver key `view_limit`.
+     *
+     * @return array<int, string>
+     */
+    private function allowedKeys(): array
+    {
+        if ($this->allowedKeys !== null) {
+            return $this->allowedKeys;
+        }
+
+        $keys = [];
+        foreach ($this->policySettingsService->centerSettingsCatalog() as $key => $definition) {
+            $resolverKey = $key === 'default_view_limit' ? 'view_limit' : $key;
+            $keys[] = $resolverKey;
+        }
+
+        return $this->allowedKeys = $keys;
+    }
 
     public function resolve(?User $student, ?Video $video = null, ?Course $course = null, ?Center $center = null): array
     {
@@ -109,7 +121,7 @@ class SettingsResolverService implements SettingsResolverServiceInterface
     private function apply(array $resolved, array $incoming): array
     {
         foreach ($incoming as $key => $value) {
-            if (! in_array($key, $this->allowedKeys, true)) {
+            if (! in_array($key, $this->allowedKeys(), true)) {
                 continue;
             }
 
@@ -195,7 +207,7 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         $filtered = [];
 
         foreach ($settings as $key => $value) {
-            if (! in_array($key, $this->allowedKeys, true)) {
+            if (! in_array($key, $this->allowedKeys(), true)) {
                 continue;
             }
 
@@ -210,51 +222,29 @@ class SettingsResolverService implements SettingsResolverServiceInterface
     }
 
     /**
-     * Apply system-level constraints (ceilings and force-disable overrides).
+     * Apply system-level constraints (ceilings, force-disable overrides, feature flags).
+     *
+     * Delegates to PolicySettingsService to avoid duplicating governance logic.
+     * Handles the view_limit <-> default_view_limit key mapping transparently.
      *
      * @param  array<string, mixed>  $resolved
      * @return array<string, mixed>
      */
     private function applySystemConstraints(array $resolved, ?Center $center = null): array
     {
-        $constraints = $this->policySettingsService->systemConstraints();
-
-        // Enforce ceiling limits
-        if (isset($resolved['view_limit']) && is_numeric($resolved['view_limit'])) {
-            $resolved['view_limit'] = min((int) $resolved['view_limit'], (int) $constraints['max_view_limit']);
+        // Map resolver key -> catalog key for governance
+        $hasViewLimit = array_key_exists('view_limit', $resolved);
+        if ($hasViewLimit) {
+            $resolved['default_view_limit'] = $resolved['view_limit'];
+            unset($resolved['view_limit']);
         }
 
-        if (isset($resolved['device_limit']) && is_numeric($resolved['device_limit'])) {
-            $resolved['device_limit'] = min((int) $resolved['device_limit'], (int) $constraints['max_device_limit']);
-        }
+        $resolved = $this->policySettingsService->applyGovernanceConstraints($resolved, $center);
 
-        // Enforce force-disable overrides
-        if ($constraints['force_disable_extra_view_requests'] === true) {
-            $resolved['allow_extra_view_requests'] = false;
-        }
-
-        if ($constraints['force_disable_pdf_download'] === true) {
-            $resolved['pdf_download_permission'] = false;
-        }
-
-        if ($constraints['force_disable_guest_browsing'] === true) {
-            $resolved['allow_guest_browsing'] = false;
-        }
-
-        if ($center instanceof Center) {
-            $features = $this->policySettingsService->centerFeatures($center);
-
-            if (($features['pdf_downloads'] ?? true) !== true) {
-                $resolved['pdf_download_permission'] = false;
-            }
-
-            if (($features['guest_browsing'] ?? true) !== true) {
-                $resolved['allow_guest_browsing'] = false;
-            }
-
-            if (($features['codes_access'] ?? true) !== true) {
-                $resolved['video_code_expiry_days'] = null;
-            }
+        // Map back to resolver key
+        if (array_key_exists('default_view_limit', $resolved)) {
+            $resolved['view_limit'] = $resolved['default_view_limit'];
+            unset($resolved['default_view_limit']);
         }
 
         return $resolved;
