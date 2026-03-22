@@ -1029,23 +1029,23 @@ final class AIContentService implements AIContentServiceInterface
      */
     private function encodePromptHistory(array $promptHistory): string
     {
-        if (isset($promptHistory['system'], $promptHistory['user'])) {
-            /** @var array{system:string,user:string} $promptHistory */
-            return $this->encodePrompts($promptHistory);
+        if (isset($promptHistory['initial'], $promptHistory['retry'])) {
+            $encoded = json_encode([
+                'initial' => [
+                    'system' => $this->promptAuditData($promptHistory['initial']['system']),
+                    'user' => $this->promptAuditData($promptHistory['initial']['user']),
+                ],
+                'retry' => [
+                    'system' => $this->promptAuditData($promptHistory['retry']['system']),
+                    'user' => $this->promptAuditData($promptHistory['retry']['user']),
+                ],
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+            return is_string($encoded) ? $encoded : '';
         }
 
-        $encoded = json_encode([
-            'initial' => [
-                'system' => $this->promptAuditData($promptHistory['initial']['system']),
-                'user' => $this->promptAuditData($promptHistory['initial']['user']),
-            ],
-            'retry' => [
-                'system' => $this->promptAuditData($promptHistory['retry']['system']),
-                'user' => $this->promptAuditData($promptHistory['retry']['user']),
-            ],
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-
-        return is_string($encoded) ? $encoded : '';
+        /** @var array{system:string,user:string} $promptHistory */
+        return $this->encodePrompts($promptHistory);
     }
 
     /**

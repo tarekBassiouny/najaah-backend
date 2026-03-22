@@ -25,10 +25,13 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         'pdf_download_permission',
         'device_limit',
         'allow_guest_browsing',
-        'whatsapp_bulk_settings',
         'branding',
         'education_profile',
     ];
+
+    public function __construct(
+        private readonly PolicySettingsService $policySettingsService
+    ) {}
 
     public function resolve(?User $student, ?Video $video = null, ?Course $course = null, ?Center $center = null): array
     {
@@ -54,7 +57,7 @@ class SettingsResolverService implements SettingsResolverServiceInterface
             $resolved = $this->apply($resolved, $this->filterSettings($student->studentSetting));
         }
 
-        return $resolved;
+        return $this->applySystemConstraints($resolved, $center);
     }
 
     private function resolveCourseFromVideo(?Video $video): ?Course
@@ -133,13 +136,6 @@ class SettingsResolverService implements SettingsResolverServiceInterface
         $defaults['pdf_download_permission'] = $center->pdf_download_permission;
         $defaults['device_limit'] = $center->device_limit;
         $defaults['allow_guest_browsing'] = $center->allow_guest_browsing;
-        $defaults['whatsapp_bulk_settings'] = [
-            'delay_seconds' => 3,
-            'batch_size' => 50,
-            'batch_pause_seconds' => 60,
-            'max_retries' => 2,
-            'max_failures_before_pause' => 10,
-        ];
 
         $branding = array_filter([
             'logo_url' => $center->logo_url,
@@ -207,13 +203,60 @@ class SettingsResolverService implements SettingsResolverServiceInterface
                 continue;
             }
 
-            if ($key === 'whatsapp_bulk_settings' && ! is_array($value)) {
-                continue;
-            }
-
             $filtered[$key] = $value;
         }
 
         return $filtered;
+    }
+
+    /**
+     * Apply system-level constraints (ceilings and force-disable overrides).
+     *
+     * @param  array<string, mixed>  $resolved
+     * @return array<string, mixed>
+     */
+    private function applySystemConstraints(array $resolved, ?Center $center = null): array
+    {
+        $constraints = $this->policySettingsService->systemConstraints();
+
+        // Enforce ceiling limits
+        if (isset($resolved['view_limit']) && is_numeric($resolved['view_limit'])) {
+            $resolved['view_limit'] = min((int) $resolved['view_limit'], (int) $constraints['max_view_limit']);
+        }
+
+        if (isset($resolved['device_limit']) && is_numeric($resolved['device_limit'])) {
+            $resolved['device_limit'] = min((int) $resolved['device_limit'], (int) $constraints['max_device_limit']);
+        }
+
+        // Enforce force-disable overrides
+        if ($constraints['force_disable_extra_view_requests'] === true) {
+            $resolved['allow_extra_view_requests'] = false;
+        }
+
+        if ($constraints['force_disable_pdf_download'] === true) {
+            $resolved['pdf_download_permission'] = false;
+        }
+
+        if ($constraints['force_disable_guest_browsing'] === true) {
+            $resolved['allow_guest_browsing'] = false;
+        }
+
+        if ($center instanceof Center) {
+            $features = $this->policySettingsService->centerFeatures($center);
+
+            if (($features['pdf_downloads'] ?? true) !== true) {
+                $resolved['pdf_download_permission'] = false;
+            }
+
+            if (($features['guest_browsing'] ?? true) !== true) {
+                $resolved['allow_guest_browsing'] = false;
+            }
+
+            if (($features['codes_access'] ?? true) !== true) {
+                $resolved['video_code_expiry_days'] = null;
+            }
+        }
+
+        return $resolved;
     }
 }

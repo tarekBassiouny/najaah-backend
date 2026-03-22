@@ -37,6 +37,7 @@ class StudentService
             'email' => $data['email'] ?? null,
             'phone' => (string) $data['phone'],
             'country_code' => (string) $data['country_code'],
+            'parent_phone' => $data['parent_phone'] ?? null,
             'center_id' => $data['center_id'] ?? null,
             'password' => Str::random(32),
             'is_student' => true,
@@ -126,10 +127,16 @@ class StudentService
         $payload = array_filter([
             'name' => $data['name'] ?? null,
             'email' => $data['email'] ?? null,
+            'parent_phone' => $data['parent_phone'] ?? null,
             'status' => $data['status'] ?? null,
         ], static fn ($value): bool => $value !== null);
 
+        if (array_key_exists('parent_phone', $data)) {
+            $payload['parent_phone'] = $data['parent_phone'];
+        }
+
         $user->update($payload);
+        StudentProfileController::invalidateCache((int) $user->id);
         $metadata = $payload;
         if (array_key_exists('status', $metadata)) {
             $status = UserStatus::tryFrom((int) $metadata['status']);

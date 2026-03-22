@@ -474,9 +474,11 @@ test('verify marks profile incomplete when placeholder name and required educati
                 'enable_grade' => true,
                 'enable_school' => true,
                 'enable_college' => true,
+                'enable_parent_phone' => true,
                 'require_grade' => true,
                 'require_school' => false,
                 'require_college' => false,
+                'require_parent_phone' => true,
             ],
         ],
     ]);
@@ -500,8 +502,8 @@ test('verify marks profile incomplete when placeholder name and required educati
     $response->assertOk()
         ->assertJsonPath('data.name', 'Student')
         ->assertJsonPath('data.is_complete_profile', false)
-        ->assertJsonPath('data.profile_completion.missing_steps', ['name', 'education'])
-        ->assertJsonPath('data.profile_completion.missing_fields', ['name', 'grade_id']);
+        ->assertJsonPath('data.profile_completion.missing_steps', ['name', 'parent', 'education'])
+        ->assertJsonPath('data.profile_completion.missing_fields', ['name', 'parent_phone', 'grade_id']);
 });
 
 test('verify issues tokens using login action', function (): void {

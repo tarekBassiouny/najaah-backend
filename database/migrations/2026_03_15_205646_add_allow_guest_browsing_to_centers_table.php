@@ -10,6 +10,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasColumn('centers', 'allow_guest_browsing')) {
+            return;
+        }
+
         Schema::table('centers', function (Blueprint $table) {
             $table->boolean('allow_guest_browsing')->default(false)->after('device_limit');
             $table->index('allow_guest_browsing');
@@ -18,6 +22,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! Schema::hasColumn('centers', 'allow_guest_browsing')) {
+            return;
+        }
+
         Schema::table('centers', function (Blueprint $table) {
             $table->dropIndex(['allow_guest_browsing']);
             $table->dropColumn('allow_guest_browsing');

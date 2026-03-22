@@ -94,6 +94,17 @@ Unified format under `/api/v1/`:
 - Test helpers in `tests/Helpers/` (MakesTestUsers, AdminTestHelper, ApiTestHelper, etc.)
 - Coverage target: 90%
 
+## Cross-Repo Feature Workflow
+
+For features spanning backend and frontend (`/Users/tarekbassiouny/projects/najaah-frontend`):
+
+- **Plan docs**: `docs/feature/{feature-slug}.md`
+- **Progress tracker**: `docs/feature/{feature-slug}-progress.md` (shared with frontend)
+- **API contracts**: `docs/contracts/{feature-slug}/{contract-name}.md`
+- **Handoff skill**: `.claude/skills/najaah-frontend-handoff/SKILL.md`
+
+Backend leads each phase, generates contract docs, then frontend builds in parallel from contracts. See the orchestrator agent and handoff skill for the full workflow.
+
 ## Commit Style
 
 Use short prefix patterns: `core: ...`, `fix: ...`, `feat: ...`

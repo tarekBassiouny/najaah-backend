@@ -16,7 +16,8 @@ description: Coordinate complex Najaah LMS backend work across architecture, fea
 ## Mandatory Load Order
 1. Read `.claude/skills/najaah/SKILL.md`
 2. Inspect repository state and nearby implementations
-3. Load only the specialist skill needed for the next phase
+3. If settings, feature flags, or admin-managed defaults are involved, load `.claude/skills/najaah-settings/SKILL.md`
+4. Load only the specialist skill needed for the next phase
 
 Do not load all specialist skills unless the task genuinely spans all of them.
 
@@ -37,6 +38,7 @@ Do not implement before approval unless the user explicitly asked for immediate 
 - Locate the nearest similar implementation
 - Identify affected schema, services, controllers, requests, resources, routes, docs, and tests
 - Confirm whether the change is system-scoped, center-scoped, or both
+- Classify each new or touched knob as system setting, center setting, center feature flag, operational default, or hard-coded invariant
 - Confirm whether admin resources or localized fields are involved
 - Note open risks, assumptions, and missing requirements
 
@@ -137,6 +139,7 @@ Before opening a lane, record:
 ## Delegation Matrix
 - Use `najaah-architecture` for migrations, indexes, relationships, query-shape changes, and caching decisions.
 - Use `najaah-features` for service logic, authorization services, workflows, domain rules, and state changes.
+- Use `najaah-settings` for settings classification, scope ownership, feature flags, defaults, and admin configuration surfaces.
 - Use `najaah-api` for routes, FormRequests, controllers, resources, Scribe, and frontend contract answers.
 - Use `najaah-quality` for tests, factories, Pint, PHPStan, coverage, and review passes.
 - Use `najaah-pr-workflow` only after implementation when the task is about review or PR prep.

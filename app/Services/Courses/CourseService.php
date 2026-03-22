@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseServiceInterface;
+use App\Services\Settings\PolicySettingsService;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use App\Support\Guards\RejectNonScalarInput;
@@ -25,10 +26,15 @@ use Illuminate\Support\Collection;
 
 class CourseService implements CourseServiceInterface
 {
+    private readonly PolicySettingsService $policySettingsService;
+
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly AuditLogService $auditLogService
-    ) {}
+        private readonly AuditLogService $auditLogService,
+        ?PolicySettingsService $policySettingsService = null
+    ) {
+        $this->policySettingsService = $policySettingsService ?? app(PolicySettingsService::class);
+    }
 
     /** @return LengthAwarePaginator<Course> */
     public function paginate(int $perPage = 15, ?User $actor = null): LengthAwarePaginator
@@ -360,13 +366,18 @@ class CourseService implements CourseServiceInterface
      */
     private function guestBaseQuery(): Builder
     {
+        $policySettingsService = $this->policySettingsService;
+
         $query = Course::query()
             ->published()
             ->with(['center', 'category', 'instructors'])
-            ->whereHas('center', function ($query): void {
-                $query->where('status', \App\Models\Center::STATUS_ACTIVE->value)
-                    ->where('allow_guest_browsing', true);
-            })
+            ->whereHas('center',
+                /** @param Builder<\App\Models\Center> $query */
+                function (Builder $query) use ($policySettingsService): void {
+                    $query->where('status', \App\Models\Center::STATUS_ACTIVE->value);
+                    $policySettingsService->applyGuestBrowsingFilter($query);
+                }
+            )
             ->where('show_for_all_students', true);
 
         $query->whereDoesntHave('videos', function ($query): void {
