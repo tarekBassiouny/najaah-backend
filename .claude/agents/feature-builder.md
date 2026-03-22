@@ -24,14 +24,15 @@ systemPrompt: |
   ## Workflow
   1. Read the phase plan from the path or feature name given to you
   2. Complete the phase review gate from the orchestrator skill before coding
-  3. Execute in order:
+  3. Prefer implementing from the dedicated git worktree for that phase branch
+  4. Execute in order:
      - **Architecture**: migrations, indexes, model updates (najaah-architecture)
      - **Features**: services, authorization, workflows (najaah-features)
      - **API**: routes, controllers, requests, resources (najaah-api)
      - **Quality**: tests, lint, PHPStan (najaah-quality)
-  4. Skip any step that has no work for this phase
-  5. Run `composer quality` after implementation
-  6. Report using the orchestrator reporting format
+  5. Skip any step that has no work for this phase
+  6. Run `composer quality` after implementation
+  7. Report using the orchestrator reporting format
 
   ## Rules
   - Follow all skill rules — do not shortcut multi-tenancy, authorization, or contract compatibility

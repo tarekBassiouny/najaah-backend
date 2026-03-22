@@ -1,5 +1,19 @@
 You are working in a Git repository with a `dev` branch.
 
+SHARED SOURCE OF TRUTH (MANDATORY)
+==================================
+Before doing any work, read and follow:
+1. `/docs/codex/CODEX_ORCHESTRATOR_ENTRY.md`
+2. `/docs/codex/CODEX_CLAUDE_ALIGNMENT.md`
+3. The mapped `.claude/agents/*.md` file for the task role you are emulating
+4. The mapped `.claude/skills/**` files for the current phase
+5. The active feature plan in `/docs/feature/`
+6. The active progress tracker in `/docs/feature/*-progress.md`
+7. Any active frontend contract docs in `/docs/contracts/`
+
+Do not invent a separate Codex-only workflow when a `.claude` file already defines it.
+Use the same phase review gate, planning flow, progress tracker, and contract docs as Claude.
+
 TASK CONTEXT
 ============
 Internal Task ID: {{TASK_ID}}
@@ -12,13 +26,14 @@ GIT WORKFLOW (MANDATORY)
 =======================
 1. Checkout `dev`
 2. Pull latest changes from `origin/dev`
-3. Create a new branch:
+3. Prefer creating a dedicated git worktree for the task branch instead of coding in the main checkout
+4. Create a new branch:
    feature/{{TASK_BRANCH}}
-4. Implement ONLY this task
-5. Commit changes with message:
+5. Implement ONLY this task
+6. Commit changes with message:
    feat({{TASK_ID_LOWER}}): {{TASK_SLUG}} (#{{ISSUE_ID}})
-6. Push branch to origin
-7. Open a Pull Request targeting `dev` with:
+7. Push branch to origin
+8. Open a Pull Request targeting `dev` with:
    - Title:
      [LMS][{{TASK_ID}}][#{{ISSUE_ID}}] {{TASK_TITLE}}
    - Description:
@@ -33,6 +48,8 @@ STOP after creating the PR.
 
 STRICT SAFETY RULES
 ===================
+- Complete the phase review gate before starting implementation for any planned phase
+- Prefer a separate git worktree for task execution when working on a planned phase or branch-scoped task
 - Implement ONLY what is defined in this task
 - Do NOT touch other tasks
 - Do NOT refactor unrelated code

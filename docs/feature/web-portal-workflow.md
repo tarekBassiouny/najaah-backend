@@ -17,8 +17,8 @@ Runs: Phase 0A → 0C → 1 → 2 → 3 || 4 → 5A → 6 → 7.
 
 **After each phase that adds endpoints:**
 1. Generate contract doc using `najaah-frontend-handoff` skill
-2. Save to `docs/contracts/{name}.md`
-3. Update `docs/feature/web-portal-progress.md`
+2. Save to `docs/contracts/{feature-slug}/{name}.md`
+3. Update `docs/feature/{feature}-progress.md`
 4. Tag frontend team: "contract ready, you're unblocked for X"
 
 ### Lane 2: Admin Frontend (najaah-frontend — admin panel)
@@ -51,7 +51,7 @@ Runs: Scaffold (after Phase 2 contract) → Student pages (after Phase 3) → Pa
 ### Phase 0A — Backend: Catalog-Driven Services
 ```
 Backend:     Implement 0A.1 → 0A.9
-             Generate: docs/contracts/settings-feature-groups.md
+             Generate: docs/contracts/student-parent-web-portal/settings-feature-groups.md
 Frontend:    Waiting (nothing to do yet)
 ```
 
@@ -102,7 +102,7 @@ Portal FE:   Student pages:         Parent pages:
 ### Phase 5A + 5B — Admin Parent Management
 ```
 Backend:     Phase 5A (admin API)
-             Generate: docs/contracts/admin-parent-api.md
+             Generate: docs/contracts/student-parent-web-portal/admin-parent-api.md
                   ↓
 Admin FE:    Phase 5B:
              - Parent list page
