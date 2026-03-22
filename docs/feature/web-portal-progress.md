@@ -50,11 +50,11 @@ Frontend can start building from the contract before the backend PR is merged.
 
 | Contract | Generated After | Location | Status | Frontend Can Start |
 |----------|----------------|----------|--------|--------------------|
-| Settings API (feature_groups) | Phase 0A | `docs/contracts/settings-feature-groups.md` | not started | Phase 0B |
-| Auth API (student + parent) | Phase 2 | `docs/contracts/web-auth-api.md` | not started | Portal scaffold + auth pages |
-| Student Web API | Phase 3 | `docs/contracts/web-student-api.md` | not started | Student dashboard + pages |
-| Parent Web API | Phase 4 | `docs/contracts/web-parent-api.md` | not started | Parent dashboard + pages |
-| Admin Parent API | Phase 5A | `docs/contracts/admin-parent-api.md` | not started | Phase 5B admin UI |
+| Settings API (feature_groups) | Phase 0A | `docs/contracts/web-portal/settings-feature-groups.md` | not started | Phase 0B |
+| Auth API (student + parent) | Phase 2 | `docs/contracts/web-portal/web-auth-api.md` | not started | Portal scaffold + auth pages |
+| Student Web API | Phase 3 | `docs/contracts/web-portal/web-student-api.md` | not started | Student dashboard + pages |
+| Parent Web API | Phase 4 | `docs/contracts/web-portal/web-parent-api.md` | not started | Parent dashboard + pages |
+| Admin Parent API | Phase 5A | `docs/contracts/web-portal/admin-parent-api.md` | not started | Phase 5B admin UI |
 | Full Handoff Doc | Phase 7 | `docs/feature/student-parent-web-portal-api.md` | not started | Final integration |
 
 ---

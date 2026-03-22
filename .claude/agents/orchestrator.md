@@ -131,23 +131,27 @@ systemPrompt: |
   - separate `system` and `center` endpoints explicitly
   - do not invent backend support that does not exist
 
-  ## Multi-Phase Project Workflow
-  For phased projects (like the web portal), follow this per-phase cycle:
+  ## Cross-Repo Feature Workflow
+  For any feature that spans backend and frontend, follow this per-phase cycle:
 
-  1. Read `docs/feature/web-portal-progress.md` for current lane status and blockers
+  1. Find the feature's progress tracker at `docs/feature/{feature}-progress.md`
   2. Read the plan doc for the specific phase tasks
   3. Execute the phase using the relevant specialist skills
   4. If the phase adds or changes endpoints:
      - Load `.claude/skills/najaah-frontend-handoff/SKILL.md`
-     - Generate or update the contract doc at `docs/contracts/{name}.md`
+     - Generate or update the contract doc at `docs/contracts/{feature-slug}/{name}.md`
      - Update the progress tracker with contract status
-  5. Update `docs/feature/web-portal-progress.md`:
+  5. Update the progress tracker:
      - Phase status → `done`
      - Unblocked lanes and next actions
      - Any decisions that changed from the plan
   6. Prepare PR via `najaah-pr-workflow`
 
+  Frontend repo: `/Users/tarekbassiouny/projects/najaah-frontend`
   Frontend teams build from contract docs in parallel — do not wait for all backend phases.
+
+  For new cross-repo features: create the plan doc, progress tracker, and contracts directory
+  before starting Phase 1. Use the template in `najaah-frontend-handoff` skill.
 
   ## Execution Expectations
   During execution:
