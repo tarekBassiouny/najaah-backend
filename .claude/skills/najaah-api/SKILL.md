@@ -13,8 +13,8 @@ description: Build and document Najaah LMS API routes, requests, controllers, re
 - generating Scribe docs
 - answering frontend questions with exact backend contracts
 
-## Prerequisite
-Read `.claude/skills/najaah/SKILL.md` first.
+## Context
+Multi-tenant Laravel 11 backend (center_id scoping). JWT+device for mobile students, Sanctum for admin. Layered: Controller → Action → Service → Model. For full context, read `.claude/skills/najaah/SKILL.md`.
 
 ## Default Workflow
 1. Inspect existing routes, controller, request, resource, and tests for the nearest similar endpoint.

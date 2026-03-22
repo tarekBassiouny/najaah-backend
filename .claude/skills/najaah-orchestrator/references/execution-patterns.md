@@ -26,6 +26,13 @@ Plan
 Approval
 - show phases, risks, and verification
 
+Phase Review Gate
+- re-read the specific phase before coding
+- inspect nearby code and affected files for that phase
+- record contract impact and phase-local adjustments
+- define exact verification for the phase
+- mark the phase as reviewed before changing code
+
 Execution
 - complete one phase at a time
 - or run disjoint lanes in parallel after ownership is explicit

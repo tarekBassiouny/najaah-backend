@@ -16,7 +16,7 @@ description: Coordinate complex Najaah LMS backend work across architecture, fea
 ## Mandatory Load Order
 1. Read `.claude/skills/najaah/SKILL.md`
 2. Inspect repository state and nearby implementations
-3. If settings, feature flags, or admin-managed defaults are involved, load `.claude/skills/najaah-settings/SKILL.md`
+3. If settings, feature flags, or admin-managed defaults are involved, load `.claude/skills/najaah-features/references/settings-classification.md`
 4. Load only the specialist skill needed for the next phase
 
 Do not load all specialist skills unless the task genuinely spans all of them.
@@ -27,11 +27,13 @@ Follow this sequence every time:
 2. Build working memory
 3. Plan
 4. Approval
-5. Execute by phase or parallel lane
-6. Verify
-7. Report
+5. Phase review gate
+6. Execute by phase or parallel lane
+7. Verify
+8. Report
 
 Do not implement before approval unless the user explicitly asked for immediate execution without a plan.
+Do not start a new phase until its phase review gate is completed.
 
 ## Discovery Checklist
 - Check changed files and current repo state
@@ -43,148 +45,43 @@ Do not implement before approval unless the user explicitly asked for immediate 
 - Note open risks, assumptions, and missing requirements
 
 ## Working Memory Protocol
-Create and keep a compact task memory with these sections:
-
-```text
-OBJECTIVE
-- requested outcome
-
-SCOPE
-- system | center | mixed
-
-INVARIANTS
-- tenancy
-- authorization split
-- localization/admin output
-- contract compatibility
-
-AFFECTED AREAS
-- schema
-- services
-- API
-- jobs/events
-- docs
-- tests
-
-OWNERSHIP
-- lane or specialist -> owned files/modules
-
-DEPENDENCIES
-- what must finish before another lane can proceed
-
-DECISIONS
-- concrete choices that are now settled
-
-VERIFICATION LEDGER
-- tests/checks run
-- checks still pending
-
-OPEN RISKS
-- unresolved questions
-```
+Create and keep a compact task memory. For the template and section definitions, see `references/shared-memory.md`.
 
 Do not let specialists drift from this memory. Update it whenever schema, workflow, API, or test scope changes.
 
 ## Plan Template
-Use a short phase-based plan:
+Use a short phase-based plan. For the template, see `references/execution-patterns.md`.
 
-```text
-OBJECTIVE
-- one sentence on the requested outcome
+## Phase Review Gate
+Before executing any approved phase, complete a short review gate and write it into the task tracker or working notes.
 
-WORKING MEMORY
-- scope
-- invariants
-- ownership
-- key dependencies
+Required checks:
+- re-read the phase plan
+- inspect the nearby implementation and affected files
+- list affected schema, services, API, docs, and tests for that phase
+- record contract impact
+- record any phase-local adjustments discovered during code review
+- define the verification plan
+- receive explicit approval to implement that phase
 
-PHASES
-- Architecture: schema, indexes, model updates
-- Features: services, authorization, workflows
-- API: routes, requests, controllers, resources, docs
-- Quality: unit/feature/integration tests, factories, checks
-- Documentation: feature docs, schema docs, quick references
-
-RISKS
-- multi-tenancy
-- authorization
-- contract compatibility
-- localization/admin output
-
-VERIFICATION
-- tests or checks you will run
-```
+Status rule:
+- `pending`: phase not reviewed yet
+- `reviewed`: review complete, not yet coding
+- `in_progress`: allowed only after review complete and approval explicit
 
 ## Parallel Execution Rules
-Parallel work is allowed only when it reduces latency without creating contract drift.
-
-Use parallel lanes for:
-- discovery across nearby schema, service, API, and tests
-- architecture research plus feature design when the schema impact is already understood
-- API implementation plus quality work after request and response shapes are stable
-- documentation updates after behavior and contracts are frozen
-
-Do not parallelize when:
-- two lanes need to edit the same file set
-- migrations, models, or shared resources are still changing
-- error codes or authorization rules are unsettled
-- tenant scope is unclear
-
-Before opening a lane, record:
-- lane owner
-- exact write scope
-- dependency edges
-- expected handoff target
+Parallel work is allowed only when it reduces latency without creating contract drift. For detailed rules on when to parallelize, lane setup, and ownership, see `references/parallel-playbook.md`.
 
 ## Delegation Matrix
 - Use `najaah-architecture` for migrations, indexes, relationships, query-shape changes, and caching decisions.
 - Use `najaah-features` for service logic, authorization services, workflows, domain rules, and state changes.
-- Use `najaah-settings` for settings classification, scope ownership, feature flags, defaults, and admin configuration surfaces.
 - Use `najaah-api` for routes, FormRequests, controllers, resources, Scribe, and frontend contract answers.
-- Use `najaah-quality` for tests, factories, Pint, PHPStan, coverage, and review passes.
-- Use `najaah-pr-workflow` only after implementation when the task is about review or PR prep.
+- Use `najaah-quality` for tests, factories, Pint, PHPStan, coverage, review passes, and PR workflow.
 
 ## Communication Contract
-Default communication path is through the orchestrator and shared memory.
-
-Use a handoff memo whenever one specialist hands work to another:
-
-```text
-FROM
-- specialist or lane
-
-TO
-- specialist or lane
-
-OWNED AREA
-- files/modules that changed or are reserved
-
-CHANGED CONTRACTS
-- schema, service, API, docs, or test assumptions that changed
-
-DECISIONS
-- choices that are now fixed
-
-BLOCKERS
-- what is missing
-
-VERIFICATION
-- tests/checks run
-- tests/checks still needed
-
-NEXT ACTION
-- exact next step for the receiver
-```
+Default communication path is through the orchestrator and shared memory. For the handoff memo template, see `references/handoff-contract.md`.
 
 Direct specialist-to-specialist sync is acceptable only for a shared contract boundary, and the result must be written back to memory immediately.
-
-## Non-Negotiable Rules
-- Preserve multi-tenancy boundaries.
-- Keep controllers thin and business logic in services.
-- Prefer human-readable admin resource fields over raw IDs or enum internals.
-- Use locale-aware translated fields for user-facing output.
-- Preserve existing contracts unless the task explicitly allows contract changes.
-- Add or update tests for changed behavior.
 
 ## Frontend Questions
 For frontend coordination:
@@ -199,6 +96,10 @@ Do not report complete until you have checked:
 - affected scopes and authorization paths are covered
 - changed behavior has tests or a documented testing gap
 - documentation is updated when a reusable pattern changed
+
+For phase-based feature work, also check:
+- the phase review gate was completed before code changes started
+- any phase-local plan adjustments were recorded back into the tracker or working memory
 
 ## Reporting Format
 Use a compact delivery report:
