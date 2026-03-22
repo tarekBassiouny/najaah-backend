@@ -19,8 +19,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 0A complete | — | Create PR, generate 0A contract |
-| Admin Frontend | not started | Backend Phase 0A PR | Wait for 0A contract |
+| Backend | Phase 0A complete | — | Create PR for 0A |
+| Admin Frontend | not started | Backend Phase 0A PR | 0A contract ready, wait for PR merge |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
 ---
@@ -29,7 +29,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Phase | Lane | Status | PR | Contract Shared | Notes |
 |-------|------|--------|-----|----------------|-------|
-| 0A — Catalog-driven services | Backend | complete | — | — | All 8 tasks done, normalizeSystemValue refactored to catalog-driven |
+| 0A — Catalog-driven services | Backend | complete | — | draft | All 8 tasks done, normalizeSystemValue refactored to catalog-driven |
 | 0B — Settings UI cards | Admin FE | pending | — | — | blocked by 0A |
 | 0C — Retroactive cleanup | Backend + Admin FE | pending | — | — | blocked by 0A+0B |
 | 1 — Schema & models | Backend | pending | — | — | blocked by 0 |
@@ -137,11 +137,11 @@ Frontend can start building from the contract before the backend PR is merged.
 
 | Contract | Generated After | Location | Status | Frontend Can Start |
 |----------|----------------|----------|--------|--------------------|
-| Settings API (feature_groups) | Phase 0A | `docs/contracts/student-parent-web-portal/settings-feature-groups.md` | draft | Phase 0B |
-| Auth API (student + parent) | Phase 2 | `docs/contracts/student-parent-web-portal/web-auth-api.md` | draft | Portal scaffold + auth pages |
-| Student Web API | Phase 3 | `docs/contracts/student-parent-web-portal/web-student-api.md` | draft | Student dashboard + pages |
-| Parent Web API | Phase 4 | `docs/contracts/student-parent-web-portal/web-parent-api.md` | draft | Parent dashboard + pages |
-| Admin Parent API | Phase 5A | `docs/contracts/student-parent-web-portal/admin-parent-api.md` | draft | Phase 5B admin UI |
+| Settings API (feature_groups) | Phase 0A | `docs/contracts/student-parent-web-portal/settings-feature-groups.md` | draft (from implementation) | Phase 0B |
+| Auth API (student + parent) | Phase 2 | `docs/contracts/student-parent-web-portal/web-auth-api.md` | not started | Portal scaffold + auth pages |
+| Student Web API | Phase 3 | `docs/contracts/student-parent-web-portal/web-student-api.md` | not started | Student dashboard + pages |
+| Parent Web API | Phase 4 | `docs/contracts/student-parent-web-portal/web-parent-api.md` | not started | Parent dashboard + pages |
+| Admin Parent API | Phase 5A | `docs/contracts/student-parent-web-portal/admin-parent-api.md` | not started | Phase 5B admin UI |
 | Full Handoff Doc | Phase 7 | `docs/feature/student-parent-web-portal-api.md` | not started | Final integration |
 
 ---
