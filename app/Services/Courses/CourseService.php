@@ -26,11 +26,15 @@ use Illuminate\Support\Collection;
 
 class CourseService implements CourseServiceInterface
 {
+    private readonly PolicySettingsService $policySettingsService;
+
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
         private readonly AuditLogService $auditLogService,
-        private readonly PolicySettingsService $policySettingsService
-    ) {}
+        ?PolicySettingsService $policySettingsService = null
+    ) {
+        $this->policySettingsService = $policySettingsService ?? app(PolicySettingsService::class);
+    }
 
     /** @return LengthAwarePaginator<Course> */
     public function paginate(int $perPage = 15, ?User $actor = null): LengthAwarePaginator
@@ -367,10 +371,13 @@ class CourseService implements CourseServiceInterface
         $query = Course::query()
             ->published()
             ->with(['center', 'category', 'instructors'])
-            ->whereHas('center', function (Builder $query) use ($policySettingsService): void {
-                $query->where('status', \App\Models\Center::STATUS_ACTIVE->value);
-                $policySettingsService->applyGuestBrowsingFilter($query);
-            })
+            ->whereHas('center',
+                /** @param Builder<\App\Models\Center> $query */
+                function (Builder $query) use ($policySettingsService): void {
+                    $query->where('status', \App\Models\Center::STATUS_ACTIVE->value);
+                    $policySettingsService->applyGuestBrowsingFilter($query);
+                }
+            )
             ->where('show_for_all_students', true);
 
         $query->whereDoesntHave('videos', function ($query): void {

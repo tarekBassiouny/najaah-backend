@@ -74,6 +74,7 @@ class StudentProfileCompletionService
     }
 
     /**
+     * @param  array<string, bool>  $settings
      * @return array<int, string>
      */
     private function missingEducationFields(User $student, array $settings): array

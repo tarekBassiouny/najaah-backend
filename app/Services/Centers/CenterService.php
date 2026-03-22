@@ -29,11 +29,15 @@ class CenterService implements CenterServiceInterface
 {
     private const CENTER_LIST_COURSE_LIMIT = 5;
 
+    private readonly PolicySettingsService $policySettingsService;
+
     public function __construct(
         private readonly AuditLogService $auditLogService,
         private readonly TimezoneServiceInterface $timezoneService,
-        private readonly PolicySettingsService $policySettingsService,
-    ) {}
+        ?PolicySettingsService $policySettingsService = null,
+    ) {
+        $this->policySettingsService = $policySettingsService ?? app(PolicySettingsService::class);
+    }
 
     /**
      * @return LengthAwarePaginator<Center>

@@ -7,6 +7,7 @@ namespace App\Services\Settings;
 use App\Models\Center;
 use App\Models\SystemSetting;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class PolicySettingsService
 {
@@ -205,9 +206,6 @@ class PolicySettingsService
         return $base;
     }
 
-    /**
-     * @return array<int, string>
-     */
     public function systemValue(string $key): mixed
     {
         $definition = $this->catalog()[$key] ?? null;
@@ -286,8 +284,11 @@ class PolicySettingsService
     /**
      * Apply the effective guest-browsing policy to a center query.
      *
-     * @param  Builder<Center>  $query
-     * @return Builder<Center>
+     * Larastan commonly infers relation subqueries as Builder<Model> in whereHas closures,
+     * while direct Center queries stay Builder<Center>. Support both call sites here.
+     *
+     * @param  Builder<Center>|Builder<Model>  $query
+     * @return Builder<Center>|Builder<Model>
      */
     public function applyGuestBrowsingFilter(Builder $query): Builder
     {
@@ -431,6 +432,9 @@ class PolicySettingsService
         return $resolved;
     }
 
+    /**
+     * @param  array<string, mixed>  $definition
+     */
     private function disabledValueForDefinition(array $definition): mixed
     {
         if (array_key_exists('default', $definition)) {

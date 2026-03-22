@@ -81,6 +81,16 @@ class UpdateCenterAIProviderRequest extends FormRequest
     {
         $validator->after(function (Validator $validator): void {
             if (! $this->isSystemAdmin()) {
+                $allowedKeys = ['default_model'];
+                $forbiddenKeys = array_diff(array_keys($this->all()), $allowedKeys);
+
+                if ($forbiddenKeys !== []) {
+                    $validator->errors()->add(
+                        'provider',
+                        'Only default_model can be updated by center admins.'
+                    );
+                }
+
                 return;
             }
 

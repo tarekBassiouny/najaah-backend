@@ -12,13 +12,11 @@ beforeEach(function (): void {
 });
 
 it('lists system settings with filters', function (): void {
-    SystemSetting::factory()->create([
-        'key' => 'support_email',
+    SystemSetting::query()->where('key', 'support_email')->update([
         'value' => ['email' => 'ops@example.com'],
         'is_public' => true,
     ]);
-    SystemSetting::factory()->create([
-        'key' => 'attendance_required',
+    SystemSetting::query()->where('key', 'attendance_required')->update([
         'value' => ['enabled' => true],
         'is_public' => false,
     ]);
@@ -39,29 +37,25 @@ it('lists system settings with filters', function (): void {
 
 it('creates a system setting', function (): void {
     $response = $this->postJson('/api/v1/admin/settings', [
-        'key' => 'support_email',
-        'value' => ['email' => 'support@example.com'],
+        'key' => 'site_name',
+        'value' => ['en' => 'Najaah LMS', 'ar' => 'نجاح'],
         'is_public' => true,
     ], $this->adminHeaders());
 
     $response->assertCreated()
         ->assertJsonPath('success', true)
-        ->assertJsonPath('data.key', 'support_email')
-        ->assertJsonPath('data.value.email', 'support@example.com')
+        ->assertJsonPath('data.key', 'site_name')
+        ->assertJsonPath('data.value.en', 'Najaah LMS')
         ->assertJsonPath('data.is_public', true);
 
     $this->assertDatabaseHas('system_settings', [
-        'key' => 'support_email',
+        'key' => 'site_name',
         'is_public' => 1,
     ]);
 });
 
 it('shows a system setting', function (): void {
-    $setting = SystemSetting::factory()->create([
-        'key' => 'max_device_limit',
-        'value' => ['value' => 3],
-        'is_public' => true,
-    ]);
+    $setting = SystemSetting::query()->where('key', 'max_device_limit')->firstOrFail();
 
     $response = $this->getJson("/api/v1/admin/settings/{$setting->id}", $this->adminHeaders());
 
@@ -73,11 +67,7 @@ it('shows a system setting', function (): void {
 });
 
 it('updates a system setting', function (): void {
-    $setting = SystemSetting::factory()->create([
-        'key' => 'max_device_limit',
-        'value' => ['value' => 3],
-        'is_public' => true,
-    ]);
+    $setting = SystemSetting::query()->where('key', 'max_device_limit')->firstOrFail();
 
     $response = $this->putJson("/api/v1/admin/settings/{$setting->id}", [
         'value' => ['value' => 5],

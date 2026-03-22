@@ -23,9 +23,13 @@ use Illuminate\Support\Carbon;
 
 class ExploreCourseService
 {
+    private readonly PolicySettingsService $policySettingsService;
+
     public function __construct(
-        private readonly PolicySettingsService $policySettingsService
-    ) {}
+        ?PolicySettingsService $policySettingsService = null
+    ) {
+        $this->policySettingsService = $policySettingsService ?? app(PolicySettingsService::class);
+    }
 
     /**
      * Explore courses for authenticated students or guest users.
@@ -206,10 +210,13 @@ class ExploreCourseService
     {
         $policySettingsService = $this->policySettingsService;
 
-        $query->whereHas('center', function (Builder $query) use ($policySettingsService): void {
-            $query->where('status', Center::STATUS_ACTIVE->value);
-            $policySettingsService->applyGuestBrowsingFilter($query);
-        });
+        $query->whereHas('center',
+            /** @param Builder<Center> $query */
+            function (Builder $query) use ($policySettingsService): void {
+                $query->where('status', Center::STATUS_ACTIVE->value);
+                $policySettingsService->applyGuestBrowsingFilter($query);
+            }
+        );
     }
 
     /**

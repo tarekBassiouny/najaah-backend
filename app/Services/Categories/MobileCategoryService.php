@@ -12,6 +12,7 @@ use App\Models\Center;
 use App\Models\User;
 use App\Services\Settings\PolicySettingsService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class MobileCategoryService
 {
@@ -36,10 +37,13 @@ class MobileCategoryService
 
             $query->where(function ($query) use ($policySettingsService): void {
                 $query->whereNull('center_id')
-                    ->orWhereHas('center', function ($query) use ($policySettingsService): void {
-                        $query->where('status', Center::STATUS_ACTIVE->value);
-                        $policySettingsService->applyGuestBrowsingFilter($query);
-                    });
+                    ->orWhereHas('center',
+                        /** @param Builder<Center> $query */
+                        function (Builder $query) use ($policySettingsService): void {
+                            $query->where('status', Center::STATUS_ACTIVE->value);
+                            $policySettingsService->applyGuestBrowsingFilter($query);
+                        }
+                    );
             });
         }
 
