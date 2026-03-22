@@ -1,5 +1,11 @@
 # Najaah Laravel LMS — Full Codex Refactor Instructions
 
+Before using this document, Codex must first load the shared workflow map in:
+- `/docs/codex/CODEX_CLAUDE_ALIGNMENT.md`
+
+Repo-local `.claude/agents/*.md` and `.claude/skills/**` files are the workflow and domain source of truth.
+This Codex document should be treated as a task overlay, not a competing ruleset.
+
 This repository must be refactored by GitHub Copilot/Codex to achieve:
 
 - 100% PHPStan Level 8 compliance

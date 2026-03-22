@@ -1,5 +1,17 @@
 # Najaah LMS — Agentic Workflow Guide
 
+## Shared Source Of Truth
+
+Claude and Codex must use the same repo-local markdown sources.
+
+- Claude agent behavior lives in `.claude/agents/*.md`
+- Claude skill behavior lives in `.claude/skills/**`
+- feature execution lives in `docs/feature/*.md` and `docs/feature/*-progress.md`
+- frontend handoff lives in `docs/contracts/**`
+
+Codex mapping for these files is defined in [docs/codex/CODEX_CLAUDE_ALIGNMENT.md](./codex/CODEX_CLAUDE_ALIGNMENT.md).
+Do not create parallel workflow rules for Codex when the `.claude` files already define them.
+
 ## How it works in CLI
 
 ### From `najaah-backend/` folder:
@@ -51,6 +63,53 @@ claude --agent reviewer
 | Generate contract for frontend | `cd najaah-backend` | `claude --agent contract-generator` |
 | Check both repos status | `cd najaah-backend` | `claude --agent cross-repo` |
 | Quick fix or question | either folder | `claude` then `@skill-name your question` |
+
+## Git Worktree Workflow
+
+Use `git worktree` as the default branch-isolation workflow for phased feature work.
+
+### Why
+
+- keeps the main repo checkout clean for planning, review, and docs
+- lets backend and frontend phases run in parallel without branch switching
+- reduces risk when the primary worktree already has unrelated local changes
+- makes phase-by-phase review easier because each phase can live in its own worktree
+
+### Standard Rule
+
+- planning, tracker updates, and contract review can happen in the main checkout
+- each implementation phase should use a dedicated worktree on its own branch
+- cross-repo work may use one backend worktree and one frontend worktree at the same time
+- reviewer work can run either in the phase worktree or against staged changes from that worktree
+
+### Recommended Pattern
+
+```bash
+# main checkout: planning/docs/review
+cd ~/projects/najaah-backend
+
+# backend phase worktree
+git worktree add ../najaah-backend-phase-0a -b refactor/settings-catalog-phase-0a dev
+
+# frontend worktree when a contract unblocks frontend
+cd ~/projects/najaah-frontend
+git worktree add ../najaah-frontend-phase-0b -b feat/settings-ui-phase-0b dev
+```
+
+### Phase Rule
+
+- do not start coding a phase in the main checkout if that phase should live on its own branch
+- finish the phase review gate first, then create or enter the phase worktree, then implement
+
+### Codex mapping
+
+| What you want | Codex should emulate | Shared files it must read first |
+|---|---|---|
+| Plan a new feature | `orchestrator` | `.claude/agents/orchestrator.md`, `.claude/skills/najaah/SKILL.md`, `.claude/skills/najaah-orchestrator/SKILL.md` |
+| Build backend phase | `feature-builder` | `.claude/agents/feature-builder.md`, current phase plan, current progress tracker |
+| Review backend code | `reviewer` | `.claude/agents/reviewer.md`, `.claude/skills/najaah-quality/SKILL.md` |
+| Generate contract for frontend | `contract-generator` | `.claude/agents/contract-generator.md`, `.claude/skills/najaah-api/SKILL.md`, `.claude/skills/najaah-frontend-handoff/SKILL.md` |
+| Check both repos status | `cross-repo` | `.claude/agents/cross-repo.md`, feature progress tracker, contract docs |
 
 ---
 
@@ -162,7 +221,8 @@ The orchestrator will:
 1. Load master skill → discover domain rules
 2. Inspect existing auth, device, and user infrastructure
 3. Produce a phased plan with parallel lanes
-4. Ask for approval before any implementation
+4. Complete the phase review gate before any phase implementation
+5. Ask for approval before any implementation
 
 **Output:** Plan doc at `docs/feature/student-parent-web-portal.md` + progress tracker at `docs/feature/web-portal-progress.md`
 
@@ -175,9 +235,10 @@ claude --agent feature-builder
 The feature-builder will:
 1. Read the phase plan
 2. Complete the phase review gate (inspect code, list affected files)
-3. Execute: migrations → services → API updates → tests
-4. Run `composer quality`
-5. Report what was done
+3. Work from the dedicated phase branch/worktree
+4. Execute: migrations → services → API updates → tests
+5. Run `composer quality`
+6. Report what was done
 
 **Step 3 — Generate contract (backend contract-generator)**
 ```bash

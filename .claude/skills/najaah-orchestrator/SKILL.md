@@ -69,6 +69,10 @@ Status rule:
 - `reviewed`: review complete, not yet coding
 - `in_progress`: allowed only after review complete and approval explicit
 
+Git workflow rule:
+- once a phase is approved for implementation, prefer executing it from a dedicated git worktree on that phase branch
+- keep the main checkout available for planning, tracker updates, and reviews
+
 ## Parallel Execution Rules
 Parallel work is allowed only when it reduces latency without creating contract drift. For detailed rules on when to parallelize, lane setup, and ownership, see `references/parallel-playbook.md`.
 
