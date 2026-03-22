@@ -95,6 +95,69 @@ class PolicySettingsService
     }
 
     /**
+     * Build feature group definitions from catalog metadata.
+     *
+     * @param  array<string, bool>  $features
+     * @return array<string, array<string, mixed>>
+     */
+    public function featureGroups(array $features): array
+    {
+        $groups = [];
+        $template = [
+            'feature_flag' => null,
+            'flag_enabled' => false,
+            'center_settings' => [],
+            'system_limits' => [],
+            'system_overrides' => [],
+            'depends_on' => null,
+        ];
+
+        foreach ($this->featureFlagCatalog() as $flagKey => $flagDef) {
+            $group = $flagDef['feature_group'] ?? null;
+            if (! is_string($group)) {
+                continue;
+            }
+
+            $groups[$group] ??= $template;
+            $groups[$group]['feature_flag'] = $flagKey;
+            $groups[$group]['flag_enabled'] = (bool) ($features[$flagKey] ?? false);
+        }
+
+        foreach ($this->centerSettingsCatalog() as $key => $definition) {
+            $group = $definition['feature_group'] ?? null;
+            if (! is_string($group)) {
+                continue;
+            }
+
+            $groups[$group] ??= $template;
+            $groups[$group]['center_settings'][] = $key;
+
+            $dependsOn = $definition['depends_on'] ?? null;
+            if (is_string($dependsOn)) {
+                $groups[$group]['depends_on'] = $dependsOn;
+            }
+        }
+
+        foreach ($this->systemSettingsCatalog() as $key => $definition) {
+            $group = $definition['feature_group'] ?? null;
+            if (! is_string($group)) {
+                continue;
+            }
+
+            $groups[$group] ??= $template;
+
+            $settingGroup = $definition['group'] ?? null;
+            if ($settingGroup === 'limits') {
+                $groups[$group]['system_limits'][] = $key;
+            } elseif ($settingGroup === 'overrides') {
+                $groups[$group]['system_overrides'][] = $key;
+            }
+        }
+
+        return $groups;
+    }
+
+    /**
      * @return array<int, string>
      */
     public function nestedKeysFor(string $key): array
@@ -156,7 +219,7 @@ class PolicySettingsService
         foreach ($this->systemSettingsCatalog() as $key => $definition) {
             /** @var SystemSetting|null $setting */
             $setting = $settings->get($key);
-            $defaults[$key] = $this->normalizeSystemValue($key, $setting?->value, $definition['default']);
+            $defaults[$key] = $this->normalizeSystemValue($setting?->value, $definition);
         }
 
         return $defaults;
@@ -215,7 +278,7 @@ class PolicySettingsService
 
         $setting = SystemSetting::query()->where('key', $key)->first();
 
-        return $this->normalizeSystemValue($key, $setting?->value, $definition['default']);
+        return $this->normalizeSystemValue($setting?->value, $definition);
     }
 
     /**
@@ -226,14 +289,16 @@ class PolicySettingsService
     public function systemConstraints(): array
     {
         $defaults = $this->systemDefaults();
+        $constraints = [];
 
-        return [
-            'max_view_limit' => $defaults['max_view_limit'] ?? 10,
-            'max_device_limit' => $defaults['max_device_limit'] ?? 3,
-            'force_disable_extra_view_requests' => $defaults['force_disable_extra_view_requests'] ?? false,
-            'force_disable_pdf_download' => $defaults['force_disable_pdf_download'] ?? false,
-            'force_disable_guest_browsing' => $defaults['force_disable_guest_browsing'] ?? false,
-        ];
+        foreach ($this->systemSettingsCatalog() as $key => $definition) {
+            $group = $definition['group'] ?? null;
+            if ($group === 'limits' || $group === 'overrides') {
+                $constraints[$key] = $defaults[$key] ?? $definition['default'];
+            }
+        }
+
+        return $constraints;
     }
 
     /**
@@ -259,6 +324,56 @@ class PolicySettingsService
         $features = is_array($raw['features'] ?? null) ? $raw['features'] : [];
 
         return $this->mergeRecursive($this->defaultFeatures(), $features);
+    }
+
+    /**
+     * Apply system constraints (ceilings, overrides, feature flags) to resolved settings.
+     *
+     * Used by SettingsResolverService to avoid duplicating governance logic.
+     *
+     * @param  array<string, mixed>  $resolved
+     * @return array<string, mixed>
+     */
+    public function applyGovernanceConstraints(array $resolved, ?Center $center): array
+    {
+        $constraints = $this->systemConstraints();
+
+        foreach ($this->centerSettingsCatalog() as $key => $definition) {
+            if (! array_key_exists($key, $resolved)) {
+                continue;
+            }
+
+            $systemLimit = $definition['system_limit'] ?? null;
+            if (is_string($systemLimit) && isset($constraints[$systemLimit]) && is_numeric($resolved[$key])) {
+                $resolved[$key] = min((int) $resolved[$key], (int) $constraints[$systemLimit]);
+            }
+
+            $systemOverride = $definition['system_override'] ?? null;
+            if (is_string($systemOverride) && ($constraints[$systemOverride] ?? false) === true) {
+                $resolved[$key] = $this->disabledValueForDefinition($definition);
+            }
+        }
+
+        if ($center instanceof Center) {
+            $features = $this->centerFeatures($center);
+
+            foreach ($this->centerSettingsCatalog() as $key => $definition) {
+                $featureFlag = $definition['feature_flag'] ?? null;
+                if (! is_string($featureFlag)) {
+                    continue;
+                }
+
+                if (! array_key_exists($key, $resolved)) {
+                    continue;
+                }
+
+                if (($features[$featureFlag] ?? true) !== true) {
+                    $resolved[$key] = $this->disabledValueForDefinition($definition);
+                }
+            }
+        }
+
+        return $resolved;
     }
 
     public function isFeatureEnabled(Center $center, string $feature): bool
@@ -309,20 +424,31 @@ class PolicySettingsService
             });
     }
 
-    private function normalizeSystemValue(string $key, mixed $value, mixed $default): mixed
+    /**
+     * @param  array<string, mixed>  $definition
+     */
+    private function normalizeSystemValue(mixed $value, array $definition): mixed
     {
-        return match ($key) {
-            'site_name' => is_array($value) ? $this->mergeRecursive($default, $value) : $default,
-            'support_email' => is_array($value) && is_string($value['email'] ?? null) && $value['email'] !== '' ? $value['email'] : $default,
-            'timezone' => is_array($value) && is_string($value['timezone'] ?? null) && $value['timezone'] !== '' ? $value['timezone'] : $default,
-            'require_device_approval', 'attendance_required',
-            'force_disable_extra_view_requests', 'force_disable_pdf_download', 'force_disable_guest_browsing' => is_array($value)
-                ? (bool) ($value['enabled'] ?? $default)
-                : $default,
-            'max_view_limit' => is_array($value) && is_numeric($value['value'] ?? null) ? (int) $value['value'] : $default,
-            'max_device_limit' => is_array($value) && is_numeric($value['value'] ?? null) ? (int) $value['value'] : $default,
-            'whatsapp_bulk_settings' => is_array($value) ? $this->mergeRecursive($default, $value) : $default,
-            default => $default,
+        $default = $definition['default'];
+        $valueKey = $definition['value_key'] ?? null;
+        $type = $definition['type'] ?? 'string';
+
+        if (! is_array($value)) {
+            return $default;
+        }
+
+        // Object types without a value_key → merge recursively
+        if ($valueKey === null) {
+            return $this->mergeRecursive($default, $value);
+        }
+
+        $extracted = $value[$valueKey] ?? null;
+
+        return match ($type) {
+            'boolean' => (bool) ($extracted ?? $default),
+            'integer' => is_numeric($extracted) ? (int) $extracted : $default,
+            'string' => is_string($extracted) && $extracted !== '' ? $extracted : $default,
+            default => $extracted ?? $default,
         };
     }
 
@@ -391,40 +517,39 @@ class PolicySettingsService
     private function applyCenterGovernance(Center $center, array $resolved): array
     {
         $constraints = $this->systemConstraints();
-
-        if (isset($resolved['default_view_limit']) && is_numeric($resolved['default_view_limit'])) {
-            $resolved['default_view_limit'] = min((int) $resolved['default_view_limit'], (int) $constraints['max_view_limit']);
-        }
-
-        if (isset($resolved['device_limit']) && is_numeric($resolved['device_limit'])) {
-            $resolved['device_limit'] = min((int) $resolved['device_limit'], (int) $constraints['max_device_limit']);
-        }
-
-        if ($constraints['force_disable_extra_view_requests'] === true) {
-            $resolved['allow_extra_view_requests'] = false;
-        }
-
-        if ($constraints['force_disable_pdf_download'] === true) {
-            $resolved['pdf_download_permission'] = false;
-        }
-
-        if ($constraints['force_disable_guest_browsing'] === true) {
-            $resolved['allow_guest_browsing'] = false;
-        }
-
         $features = $this->centerFeatures($center);
 
         foreach ($this->centerSettingsCatalog() as $key => $definition) {
+            if (! array_key_exists($key, $resolved)) {
+                continue;
+            }
+
+            // System limit ceiling: min(resolved, limit)
+            $systemLimit = $definition['system_limit'] ?? null;
+            if (is_string($systemLimit) && isset($constraints[$systemLimit]) && is_numeric($resolved[$key])) {
+                $resolved[$key] = min((int) $resolved[$key], (int) $constraints[$systemLimit]);
+            }
+
+            // System override: force-disable when override is true
+            $systemOverride = $definition['system_override'] ?? null;
+            if (is_string($systemOverride) && ($constraints[$systemOverride] ?? false) === true) {
+                $resolved[$key] = $this->disabledValueForDefinition($definition);
+            }
+
+            // Feature flag: disable when flag is off
             $featureFlag = $definition['feature_flag'] ?? null;
-            if (! is_string($featureFlag)) {
-                continue;
+            if (is_string($featureFlag) && ($features[$featureFlag] ?? true) !== true) {
+                $resolved[$key] = $this->disabledValueForDefinition($definition);
             }
 
-            if (($features[$featureFlag] ?? true) === true) {
-                continue;
+            // Dependency: disable when the depended-on setting is disabled
+            $dependsOn = $definition['depends_on'] ?? null;
+            if (is_string($dependsOn) && array_key_exists($dependsOn, $resolved)) {
+                $depDefinition = $this->catalog()[$dependsOn] ?? null;
+                if (is_array($depDefinition) && $resolved[$dependsOn] === $this->disabledValueForDefinition($depDefinition)) {
+                    $resolved[$key] = $this->disabledValueForDefinition($definition);
+                }
             }
-
-            $resolved[$key] = $this->disabledValueForDefinition($definition);
         }
 
         $resolved['features'] = $features;
