@@ -11,8 +11,8 @@ description: Test and verify Najaah LMS changes with Pest, factories, Pint, PHPS
 - running Pint or PHPStan
 - reviewing changed code for regressions and gaps
 
-## Prerequisite
-Read `.claude/skills/najaah/SKILL.md` first.
+## Context
+Multi-tenant Laravel 11 backend (center_id scoping). JWT+device for mobile students, Sanctum for admin. Layered: Controller → Action → Service → Model. For full context, read `.claude/skills/najaah/SKILL.md`.
 
 ## Default Workflow
 1. Start with a regression test for the changed behavior.
@@ -32,3 +32,4 @@ Read `.claude/skills/najaah/SKILL.md` first.
 
 ## Read Next Only When Needed
 - Testing patterns and commands: `references/testing-patterns.md`
+- PR workflow, review checklist, and validation: `references/pr-workflow.md`

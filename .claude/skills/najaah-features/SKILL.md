@@ -11,8 +11,8 @@ description: Implement Najaah LMS business logic, authorization services, workfl
 - enforcing authorization and workflow rules
 - handling domain exceptions and state transitions
 
-## Prerequisite
-Read `.claude/skills/najaah/SKILL.md` first.
+## Context
+Multi-tenant Laravel 11 backend (center_id scoping). JWT+device for mobile students, Sanctum for admin. Layered: Controller → Action → Service → Model. For full context, read `.claude/skills/najaah/SKILL.md`.
 
 ## Default Workflow
 1. Inspect the nearest existing service and its tests.
@@ -21,13 +21,12 @@ Read `.claude/skills/najaah/SKILL.md` first.
 4. Put authorization decisions in dedicated service logic.
 5. Preserve multi-tenancy, settings resolution, and existing error shapes.
 6. For new or changed features, classify whether the behavior needs a system setting, a center setting, a per-center feature flag, or only an internal operational default.
-7. Load `.claude/skills/najaah-settings/SKILL.md` when feature availability or admin-managed configuration is involved.
+7. Load `references/settings-classification.md` when feature availability or admin-managed configuration is involved.
 8. Record workflow decisions, authorization assumptions, and downstream needs in working memory.
 9. Add or update tests for the changed behavior.
 
 ## Mandatory Rules
-- Prefer readonly services with constructor injection.
-- Use strict types and typed array PHPDoc shapes where needed.
+- Follow PHP and service rules from `.claude/skills/najaah/references/standards.md`.
 - Throw stable domain failures from the service layer instead of leaking transport concerns.
 - Keep cross-center access impossible unless the feature is explicitly system-scoped.
 - Split services when one class starts owning unrelated workflows.
@@ -36,4 +35,5 @@ Read `.claude/skills/najaah/SKILL.md` first.
 
 ## Read Next Only When Needed
 - Service and authorization patterns: `references/service-patterns.md`
-- Settings governance and classification: `.claude/skills/najaah-settings/SKILL.md`
+- Settings classification and registry workflow: `references/settings-classification.md`
+- Settings governance audit and categorization: `references/settings-governance.md`
