@@ -24,6 +24,7 @@ class UserFactory extends Factory
             'username' => 'user'.uniqid(),
             'phone' => $this->faker->unique()->numerify('1#########'),
             'country_code' => '+2',
+            'parent_phone' => null,
             'email' => 'user'.uniqid().'@example.com',
             'password' => Hash::make('password'),
             'status' => 1,

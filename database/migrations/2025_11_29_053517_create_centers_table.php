@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('allow_extra_view_requests')->default(true);
             $table->boolean('pdf_download_permission')->default(false);
             $table->unsignedInteger('device_limit')->default(1);
+            $table->boolean('allow_guest_browsing')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

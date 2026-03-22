@@ -95,6 +95,7 @@ class StudentProfileResource extends JsonResource
             'email' => $student->email,
             'phone' => $student->phone,
             'country_code' => $student->country_code,
+            'parent_phone' => $student->parent_phone,
             'avatar_url' => $student->avatar_url,
             'status' => $status?->value ?? $student->status,
             'status_label' => $status?->name,

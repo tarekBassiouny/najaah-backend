@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Centers;
 
+use App\Enums\AIProvider;
+use App\Services\Centers\CenterScopeService;
+use App\Services\Settings\PolicySettingsService;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -20,31 +23,17 @@ class UpdateCenterSettingsRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'settings' => ['required', 'array'],
-            'settings.default_view_limit' => ['sometimes', 'integer', 'min:0'],
-            'settings.allow_extra_view_requests' => ['sometimes', 'boolean'],
-            'settings.requires_video_approval' => ['sometimes', 'boolean'],
-            'settings.video_code_expiry_days' => ['sometimes', 'nullable', 'integer', 'min:1'],
-            'settings.pdf_download_permission' => ['sometimes', 'boolean'],
-            'settings.device_limit' => ['sometimes', 'integer', 'min:1'],
-            'settings.whatsapp_bulk_settings' => ['sometimes', 'array'],
-            'settings.whatsapp_bulk_settings.delay_seconds' => ['sometimes', 'integer', 'min:0'],
-            'settings.whatsapp_bulk_settings.batch_size' => ['sometimes', 'integer', 'min:1'],
-            'settings.whatsapp_bulk_settings.batch_pause_seconds' => ['sometimes', 'integer', 'min:0'],
-            'settings.whatsapp_bulk_settings.max_retries' => ['sometimes', 'integer', 'min:0'],
-            'settings.whatsapp_bulk_settings.max_failures_before_pause' => ['sometimes', 'integer', 'min:1'],
-            'settings.education_profile' => ['sometimes', 'array'],
-            'settings.education_profile.enable_grade' => ['sometimes', 'boolean'],
-            'settings.education_profile.enable_school' => ['sometimes', 'boolean'],
-            'settings.education_profile.enable_college' => ['sometimes', 'boolean'],
-            'settings.education_profile.require_grade' => ['sometimes', 'boolean'],
-            'settings.education_profile.require_school' => ['sometimes', 'boolean'],
-            'settings.education_profile.require_college' => ['sometimes', 'boolean'],
-            'settings.branding' => ['sometimes', 'array'],
-            'settings.branding.logo_url' => ['sometimes', 'nullable', 'string'],
-            'settings.branding.primary_color' => ['sometimes', 'nullable', 'string'],
-        ];
+        return array_merge(
+            [
+                'settings' => ['sometimes', 'array'],
+                'features' => ['sometimes', 'array'],
+                'ai' => ['sometimes', 'array'],
+                'ai.providers' => ['sometimes', 'array'],
+            ],
+            $this->policySettingsService()->centerSettingRules('settings'),
+            $this->policySettingsService()->featureFlagRules('features'),
+            $this->aiProviderRules()
+        );
     }
 
     /**
@@ -62,20 +51,16 @@ class UpdateCenterSettingsRequest extends FormRequest
                     'video_code_expiry_days' => 30,
                     'pdf_download_permission' => true,
                     'device_limit' => 1,
-                    'whatsapp_bulk_settings' => [
-                        'delay_seconds' => 3,
-                        'batch_size' => 50,
-                        'batch_pause_seconds' => 60,
-                        'max_retries' => 2,
-                        'max_failures_before_pause' => 10,
-                    ],
+                    'allow_guest_browsing' => false,
                     'education_profile' => [
                         'enable_grade' => true,
                         'enable_school' => true,
                         'enable_college' => true,
+                        'enable_parent_phone' => true,
                         'require_grade' => false,
                         'require_school' => false,
                         'require_college' => false,
+                        'require_parent_phone' => false,
                     ],
                     'branding' => [
                         'logo_url' => 'https://example.com/logo.png',
@@ -84,11 +69,11 @@ class UpdateCenterSettingsRequest extends FormRequest
                 ],
             ],
             'settings.default_view_limit' => [
-                'description' => 'Default view limit for videos.',
+                'description' => 'Default view limit for videos. Must not exceed system max_view_limit.',
                 'example' => 3,
             ],
             'settings.allow_extra_view_requests' => [
-                'description' => 'Whether students can request extra views.',
+                'description' => 'Whether students can request extra views. May be force-disabled by system admin.',
                 'example' => true,
             ],
             'settings.requires_video_approval' => [
@@ -100,22 +85,16 @@ class UpdateCenterSettingsRequest extends FormRequest
                 'example' => 30,
             ],
             'settings.pdf_download_permission' => [
-                'description' => 'Whether PDF downloads are allowed.',
+                'description' => 'Whether PDF downloads are allowed. May be force-disabled by system admin.',
                 'example' => true,
             ],
             'settings.device_limit' => [
-                'description' => 'Maximum active devices per student.',
+                'description' => 'Maximum active devices per student. Must not exceed system max_device_limit.',
                 'example' => 1,
             ],
-            'settings.whatsapp_bulk_settings' => [
-                'description' => 'Configuration for queue-based bulk WhatsApp sending.',
-                'example' => [
-                    'delay_seconds' => 3,
-                    'batch_size' => 50,
-                    'batch_pause_seconds' => 60,
-                    'max_retries' => 2,
-                    'max_failures_before_pause' => 10,
-                ],
+            'settings.allow_guest_browsing' => [
+                'description' => "Whether guest users can browse this center's courses without authentication. May be force-disabled by system admin.",
+                'example' => false,
             ],
             'settings.education_profile' => [
                 'description' => 'Education profile module configuration for student-facing education fields.',
@@ -123,9 +102,11 @@ class UpdateCenterSettingsRequest extends FormRequest
                     'enable_grade' => true,
                     'enable_school' => true,
                     'enable_college' => false,
+                    'enable_parent_phone' => true,
                     'require_grade' => true,
                     'require_school' => false,
                     'require_college' => false,
+                    'require_parent_phone' => true,
                 ],
             ],
             'settings.branding' => [
@@ -143,6 +124,26 @@ class UpdateCenterSettingsRequest extends FormRequest
                 'description' => 'Primary branding color.',
                 'example' => '#000000',
             ],
+            'features' => [
+                'description' => 'System-managed feature flags for this center. System admin only.',
+                'example' => [
+                    'ai_content' => true,
+                    'guest_browsing' => true,
+                ],
+            ],
+            'ai.providers' => [
+                'description' => 'Per-provider AI settings for this center. System admin can edit all fields, center admin can only update default_model.',
+                'example' => [
+                    'openai' => [
+                        'is_enabled' => true,
+                        'allowed_models' => ['gpt-4o-mini'],
+                        'default_model' => 'gpt-4o-mini',
+                        'limits' => [
+                            'daily_job_limit' => 200,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -151,66 +152,142 @@ class UpdateCenterSettingsRequest extends FormRequest
         $validator->after(function (Validator $validator): void {
             $settings = $this->input('settings');
             if (! is_array($settings)) {
-                return;
+                $settings = [];
             }
 
-            $allowedKeys = [
-                'default_view_limit',
-                'allow_extra_view_requests',
-                'requires_video_approval',
-                'video_code_expiry_days',
-                'pdf_download_permission',
-                'device_limit',
-                'whatsapp_bulk_settings',
-                'education_profile',
-                'branding',
-            ];
+            $policySettingsService = $this->policySettingsService();
+            $allowedKeys = $policySettingsService->centerSettingKeys();
 
             $invalidKeys = array_diff(array_keys($settings), $allowedKeys);
             if (! empty($invalidKeys)) {
                 $validator->errors()->add('settings', 'Unsupported settings: '.implode(', ', $invalidKeys));
             }
 
-            if (isset($settings['branding']) && is_array($settings['branding'])) {
-                $brandingAllowed = ['logo_url', 'primary_color'];
-                $invalidBranding = array_diff(array_keys($settings['branding']), $brandingAllowed);
+            foreach ($settings as $key => $value) {
+                if (! is_array($value)) {
+                    continue;
+                }
 
-                if (! empty($invalidBranding)) {
-                    $validator->errors()->add('settings.branding', 'Unsupported branding settings: '.implode(', ', $invalidBranding));
+                $nestedKeys = $policySettingsService->nestedKeysFor($key);
+                if ($nestedKeys === []) {
+                    continue;
+                }
+
+                $invalidNestedKeys = array_diff(array_keys($value), $nestedKeys);
+                if ($invalidNestedKeys === []) {
+                    continue;
+                }
+
+                $validator->errors()->add(
+                    'settings.'.$key,
+                    'Unsupported '.str_replace('_', ' ', $key).' settings: '.implode(', ', $invalidNestedKeys)
+                );
+            }
+
+            $features = $this->input('features');
+            if (is_array($features)) {
+                $allowedFeatureKeys = $policySettingsService->featureFlagKeys();
+                $invalidFeatureKeys = array_diff(array_keys($features), $allowedFeatureKeys);
+                if ($invalidFeatureKeys !== []) {
+                    $validator->errors()->add('features', 'Unsupported feature flags: '.implode(', ', $invalidFeatureKeys));
+                }
+
+                if (! $this->isSystemAdmin()) {
+                    $validator->errors()->add('features', 'Only system admin can manage feature flags.');
                 }
             }
 
-            if (isset($settings['whatsapp_bulk_settings']) && is_array($settings['whatsapp_bulk_settings'])) {
-                $bulkAllowed = [
-                    'delay_seconds',
-                    'batch_size',
-                    'batch_pause_seconds',
-                    'max_retries',
-                    'max_failures_before_pause',
-                ];
-                $invalidBulk = array_diff(array_keys($settings['whatsapp_bulk_settings']), $bulkAllowed);
+            $providers = $this->input('ai.providers');
+            if (is_array($providers)) {
+                $invalidProviders = array_diff(array_keys($providers), AIProvider::values());
+                if ($invalidProviders !== []) {
+                    $validator->errors()->add('ai.providers', 'Unsupported AI providers: '.implode(', ', $invalidProviders));
+                }
 
-                if (! empty($invalidBulk)) {
-                    $validator->errors()->add('settings.whatsapp_bulk_settings', 'Unsupported WhatsApp bulk settings: '.implode(', ', $invalidBulk));
+                foreach ($providers as $providerKey => $providerPayload) {
+                    if (! is_array($providerPayload)) {
+                        continue;
+                    }
+
+                    $allowedProviderKeys = $this->isSystemAdmin()
+                        ? ['is_enabled', 'allowed_models', 'default_model', 'limits']
+                        : ['default_model'];
+
+                    $invalidProviderKeys = array_diff(array_keys($providerPayload), $allowedProviderKeys);
+                    if ($invalidProviderKeys !== []) {
+                        $validator->errors()->add(
+                            'ai.providers.'.$providerKey,
+                            'Unsupported AI provider settings: '.implode(', ', $invalidProviderKeys)
+                        );
+                    }
+
+                    $limits = $providerPayload['limits'] ?? null;
+                    if (is_array($limits)) {
+                        $allowedLimitKeys = [
+                            'daily_job_limit',
+                            'monthly_job_limit',
+                            'daily_token_limit',
+                            'monthly_token_limit',
+                            'max_input_chars',
+                            'max_output_chars',
+                            'max_concurrent_jobs',
+                            'default_output_token_estimate',
+                        ];
+
+                        $invalidLimitKeys = array_diff(array_keys($limits), $allowedLimitKeys);
+                        if ($invalidLimitKeys !== []) {
+                            $validator->errors()->add(
+                                'ai.providers.'.$providerKey.'.limits',
+                                'Unsupported AI limits keys: '.implode(', ', $invalidLimitKeys)
+                            );
+                        }
+
+                        if (! $this->isSystemAdmin()) {
+                            $validator->errors()->add('ai.providers.'.$providerKey.'.limits', 'Only system admin can manage AI limits.');
+                        }
+                    }
                 }
             }
 
-            if (isset($settings['education_profile']) && is_array($settings['education_profile'])) {
-                $educationAllowed = [
-                    'enable_grade',
-                    'enable_school',
-                    'enable_college',
-                    'require_grade',
-                    'require_school',
-                    'require_college',
-                ];
-                $invalidEducation = array_diff(array_keys($settings['education_profile']), $educationAllowed);
-
-                if (! empty($invalidEducation)) {
-                    $validator->errors()->add('settings.education_profile', 'Unsupported education profile settings: '.implode(', ', $invalidEducation));
-                }
+            if ($settings === [] && ! is_array($this->input('features')) && ! is_array($this->input('ai.providers'))) {
+                $validator->errors()->add('settings', 'At least one of settings, features, or ai.providers is required.');
             }
         });
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function aiProviderRules(): array
+    {
+        return [
+            'ai.providers.*' => ['sometimes', 'array'],
+            'ai.providers.*.is_enabled' => ['sometimes', 'boolean'],
+            'ai.providers.*.allowed_models' => ['sometimes', 'nullable', 'array'],
+            'ai.providers.*.allowed_models.*' => ['required_with:ai.providers.*.allowed_models', 'string', 'max:120'],
+            'ai.providers.*.default_model' => ['sometimes', 'nullable', 'string', 'max:120'],
+            'ai.providers.*.limits' => ['sometimes', 'array'],
+            'ai.providers.*.limits.daily_job_limit' => ['sometimes', 'integer', 'min:0'],
+            'ai.providers.*.limits.monthly_job_limit' => ['sometimes', 'integer', 'min:0'],
+            'ai.providers.*.limits.daily_token_limit' => ['sometimes', 'integer', 'min:0'],
+            'ai.providers.*.limits.monthly_token_limit' => ['sometimes', 'integer', 'min:0'],
+            'ai.providers.*.limits.max_input_chars' => ['sometimes', 'integer', 'min:0'],
+            'ai.providers.*.limits.max_output_chars' => ['sometimes', 'integer', 'min:0'],
+            'ai.providers.*.limits.max_concurrent_jobs' => ['sometimes', 'integer', 'min:0'],
+            'ai.providers.*.limits.default_output_token_estimate' => ['sometimes', 'integer', 'min:0'],
+        ];
+    }
+
+    private function policySettingsService(): PolicySettingsService
+    {
+        return app(PolicySettingsService::class);
+    }
+
+    private function isSystemAdmin(): bool
+    {
+        $user = $this->user();
+
+        return $user !== null && app(CenterScopeService::class)->isSystemSuperAdmin($user);
     }
 
     protected function failedValidation(Validator $validator): void

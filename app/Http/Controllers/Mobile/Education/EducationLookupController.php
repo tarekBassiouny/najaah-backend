@@ -48,9 +48,11 @@ class EducationLookupController extends Controller
             'enable_grade' => true,
             'enable_school' => true,
             'enable_college' => true,
+            'enable_parent_phone' => true,
             'require_grade' => false,
             'require_school' => false,
             'require_college' => false,
+            'require_parent_phone' => false,
         ], $profile);
 
         $grades = (bool) ($resolvedSettings['enable_grade'] ?? true)
@@ -93,9 +95,11 @@ class EducationLookupController extends Controller
                     'enable_grade' => (bool) ($resolvedSettings['enable_grade'] ?? true),
                     'enable_school' => (bool) ($resolvedSettings['enable_school'] ?? true),
                     'enable_college' => (bool) ($resolvedSettings['enable_college'] ?? true),
+                    'enable_parent_phone' => (bool) ($resolvedSettings['enable_parent_phone'] ?? true),
                     'require_grade' => (bool) ($resolvedSettings['require_grade'] ?? false),
                     'require_school' => (bool) ($resolvedSettings['require_school'] ?? false),
                     'require_college' => (bool) ($resolvedSettings['require_college'] ?? false),
+                    'require_parent_phone' => (bool) ($resolvedSettings['require_parent_phone'] ?? false),
                 ],
                 'lookups' => [
                     'grades' => $grades,

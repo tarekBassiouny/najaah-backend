@@ -46,6 +46,7 @@ class UpdateStudentRequest extends FormRequest
                         }
                     }),
             ],
+            'parent_phone' => ['sometimes', 'nullable', 'string', 'max:24', 'regex:/^[\d+\s().-]+$/'],
             'status' => ['sometimes', 'integer', 'in:0,1,2'],
         ];
     }
@@ -64,6 +65,10 @@ class UpdateStudentRequest extends FormRequest
                 'description' => 'Student email address.',
                 'example' => 'student@example.com',
             ],
+            'parent_phone' => [
+                'description' => 'Optional parent phone number for notifications.',
+                'example' => '+201001234567',
+            ],
             'status' => [
                 'description' => 'Student status (0 inactive, 1 active, 2 banned).',
                 'example' => 1,
@@ -81,5 +86,20 @@ class UpdateStudentRequest extends FormRequest
                 'details' => $validator->errors(),
             ],
         ], 422));
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if (! $this->has('parent_phone')) {
+            return;
+        }
+
+        $parentPhone = preg_replace('/[^\d+]+/', '', (string) $this->input('parent_phone'));
+
+        $this->merge([
+            'parent_phone' => $parentPhone !== null && $parentPhone !== ''
+                ? trim((string) $parentPhone)
+                : null,
+        ]);
     }
 }

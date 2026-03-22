@@ -91,9 +91,15 @@ class MeController extends Controller
         }
 
         $data = $request->validated();
-        $updated = $this->studentService->update($user, [
-            'name' => $data['name'],
-        ]);
+        $payload = [];
+
+        foreach (['name', 'parent_phone'] as $field) {
+            if (array_key_exists($field, $data)) {
+                $payload[$field] = $data[$field];
+            }
+        }
+
+        $updated = $this->studentService->update($user, $payload);
 
         return response()->json([
             'success' => true,

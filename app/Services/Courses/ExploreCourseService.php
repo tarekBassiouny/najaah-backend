@@ -16,12 +16,21 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Settings\PolicySettingsService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 class ExploreCourseService
 {
+    private readonly PolicySettingsService $policySettingsService;
+
+    public function __construct(
+        ?PolicySettingsService $policySettingsService = null
+    ) {
+        $this->policySettingsService = $policySettingsService ?? app(PolicySettingsService::class);
+    }
+
     /**
      * Explore courses for authenticated students or guest users.
      *
@@ -163,7 +172,7 @@ class ExploreCourseService
         } else {
             // Guest user - course center must allow guest browsing
             // Note: center is guaranteed to be non-null after the check on line 137
-            if ($course->center === null || ! $course->center->allow_guest_browsing) {
+            if ($course->center === null || ! $this->policySettingsService->centerAllowsGuestBrowsing($course->center)) {
                 $this->centerMismatch();
             }
         }
@@ -199,10 +208,15 @@ class ExploreCourseService
      */
     private function applyGuestVisibility(Builder $query): void
     {
-        $query->whereHas('center', function ($query): void {
-            $query->where('status', Center::STATUS_ACTIVE->value)
-                ->where('allow_guest_browsing', true);
-        });
+        $policySettingsService = $this->policySettingsService;
+
+        $query->whereHas('center',
+            /** @param Builder<Center> $query */
+            function (Builder $query) use ($policySettingsService): void {
+                $query->where('status', Center::STATUS_ACTIVE->value);
+                $policySettingsService->applyGuestBrowsingFilter($query);
+            }
+        );
     }
 
     /**

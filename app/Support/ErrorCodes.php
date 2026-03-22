@@ -130,5 +130,7 @@ final class ErrorCodes
 
     public const PDF_TEXT_EXTRACTION_FAILED = 'PDF_TEXT_EXTRACTION_FAILED';
 
+    public const SYSTEM_LIMIT_EXCEEDED = 'SYSTEM_LIMIT_EXCEEDED';
+
     private function __construct() {}
 }

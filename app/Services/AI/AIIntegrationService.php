@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Services\AI\Contracts\AIIntegrationServiceInterface;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Settings\PolicySettingsService;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
@@ -23,7 +24,8 @@ final class AIIntegrationService implements AIIntegrationServiceInterface
 {
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly PolicySettingsService $policySettingsService
     ) {}
 
     /**
@@ -132,6 +134,7 @@ final class AIIntegrationService implements AIIntegrationServiceInterface
     public function updateCenterProvider(Center $center, string $providerKey, array $data, User $actor): AICenterProviderSetting
     {
         $this->centerScopeService->assertAdminSameCenter($actor, $center);
+        $this->assertCenterProviderUpdateAllowed($actor, $data);
         $normalizedKey = $this->normalizeProviderKey($providerKey);
 
         $systemProvider = collect($this->listSystemProviders())
@@ -209,6 +212,8 @@ final class AIIntegrationService implements AIIntegrationServiceInterface
      */
     public function getCenterOptions(Center $center, bool $enabledOnly = false): array
     {
+        $this->assertAIContentEnabled($center);
+
         $providers = $this->listCenterProviders($center);
         if ($enabledOnly) {
             $providers = array_values(array_filter(
@@ -245,6 +250,8 @@ final class AIIntegrationService implements AIIntegrationServiceInterface
      */
     public function resolveProviderAndModel(Center $center, ?string $requestedProvider, ?string $requestedModel): array
     {
+        $this->assertAIContentEnabled($center);
+
         $options = $this->getCenterOptions($center, false);
 
         /** @var array<int, array<string,mixed>> $providers */
@@ -520,6 +527,42 @@ final class AIIntegrationService implements AIIntegrationServiceInterface
         }
 
         return $normalized;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function assertCenterProviderUpdateAllowed(User $actor, array $data): void
+    {
+        if ($this->centerScopeService->isSystemSuperAdmin($actor)) {
+            return;
+        }
+
+        $allowedKeys = ['default_model'];
+        $forbiddenKeys = array_diff(array_keys($data), $allowedKeys);
+
+        if ($forbiddenKeys === []) {
+            return;
+        }
+
+        throw new DomainException(
+            'Only system admin can manage AI provider availability, model allowlists, and limits.',
+            ErrorCodes::FORBIDDEN,
+            403
+        );
+    }
+
+    private function assertAIContentEnabled(Center $center): void
+    {
+        if ($this->policySettingsService->isFeatureEnabled($center, 'ai_content')) {
+            return;
+        }
+
+        throw new DomainException(
+            'AI content is disabled for this center.',
+            ErrorCodes::FORBIDDEN,
+            403
+        );
     }
 
     /**
