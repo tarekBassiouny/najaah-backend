@@ -1,6 +1,6 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 0A (complete — pending PR)
+## Current Phase: Phase 0B (frontend, in progress) / Phase 1 (backend, planning)
 ## Last Updated: 2026-03-22
 
 ---
@@ -19,8 +19,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 0A complete | — | Create PR for 0A |
-| Admin Frontend | not started | Backend Phase 0A PR | 0A contract ready, wait for PR merge |
+| Backend | Phase 0A+0C.1 complete | — | Plan Phase 1 (Schema & Models) |
+| Admin Frontend | Phase 0B in progress | — | Building feature group cards from contract |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
 ---
@@ -29,9 +29,10 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Phase | Lane | Status | PR | Contract Shared | Notes |
 |-------|------|--------|-----|----------------|-------|
-| 0A — Catalog-driven services | Backend | complete | — | draft | All 8 tasks done, normalizeSystemValue refactored to catalog-driven |
-| 0B — Settings UI cards | Admin FE | pending | — | — | blocked by 0A |
-| 0C — Retroactive cleanup | Backend + Admin FE | pending | — | — | blocked by 0A+0B |
+| 0A — Catalog-driven services | Backend | complete | #280 | draft | All 8 tasks done, merged to dev |
+| 0B — Settings UI cards | Admin FE | in_progress | — | — | Frontend agent building feature group cards |
+| 0C.1 — Add feature_group to existing entries | Backend | complete | — | — | Already done in Phase 0A |
+| 0C.2-4 — Verify existing features in cards | Admin FE | pending | — | — | blocked by 0B |
 | 1 — Schema & models | Backend | pending | — | — | blocked by 0 |
 | 2 — Auth & middleware | Backend | pending | — | — | blocked by 1 |
 | 3 — Student web portal | Backend | pending | — | — | blocked by 2 |
