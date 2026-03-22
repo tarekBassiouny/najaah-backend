@@ -1,5 +1,117 @@
 # Najaah LMS — Agentic Workflow Guide
 
+## How it works in CLI
+
+### From `najaah-backend/` folder:
+
+```bash
+# Start a conversation (loads skills automatically based on what you ask)
+claude
+
+# Start with a specific agent
+claude --agent orchestrator
+claude --agent feature-builder
+claude --agent reviewer
+claude --agent contract-generator
+claude --agent cross-repo
+```
+
+### From `najaah-frontend/` folder:
+
+```bash
+# Start a conversation
+claude
+
+# Start with a specific agent
+claude --agent orchestrator
+claude --agent feature-builder
+claude --agent reviewer
+```
+
+### Inside a conversation (no agent), use `@` to load skills:
+
+```bash
+# You're chatting with claude, then type:
+@najaah-features fix the enrollment count bug
+@najaah explain how device binding works
+@najaah-api add a new endpoint for parent links
+```
+
+---
+
+## What to use when
+
+| What you want | Where | What you type |
+|---|---|---|
+| Plan a new feature | `cd najaah-backend` | `claude --agent orchestrator` |
+| Build backend phase | `cd najaah-backend` | `claude --agent feature-builder` |
+| Build frontend from contract | `cd najaah-frontend` | `claude --agent feature-builder` |
+| Review backend code | `cd najaah-backend` | `claude --agent reviewer` |
+| Review frontend code | `cd najaah-frontend` | `claude --agent reviewer` |
+| Generate contract for frontend | `cd najaah-backend` | `claude --agent contract-generator` |
+| Check both repos status | `cd najaah-backend` | `claude --agent cross-repo` |
+| Quick fix or question | either folder | `claude` then `@skill-name your question` |
+
+---
+
+## Real examples, copy-paste ready
+
+### Example 1: New feature start to finish
+
+```bash
+# 1. Plan (backend)
+cd ~/projects/najaah-backend
+claude --agent orchestrator
+# > "Plan the quiz retry limits feature"
+
+# 2. Build backend
+claude --agent feature-builder
+# > "Implement Phase 1 from docs/feature/quiz-retry-limits.md"
+
+# 3. Generate contract for frontend
+claude --agent contract-generator
+# > "Generate contract for quiz-retry-limits Phase 1"
+
+# 4. Review backend
+claude --agent reviewer
+# > "Review my changes"
+
+# 5. Build frontend
+cd ~/projects/najaah-frontend
+claude --agent feature-builder
+# > "Build from docs/contracts/quiz-retry-limits/quiz-api.md"
+
+# 6. Review frontend
+claude --agent reviewer
+# > "Review my changes"
+```
+
+### Example 2: Fix a bug
+
+```bash
+cd ~/projects/najaah-backend
+claude
+# > "@najaah-features enrollment count is wrong for center admins, fix it"
+```
+
+### Example 3: Quick question
+
+```bash
+cd ~/projects/najaah-backend
+claude
+# > "@najaah how does video playback security work?"
+```
+
+### Example 4: Check where we are
+
+```bash
+cd ~/projects/najaah-backend
+claude --agent cross-repo
+# > "Status of student-parent-web-portal"
+```
+
+---
+
 ## Agent Inventory
 
 ### Backend (`najaah-backend`)
@@ -18,26 +130,28 @@
 | `feature-builder` | `claude --agent feature-builder` | Implement frontend from a backend contract |
 | `reviewer` | `claude --agent reviewer` | Validate changes before commit or PR |
 
-### Skills (loaded on-demand by agents or directly)
-| Skill | Trigger |
+### Skills (loaded on-demand by agents or directly with `@`)
+| Skill | Use For |
 |-------|---------|
-| `najaah` / `lms` | Always loaded first — master context |
-| `najaah-orchestrator` / `lms-orchestrator` | Multi-step coordination |
-| `najaah-architecture` | Schema, migrations, indexes |
-| `najaah-features` | Services, authorization, domain rules |
-| `najaah-api` | Routes, controllers, resources |
-| `najaah-quality` / `lms-qa` | Tests, lint, review |
-| `lms-frontend` | Components, hooks, services, routes |
-| `lms-pm` | Scope framing, capability mapping |
-| `lms-review` | Code review checklist |
+| `@najaah` / `@lms` | Master context — always loaded first |
+| `@najaah-features` | Services, authorization, domain rules, settings |
+| `@najaah-architecture` | Schema, migrations, indexes |
+| `@najaah-api` | Routes, controllers, resources |
+| `@najaah-quality` | Tests, lint, PR review |
+| `@lms-frontend` | Components, hooks, services, routes |
+| `@lms-pm` | Scope framing, capability mapping |
+| `@lms-review` | Code review checklist |
+| `@lms-qa` | Tests, mocks, validation |
 
 ---
 
-## Workflow 1: New Feature (Multi-Phase, Cross-Repo)
+## Detailed Workflows
+
+### Workflow 1: New Feature (Multi-Phase, Cross-Repo)
 
 **Example:** Student & Parent Web Portal
 
-### Step 1 — Plan (backend orchestrator)
+**Step 1 — Plan (backend orchestrator)**
 ```bash
 cd najaah-backend
 claude --agent orchestrator
@@ -52,7 +166,7 @@ The orchestrator will:
 
 **Output:** Plan doc at `docs/feature/student-parent-web-portal.md` + progress tracker at `docs/feature/web-portal-progress.md`
 
-### Step 2 — Implement Phase 0A (backend feature-builder)
+**Step 2 — Implement Phase 0A (backend feature-builder)**
 ```bash
 claude --agent feature-builder
 ```
@@ -65,7 +179,7 @@ The feature-builder will:
 4. Run `composer quality`
 5. Report what was done
 
-### Step 3 — Generate contract (backend contract-generator)
+**Step 3 — Generate contract (backend contract-generator)**
 ```bash
 claude --agent contract-generator
 ```
@@ -73,7 +187,7 @@ claude --agent contract-generator
 
 Creates `docs/contracts/student-parent-web-portal/settings-feature-groups.md` with endpoint table, request/response shapes, permissions.
 
-### Step 4 — Review before PR (backend reviewer)
+**Step 4 — Review before PR (backend reviewer)**
 ```bash
 git add -A
 claude --agent reviewer
@@ -82,7 +196,7 @@ claude --agent reviewer
 
 Runs Pint + PHPStan + tests + PR checklist. Reports blockers/warnings/suggestions.
 
-### Step 5 — Frontend builds from contract (frontend feature-builder)
+**Step 5 — Frontend builds from contract (frontend feature-builder)**
 ```bash
 cd najaah-frontend
 claude --agent feature-builder
@@ -95,7 +209,7 @@ The frontend feature-builder will:
 3. Run lint + type-check + tests
 4. Report
 
-### Step 6 — Check cross-repo status
+**Step 6 — Check cross-repo status**
 ```bash
 cd najaah-backend
 claude --agent cross-repo
@@ -106,11 +220,10 @@ Reports: backend Phase 0A done, contract published, frontend Phase 0B in progres
 
 ---
 
-## Workflow 2: Bug Fix (Single Layer)
+### Workflow 2: Bug Fix (Single Layer)
 
 **Example:** Course enrollment count returns wrong number for center admin
 
-### Option A — Direct skill (simple fix)
 ```bash
 cd najaah-backend
 claude
@@ -119,27 +232,15 @@ claude
 
 Claude loads the features skill, inspects the service, finds the missing `center_id` scope, fixes it, adds a test.
 
-### Option B — Orchestrator (if unsure where the bug lives)
-```bash
-claude --agent orchestrator
-```
-> "Center admin sees wrong enrollment count. Investigate and fix."
-
-The orchestrator will:
-1. Discover: check EnrollmentService, EnrollmentController, EnrollmentResource
-2. Identify: missing center scope in the query
-3. Plan: single-phase fix (features layer only)
-4. Ask for approval
-5. Fix and test
-
 ---
 
-## Workflow 3: Bug Fix (Multi-Layer)
+### Workflow 3: Bug Fix (Multi-Layer)
 
 **Example:** Device binding allows duplicate web devices
 
-### Step 1 — Investigate with orchestrator
+**Step 1 — Investigate with orchestrator**
 ```bash
+cd najaah-backend
 claude --agent orchestrator
 ```
 > "Students can register multiple web devices beyond web_device_limit. Investigate and fix."
@@ -151,7 +252,7 @@ The orchestrator will:
 4. Plan: schema scope fix (architecture) → service logic fix (features) → test coverage (quality)
 5. Ask for approval
 
-### Step 2 — Review
+**Step 2 — Review**
 ```bash
 claude --agent reviewer
 ```
@@ -159,11 +260,9 @@ claude --agent reviewer
 
 ---
 
-## Workflow 4: Code Review / PR Prep
+### Workflow 4: Code Review / PR Prep
 
-**Example:** Review a teammate's PR or your own changes
-
-### Backend
+**Backend**
 ```bash
 cd najaah-backend
 claude --agent reviewer
@@ -177,7 +276,7 @@ The reviewer agent:
 4. Applies the full PR checklist (multi-tenancy, auth, contracts, tests)
 5. Reports: ready / needs-fixes / needs-discussion
 
-### Frontend
+**Frontend**
 ```bash
 cd najaah-frontend
 claude --agent reviewer
@@ -188,7 +287,7 @@ Same flow: lint, type-check, tests, review checklist (TypeScript, React Query, s
 
 ---
 
-## Workflow 5: Add a New Admin Setting
+### Workflow 5: Add a New Admin Setting
 
 **Example:** Add `max_quiz_attempts` center setting
 
@@ -207,7 +306,7 @@ Claude loads the features skill, which tells it to check `references/settings-cl
 
 ---
 
-## Workflow 6: Frontend Feature from Existing Contract
+### Workflow 6: Frontend Feature from Existing Contract
 
 **Example:** Build the parent management page from the admin-parent API contract
 
@@ -230,7 +329,7 @@ The feature-builder will:
 
 ---
 
-## Workflow 7: Quick Investigation
+### Workflow 7: Quick Investigation
 
 **Example:** Understand how video playback security works
 
@@ -244,7 +343,7 @@ Claude loads the master skill, reads the domain rules reference, then inspects t
 
 ---
 
-## Workflow 8: Cross-Repo Status Check
+### Workflow 8: Cross-Repo Status Check
 
 **Example:** "Where are we on the web portal?"
 
@@ -274,20 +373,3 @@ Both repos have PostToolUse hooks that auto-format after every Write/Edit:
 - **Frontend:** Prettier formats TS/TSX/JS files
 
 These run automatically — no manual step needed.
-
----
-
-## Quick Reference: Which Agent for What
-
-| Scenario | Agent | Repo |
-|----------|-------|------|
-| Plan a new feature | `orchestrator` | backend |
-| Implement a planned phase | `feature-builder` | backend or frontend |
-| Fix a bug (simple) | direct skill (`@najaah-features`) | backend |
-| Fix a bug (complex) | `orchestrator` | backend |
-| Generate API contract | `contract-generator` | backend |
-| Build frontend from contract | `feature-builder` | frontend |
-| Review before PR | `reviewer` | backend or frontend |
-| Check cross-repo progress | `cross-repo` | backend |
-| Investigate code | direct skill (`@najaah`) | backend |
-| Add a setting | direct skill (`@najaah-features`) | backend |
