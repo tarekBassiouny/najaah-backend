@@ -1,6 +1,6 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 3 complete — Phase 4 next (Parent Web Portal)
+## Current Phase: Phase 4 complete — Phase 5A next (Admin Parent API)
 ## Last Updated: 2026-03-23
 
 ---
@@ -19,7 +19,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 3 complete | — | Plan Phase 4 (Parent Web Portal) |
+| Backend | Phase 4 complete | — | Plan Phase 5A (Admin Parent API) |
 | Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
@@ -35,8 +35,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 | 0C.2-4 — Verify existing features in cards | Admin FE | pending | — | — | blocked by 0B merge |
 | 1 — Schema & models | Backend | complete | #286 | — | All tasks done, 1205 tests pass |
 | 2 — Auth & middleware | Backend | complete | #287 | — | All tasks done, 1205 tests pass |
-| 3 — Student web portal | Backend | complete | — | — | All tasks done, reused 18 mobile controllers |
-| 4 — Parent web portal | Backend | pending | — | — | blocked by 2, parallel with 3 |
+| 3 — Student web portal | Backend | complete | #288 | — | All tasks done, reused 18 mobile controllers |
+| 4 — Parent web portal | Backend | complete | — | — | All tasks done, 7 controllers, 2 services, 4 events |
 | 5A — Admin parent API | Backend | pending | — | — | blocked by 3+4 |
 | 5B — Admin parent UI | Admin FE | pending | — | — | blocked by 5A |
 | 6 — Quality | Backend | pending | — | — | blocked by 3+4+5 |
@@ -246,6 +246,52 @@ RISKS / ADJUSTMENTS
 - Education routes re-declared in web/student.php (cannot include mobile/education.php
   directly because it wraps routes in jwt.mobile middleware).
 - DeviceChangeRequestController excluded from web routes (mobile-only feature).
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint + Rector: all files pass (composer fix)
+- All tests pass (0 failures)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 4
+
+```text
+PHASE
+- 4 — Parent Web Portal (Read-Only Dashboard)
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- app/Models/ParentStudentLink.php — relations, scopes (forParent/forStudent take int, not User)
+- app/Models/Enrollment.php — relations, scopes (active, notDeleted, forUser)
+- app/Models/QuizAttempt.php — quiz relation, answers relation
+- app/Models/AssignmentSubmission.php — assignment relation, status enum
+- app/Services/Assessments/AssessmentProgressService.php — getProgressSummary signature
+- app/Http/Controllers/Mobile/WeeklyActivityController.php — activity aggregation pattern
+- app/Support/AuditActions.php — constant naming pattern
+- app/Exceptions/DomainException.php — errorCode()/statusCode() method names
+- app/Providers/AppServiceProvider.php — service binding pattern
+
+CONTRACT IMPACT
+- parent API — full parent dashboard at /api/v1/web/parent/*
+- audit — 5 new audit action constants for parent link lifecycle
+- events — 4 domain events dispatched (no listeners in MVP)
+
+RISKS / ADJUSTMENTS
+- ParentStudentLink scopes (forParent, forStudent, forCenter) accept int, not User — must
+  pass $user->id, not $user directly.
+- DomainException uses errorCode()/statusCode() (not getErrorCode()/getStatusCode()) — fixed
+  in LinkController.
+- Rector renamed catch variable from $e to $domainException (CatchExceptionNameMatchingTypeRector).
+- Weekly activity query logic duplicated from WeeklyActivityController into ParentProgressService
+  because the existing controller is student-scoped (checks is_student) and the parent variant
+  queries a different student's data.
 
 VERIFICATION PLAN
 - PHPStan level 7: 0 errors
