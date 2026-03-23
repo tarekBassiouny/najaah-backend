@@ -265,8 +265,8 @@ class ParentService implements ParentServiceInterface
             ->where('is_parent', true)
             ->when(is_numeric($centerId), fn ($q) => $q->where('center_id', $centerId))
             ->when($search !== null && $search !== '', fn ($q) => $q->where(function ($q) use ($search): void {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
+                $q->where('name', 'like', sprintf('%%%s%%', $search))
+                    ->orWhere('phone', 'like', sprintf('%%%s%%', $search));
             }))
             ->withCount(['parentLinks as active_links_count' => fn ($q) => $q->active()])
             ->orderByDesc('created_at')
