@@ -1,7 +1,7 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 5A complete — Phase 6 next (Quality)
-## Last Updated: 2026-03-23
+## Current Phase: Phase 6 complete — Phase 7 next (Docs & Postman)
+## Last Updated: 2026-03-24
 
 ---
 
@@ -19,7 +19,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 5A complete | — | Phase 6 (Quality & Tests) |
+| Backend | Phase 6 complete | — | Phase 7 (Docs & Postman) |
 | Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
@@ -39,7 +39,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 | 4 — Parent web portal | Backend | complete | — | — | All tasks done, 7 controllers, 2 services, 4 events |
 | 5A — Admin parent API | Backend | complete | — | — | 2 controllers, 2 permissions, routes registered |
 | 5B — Admin parent UI | Admin FE | pending | — | — | blocked by 5A |
-| 6 — Quality | Backend | pending | — | — | blocked by 3+4+5 |
+| 6 — Quality | Backend | complete | — | — | 55 new tests, 7 test files, WebTestHelper |
 | 7 — Docs & Postman | Backend | pending | — | — | blocked by 6 |
 
 ---
@@ -344,6 +344,46 @@ APPROVED TO IMPLEMENT
 - yes
 - approved by: user
 - date: 2026-03-23
+```
+
+### Gate Record: Phase 6
+
+```text
+PHASE
+- 6 — Quality (Feature & Integration Tests)
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- tests/Feature/Mobile/AuthControllerTest.php — existing mobile auth test patterns
+- tests/Helpers/AdminTestHelper.php — admin auth setup pattern
+- tests/Helpers/ApiTestHelper.php — mobile API auth setup pattern
+- config/settings_catalog.php — feature flags (web_access, parent_portal defaults)
+- app/Services/Settings/PolicySettingsService.php — governance layer (feature flags override settings)
+- All Phase 2-5A service/middleware files for test coverage targets
+
+CONTRACT IMPACT
+- none — tests only, no API changes
+
+RISKS / ADJUSTMENTS
+- Feature flags default `web_access: false` in catalog — test helper must set `features.web_access: true`
+  in center settings alongside `allow_web_access: true`, otherwise governance layer disables it.
+- Parent link store returns 201 not 200 — test adjusted to assertStatus(201).
+- Student parent-links admin route used scope.center but has no center param — changed to scope.system.
+- AdminTestHelper permissions list extended with parents.view and parents.manage.
+- Explore/enrolled routes are at /courses/explore and /courses/enrolled (no /student/ prefix).
+- Parent routes at /students, /links (no /parent/ prefix) — all under /api/v1/web/.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- All 1260 tests pass (5111 assertions, 0 failures, 55 new)
+- 7 new test files covering tasks 6.1–6.8, 6.11, 6.12, 6.14
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-24
 ```
 
 ### Gate Rule

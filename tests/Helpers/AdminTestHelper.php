@@ -58,6 +58,8 @@ trait AdminTestHelper
             'ai_content.review_publish',
             'learning_asset.manage',
             'landing_page.manage',
+            'parents.view',
+            'parents.manage',
         ];
 
         $permissionIds = [];

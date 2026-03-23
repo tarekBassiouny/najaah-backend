@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
+    ->withCache(__DIR__.'/storage/rector')
     ->withPaths([
         __DIR__.'/app',
         __DIR__.'/database',
