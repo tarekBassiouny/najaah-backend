@@ -1,0 +1,174 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Web\Student;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Mobile\Education\UpdateEducationRequest;
+use App\Http\Requests\Mobile\UpdateProfileRequest;
+use App\Http\Resources\Admin\StudentProfileResource;
+use App\Http\Resources\Mobile\StudentUserResource;
+use App\Models\User;
+use App\Services\Audit\AuditLogService;
+use App\Services\Auth\Contracts\JwtServiceInterface;
+use App\Services\Students\StudentProfileCompletionService;
+use App\Services\Students\StudentProfileQueryService;
+use App\Services\Students\StudentService;
+use App\Support\AuditActions;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class MeController extends Controller
+{
+    public function __construct(
+        private readonly StudentService $studentService,
+        private readonly JwtServiceInterface $jwtService,
+        private readonly AuditLogService $auditLogService,
+        private readonly StudentProfileQueryService $studentProfileQueryService,
+        private readonly StudentProfileCompletionService $studentProfileCompletionService
+    ) {}
+
+    public function profile(): JsonResponse
+    {
+        $user = request()->user();
+        if ($user === null) {
+            return $this->deny();
+        }
+
+        $user->load(['center', 'roles']);
+
+        return response()->json([
+            'success' => true,
+            'data' => new StudentUserResource($user),
+        ]);
+    }
+
+    public function profileDetails(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if (! $user instanceof User) {
+            return $this->deny();
+        }
+
+        $resolvedCenterId = $request->attributes->get('resolved_center_id');
+        $this->studentProfileQueryService->assertMatchesResolvedCenterScope(
+            $user,
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
+
+        $this->studentProfileQueryService->load($user);
+
+        $completion = $this->studentProfileCompletionService->resolve(
+            $user,
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
+        $data = (new StudentProfileResource($user))->resolve($request);
+        $data['is_complete_profile'] = $completion['is_complete_profile'];
+        $data['profile_completion'] = [
+            'missing_steps' => $completion['missing_steps'],
+            'missing_fields' => $completion['missing_fields'],
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
+    {
+        $user = request()->user();
+        if ($user === null) {
+            return $this->deny();
+        }
+
+        $data = $request->validated();
+        $payload = [];
+
+        foreach (['name', 'parent_phone'] as $field) {
+            if (array_key_exists($field, $data)) {
+                $payload[$field] = $data[$field];
+            }
+        }
+
+        $updated = $this->studentService->update($user, $payload);
+
+        return response()->json([
+            'success' => true,
+            'data' => new StudentUserResource($updated),
+        ]);
+    }
+
+    public function updateEducation(UpdateEducationRequest $request): JsonResponse
+    {
+        $user = request()->user();
+        if (! $user instanceof User) {
+            return $this->deny();
+        }
+
+        $updated = $this->studentService->updateEducation($user, $request->validated());
+        $updated->loadMissing(['grade', 'school', 'college']);
+
+        $resolvedCenterId = $request->attributes->get('resolved_center_id');
+        $completion = $this->studentProfileCompletionService->resolve(
+            $updated,
+            is_numeric($resolvedCenterId) ? (int) $resolvedCenterId : null
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Educational profile updated successfully.',
+            'data' => [
+                'grade' => $updated->grade ? [
+                    'id' => $updated->grade->id,
+                    'name' => $updated->grade->translate('name'),
+                ] : null,
+                'school' => $updated->school ? [
+                    'id' => $updated->school->id,
+                    'name' => $updated->school->translate('name'),
+                ] : null,
+                'college' => $updated->college ? [
+                    'id' => $updated->college->id,
+                    'name' => $updated->college->translate('name'),
+                ] : null,
+                'is_complete_profile' => $completion['is_complete_profile'],
+                'profile_completion' => [
+                    'missing_steps' => $completion['missing_steps'],
+                    'missing_fields' => $completion['missing_fields'],
+                ],
+            ],
+        ]);
+    }
+
+    public function logout(): JsonResponse
+    {
+        $user = request()->user();
+
+        if ($user === null) {
+            return $this->deny();
+        }
+
+        $this->auditLogService->log($user, $user, AuditActions::STUDENT_LOGOUT, [
+            'platform' => 'web',
+        ]);
+
+        $this->jwtService->revokeCurrent();
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
+    private function deny(): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'UNAUTHORIZED',
+                'message' => 'Authentication required.',
+            ],
+        ], Response::HTTP_UNAUTHORIZED);
+    }
+}

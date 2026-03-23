@@ -10,6 +10,14 @@ use App\Models\UserDevice;
 interface DeviceServiceInterface
 {
     /**
+     * Register or reuse a web device for a user.
+     * Web devices have a separate pool from mobile devices.
+     *
+     * @param  array<string, mixed>  $meta  Device metadata (device_name, device_os)
+     */
+    public function registerWeb(User $user, string $uuid, array $meta, int $webDeviceLimit): UserDevice;
+
+    /**
      * Register or update a device for a user.
      * Handles pre-approved requests and reinstall detection.
      *

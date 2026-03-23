@@ -27,10 +27,12 @@ use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpSenderInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
+use App\Services\Auth\Contracts\WebAuthServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
 use App\Services\Auth\Senders\EvolutionOtpSender;
 use App\Services\Auth\Senders\WhatsAppOtpSender;
+use App\Services\Auth\WebAuthService;
 use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterScopeService;
@@ -61,6 +63,10 @@ use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
 use App\Services\LandingPages\Contracts\SubdomainResolverServiceInterface;
 use App\Services\LandingPages\LandingPageService;
 use App\Services\LandingPages\SubdomainResolverService;
+use App\Services\Parents\Contracts\ParentProgressServiceInterface;
+use App\Services\Parents\Contracts\ParentServiceInterface;
+use App\Services\Parents\ParentProgressService;
+use App\Services\Parents\ParentService;
 use App\Services\Pdfs\AdminPdfQueryService;
 use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
 use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
@@ -163,6 +169,9 @@ class AppServiceProvider extends ServiceProvider
             CollegeServiceInterface::class => CollegeService::class,
             DashboardServiceInterface::class => DashboardService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,
+            WebAuthServiceInterface::class => WebAuthService::class,
+            ParentServiceInterface::class => ParentService::class,
+            ParentProgressServiceInterface::class => ParentProgressService::class,
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
             QuizServiceInterface::class => QuizService::class,

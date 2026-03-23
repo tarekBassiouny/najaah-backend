@@ -48,6 +48,14 @@ return [
             'driver' => 'jwt',
             'provider' => 'users',
         ],
+        'web-student' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+        ],
+        'web-parent' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+        ],
     ],
 
     /*

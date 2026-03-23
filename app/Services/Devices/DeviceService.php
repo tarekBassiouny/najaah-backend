@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Devices;
 
+use App\Enums\DeviceType;
 use App\Enums\UserDeviceStatus;
 use App\Exceptions\DomainException;
 use App\Models\DeviceChangeRequest;
@@ -104,6 +105,61 @@ class DeviceService implements DeviceServiceInterface
                 ->update(['status' => UserDeviceStatus::Revoked->value]);
 
             return $device;
+        });
+    }
+
+    /** @param array<string, mixed> $meta */
+    public function registerWeb(User $user, string $uuid, array $meta, int $webDeviceLimit): UserDevice
+    {
+        return DB::transaction(function () use ($user, $uuid, $meta, $webDeviceLimit): UserDevice {
+            $deviceName = isset($meta['device_name']) ? trim((string) $meta['device_name']) : null;
+            $deviceName = $deviceName !== '' ? $deviceName : null;
+
+            $osVersion = $meta['device_os'] ?? 'unknown';
+
+            // Check if this UUID already exists for this user
+            /** @var UserDevice|null $existing */
+            $existing = UserDevice::query()
+                ->where('user_id', $user->id)
+                ->where('device_id', $uuid)
+                ->where('device_type', DeviceType::Web)
+                ->first();
+
+            if ($existing !== null) {
+                $existing->update([
+                    'device_name' => $deviceName,
+                    'model' => $deviceName ?? 'Web Browser',
+                    'os_version' => $osVersion,
+                    'status' => UserDeviceStatus::Active,
+                    'last_used_at' => now(),
+                ]);
+
+                return $existing;
+            }
+
+            // New web device — check limit
+            $activeWebCount = UserDevice::query()
+                ->where('user_id', $user->id)
+                ->web()
+                ->active()
+                ->notDeleted()
+                ->count();
+
+            if ($activeWebCount >= $webDeviceLimit) {
+                $this->deny(ErrorCodes::WEB_DEVICE_LIMIT_REACHED, 'Web device limit reached.');
+            }
+
+            return UserDevice::create([
+                'user_id' => $user->id,
+                'device_id' => $uuid,
+                'device_name' => $deviceName,
+                'device_type' => DeviceType::Web->value,
+                'model' => $deviceName ?? 'Web Browser',
+                'os_version' => $osVersion,
+                'status' => UserDeviceStatus::Active,
+                'approved_at' => now(),
+                'last_used_at' => now(),
+            ]);
         });
     }
 

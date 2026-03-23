@@ -20,6 +20,10 @@ class CenterSettingSeeder extends Seeder
                     'video_code_expiry_days' => null,
                     'pdf_download_permission' => false,
                     'device_limit' => 1,
+                    'allow_web_access' => false,
+                    'allow_web_playback' => false,
+                    'web_device_limit' => 1,
+                    'allow_parent_portal' => false,
                     'allow_guest_browsing' => false,
                     'education_profile' => [
                         'enable_grade' => true,
@@ -41,6 +45,9 @@ class CenterSettingSeeder extends Seeder
                         'whatsapp_bulk' => true,
                         'guest_browsing' => true,
                         'pdf_downloads' => true,
+                        'web_access' => false,
+                        'web_playback' => false,
+                        'parent_portal' => false,
                     ],
                 ],
             ]);

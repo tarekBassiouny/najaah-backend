@@ -33,6 +33,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property string $password
  * @property int $status
  * @property bool $is_student
+ * @property bool $is_parent
  * @property string|null $avatar_url
  * @property \Carbon\Carbon|null $last_login_at
  * @property \Carbon\Carbon|null $invitation_sent_at
@@ -55,6 +56,8 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, VideoAccess> $videoAccesses
  * @property-read \Illuminate\Database\Eloquent\Collection<int, BulkWhatsAppJob> $bulkWhatsAppJobs
  * @property-read \Illuminate\Database\Eloquent\Collection<int, DeviceChangeRequest> $deviceChangeRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ParentStudentLink> $parentLinks
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ParentStudentLink> $childLinks
  *
  * @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\UserFactory>
  */
@@ -83,6 +86,7 @@ class User extends Authenticatable implements JWTSubject
         'force_password_reset',
         'status',
         'is_student',
+        'is_parent',
         'avatar_url',
         'last_login_at',
         'invitation_sent_at',
@@ -94,6 +98,7 @@ class User extends Authenticatable implements JWTSubject
         'school_id' => 'integer',
         'college_id' => 'integer',
         'is_student' => 'boolean',
+        'is_parent' => 'boolean',
         'force_password_reset' => 'boolean',
         'last_login_at' => 'datetime',
         'invitation_sent_at' => 'datetime',
@@ -259,6 +264,18 @@ class User extends Authenticatable implements JWTSubject
     public function deviceChangeRequests(): HasMany
     {
         return $this->hasMany(DeviceChangeRequest::class);
+    }
+
+    /** @return HasMany<ParentStudentLink, self> */
+    public function parentLinks(): HasMany
+    {
+        return $this->hasMany(ParentStudentLink::class, 'parent_user_id');
+    }
+
+    /** @return HasMany<ParentStudentLink, self> */
+    public function childLinks(): HasMany
+    {
+        return $this->hasMany(ParentStudentLink::class, 'student_user_id');
     }
 
     /** @return HasOne<StudentSetting, self> */

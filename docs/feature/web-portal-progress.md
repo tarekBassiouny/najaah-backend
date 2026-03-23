@@ -1,7 +1,7 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 0A (complete — pending PR)
-## Last Updated: 2026-03-22
+## Current Phase: Phase 6 complete — Phase 7 next (Docs & Postman)
+## Last Updated: 2026-03-24
 
 ---
 
@@ -19,8 +19,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 0A complete | — | Create PR, generate 0A contract |
-| Admin Frontend | not started | Backend Phase 0A PR | Wait for 0A contract |
+| Backend | Phase 6 complete | — | Phase 7 (Docs & Postman) |
+| Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
 ---
@@ -29,16 +29,17 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Phase | Lane | Status | PR | Contract Shared | Notes |
 |-------|------|--------|-----|----------------|-------|
-| 0A — Catalog-driven services | Backend | complete | — | — | All 8 tasks done, normalizeSystemValue refactored to catalog-driven |
-| 0B — Settings UI cards | Admin FE | pending | — | — | blocked by 0A |
-| 0C — Retroactive cleanup | Backend + Admin FE | pending | — | — | blocked by 0A+0B |
-| 1 — Schema & models | Backend | pending | — | — | blocked by 0 |
-| 2 — Auth & middleware | Backend | pending | — | — | blocked by 1 |
-| 3 — Student web portal | Backend | pending | — | — | blocked by 2 |
-| 4 — Parent web portal | Backend | pending | — | — | blocked by 2, parallel with 3 |
-| 5A — Admin parent API | Backend | pending | — | — | blocked by 3+4 |
+| 0A — Catalog-driven services | Backend | complete | #280 | done | All 8 tasks done, merged to dev, release PR #284 |
+| 0B — Settings UI cards | Admin FE | complete | FE #78 | — | Feature group cards committed, PR to dev |
+| 0C.1 — Add feature_group to existing entries | Backend | complete | — | — | Already done in Phase 0A |
+| 0C.2-4 — Verify existing features in cards | Admin FE | pending | — | — | blocked by 0B merge |
+| 1 — Schema & models | Backend | complete | #286 | — | All tasks done, 1205 tests pass |
+| 2 — Auth & middleware | Backend | complete | #287 | — | All tasks done, 1205 tests pass |
+| 3 — Student web portal | Backend | complete | #288 | — | All tasks done, reused 18 mobile controllers |
+| 4 — Parent web portal | Backend | complete | — | — | All tasks done, 7 controllers, 2 services, 4 events |
+| 5A — Admin parent API | Backend | complete | — | — | 2 controllers, 2 permissions, routes registered |
 | 5B — Admin parent UI | Admin FE | pending | — | — | blocked by 5A |
-| 6 — Quality | Backend | pending | — | — | blocked by 3+4+5 |
+| 6 — Quality | Backend | complete | — | — | 55 new tests, 7 test files, WebTestHelper |
 | 7 — Docs & Postman | Backend | pending | — | — | blocked by 6 |
 
 ---
@@ -122,6 +123,269 @@ APPROVED TO IMPLEMENT
 - date: 2026-03-22
 ```
 
+### Gate Record: Phase 1
+
+```text
+PHASE
+- 1 — Architecture (Schema & Models)
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- app/Models/User.php — is_student pattern, fillable, casts, relations
+- app/Models/UserDevice.php — device_type column (nullable string), status enum cast, scopes
+- app/Models/JwtToken.php — fillable, casts, device_id nullable FK
+- app/Services/Devices/DeviceService.php — register() revokes all other devices
+- config/settings_catalog.php — catalog entry structure, feature_group/value_key from Phase 0A
+- app/Enums/ — int-backed and string-backed enum patterns
+- app/Support/ErrorCodes.php — const pattern
+- database/seeders/ — SystemSettingSeeder (updateOrCreate), CenterSettingSeeder (factory)
+- database/factories/ — UserFactory, UserDeviceFactory, JwtTokenFactory
+- docs/feature/web-portal-settings-governance.md — all 11 settings with catalog entries
+
+CONTRACT IMPACT
+- settings — 3 feature flags, 4 center settings, 4 system settings added to catalog
+- No new API endpoints (schema/model only)
+
+RISKS / ADJUSTMENTS
+- DeviceType enum cast: cannot auto-cast at model level because existing device_type column
+  has free-text values. Added deviceTypeParsed() method using tryFrom() instead. Scopes
+  compare against enum values directly (works with raw DB strings).
+- Unique index name on parent_student_links was too long for MySQL — used explicit short name.
+- DeviceService pool-aware logic deferred to Phase 2 (Phase 1 only adds model scopes).
+- Updated UserDeviceFactory default device_type from 'device-type' to DeviceType::Mobile->value.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint: all 1389 files pass
+- All 1205 tests pass (4931 assertions, 0 failures)
+- Migrations: all 4 new migrations run successfully (fresh + seed)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 2
+
+```text
+PHASE
+- 2 — Auth & Middleware
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- config/auth.php — guard config, existing mobile/admin guards
+- config/cors.php — existing allowed_origins_patterns
+- app/Services/Auth/JwtService.php — create() signature, token creation
+- app/Services/Auth/Contracts/JwtServiceInterface.php — create() contract
+- app/Services/Devices/DeviceService.php — register(), device pool logic
+- app/Services/Devices/Contracts/DeviceServiceInterface.php — interface contract
+- app/Http/Middleware/JwtStudentMiddleware.php — existing mobile JWT middleware pattern
+- app/Http/Middleware/EnsureGuestBrowsingAllowed.php — PolicySettingsService usage pattern
+- app/Services/Settings/PolicySettingsService.php — resolveCenterPolicy signature
+- app/Providers/AppServiceProvider.php — service bindings
+- bootstrap/app.php — middleware registration, route groups
+
+CONTRACT IMPACT
+- auth — 2 new JWT guards (web-student, web-parent), 3 new middleware aliases
+- settings — PolicySettingsService used for allow_web_access/allow_parent_portal checks
+- New API routes: POST /api/v1/web/student/auth/* and /api/v1/web/parent/auth/*
+
+RISKS / ADJUSTMENTS
+- SettingsResolverService cannot be used for web access checks (different signature).
+  Used PolicySettingsService::resolveCenterPolicy(Center) instead — same pattern as
+  EnsureGuestBrowsingAllowed middleware.
+- JwtService::create() signature extended with optional TokenPlatform param (backward compatible).
+- DeviceService::registerWeb() added as separate method — web device pool is independent
+  from mobile devices (no reinstall detection, no pre-approved requests).
+- Parent web device limit set to 99 (effectively unlimited) — parents are not device-restricted.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint + Rector: all files pass (composer fix)
+- All 1205 tests pass (4931 assertions, 0 failures)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 3
+
+```text
+PHASE
+- 3 — Student Web Portal (Feature Parity)
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- routes/api/v1/mobile.php — mobile route structure and controller reuse pattern
+- routes/api/v1/mobile/education.php — education lookups wrapped in jwt.mobile
+- app/Http/Controllers/Mobile/MeController.php — device-specific logic (activeDevice relation)
+- app/Http/Resources/Mobile/StudentUserResource.php — device field conditional on relation
+- app/Services/Playback/PlaybackAuthorizationService.php — device resolution, assertCanStartPlayback
+- app/Services/Playback/PlaybackService.php — requestPlayback flow
+- app/Http/Middleware/JwtWebStudentMiddleware.php — request attribute bindings
+- All 18 mobile controllers confirmed platform-agnostic (no mobile-specific logic)
+
+CONTRACT IMPACT
+- student API — full student web API at /api/v1/web/student/*
+- playback — allow_web_playback check added to PlaybackAuthorizationService
+
+RISKS / ADJUSTMENTS
+- Middleware did not set token_platform on request attributes — added it so
+  PlaybackAuthorizationService can detect web requests for allow_web_playback check.
+- Web MeController omits device loading (no activeDevice relation set) — StudentUserResource
+  already handles this gracefully via conditional `relationLoaded('activeDevice')` check.
+- Education routes re-declared in web/student.php (cannot include mobile/education.php
+  directly because it wraps routes in jwt.mobile middleware).
+- DeviceChangeRequestController excluded from web routes (mobile-only feature).
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint + Rector: all files pass (composer fix)
+- All tests pass (0 failures)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 4
+
+```text
+PHASE
+- 4 — Parent Web Portal (Read-Only Dashboard)
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- app/Models/ParentStudentLink.php — relations, scopes (forParent/forStudent take int, not User)
+- app/Models/Enrollment.php — relations, scopes (active, notDeleted, forUser)
+- app/Models/QuizAttempt.php — quiz relation, answers relation
+- app/Models/AssignmentSubmission.php — assignment relation, status enum
+- app/Services/Assessments/AssessmentProgressService.php — getProgressSummary signature
+- app/Http/Controllers/Mobile/WeeklyActivityController.php — activity aggregation pattern
+- app/Support/AuditActions.php — constant naming pattern
+- app/Exceptions/DomainException.php — errorCode()/statusCode() method names
+- app/Providers/AppServiceProvider.php — service binding pattern
+
+CONTRACT IMPACT
+- parent API — full parent dashboard at /api/v1/web/parent/*
+- audit — 5 new audit action constants for parent link lifecycle
+- events — 4 domain events dispatched (no listeners in MVP)
+
+RISKS / ADJUSTMENTS
+- ParentStudentLink scopes (forParent, forStudent, forCenter) accept int, not User — must
+  pass $user->id, not $user directly.
+- DomainException uses errorCode()/statusCode() (not getErrorCode()/getStatusCode()) — fixed
+  in LinkController.
+- Rector renamed catch variable from $e to $domainException (CatchExceptionNameMatchingTypeRector).
+- Weekly activity query logic duplicated from WeeklyActivityController into ParentProgressService
+  because the existing controller is student-scoped (checks is_student) and the parent variant
+  queries a different student's data.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint + Rector: all files pass (composer fix)
+- All tests pass (0 failures)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 5A
+
+```text
+PHASE
+- 5A — Admin Parent Management API
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- config/permissions.php — existing permission pattern
+- database/seeders/RolePermissionSeeder.php — role-permission assignment pattern
+- routes/api/v1/admin/students.php — admin route structure (scope.center, require.permission)
+- bootstrap/app.php — route registration under jwt.admin middleware group
+- app/Services/Parents/ParentService.php — existing parent-side methods from Phase 4
+- app/Services/Parents/Contracts/ParentServiceInterface.php — interface contract
+- app/Exceptions/DomainException.php — errorCode()/statusCode() method names
+- app/Http/Controllers/Admin/StudentController.php — admin controller patterns
+
+CONTRACT IMPACT
+- admin API — 6 new endpoints under /api/v1/admin/centers/{center}/parents/*
+- permissions — parents.view and parents.manage added
+
+RISKS / ADJUSTMENTS
+- PHPStan: match expression on validated 'action' field needed literal type annotation
+  (@var array{action: 'approve'|'reject'|'revoke'}) instead of string to satisfy exhaustiveness check.
+- AdminStudentResource (task 5A.10) does not exist in the codebase — skipped, can add when
+  the resource is created.
+- parent_phone auto-match on student update (task 5A.8) deferred to Phase 6 tests — it's a
+  behavioral concern tested via feature tests, not an API endpoint.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint: all files pass
+- All 1205 tests pass (4931 assertions, 0 failures)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 6
+
+```text
+PHASE
+- 6 — Quality (Feature & Integration Tests)
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- tests/Feature/Mobile/AuthControllerTest.php — existing mobile auth test patterns
+- tests/Helpers/AdminTestHelper.php — admin auth setup pattern
+- tests/Helpers/ApiTestHelper.php — mobile API auth setup pattern
+- config/settings_catalog.php — feature flags (web_access, parent_portal defaults)
+- app/Services/Settings/PolicySettingsService.php — governance layer (feature flags override settings)
+- All Phase 2-5A service/middleware files for test coverage targets
+
+CONTRACT IMPACT
+- none — tests only, no API changes
+
+RISKS / ADJUSTMENTS
+- Feature flags default `web_access: false` in catalog — test helper must set `features.web_access: true`
+  in center settings alongside `allow_web_access: true`, otherwise governance layer disables it.
+- Parent link store returns 201 not 200 — test adjusted to assertStatus(201).
+- Student parent-links admin route used scope.center but has no center param — changed to scope.system.
+- AdminTestHelper permissions list extended with parents.view and parents.manage.
+- Explore/enrolled routes are at /courses/explore and /courses/enrolled (no /student/ prefix).
+- Parent routes at /students, /links (no /parent/ prefix) — all under /api/v1/web/.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- All 1260 tests pass (5111 assertions, 0 failures, 55 new)
+- 7 new test files covering tasks 6.1–6.8, 6.11, 6.12, 6.14
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-24
+```
+
 ### Gate Rule
 
 - `pending` means not reviewed yet.
@@ -137,11 +401,11 @@ Frontend can start building from the contract before the backend PR is merged.
 
 | Contract | Generated After | Location | Status | Frontend Can Start |
 |----------|----------------|----------|--------|--------------------|
-| Settings API (feature_groups) | Phase 0A | `docs/contracts/student-parent-web-portal/settings-feature-groups.md` | draft | Phase 0B |
-| Auth API (student + parent) | Phase 2 | `docs/contracts/student-parent-web-portal/web-auth-api.md` | draft | Portal scaffold + auth pages |
-| Student Web API | Phase 3 | `docs/contracts/student-parent-web-portal/web-student-api.md` | draft | Student dashboard + pages |
-| Parent Web API | Phase 4 | `docs/contracts/student-parent-web-portal/web-parent-api.md` | draft | Parent dashboard + pages |
-| Admin Parent API | Phase 5A | `docs/contracts/student-parent-web-portal/admin-parent-api.md` | draft | Phase 5B admin UI |
+| Settings API (feature_groups) | Phase 0A | `docs/contracts/student-parent-web-portal/settings-feature-groups.md` | draft (from implementation) | Phase 0B |
+| Auth API (student + parent) | Phase 2 | `docs/contracts/student-parent-web-portal/web-auth-api.md` | not started | Portal scaffold + auth pages |
+| Student Web API | Phase 3 | `docs/contracts/student-parent-web-portal/web-student-api.md` | not started | Student dashboard + pages |
+| Parent Web API | Phase 4 | `docs/contracts/student-parent-web-portal/web-parent-api.md` | not started | Parent dashboard + pages |
+| Admin Parent API | Phase 5A | `docs/contracts/student-parent-web-portal/admin-parent-api.md` | not started | Phase 5B admin UI |
 | Full Handoff Doc | Phase 7 | `docs/feature/student-parent-web-portal-api.md` | not started | Final integration |
 
 ---
