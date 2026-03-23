@@ -27,10 +27,12 @@ use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpSenderInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
+use App\Services\Auth\Contracts\WebAuthServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
 use App\Services\Auth\Senders\EvolutionOtpSender;
 use App\Services\Auth\Senders\WhatsAppOtpSender;
+use App\Services\Auth\WebAuthService;
 use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterScopeService;
@@ -163,6 +165,7 @@ class AppServiceProvider extends ServiceProvider
             CollegeServiceInterface::class => CollegeService::class,
             DashboardServiceInterface::class => DashboardService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,
+            WebAuthServiceInterface::class => WebAuthService::class,
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
             QuizServiceInterface::class => QuizService::class,

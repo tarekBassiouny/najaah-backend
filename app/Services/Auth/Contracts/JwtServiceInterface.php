@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Auth\Contracts;
 
+use App\Enums\TokenPlatform;
 use App\Models\User;
 use App\Models\UserDevice;
 
@@ -15,7 +16,7 @@ interface JwtServiceInterface
      *     refresh_token: string
      * }
      */
-    public function create(User $user, UserDevice $device): array;
+    public function create(User $user, UserDevice $device, TokenPlatform $platform = TokenPlatform::Mobile): array;
 
     /**
      * @return array{
