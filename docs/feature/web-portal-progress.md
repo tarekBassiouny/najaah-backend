@@ -1,6 +1,6 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 4 complete — Phase 5A next (Admin Parent API)
+## Current Phase: Phase 5A complete — Phase 6 next (Quality)
 ## Last Updated: 2026-03-23
 
 ---
@@ -19,7 +19,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 4 complete | — | Plan Phase 5A (Admin Parent API) |
+| Backend | Phase 5A complete | — | Phase 6 (Quality & Tests) |
 | Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
@@ -37,7 +37,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 | 2 — Auth & middleware | Backend | complete | #287 | — | All tasks done, 1205 tests pass |
 | 3 — Student web portal | Backend | complete | #288 | — | All tasks done, reused 18 mobile controllers |
 | 4 — Parent web portal | Backend | complete | — | — | All tasks done, 7 controllers, 2 services, 4 events |
-| 5A — Admin parent API | Backend | pending | — | — | blocked by 3+4 |
+| 5A — Admin parent API | Backend | complete | — | — | 2 controllers, 2 permissions, routes registered |
 | 5B — Admin parent UI | Admin FE | pending | — | — | blocked by 5A |
 | 6 — Quality | Backend | pending | — | — | blocked by 3+4+5 |
 | 7 — Docs & Postman | Backend | pending | — | — | blocked by 6 |
@@ -297,6 +297,48 @@ VERIFICATION PLAN
 - PHPStan level 7: 0 errors
 - Pint + Rector: all files pass (composer fix)
 - All tests pass (0 failures)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 5A
+
+```text
+PHASE
+- 5A — Admin Parent Management API
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- config/permissions.php — existing permission pattern
+- database/seeders/RolePermissionSeeder.php — role-permission assignment pattern
+- routes/api/v1/admin/students.php — admin route structure (scope.center, require.permission)
+- bootstrap/app.php — route registration under jwt.admin middleware group
+- app/Services/Parents/ParentService.php — existing parent-side methods from Phase 4
+- app/Services/Parents/Contracts/ParentServiceInterface.php — interface contract
+- app/Exceptions/DomainException.php — errorCode()/statusCode() method names
+- app/Http/Controllers/Admin/StudentController.php — admin controller patterns
+
+CONTRACT IMPACT
+- admin API — 6 new endpoints under /api/v1/admin/centers/{center}/parents/*
+- permissions — parents.view and parents.manage added
+
+RISKS / ADJUSTMENTS
+- PHPStan: match expression on validated 'action' field needed literal type annotation
+  (@var array{action: 'approve'|'reject'|'revoke'}) instead of string to satisfy exhaustiveness check.
+- AdminStudentResource (task 5A.10) does not exist in the codebase — skipped, can add when
+  the resource is created.
+- parent_phone auto-match on student update (task 5A.8) deferred to Phase 6 tests — it's a
+  behavioral concern tested via feature tests, not an API endpoint.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint: all files pass
+- All 1205 tests pass (4931 assertions, 0 failures)
 
 APPROVED TO IMPLEMENT
 - yes

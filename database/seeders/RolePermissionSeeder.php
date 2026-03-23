@@ -46,6 +46,8 @@ class RolePermissionSeeder extends Seeder
                 'notification.manage',
                 'ai_content.generate',
                 'learning_asset.manage',
+                'parents.view',
+                'parents.manage',
             ],
             'support_admin' => [
                 'audit.view',

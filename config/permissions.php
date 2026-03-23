@@ -55,6 +55,10 @@ return [
     'ai_content.review_publish' => 'Review and publish AI generated content',
     'learning_asset.manage' => 'Manage generated learning assets',
 
+    // Parent Management
+    'parents.view' => 'View parent accounts and links',
+    'parents.manage' => 'Manage parent-student links',
+
     // Landing Pages
     'landing_page.manage' => 'Manage center landing pages',
 ];

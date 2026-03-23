@@ -6,8 +6,10 @@ namespace App\Services\Parents;
 
 use App\Enums\ParentLinkMethod;
 use App\Enums\ParentLinkStatus;
+use App\Events\ParentLinkApproved;
 use App\Events\ParentLinked;
 use App\Events\ParentLinkRequested;
+use App\Events\ParentLinkRevoked;
 use App\Exceptions\DomainException;
 use App\Models\ParentStudentLink;
 use App\Models\User;
@@ -15,6 +17,7 @@ use App\Services\Audit\AuditLogService;
 use App\Services\Parents\Contracts\ParentServiceInterface;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class ParentService implements ParentServiceInterface
@@ -154,5 +157,144 @@ class ParentService implements ParentServiceInterface
         }
 
         return $link;
+    }
+
+    // ── Admin methods ──
+
+    public function createLink(User $admin, int $parentUserId, int $studentUserId, ?int $centerId): ParentStudentLink
+    {
+        $existing = ParentStudentLink::query()
+            ->forParent($parentUserId)
+            ->forStudent($studentUserId)
+            ->when(is_numeric($centerId), fn ($q) => $q->forCenter($centerId))
+            ->whereIn('status', [ParentLinkStatus::Active->value, ParentLinkStatus::PendingApproval->value])
+            ->first();
+
+        if ($existing !== null) {
+            throw new DomainException('Link already exists for this student.', ErrorCodes::LINK_ALREADY_EXISTS, 422);
+        }
+
+        /** @var ParentStudentLink $link */
+        $link = ParentStudentLink::create([
+            'parent_user_id' => $parentUserId,
+            'student_user_id' => $studentUserId,
+            'center_id' => $centerId,
+            'status' => ParentLinkStatus::Active,
+            'link_method' => ParentLinkMethod::AdminManaged,
+            'linked_by' => $admin->id,
+            'linked_at' => now(),
+        ]);
+
+        $this->auditLogService->log($admin, $link, AuditActions::PARENT_LINK_CREATED, [
+            'parent_user_id' => $parentUserId,
+            'student_user_id' => $studentUserId,
+        ]);
+
+        ParentLinked::dispatch($link);
+
+        return $link->load(['parent:id,name,phone', 'student:id,name,phone']);
+    }
+
+    public function approveLink(User $admin, int $linkId): ParentStudentLink
+    {
+        /** @var ParentStudentLink $link */
+        $link = ParentStudentLink::findOrFail($linkId);
+
+        if ($link->status !== ParentLinkStatus::PendingApproval) {
+            throw new DomainException('Only pending links can be approved.', ErrorCodes::PARENT_LINK_NOT_FOUND, 422);
+        }
+
+        $link->update([
+            'status' => ParentLinkStatus::Active,
+            'linked_by' => $admin->id,
+        ]);
+
+        $this->auditLogService->log($admin, $link, AuditActions::PARENT_LINK_APPROVED);
+
+        ParentLinkApproved::dispatch($link);
+
+        return $link->load(['parent:id,name,phone', 'student:id,name,phone']);
+    }
+
+    public function rejectLink(User $admin, int $linkId): ParentStudentLink
+    {
+        /** @var ParentStudentLink $link */
+        $link = ParentStudentLink::findOrFail($linkId);
+
+        if ($link->status !== ParentLinkStatus::PendingApproval) {
+            throw new DomainException('Only pending links can be rejected.', ErrorCodes::PARENT_LINK_NOT_FOUND, 422);
+        }
+
+        $link->update(['status' => ParentLinkStatus::Revoked]);
+
+        $this->auditLogService->log($admin, $link, AuditActions::PARENT_LINK_REVOKED, [
+            'reason' => 'admin_rejected',
+        ]);
+
+        ParentLinkRevoked::dispatch($link);
+
+        return $link->load(['parent:id,name,phone', 'student:id,name,phone']);
+    }
+
+    public function revokeLink(User $admin, int $linkId): ParentStudentLink
+    {
+        /** @var ParentStudentLink $link */
+        $link = ParentStudentLink::findOrFail($linkId);
+
+        if ($link->status === ParentLinkStatus::Revoked) {
+            throw new DomainException('Link is already revoked.', ErrorCodes::PARENT_LINK_NOT_FOUND, 422);
+        }
+
+        $link->update(['status' => ParentLinkStatus::Revoked]);
+
+        $this->auditLogService->log($admin, $link, AuditActions::PARENT_LINK_REVOKED, [
+            'reason' => 'admin_revoked',
+        ]);
+
+        ParentLinkRevoked::dispatch($link);
+
+        return $link->load(['parent:id,name,phone', 'student:id,name,phone']);
+    }
+
+    /**
+     * @return LengthAwarePaginator<User>
+     */
+    public function listParents(?int $centerId, ?string $search, int $perPage = 15): LengthAwarePaginator
+    {
+        return User::query()
+            ->where('is_parent', true)
+            ->when(is_numeric($centerId), fn ($q) => $q->where('center_id', $centerId))
+            ->when($search !== null && $search !== '', fn ($q) => $q->where(function ($q) use ($search): void {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            }))
+            ->withCount(['parentLinks as active_links_count' => fn ($q) => $q->active()])
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+    }
+
+    /**
+     * @return Collection<int, ParentStudentLink>
+     */
+    public function listLinksForStudent(int $studentId): Collection
+    {
+        return ParentStudentLink::query()
+            ->with(['parent:id,name,phone', 'linkedByUser:id,name'])
+            ->forStudent($studentId)
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
+    /**
+     * @return Collection<int, ParentStudentLink>
+     */
+    public function listPendingRequests(?int $centerId): Collection
+    {
+        return ParentStudentLink::query()
+            ->with(['parent:id,name,phone', 'student:id,name,phone'])
+            ->where('status', ParentLinkStatus::PendingApproval)
+            ->when(is_numeric($centerId), fn ($q) => $q->forCenter($centerId))
+            ->orderByDesc('created_at')
+            ->get();
     }
 }
