@@ -63,6 +63,10 @@ use App\Services\LandingPages\Contracts\LandingPageServiceInterface;
 use App\Services\LandingPages\Contracts\SubdomainResolverServiceInterface;
 use App\Services\LandingPages\LandingPageService;
 use App\Services\LandingPages\SubdomainResolverService;
+use App\Services\Parents\Contracts\ParentProgressServiceInterface;
+use App\Services\Parents\Contracts\ParentServiceInterface;
+use App\Services\Parents\ParentProgressService;
+use App\Services\Parents\ParentService;
 use App\Services\Pdfs\AdminPdfQueryService;
 use App\Services\Pdfs\Contracts\AdminPdfQueryServiceInterface;
 use App\Services\Pdfs\Contracts\PdfAccessServiceInterface;
@@ -166,6 +170,8 @@ class AppServiceProvider extends ServiceProvider
             DashboardServiceInterface::class => DashboardService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,
             WebAuthServiceInterface::class => WebAuthService::class,
+            ParentServiceInterface::class => ParentService::class,
+            ParentProgressServiceInterface::class => ParentProgressService::class,
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
             QuizServiceInterface::class => QuizService::class,

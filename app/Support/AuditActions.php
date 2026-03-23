@@ -219,4 +219,14 @@ final class AuditActions
     public const TESTIMONIAL_DELETED = 'testimonial_deleted';
 
     public const TESTIMONIALS_REORDERED = 'testimonials_reordered';
+
+    public const PARENT_LINK_CREATED = 'parent_link_created';
+
+    public const PARENT_LINK_AUTO_MATCHED = 'parent_link_auto_matched';
+
+    public const PARENT_LINK_REQUESTED = 'parent_link_requested';
+
+    public const PARENT_LINK_APPROVED = 'parent_link_approved';
+
+    public const PARENT_LINK_REVOKED = 'parent_link_revoked';
 }
