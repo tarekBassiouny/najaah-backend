@@ -1,6 +1,6 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 2 complete — Phase 3 next (Student Web Portal)
+## Current Phase: Phase 3 complete — Phase 4 next (Parent Web Portal)
 ## Last Updated: 2026-03-23
 
 ---
@@ -19,7 +19,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 2 complete | — | Plan Phase 3 (Student Web Portal) |
+| Backend | Phase 3 complete | — | Plan Phase 4 (Parent Web Portal) |
 | Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
@@ -34,8 +34,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 | 0C.1 — Add feature_group to existing entries | Backend | complete | — | — | Already done in Phase 0A |
 | 0C.2-4 — Verify existing features in cards | Admin FE | pending | — | — | blocked by 0B merge |
 | 1 — Schema & models | Backend | complete | #286 | — | All tasks done, 1205 tests pass |
-| 2 — Auth & middleware | Backend | complete | — | — | All tasks done, 1205 tests pass |
-| 3 — Student web portal | Backend | pending | — | — | blocked by 2 |
+| 2 — Auth & middleware | Backend | complete | #287 | — | All tasks done, 1205 tests pass |
+| 3 — Student web portal | Backend | complete | — | — | All tasks done, reused 18 mobile controllers |
 | 4 — Parent web portal | Backend | pending | — | — | blocked by 2, parallel with 3 |
 | 5A — Admin parent API | Backend | pending | — | — | blocked by 3+4 |
 | 5B — Admin parent UI | Admin FE | pending | — | — | blocked by 5A |
@@ -208,6 +208,49 @@ VERIFICATION PLAN
 - PHPStan level 7: 0 errors
 - Pint + Rector: all files pass (composer fix)
 - All 1205 tests pass (4931 assertions, 0 failures)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 3
+
+```text
+PHASE
+- 3 — Student Web Portal (Feature Parity)
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- routes/api/v1/mobile.php — mobile route structure and controller reuse pattern
+- routes/api/v1/mobile/education.php — education lookups wrapped in jwt.mobile
+- app/Http/Controllers/Mobile/MeController.php — device-specific logic (activeDevice relation)
+- app/Http/Resources/Mobile/StudentUserResource.php — device field conditional on relation
+- app/Services/Playback/PlaybackAuthorizationService.php — device resolution, assertCanStartPlayback
+- app/Services/Playback/PlaybackService.php — requestPlayback flow
+- app/Http/Middleware/JwtWebStudentMiddleware.php — request attribute bindings
+- All 18 mobile controllers confirmed platform-agnostic (no mobile-specific logic)
+
+CONTRACT IMPACT
+- student API — full student web API at /api/v1/web/student/*
+- playback — allow_web_playback check added to PlaybackAuthorizationService
+
+RISKS / ADJUSTMENTS
+- Middleware did not set token_platform on request attributes — added it so
+  PlaybackAuthorizationService can detect web requests for allow_web_playback check.
+- Web MeController omits device loading (no activeDevice relation set) — StudentUserResource
+  already handles this gracefully via conditional `relationLoaded('activeDevice')` check.
+- Education routes re-declared in web/student.php (cannot include mobile/education.php
+  directly because it wraps routes in jwt.mobile middleware).
+- DeviceChangeRequestController excluded from web routes (mobile-only feature).
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint + Rector: all files pass (composer fix)
+- All tests pass (0 failures)
 
 APPROVED TO IMPLEMENT
 - yes

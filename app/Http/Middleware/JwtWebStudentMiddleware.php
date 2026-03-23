@@ -133,6 +133,7 @@ class JwtWebStudentMiddleware
         // Bind resolved user to request
         $request->setUserResolver(fn (): User => $user);
         $request->attributes->set('authenticated_device', $authenticatedDevice);
+        $request->attributes->set('token_platform', TokenPlatform::Web);
 
         return $next($request);
     }

@@ -6,6 +6,7 @@ namespace App\Services\Playback;
 
 use App\Enums\CenterType;
 use App\Enums\CourseStatus;
+use App\Enums\TokenPlatform;
 use App\Enums\UserDeviceStatus;
 use App\Exceptions\DomainException;
 use App\Models\Center;
@@ -20,6 +21,7 @@ use App\Services\Access\EnrollmentAccessService;
 use App\Services\Access\StudentAccessService;
 use App\Services\Access\VideoAccessService;
 use App\Services\Playback\Contracts\PlaybackAuthorizationServiceInterface;
+use App\Services\Settings\PolicySettingsService;
 use App\Services\VideoAccess\Contracts\VideoApprovalServiceInterface;
 use App\Support\ErrorCodes;
 
@@ -33,11 +35,14 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         private readonly CourseAccessService $courseAccessService,
         private readonly EnrollmentAccessService $enrollmentAccessService,
         private readonly VideoAccessService $videoAccessService,
-        private readonly VideoApprovalServiceInterface $videoApprovalService
+        private readonly VideoApprovalServiceInterface $videoApprovalService,
+        private readonly PolicySettingsService $policySettingsService
     ) {}
 
     public function assertCanStartPlayback(User $student, Center $center, Course $course, Video $video): void
     {
+        $this->assertWebPlaybackAllowed($center);
+
         $this->studentAccessService->assertStudent(
             $student,
             'Only students can access this endpoint.',
@@ -260,6 +265,21 @@ class PlaybackAuthorizationService implements PlaybackAuthorizationServiceInterf
         }
 
         return $device;
+    }
+
+    private function assertWebPlaybackAllowed(Center $center): void
+    {
+        $tokenPlatform = request()->attributes->get('token_platform');
+
+        if (! $tokenPlatform instanceof TokenPlatform || $tokenPlatform !== TokenPlatform::Web) {
+            return;
+        }
+
+        $policy = $this->policySettingsService->resolveCenterPolicy($center);
+
+        if (! ($policy['allow_web_playback'] ?? false)) {
+            $this->deny(ErrorCodes::WEB_PLAYBACK_DISABLED, 'Web playback is not enabled for this center.', 403);
+        }
     }
 
     private function notFound(string $message): void
