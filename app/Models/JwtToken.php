@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\TokenPlatform;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $user_id
  * @property int|null $device_id
+ * @property TokenPlatform $platform
  * @property string $access_token
  * @property string $refresh_token
  * @property \Carbon\Carbon $expires_at
@@ -31,6 +33,7 @@ class JwtToken extends Model
     protected $fillable = [
         'user_id',
         'device_id',
+        'platform',
         'access_token',
         'refresh_token',
         'expires_at',
@@ -39,6 +42,7 @@ class JwtToken extends Model
     ];
 
     protected $casts = [
+        'platform' => TokenPlatform::class,
         'expires_at' => 'datetime',
         'refresh_expires_at' => 'datetime',
         'revoked_at' => 'datetime',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\DeviceType;
 use App\Enums\UserDeviceStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $user_id
  * @property string $device_id
  * @property string|null $device_name
- * @property string|null $device_type
+ * @property DeviceType|null $device_type
  * @property string $model
  * @property string $os_version
  * @property int $status
@@ -57,6 +58,13 @@ class UserDevice extends Model
         'approved_at' => 'datetime',
         'last_used_at' => 'datetime',
     ];
+
+    public function deviceTypeParsed(): ?DeviceType
+    {
+        return is_string($this->attributes['device_type'] ?? null)
+            ? DeviceType::tryFrom($this->attributes['device_type'])
+            : null;
+    }
 
     /** @return BelongsTo<User, self> */
     public function user(): BelongsTo
@@ -130,5 +138,27 @@ class UserDevice extends Model
     {
         return $query->forUser($user)
             ->where('status', self::STATUS_ACTIVE->value);
+    }
+
+    /**
+     * Scope to filter web devices.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeWeb(Builder $query): Builder
+    {
+        return $query->where('device_type', DeviceType::Web);
+    }
+
+    /**
+     * Scope to filter mobile devices.
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeMobile(Builder $query): Builder
+    {
+        return $query->where('device_type', DeviceType::Mobile);
     }
 }

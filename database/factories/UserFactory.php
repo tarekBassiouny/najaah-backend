@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'password' => Hash::make('password'),
             'status' => 1,
             'is_student' => false,
+            'is_parent' => false,
             'avatar_url' => null,
             'last_login_at' => now(),
         ];
@@ -59,6 +60,13 @@ class UserFactory extends Factory
     {
         return $this->state(fn (): array => [
             'is_student' => false,
+        ]);
+    }
+
+    public function parent(): static
+    {
+        return $this->state(fn (): array => [
+            'is_parent' => true,
         ]);
     }
 }

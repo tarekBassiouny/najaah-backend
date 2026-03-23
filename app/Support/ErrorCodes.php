@@ -132,5 +132,21 @@ final class ErrorCodes
 
     public const SYSTEM_LIMIT_EXCEEDED = 'SYSTEM_LIMIT_EXCEEDED';
 
+    public const WEB_ACCESS_DISABLED = 'WEB_ACCESS_DISABLED';
+
+    public const WEB_PLAYBACK_DISABLED = 'WEB_PLAYBACK_DISABLED';
+
+    public const PARENT_PORTAL_DISABLED = 'PARENT_PORTAL_DISABLED';
+
+    public const PARENT_LINK_NOT_FOUND = 'PARENT_LINK_NOT_FOUND';
+
+    public const STUDENT_NOT_LINKED = 'STUDENT_NOT_LINKED';
+
+    public const LINK_ALREADY_EXISTS = 'LINK_ALREADY_EXISTS';
+
+    public const WEB_DEVICE_LIMIT_REACHED = 'WEB_DEVICE_LIMIT_REACHED';
+
+    public const PARENT_LINK_PENDING = 'PARENT_LINK_PENDING';
+
     private function __construct() {}
 }
