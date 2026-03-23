@@ -21,7 +21,7 @@ Route::middleware(['require.permission:parents.manage', 'scope.center'])
         Route::patch('/{link}', [ParentLinkController::class, 'update'])->whereNumber('link');
     });
 
-Route::middleware(['require.permission:parents.view', 'scope.center'])
+Route::middleware(['require.permission:parents.view', 'scope.system'])
     ->prefix('/students/{student}/parent-links')
     ->whereNumber('student')
     ->group(function (): void {

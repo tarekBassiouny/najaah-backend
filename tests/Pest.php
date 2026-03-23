@@ -7,7 +7,8 @@ use Tests\Helpers\ApiTestHelper;
 use Tests\Helpers\CourseTestHelper;
 use Tests\Helpers\EnrollmentTestHelper;
 use Tests\Helpers\MakesTestUsers;
+use Tests\Helpers\WebTestHelper;
 use Tests\TestCase;
 
-uses(TestCase::class, MakesTestUsers::class, AdminTestHelper::class, ApiTestHelper::class, CourseTestHelper::class, EnrollmentTestHelper::class)->in('Feature');
+uses(TestCase::class, MakesTestUsers::class, AdminTestHelper::class, ApiTestHelper::class, CourseTestHelper::class, EnrollmentTestHelper::class, WebTestHelper::class)->in('Feature');
 uses(MakesTestUsers::class)->in('Unit');
