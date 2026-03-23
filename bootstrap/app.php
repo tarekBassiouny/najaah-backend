@@ -11,9 +11,12 @@ use App\Http\Middleware\EnsureSystemScope;
 use App\Http\Middleware\EnsureUnbrandedStudent;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
+use App\Http\Middleware\JwtWebParentMiddleware;
+use App\Http\Middleware\JwtWebStudentMiddleware;
 use App\Http\Middleware\LocalizeApiResponse;
 use App\Http\Middleware\NormalizeAdminApiResponse;
 use App\Http\Middleware\OptionalJwtMobileMiddleware;
+use App\Http\Middleware\OptionalJwtWebStudentMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\RequirePermission;
 use App\Http\Middleware\RequireRole;
@@ -92,6 +95,15 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/landing-pages.php';
                     });
                 });
+
+            // Web Portal API (JWT)
+            Route::prefix('api/v1/web')
+                ->middleware('api')
+                ->group(function (): void {
+                    require __DIR__.'/../routes/api/v1/web/auth.php';
+                    require __DIR__.'/../routes/api/v1/web/student.php';
+                    require __DIR__.'/../routes/api/v1/web/parent.php';
+                });
         }
     )
     ->withCommands([
@@ -122,6 +134,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.mobile' => JwtMobileMiddleware::class,
             'jwt.mobile.optional' => OptionalJwtMobileMiddleware::class,
             'jwt.admin' => JwtAdminMiddleware::class,
+            'jwt.web.student' => JwtWebStudentMiddleware::class,
+            'jwt.web.parent' => JwtWebParentMiddleware::class,
+            'jwt.web.student.optional' => OptionalJwtWebStudentMiddleware::class,
             'guest.browsing' => EnsureGuestBrowsingAllowed::class,
             'enrollment.active' => EnsureActiveEnrollment::class,
             'ensure.unbranded.student' => EnsureUnbrandedStudent::class,

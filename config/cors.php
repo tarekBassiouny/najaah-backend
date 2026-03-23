@@ -19,7 +19,9 @@ return [
 
     'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '#^https://[\w-]+\.najaah\.me$#',
+    ],
 
     'allowed_headers' => ['*'],
 

@@ -1,6 +1,6 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 1 complete — Phase 2 next (Auth & Middleware)
+## Current Phase: Phase 2 complete — Phase 3 next (Student Web Portal)
 ## Last Updated: 2026-03-23
 
 ---
@@ -19,7 +19,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 1 complete | — | Plan Phase 2 (Auth & Middleware) |
+| Backend | Phase 2 complete | — | Plan Phase 3 (Student Web Portal) |
 | Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
@@ -33,8 +33,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 | 0B — Settings UI cards | Admin FE | complete | FE #78 | — | Feature group cards committed, PR to dev |
 | 0C.1 — Add feature_group to existing entries | Backend | complete | — | — | Already done in Phase 0A |
 | 0C.2-4 — Verify existing features in cards | Admin FE | pending | — | — | blocked by 0B merge |
-| 1 — Schema & models | Backend | complete | — | — | All tasks done, 1205 tests pass |
-| 2 — Auth & middleware | Backend | pending | — | — | blocked by 1 |
+| 1 — Schema & models | Backend | complete | #286 | — | All tasks done, 1205 tests pass |
+| 2 — Auth & middleware | Backend | complete | — | — | All tasks done, 1205 tests pass |
 | 3 — Student web portal | Backend | pending | — | — | blocked by 2 |
 | 4 — Parent web portal | Backend | pending | — | — | blocked by 2, parallel with 3 |
 | 5A — Admin parent API | Backend | pending | — | — | blocked by 3+4 |
@@ -161,6 +161,53 @@ VERIFICATION PLAN
 - Pint: all 1389 files pass
 - All 1205 tests pass (4931 assertions, 0 failures)
 - Migrations: all 4 new migrations run successfully (fresh + seed)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
+```
+
+### Gate Record: Phase 2
+
+```text
+PHASE
+- 2 — Auth & Middleware
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- config/auth.php — guard config, existing mobile/admin guards
+- config/cors.php — existing allowed_origins_patterns
+- app/Services/Auth/JwtService.php — create() signature, token creation
+- app/Services/Auth/Contracts/JwtServiceInterface.php — create() contract
+- app/Services/Devices/DeviceService.php — register(), device pool logic
+- app/Services/Devices/Contracts/DeviceServiceInterface.php — interface contract
+- app/Http/Middleware/JwtStudentMiddleware.php — existing mobile JWT middleware pattern
+- app/Http/Middleware/EnsureGuestBrowsingAllowed.php — PolicySettingsService usage pattern
+- app/Services/Settings/PolicySettingsService.php — resolveCenterPolicy signature
+- app/Providers/AppServiceProvider.php — service bindings
+- bootstrap/app.php — middleware registration, route groups
+
+CONTRACT IMPACT
+- auth — 2 new JWT guards (web-student, web-parent), 3 new middleware aliases
+- settings — PolicySettingsService used for allow_web_access/allow_parent_portal checks
+- New API routes: POST /api/v1/web/student/auth/* and /api/v1/web/parent/auth/*
+
+RISKS / ADJUSTMENTS
+- SettingsResolverService cannot be used for web access checks (different signature).
+  Used PolicySettingsService::resolveCenterPolicy(Center) instead — same pattern as
+  EnsureGuestBrowsingAllowed middleware.
+- JwtService::create() signature extended with optional TokenPlatform param (backward compatible).
+- DeviceService::registerWeb() added as separate method — web device pool is independent
+  from mobile devices (no reinstall detection, no pre-approved requests).
+- Parent web device limit set to 99 (effectively unlimited) — parents are not device-restricted.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint + Rector: all files pass (composer fix)
+- All 1205 tests pass (4931 assertions, 0 failures)
 
 APPROVED TO IMPLEMENT
 - yes
