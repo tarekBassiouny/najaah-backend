@@ -1,7 +1,7 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 0B (frontend, in progress) / Phase 1 (backend, planning)
-## Last Updated: 2026-03-22
+## Current Phase: Phase 0 complete — Phase 1 (backend, planning)
+## Last Updated: 2026-03-23
 
 ---
 
@@ -19,8 +19,8 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 0A+0C.1 complete | — | Plan Phase 1 (Schema & Models) |
-| Admin Frontend | Phase 0B in progress | — | Building feature group cards from contract |
+| Backend | Phase 0 complete | — | Plan Phase 1 (Schema & Models) |
+| Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
 ---
@@ -29,11 +29,11 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Phase | Lane | Status | PR | Contract Shared | Notes |
 |-------|------|--------|-----|----------------|-------|
-| 0A — Catalog-driven services | Backend | complete | #280 | draft | All 8 tasks done, merged to dev |
-| 0B — Settings UI cards | Admin FE | in_progress | — | — | Frontend agent building feature group cards |
+| 0A — Catalog-driven services | Backend | complete | #280 | done | All 8 tasks done, merged to dev, release PR #284 |
+| 0B — Settings UI cards | Admin FE | complete | FE #78 | — | Feature group cards committed, PR to dev |
 | 0C.1 — Add feature_group to existing entries | Backend | complete | — | — | Already done in Phase 0A |
-| 0C.2-4 — Verify existing features in cards | Admin FE | pending | — | — | blocked by 0B |
-| 1 — Schema & models | Backend | pending | — | — | blocked by 0 |
+| 0C.2-4 — Verify existing features in cards | Admin FE | pending | — | — | blocked by 0B merge |
+| 1 — Schema & models | Backend | planning | — | — | Ready to start |
 | 2 — Auth & middleware | Backend | pending | — | — | blocked by 1 |
 | 3 — Student web portal | Backend | pending | — | — | blocked by 2 |
 | 4 — Parent web portal | Backend | pending | — | — | blocked by 2, parallel with 3 |
