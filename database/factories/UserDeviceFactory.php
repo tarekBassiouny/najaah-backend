@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\DeviceType;
 use App\Models\User;
 use App\Models\UserDevice;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,7 +20,7 @@ class UserDeviceFactory extends Factory
             'user_id' => User::factory(),
             'device_id' => (string) Str::uuid(),
             'device_name' => 'device-name',
-            'device_type' => 'device-type',
+            'device_type' => DeviceType::Mobile->value,
             'model' => 'device-model',
             'os_version' => 'os-version',
             'status' => UserDevice::STATUS_ACTIVE,

@@ -63,6 +63,22 @@ class SystemSettingSeeder extends Seeder
                 'value' => ['enabled' => false],
                 'is_public' => true,
             ],
+            'max_web_device_limit' => [
+                'value' => ['value' => 3],
+                'is_public' => false,
+            ],
+            'force_disable_web_access' => [
+                'value' => ['enabled' => false],
+                'is_public' => false,
+            ],
+            'force_disable_web_playback' => [
+                'value' => ['enabled' => false],
+                'is_public' => false,
+            ],
+            'force_disable_parent_portal' => [
+                'value' => ['enabled' => false],
+                'is_public' => false,
+            ],
         ];
 
         foreach ($settings as $key => $attributes) {

@@ -1,6 +1,6 @@
 # Web Portal — Implementation Progress
 
-## Current Phase: Phase 0 complete — Phase 1 (backend, planning)
+## Current Phase: Phase 1 complete — Phase 2 next (Auth & Middleware)
 ## Last Updated: 2026-03-23
 
 ---
@@ -19,7 +19,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
-| Backend | Phase 0 complete | — | Plan Phase 1 (Schema & Models) |
+| Backend | Phase 1 complete | — | Plan Phase 2 (Auth & Middleware) |
 | Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
 | Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
 
@@ -33,7 +33,7 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 | 0B — Settings UI cards | Admin FE | complete | FE #78 | — | Feature group cards committed, PR to dev |
 | 0C.1 — Add feature_group to existing entries | Backend | complete | — | — | Already done in Phase 0A |
 | 0C.2-4 — Verify existing features in cards | Admin FE | pending | — | — | blocked by 0B merge |
-| 1 — Schema & models | Backend | planning | — | — | Ready to start |
+| 1 — Schema & models | Backend | complete | — | — | All tasks done, 1205 tests pass |
 | 2 — Auth & middleware | Backend | pending | — | — | blocked by 1 |
 | 3 — Student web portal | Backend | pending | — | — | blocked by 2 |
 | 4 — Parent web portal | Backend | pending | — | — | blocked by 2, parallel with 3 |
@@ -121,6 +121,51 @@ APPROVED TO IMPLEMENT
 - yes
 - approved by: user
 - date: 2026-03-22
+```
+
+### Gate Record: Phase 1
+
+```text
+PHASE
+- 1 — Architecture (Schema & Models)
+
+PLAN REVIEWED
+- yes
+
+CODE INSPECTED
+- app/Models/User.php — is_student pattern, fillable, casts, relations
+- app/Models/UserDevice.php — device_type column (nullable string), status enum cast, scopes
+- app/Models/JwtToken.php — fillable, casts, device_id nullable FK
+- app/Services/Devices/DeviceService.php — register() revokes all other devices
+- config/settings_catalog.php — catalog entry structure, feature_group/value_key from Phase 0A
+- app/Enums/ — int-backed and string-backed enum patterns
+- app/Support/ErrorCodes.php — const pattern
+- database/seeders/ — SystemSettingSeeder (updateOrCreate), CenterSettingSeeder (factory)
+- database/factories/ — UserFactory, UserDeviceFactory, JwtTokenFactory
+- docs/feature/web-portal-settings-governance.md — all 11 settings with catalog entries
+
+CONTRACT IMPACT
+- settings — 3 feature flags, 4 center settings, 4 system settings added to catalog
+- No new API endpoints (schema/model only)
+
+RISKS / ADJUSTMENTS
+- DeviceType enum cast: cannot auto-cast at model level because existing device_type column
+  has free-text values. Added deviceTypeParsed() method using tryFrom() instead. Scopes
+  compare against enum values directly (works with raw DB strings).
+- Unique index name on parent_student_links was too long for MySQL — used explicit short name.
+- DeviceService pool-aware logic deferred to Phase 2 (Phase 1 only adds model scopes).
+- Updated UserDeviceFactory default device_type from 'device-type' to DeviceType::Mobile->value.
+
+VERIFICATION PLAN
+- PHPStan level 7: 0 errors
+- Pint: all 1389 files pass
+- All 1205 tests pass (4931 assertions, 0 failures)
+- Migrations: all 4 new migrations run successfully (fresh + seed)
+
+APPROVED TO IMPLEMENT
+- yes
+- approved by: user
+- date: 2026-03-23
 ```
 
 ### Gate Rule
