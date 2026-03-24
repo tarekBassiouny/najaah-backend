@@ -20,8 +20,11 @@ LANE 3: Web Portal Frontend (najaah-frontend — new portal SPA)
 | Lane | Current Phase | Blocked By | Next Action |
 |------|--------------|------------|-------------|
 | Backend | Phase 7 complete | — | All backend phases done |
-| Admin Frontend | Phase 0B complete | — | PR #78 submitted, awaiting 0C verification |
-| Web Portal Frontend | not started | Backend Phase 2 | Wait for auth contract |
+| Admin Frontend | FE-0C pending | — | Merge 0B PR #78, verify settings cards |
+| Web Portal Frontend | FE-P1 pending | — | Scaffold + auth + login pages |
+
+> **Frontend progress is now tracked in the frontend repo:**
+> `/Users/tarekbassiouny/projects/najaah-frontend/docs/feature/web-portal-progress.md`
 
 ---
 
