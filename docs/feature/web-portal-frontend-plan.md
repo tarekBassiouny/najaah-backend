@@ -1,7 +1,25 @@
 # Web Portal — Frontend Implementation Plan
 
-## Status: Draft (2026-03-24)
-## Prepared for: Team review before execution
+## Status: Approved (2026-03-24)
+## Execution: Run from najaah-frontend session, both streams in parallel
+
+---
+
+## Execution Strategy
+
+All backend APIs are complete (7 phases merged to dev). Frontend work runs from a **single Claude session** in the `najaah-frontend` repo.
+
+**Parallel execution:**
+- **Stream 1** (Admin: FE-0C → FE-0D → FE-5B) — changes to existing admin pages
+- **Stream 2** (Portal: FE-P1 → FE-P6) — new `(portal)` route group with custom design
+
+Both streams use worktree agents on separate branches, running in parallel. No cross-stream dependencies.
+
+**Reference docs** (read from backend repo):
+- API contract: `/Users/tarekbassiouny/projects/najaah-backend/docs/feature/student-parent-web-portal-api.md`
+- This plan: `/Users/tarekbassiouny/projects/najaah-backend/docs/feature/web-portal-frontend-plan.md`
+
+**Auth note:** The entire app uses JWT (no Sanctum). Admin and portal share the same JWT token infrastructure with different storage keys and API endpoints.
 
 ---
 
@@ -34,10 +52,10 @@ src/app/
 
 ### FD-2: Separate Auth Context for Portal
 
-The admin panel uses Sanctum (session cookies). The portal uses JWT (access + refresh tokens). These are completely independent auth flows stored in separate contexts:
+The entire app uses JWT authentication. Admin and portal use different JWT guards and API endpoints but the same token storage/refresh infrastructure:
 
-- `AuthContext` (existing) — admin Sanctum auth
-- `PortalAuthContext` (new) — portal JWT auth with `web_student_access_token` or `web_parent_access_token`
+- `AuthContext` (existing) — admin JWT auth (`/api/v1/admin/auth/*`)
+- `PortalAuthContext` (new) — portal JWT auth (`/api/v1/web/auth/student/*` or `/api/v1/web/auth/parent/*`)
 
 Both share `token-storage.ts` and `token-refresh.ts` patterns but with different storage keys and API endpoints.
 
@@ -48,7 +66,7 @@ A separate Axios instance for portal requests:
 - Base URL: same API backend
 - Headers: `X-Api-Key` (center), `Authorization: Bearer {portal_token}`, `X-Locale`
 - Token refresh: uses `/api/v1/web/auth/student/refresh` or `/api/v1/web/auth/parent/refresh`
-- No Sanctum cookies
+- Same JWT pattern as admin, different guard and endpoints
 
 ### FD-4: Center Resolution
 
@@ -251,7 +269,7 @@ FE-P1.5. Portal HTTP client: `portal-http.ts`
   - Injects `X-Api-Key` from portal tenant context
   - Injects `Authorization: Bearer {portal_token}`
   - 401 handler: attempt refresh, then redirect to portal login
-  - No Sanctum/CSRF involvement
+  - Same JWT pattern as admin HTTP client, different storage keys and refresh endpoints
 
 FE-P1.6. Portal header component:
   - Center logo (from branding)
