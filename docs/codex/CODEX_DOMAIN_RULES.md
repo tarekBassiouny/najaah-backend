@@ -138,6 +138,34 @@ Codex must generate:
 
 ---
 
+# 9B. PARENT-STUDENT RELATIONSHIPS
+
+- Parents are `User` records with `is_parent = true` (same table as students).
+- A user can be both student and parent simultaneously (`is_student = true` AND `is_parent = true`).
+- Links are stored in `parent_student_links` table, scoped by `center_id`.
+- Link statuses use `ParentLinkStatus` enum: `Active` (0), `PendingApproval` (1), `Revoked` (2).
+- Link methods use `ParentLinkMethod` enum: `AdminManaged` (0), `AutoMatched` (1), `ParentRequested` (2).
+- Auto-match runs on parent registration: links parent to students whose `parent_phone` matches.
+- Parents access student data only through `Active` links — `PendingApproval` and `Revoked` are blocked.
+- Parent web auth uses guard `jwt.web.parent` with `TokenPlatform::Web`.
+- Parents have no device binding (no device limit enforcement).
+
+---
+
+# 9C. WEB PORTAL
+
+- Web student auth guard: `jwt.web.student`.
+- Web parent auth guard: `jwt.web.parent`.
+- Web devices use `DeviceType::Web` enum value, separate pool from `DeviceType::Mobile`.
+- `TokenPlatform` enum: `Mobile` (0), `Web` (1) — tracked on JWT tokens.
+- Center feature flags control access: `features.web_access`, `features.web_playback`, `features.parent_portal`.
+- Center settings: `allow_web_access`, `allow_web_playback`, `allow_parent_portal`, `web_device_limit`.
+- Feature flags **override** center settings via governance layer — if `features.web_access` is `false`, web access is disabled even if `allow_web_access` is `true`.
+- Web student routes mirror mobile routes under `/api/v1/web/` prefix, reusing the same controllers.
+- Parent routes are at `/api/v1/web/students`, `/api/v1/web/links`, etc.
+
+---
+
 # 10. QA
 
 Codex must ensure:
