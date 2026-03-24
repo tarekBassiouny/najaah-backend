@@ -24,7 +24,8 @@ All responses MUST follow these rules unless explicitly overridden.
 - **Center Owner** → full access to their center.
 - **Center Admin** → manages students, enrollments, devices, view limits, courses.
 - **Content Manager** → manages courses, sections, videos, PDFs only.
-- **Student** → consumes content via mobile app (Flutter) or limited web.
+- **Student** → consumes content via mobile app (Flutter) or web portal.
+- **Parent** → read-only dashboard via web portal, monitors linked student(s).
 
 ## 2.2 Identity Rules
 - Branded centers → students are **isolated**, separate accounts.
@@ -44,23 +45,59 @@ All responses MUST follow these rules unless explicitly overridden.
 - Access tokens are short-lived (15–60 minutes).
 - Refresh tokens are long-lived (30–90 days).
 
-## 3.3 OTP
-- Students log in using phone + OTP.
+## 3.3 Student (Web Portal)
+- Uses **JWT authentication** with guard `jwt.web.student`.
+- Same phone + OTP login flow as mobile.
+- Web device pool is **independent** from mobile — a student can have 1 mobile device + N web browsers (up to `web_device_limit`).
+- Web access controlled by center settings: `allow_web_access` + feature flag `features.web_access`.
+- Web playback controlled by `allow_web_playback` + feature flag `features.web_playback`.
+- Concurrency rule: no simultaneous playback across web + mobile.
+
+## 3.4 Parent (Web Portal)
+- Uses **JWT authentication** with guard `jwt.web.parent`.
+- Parents are `User` records with `is_parent = true` (same table as students).
+- Login via phone + OTP; registration creates parent user and auto-links to students by `parent_phone`.
+- Parent portal controlled by `allow_parent_portal` + feature flag `features.parent_portal`.
+- Read-only access: parents can view linked students' enrollments, progress, quiz results, assignments, and weekly activity.
+- No device binding for parents.
+
+## 3.5 OTP
+- Students and parents log in using phone + OTP.
 - OTP provider is abstract; do not hardcode Twilio, Firebase, etc.
 
 ---
 
 # 4. Device Binding Rules (Critical)
 
-- Each student is allowed **one active device**.
+## 4.1 Mobile Devices
+- Each student is allowed **one active mobile device**.
 - On first login, bind:
-  - device_id  
-  - model  
-  - OS version  
+  - device_id
+  - model
+  - OS version
 - If student logs into a new device:
   - Block all playback.
   - Require admin approval for device change.
 - Previous device must be stored as `REVOKED`, not deleted.
+
+## 4.2 Web Devices
+- Web devices use `DeviceType::Web` and form a **separate pool** from mobile.
+- Web device IDs are auto-generated UUIDs (no hardware fingerprint).
+- Web device limit per student is controlled by `web_device_limit` center setting.
+- No admin approval needed for web device changes — oldest device is revoked when limit is reached.
+
+---
+
+# 4B. Parent-Student Linking Rules
+
+- Links are stored in `parent_student_links` table with `center_id` scoping.
+- Link statuses: `Active` (0), `PendingApproval` (1), `Revoked` (2).
+- Link methods: `AdminManaged` (0), `AutoMatched` (1), `ParentRequested` (2).
+- **Auto-matching**: On parent registration, the system links the parent to all students in the same center whose `parent_phone` matches the parent's phone.
+- **Parent requests**: Parents can request links to students; admin approves or rejects.
+- **Admin-managed**: Admins can create, approve, reject, or revoke links directly.
+- A parent can have multiple students (siblings); a student can have multiple parents.
+- Parents can only view data for students with `Active` links.
 
 ---
 
