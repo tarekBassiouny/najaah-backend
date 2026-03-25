@@ -12,8 +12,10 @@ use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoCodeBatch;
 use App\Models\VideoCodeRedemption;
+use App\Models\Center;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Evolution\EvolutionApiClient;
+use App\Services\Settings\PolicySettingsService;
 use App\Services\VideoAccess\Contracts\VideoCodeBatchServiceInterface;
 use App\Support\ErrorCodes;
 use BaconQrCode\Renderer\GDLibRenderer;
@@ -69,7 +71,8 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
     public function __construct(
         private readonly VideoCodeGenerator $codeGenerator,
         private readonly CenterScopeService $centerScopeService,
-        private readonly EvolutionApiClient $evolutionApiClient
+        private readonly EvolutionApiClient $evolutionApiClient,
+        private readonly PolicySettingsService $policySettingsService
     ) {}
 
     public function createBatch(
@@ -87,12 +90,18 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
         $this->assertCourseSupportsVideoCodes($course);
         $this->assertVideoBelongsToCourse($video, $course);
 
-        if ($quantity < 1 || $quantity > 10000) {
-            $this->deny(ErrorCodes::INVALID_STATE, 'Quantity must be between 1 and 10,000.', 422);
+        $center = $course->center;
+        $policy = $this->policySettingsService->resolveCenterPolicy($center);
+        $catalog = $this->policySettingsService->catalog();
+        $maxQuantity = (int) ($policy['video_code_batch_max_quantity'] ?? $catalog['video_code_batch_max_quantity']['default']);
+        $maxViewLimit = (int) ($policy['max_video_code_batch_view_limit'] ?? $catalog['max_video_code_batch_view_limit']['default']);
+
+        if ($quantity < 1 || $quantity > $maxQuantity) {
+            $this->deny(ErrorCodes::INVALID_STATE, "Quantity must be between 1 and {$maxQuantity}.", 422);
         }
 
-        if ($viewLimitPerCode < 1) {
-            $this->deny(ErrorCodes::INVALID_VIEWS, 'View limit must be at least 1.', 422);
+        if ($viewLimitPerCode < 1 || $viewLimitPerCode > $maxViewLimit) {
+            $this->deny(ErrorCodes::INVALID_VIEWS, "View limit must be between 1 and {$maxViewLimit}.", 422);
         }
 
         return DB::transaction(function () use ($admin, $video, $course, $quantity, $viewLimitPerCode): VideoCodeBatch {
@@ -147,11 +156,18 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
 
         $this->centerScopeService->assertAdminSameCenter($admin, $batch);
 
-        if ($additionalQuantity < 1 || $additionalQuantity > 10000) {
-            $this->deny(ErrorCodes::INVALID_STATE, 'Additional quantity must be between 1 and 10,000.', 422);
+        $center = $batch->relationLoaded('center') ? $batch->center : $batch->center()->first();
+        $policy = $center instanceof Center
+            ? $this->policySettingsService->resolveCenterPolicy($center)
+            : [];
+        $catalog = $this->policySettingsService->catalog();
+        $maxQuantity = (int) ($policy['video_code_batch_max_quantity'] ?? $catalog['video_code_batch_max_quantity']['default']);
+
+        if ($additionalQuantity < 1 || $additionalQuantity > $maxQuantity) {
+            $this->deny(ErrorCodes::INVALID_STATE, "Additional quantity must be between 1 and {$maxQuantity}.", 422);
         }
 
-        return DB::transaction(function () use ($batch, $additionalQuantity): VideoCodeBatch {
+        return DB::transaction(function () use ($batch, $additionalQuantity, $maxQuantity): VideoCodeBatch {
             // Lock and recheck status
             /** @var VideoCodeBatch|null $lockedBatch */
             $lockedBatch = VideoCodeBatch::query()
@@ -168,8 +184,8 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
             }
 
             $newTotal = $lockedBatch->quantity + $additionalQuantity;
-            if ($newTotal > 100000) {
-                $this->deny(ErrorCodes::INVALID_STATE, 'Total batch size cannot exceed 100,000 codes.', 422);
+            if ($newTotal > $maxQuantity) {
+                $this->deny(ErrorCodes::INVALID_STATE, "Total batch size cannot exceed {$maxQuantity} codes.", 422);
             }
 
             $lockedBatch->quantity = $newTotal;

@@ -22,6 +22,7 @@ use App\Models\Course;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoCodeBatch;
+use App\Services\Settings\PolicySettingsService;
 use App\Services\VideoAccess\Contracts\VideoCodeBatchServiceInterface;
 use App\Support\ErrorCodes;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,7 +34,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class VideoCodeBatchController extends Controller
 {
     public function __construct(
-        private readonly VideoCodeBatchServiceInterface $batchService
+        private readonly VideoCodeBatchServiceInterface $batchService,
+        private readonly PolicySettingsService $policySettingsService
     ) {}
 
     public function index(ListVideoCodeBatchesRequest $request, Center $center): JsonResponse
@@ -80,6 +82,9 @@ class VideoCodeBatchController extends Controller
         $perPage = (int) $request->input('per_page', 20);
         $paginator = $query->paginate($perPage);
 
+        $policy = $this->policySettingsService->resolveCenterPolicy($center);
+        $catalog = $this->policySettingsService->catalog();
+
         return response()->json([
             'success' => true,
             'message' => 'Video code batches retrieved successfully',
@@ -90,6 +95,10 @@ class VideoCodeBatchController extends Controller
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
                 'last_page' => $paginator->lastPage(),
+            ],
+            'settings' => [
+                'max_quantity' => (int) ($policy['video_code_batch_max_quantity'] ?? $catalog['video_code_batch_max_quantity']['default']),
+                'default_view_limit' => (int) ($policy['video_code_batch_default_view_limit'] ?? $catalog['video_code_batch_default_view_limit']['default']),
             ],
         ]);
     }
@@ -109,12 +118,16 @@ class VideoCodeBatchController extends Controller
         /** @var array{quantity:int,view_limit_per_code?:int} $data */
         $data = $request->validated();
 
+        $policy = $this->policySettingsService->resolveCenterPolicy($center);
+        $catalog = $this->policySettingsService->catalog();
+        $defaultViewLimit = (int) ($policy['video_code_batch_default_view_limit'] ?? $catalog['video_code_batch_default_view_limit']['default']);
+
         $batch = $this->batchService->createBatch(
             $admin,
             $video,
             $course,
             (int) $data['quantity'],
-            (int) ($data['view_limit_per_code'] ?? 2)
+            (int) ($data['view_limit_per_code'] ?? $defaultViewLimit)
         );
 
         return response()->json([

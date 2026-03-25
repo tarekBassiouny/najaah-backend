@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 use App\Enums\CourseAccessModel;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\Course;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoAccess;
@@ -63,6 +65,79 @@ it('creates a video code batch for an explicit course video route', function ():
         'quantity' => 25,
         'view_limit_per_code' => 3,
     ]);
+});
+
+it('defaults the batch view limit from center policy settings when omitted', function (): void {
+    $center = Center::factory()->create();
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'video_code_batch_default_view_limit' => 7,
+        ],
+    ]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+    ]);
+    attachVideoToCourseForVideoCodeBatches($course, $video);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/code-batches",
+        [
+            'quantity' => 25,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertCreated()
+        ->assertJsonPath('data.view_limit_per_code', 7);
+
+    $this->assertDatabaseHas('video_code_batches', [
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'center_id' => $center->id,
+        'quantity' => 25,
+        'view_limit_per_code' => 7,
+    ]);
+});
+
+it('rejects creating a batch above the center max quantity setting', function (): void {
+    $center = Center::factory()->create();
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'video_code_batch_max_quantity' => 50,
+        ],
+    ]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+    ]);
+    attachVideoToCourseForVideoCodeBatches($course, $video);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/code-batches",
+        [
+            'quantity' => 60,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.details.quantity.0', 'The quantity field must not be greater than 50.');
 });
 
 it('returns not found when the video is not attached to the specified course', function (): void {
@@ -276,6 +351,13 @@ it('rejects reducing sold limit on a closed batch', function (): void {
 
 it('keeps can_close true in list responses for closed batches with remaining sellable capacity', function (): void {
     $center = Center::factory()->create();
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'video_code_batch_max_quantity' => 100,
+            'video_code_batch_default_view_limit' => 6,
+        ],
+    ]);
     $course = Course::factory()->create([
         'center_id' => $center->id,
         'access_model' => CourseAccessModel::VideoCode,
@@ -306,7 +388,82 @@ it('keeps can_close true in list responses for closed batches with remaining sel
         ->assertJsonPath('data.0.id', $batch->id)
         ->assertJsonPath('data.0.available_codes', 75)
         ->assertJsonPath('data.0.remaining_redemptions', 15)
-        ->assertJsonPath('data.0.can_close', true);
+        ->assertJsonPath('data.0.can_close', true)
+        ->assertJsonPath('settings.max_quantity', 100)
+        ->assertJsonPath('settings.default_view_limit', 6);
+});
+
+it('returns resolved video code batch settings in list responses', function (): void {
+    $center = Center::factory()->create();
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'video_code_batch_max_quantity' => 100,
+            'video_code_batch_default_view_limit' => 6,
+        ],
+    ]);
+    SystemSetting::factory()->create([
+        'key' => 'max_video_code_batch_quantity',
+        'value' => ['value' => 120],
+        'is_public' => false,
+    ]);
+    SystemSetting::factory()->create([
+        'key' => 'max_video_code_batch_view_limit',
+        'value' => ['value' => 8],
+        'is_public' => false,
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/video-code-batches",
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('settings.max_quantity', 100)
+        ->assertJsonPath('settings.default_view_limit', 6);
+});
+
+it('rejects expanding a batch beyond the center max quantity setting', function (): void {
+    $center = Center::factory()->create();
+    CenterSetting::factory()->create([
+        'center_id' => $center->id,
+        'settings' => [
+            'video_code_batch_max_quantity' => 50,
+        ],
+    ]);
+
+    $course = Course::factory()->create([
+        'center_id' => $center->id,
+        'access_model' => CourseAccessModel::VideoCode,
+    ]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+    ]);
+    attachVideoToCourseForVideoCodeBatches($course, $video);
+
+    $admin = $this->asCenterAdmin($center);
+
+    $batch = VideoCodeBatch::factory()->create([
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'center_id' => $center->id,
+        'generated_by' => $admin->id,
+        'quantity' => 40,
+    ]);
+
+    $response = $this->postJson(
+        "/api/v1/admin/centers/{$center->id}/code-batches/{$batch->id}/expand",
+        [
+            'additional_quantity' => 11,
+        ],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.details.additional_quantity.0', 'The additional quantity field must not be greater than 10.');
 });
 
 it('returns expanded statistics payload for dashboard batch details', function (): void {
