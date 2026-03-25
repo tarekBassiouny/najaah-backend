@@ -29,6 +29,7 @@ class PdfSummaryResource extends JsonResource
             'title' => $pdf->translate('title'),
             'title_translations' => $pdf->title_translations,
             'tags' => $pdf->tags,
+            'page_count' => $pdf->page_count,
         ];
     }
 }
