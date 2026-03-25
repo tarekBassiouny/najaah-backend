@@ -27,6 +27,7 @@ class CategorySummaryResource extends JsonResource
         return [
             'id' => $category->id,
             'title' => $category->translate('title'),
+            'title_translations' => $category->title_translations,
         ];
     }
 }

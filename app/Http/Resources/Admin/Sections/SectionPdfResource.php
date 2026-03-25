@@ -28,6 +28,7 @@ class SectionPdfResource extends JsonResource
             'id' => $pivot?->id ?? $pdf->id,
             'pdf_id' => $pdf->id,
             'title' => $pdf->translate('title'),
+            'title_translations' => $pdf->title_translations,
             'tags' => $pdf->tags,
             'file_path' => $pdf->source_url,
             'size' => $pdf->file_size_kb,

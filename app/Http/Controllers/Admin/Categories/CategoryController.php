@@ -112,6 +112,14 @@ class CategoryController extends Controller
             }
         }
 
+        if (array_key_exists('title_translations', $data) && is_array($data['title_translations'])) {
+            $data['title_translations'] = array_merge($category->title_translations ?? [], $data['title_translations']);
+        }
+
+        if (array_key_exists('description_translations', $data) && is_array($data['description_translations'])) {
+            $data['description_translations'] = array_merge($category->description_translations ?? [], $data['description_translations']);
+        }
+
         $category->update($data);
         $this->auditLogService->log($admin, $category, AuditActions::CATEGORY_UPDATED);
 
