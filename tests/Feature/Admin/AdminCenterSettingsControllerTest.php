@@ -155,7 +155,7 @@ it('localizes center settings summaries and default ai provider labels for cente
     $center = Center::factory()->create();
     AIProviderConfig::factory()->create([
         'provider_key' => 'gemini',
-        'display_name' => null,
+        'display_name' => '',
         'is_enabled' => true,
         'default_model' => 'gemini-1.5-flash',
         'models' => ['gemini-1.5-flash'],
