@@ -151,6 +151,53 @@ it('returns simplified settings payload for center admins', function (): void {
         ->assertJsonPath('data.sections.ai.providers.0.managed_by', 'platform');
 });
 
+it('localizes center settings summaries and default ai provider labels for center admins', function (): void {
+    $center = Center::factory()->create();
+    AIProviderConfig::factory()->create([
+        'provider_key' => 'gemini',
+        'display_name' => '',
+        'is_enabled' => true,
+        'default_model' => 'gemini-1.5-flash',
+        'models' => ['gemini-1.5-flash'],
+    ]);
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->getJson(
+        "/api/v1/admin/centers/{$center->id}/settings",
+        $this->adminHeaders(['X-Locale' => 'ar'])
+    );
+
+    $response->assertOk()
+        ->assertJsonPath('data.summaries.0.title', 'موفر الذكاء الاصطناعي مُدار من المنصة')
+        ->assertJsonPath(
+            'data.summaries.0.message',
+            'تم تهيئة جيميني لهذا المركز. تتم إدارة إتاحة الموفر وحدوده من قبل مدير المنصة.'
+        );
+
+    $providers = $response->json('data.sections.ai.providers', []);
+    $gemini = collect($providers)->firstWhere('key', 'gemini');
+
+    expect($gemini)->toBeArray()
+        ->and($gemini['label'] ?? null)->toBe('جيميني');
+});
+
+it('localizes grouped center settings validation errors', function (): void {
+    $center = Center::factory()->create();
+
+    $this->asCenterAdmin($center);
+
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/settings", [
+        'features' => [
+            'ai_content' => false,
+        ],
+    ], $this->adminHeaders(['X-Locale' => 'ar']));
+
+    $response->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonPath('error.details.features.0', 'يمكن لمدير النظام فقط إدارة أعلام الميزات.');
+});
+
 it('allows system admin to update grouped center settings including features and ai policy', function (): void {
     $center = Center::factory()->create();
     AIProviderConfig::factory()->create([

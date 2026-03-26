@@ -193,7 +193,7 @@ class PolicySettingsService
             'primary_color' => $center->primary_color,
         ], static fn ($value): bool => $value !== null);
 
-        return [
+        $defaults = [
             'default_view_limit' => $center->default_view_limit,
             'allow_extra_view_requests' => $center->allow_extra_view_requests,
             'pdf_download_permission' => $center->pdf_download_permission,
@@ -203,6 +203,14 @@ class PolicySettingsService
             'education_profile' => $this->defaultCatalogValue('education_profile', []),
             'features' => $this->defaultFeatures(),
         ];
+
+        foreach ($this->centerSettingsCatalog() as $key => $definition) {
+            if (! array_key_exists($key, $defaults) && array_key_exists('default', $definition)) {
+                $defaults[$key] = $definition['default'];
+            }
+        }
+
+        return $defaults;
     }
 
     /**

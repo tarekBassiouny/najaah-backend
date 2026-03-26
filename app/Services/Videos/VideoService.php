@@ -95,6 +95,14 @@ class VideoService implements VideoServiceInterface
             unset($payload['description']);
         }
 
+        if (array_key_exists('title_translations', $payload) && is_array($payload['title_translations'])) {
+            $payload['title_translations'] = array_merge($video->title_translations ?? [], $payload['title_translations']);
+        }
+
+        if (array_key_exists('description_translations', $payload) && is_array($payload['description_translations'])) {
+            $payload['description_translations'] = array_merge($video->description_translations ?? [], $payload['description_translations']);
+        }
+
         $video->update($payload);
 
         $this->auditLogService->log($admin, $video, AuditActions::VIDEO_UPDATED, [

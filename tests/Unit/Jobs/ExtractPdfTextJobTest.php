@@ -24,13 +24,15 @@ it('stores extracted text when pdf extraction succeeds', function (): void {
     $service = \Mockery::mock(PdfTextExtractionServiceInterface::class);
     $service->shouldReceive('canExtract')->once()->andReturn(true);
     $service->shouldReceive('extractText')->once()->andReturn('Extracted lesson text');
+    $service->shouldReceive('extractPageCount')->once()->andReturn(5);
 
     $job = new ExtractPdfTextJob($pdf);
     $job->handle($service);
 
     $pdf->refresh();
     expect($pdf->text_content)->toBe('Extracted lesson text')
-        ->and($pdf->text_extraction_status)->toBe(TextExtractionStatus::Completed);
+        ->and($pdf->text_extraction_status)->toBe(TextExtractionStatus::Completed)
+        ->and($pdf->page_count)->toBe(5);
 });
 
 it('marks pdf extraction as skipped when the file cannot be processed', function (): void {

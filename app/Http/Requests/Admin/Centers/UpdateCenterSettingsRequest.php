@@ -160,7 +160,9 @@ class UpdateCenterSettingsRequest extends FormRequest
 
             $invalidKeys = array_diff(array_keys($settings), $allowedKeys);
             if (! empty($invalidKeys)) {
-                $validator->errors()->add('settings', 'Unsupported settings: '.implode(', ', $invalidKeys));
+                $validator->errors()->add('settings', __('settings.validation.unsupported_settings', [
+                    'keys' => implode(', ', $invalidKeys),
+                ]));
             }
 
             foreach ($settings as $key => $value) {
@@ -180,7 +182,10 @@ class UpdateCenterSettingsRequest extends FormRequest
 
                 $validator->errors()->add(
                     'settings.'.$key,
-                    'Unsupported '.str_replace('_', ' ', $key).' settings: '.implode(', ', $invalidNestedKeys)
+                    __('settings.validation.unsupported_nested_settings', [
+                        'setting' => str_replace('_', ' ', $key),
+                        'keys' => implode(', ', $invalidNestedKeys),
+                    ])
                 );
             }
 
@@ -189,11 +194,13 @@ class UpdateCenterSettingsRequest extends FormRequest
                 $allowedFeatureKeys = $policySettingsService->featureFlagKeys();
                 $invalidFeatureKeys = array_diff(array_keys($features), $allowedFeatureKeys);
                 if ($invalidFeatureKeys !== []) {
-                    $validator->errors()->add('features', 'Unsupported feature flags: '.implode(', ', $invalidFeatureKeys));
+                    $validator->errors()->add('features', __('settings.validation.unsupported_feature_flags', [
+                        'keys' => implode(', ', $invalidFeatureKeys),
+                    ]));
                 }
 
                 if (! $this->isSystemAdmin()) {
-                    $validator->errors()->add('features', 'Only system admin can manage feature flags.');
+                    $validator->errors()->add('features', __('settings.validation.system_admin_only_feature_flags'));
                 }
             }
 
@@ -201,7 +208,9 @@ class UpdateCenterSettingsRequest extends FormRequest
             if (is_array($providers)) {
                 $invalidProviders = array_diff(array_keys($providers), AIProvider::values());
                 if ($invalidProviders !== []) {
-                    $validator->errors()->add('ai.providers', 'Unsupported AI providers: '.implode(', ', $invalidProviders));
+                    $validator->errors()->add('ai.providers', __('settings.validation.unsupported_ai_providers', [
+                        'keys' => implode(', ', $invalidProviders),
+                    ]));
                 }
 
                 foreach ($providers as $providerKey => $providerPayload) {
@@ -217,7 +226,9 @@ class UpdateCenterSettingsRequest extends FormRequest
                     if ($invalidProviderKeys !== []) {
                         $validator->errors()->add(
                             'ai.providers.'.$providerKey,
-                            'Unsupported AI provider settings: '.implode(', ', $invalidProviderKeys)
+                            __('settings.validation.unsupported_ai_provider_settings', [
+                                'keys' => implode(', ', $invalidProviderKeys),
+                            ])
                         );
                     }
 
@@ -238,19 +249,21 @@ class UpdateCenterSettingsRequest extends FormRequest
                         if ($invalidLimitKeys !== []) {
                             $validator->errors()->add(
                                 'ai.providers.'.$providerKey.'.limits',
-                                'Unsupported AI limits keys: '.implode(', ', $invalidLimitKeys)
+                                __('settings.validation.unsupported_ai_limit_keys', [
+                                    'keys' => implode(', ', $invalidLimitKeys),
+                                ])
                             );
                         }
 
                         if (! $this->isSystemAdmin()) {
-                            $validator->errors()->add('ai.providers.'.$providerKey.'.limits', 'Only system admin can manage AI limits.');
+                            $validator->errors()->add('ai.providers.'.$providerKey.'.limits', __('settings.validation.system_admin_only_ai_limits'));
                         }
                     }
                 }
             }
 
             if ($settings === [] && ! is_array($this->input('features')) && ! is_array($this->input('ai.providers'))) {
-                $validator->errors()->add('settings', 'At least one of settings, features, or ai.providers is required.');
+                $validator->errors()->add('settings', __('settings.validation.settings_payload_required'));
             }
         });
     }

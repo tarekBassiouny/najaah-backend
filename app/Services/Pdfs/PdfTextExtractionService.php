@@ -34,6 +34,59 @@ final class PdfTextExtractionService implements PdfTextExtractionServiceInterfac
         return $this->normalizeExtractedText($text);
     }
 
+    public function extractPageCount(Pdf $pdf): ?int
+    {
+        if (! $this->canExtract($pdf)) {
+            return null;
+        }
+
+        $sourceId = is_string($pdf->source_id) ? $pdf->source_id : '';
+        if ($sourceId === '') {
+            return null;
+        }
+
+        try {
+            $contents = $this->storageService->getContents($sourceId);
+
+            if (class_exists(\Smalot\PdfParser\Parser::class)) {
+                $document = (new \Smalot\PdfParser\Parser)->parseContent($contents);
+
+                return count($document->getPages());
+            }
+
+            $tempPath = $this->writeTempPdf($contents);
+
+            try {
+                return $this->countPagesWithPdfinfo($tempPath);
+            } finally {
+                @unlink($tempPath);
+            }
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    private function countPagesWithPdfinfo(string $tempPath): ?int
+    {
+        if (! $this->commandAvailable('pdfinfo')) {
+            return null;
+        }
+
+        $process = new Process(['pdfinfo', $tempPath]);
+        $process->setTimeout(30);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            return null;
+        }
+
+        if (preg_match('/Pages:\s+(\d+)/', $process->getOutput(), $matches)) {
+            return (int) $matches[1];
+        }
+
+        return null;
+    }
+
     public function canExtract(Pdf $pdf): bool
     {
         return strtolower((string) $pdf->file_extension) === 'pdf'

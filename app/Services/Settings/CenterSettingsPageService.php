@@ -216,34 +216,34 @@ class CenterSettingsPageService
         if (($features['ai_content'] ?? true) !== true) {
             $summaries[] = [
                 'type' => 'info',
-                'title' => 'AI content is disabled',
-                'message' => 'AI tools are managed by platform admin for this center.',
+                'title' => __('settings.center_admin_summaries.ai_content_disabled.title'),
+                'message' => __('settings.center_admin_summaries.ai_content_disabled.message'),
             ];
         }
 
         if (($features['guest_browsing'] ?? true) !== true) {
             $summaries[] = [
                 'type' => 'info',
-                'title' => 'Guest browsing is disabled',
-                'message' => 'Guest browsing is managed by platform policy for this center.',
+                'title' => __('settings.center_admin_summaries.guest_browsing_disabled.title'),
+                'message' => __('settings.center_admin_summaries.guest_browsing_disabled.message'),
             ];
         }
 
         if (($features['pdf_downloads'] ?? true) !== true) {
             $summaries[] = [
                 'type' => 'info',
-                'title' => 'PDF downloads are disabled',
-                'message' => 'PDF download availability is managed by platform admin.',
+                'title' => __('settings.center_admin_summaries.pdf_downloads_disabled.title'),
+                'message' => __('settings.center_admin_summaries.pdf_downloads_disabled.message'),
             ];
         }
 
         $configuredProvider = collect($providers)->first(static fn (array $provider): bool => (bool) ($provider['enabled'] ?? false) && (bool) ($provider['configured'] ?? false));
         if (is_array($configuredProvider)) {
-            $label = (string) ($configuredProvider['label'] ?? $configuredProvider['key'] ?? 'AI provider');
+            $label = (string) ($configuredProvider['label'] ?? __('settings.ai.fallback_provider'));
             $summaries[] = [
                 'type' => 'info',
-                'title' => 'AI provider managed by platform',
-                'message' => sprintf('%s is configured for your center. Provider availability and limits are managed by platform admin.', $label),
+                'title' => __('settings.center_admin_summaries.provider_managed.title'),
+                'message' => __('settings.center_admin_summaries.provider_managed.message', ['provider' => $label]),
             ];
         }
 

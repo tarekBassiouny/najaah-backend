@@ -33,7 +33,9 @@ class CourseSummaryResource extends JsonResource
         return [
             'id' => $course->id,
             'title' => $course->translate('title'),
+            'title_translations' => $course->title_translations,
             'description' => $course->translate('description'),
+            'description_translations' => $course->description_translations,
             'language' => $course->language,
             'thumbnail' => $thumbnailUrlResolver->resolve($course->thumbnail_url),
             'status' => $course->status->value,

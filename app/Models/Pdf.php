@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $source_id
  * @property string|null $source_url
  * @property int|null $file_size_kb
+ * @property int|null $page_count
  * @property string $file_extension
  * @property string|null $text_content
  * @property TextExtractionStatus $text_extraction_status
@@ -54,6 +55,7 @@ class Pdf extends Model
         'source_id',
         'source_url',
         'file_size_kb',
+        'page_count',
         'file_extension',
         'text_content',
         'text_extraction_status',
@@ -68,6 +70,7 @@ class Pdf extends Model
         'description_translations' => 'array',
         'tags' => 'array',
         'file_size_kb' => 'integer',
+        'page_count' => 'integer',
         'source_type' => MediaSourceType::class,
         'text_content' => 'string',
         'text_extraction_status' => TextExtractionStatus::class,

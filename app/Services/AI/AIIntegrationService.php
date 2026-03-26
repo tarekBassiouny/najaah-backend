@@ -470,7 +470,9 @@ final class AIIntegrationService implements AIIntegrationServiceInterface
 
         return [
             'key' => $providerKey,
-            'label' => is_string($row?->display_name) ? $row->display_name : (string) $default['label'],
+            'label' => is_string($row?->display_name) && trim($row->display_name) !== ''
+                ? $row->display_name
+                : $this->localizedProviderLabel($providerKey, (string) $default['label']),
             'is_enabled' => $row?->is_enabled ?? true,
             'default_model' => $defaultModel,
             'models' => $models,
@@ -516,6 +518,15 @@ final class AIIntegrationService implements AIIntegrationServiceInterface
         }
 
         return $default;
+    }
+
+    private function localizedProviderLabel(string $providerKey, string $fallback): string
+    {
+        $label = __('settings.ai.providers.'.$providerKey);
+
+        return is_string($label) && $label !== 'settings.ai.providers.'.$providerKey
+            ? $label
+            : $fallback;
     }
 
     private function normalizeProviderKey(string $providerKey): string

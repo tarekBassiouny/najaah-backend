@@ -55,12 +55,14 @@ class ExtractPdfTextJob implements ShouldQueue
 
         try {
             $text = $service->extractText($pdf);
+            $pageCount = $service->extractPageCount($pdf);
 
             $pdf->update([
                 'text_content' => $text,
                 'text_extraction_status' => $text === ''
                     ? TextExtractionStatus::Skipped
                     : TextExtractionStatus::Completed,
+                ...($pageCount !== null ? ['page_count' => $pageCount] : []),
             ]);
         } catch (\Throwable $throwable) {
             Log::error('PDF text extraction failed', [
