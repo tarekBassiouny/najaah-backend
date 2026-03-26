@@ -169,12 +169,17 @@ it('localizes center settings summaries and default ai provider labels for cente
     );
 
     $response->assertOk()
-        ->assertJsonPath('data.sections.ai.providers.0.label', 'جيميني')
         ->assertJsonPath('data.summaries.0.title', 'موفر الذكاء الاصطناعي مُدار من المنصة')
         ->assertJsonPath(
             'data.summaries.0.message',
             'تم تهيئة جيميني لهذا المركز. تتم إدارة إتاحة الموفر وحدوده من قبل مدير المنصة.'
         );
+
+    $providers = $response->json('data.sections.ai.providers', []);
+    $gemini = collect($providers)->firstWhere('key', 'gemini');
+
+    expect($gemini)->toBeArray()
+        ->and($gemini['label'] ?? null)->toBe('جيميني');
 });
 
 it('localizes grouped center settings validation errors', function (): void {
