@@ -220,10 +220,10 @@ return [
             'feature_group' => 'codes_access',
             'type' => 'integer',
             'storage' => 'center_settings.settings.video_code_batch_max_quantity',
-            'default' => 10000,
+            'default' => 1000,
             'feature_flag' => 'codes_access',
             'system_limit' => 'max_video_code_batch_quantity',
-            'rules' => ['integer', 'min:1', 'max:10000'],
+            'rules' => ['integer', 'min:1', 'max:1000'],
         ],
         'video_code_batch_default_view_limit' => [
             'scope' => 'center',
@@ -235,7 +235,7 @@ return [
             'default' => 2,
             'feature_flag' => 'codes_access',
             'system_limit' => 'max_video_code_batch_view_limit',
-            'rules' => ['integer', 'min:1', 'max:100'],
+            'rules' => ['integer', 'min:1', 'max:10'],
         ],
         'features' => [
             'scope' => 'center',
@@ -395,8 +395,8 @@ return [
             'type' => 'integer',
             'storage' => 'system_settings.key=max_video_code_batch_quantity',
             'value_key' => 'value',
-            'default' => 10000,
-            'rules' => ['integer', 'min:1', 'max:50000'],
+            'default' => 1000,
+            'rules' => ['integer', 'min:1', 'max:1000'],
         ],
         'max_video_code_batch_view_limit' => [
             'scope' => 'system',
@@ -406,8 +406,8 @@ return [
             'type' => 'integer',
             'storage' => 'system_settings.key=max_video_code_batch_view_limit',
             'value_key' => 'value',
-            'default' => 100,
-            'rules' => ['integer', 'min:1', 'max:1000'],
+            'default' => 10,
+            'rules' => ['integer', 'min:1', 'max:10'],
         ],
         'force_disable_extra_view_requests' => [
             'scope' => 'system',

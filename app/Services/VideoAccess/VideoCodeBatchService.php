@@ -7,12 +7,12 @@ namespace App\Services\VideoAccess;
 use App\Enums\VideoCodeBatchStatus;
 use App\Exceptions\DomainException;
 use App\Jobs\SendVideoCodeBatchCsvToWhatsAppJob;
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoCodeBatch;
 use App\Models\VideoCodeRedemption;
-use App\Models\Center;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Evolution\EvolutionApiClient;
 use App\Services\Settings\PolicySettingsService;
@@ -97,11 +97,11 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
         $maxViewLimit = (int) ($policy['max_video_code_batch_view_limit'] ?? $catalog['max_video_code_batch_view_limit']['default']);
 
         if ($quantity < 1 || $quantity > $maxQuantity) {
-            $this->deny(ErrorCodes::INVALID_STATE, "Quantity must be between 1 and {$maxQuantity}.", 422);
+            $this->deny(ErrorCodes::INVALID_STATE, sprintf('Quantity must be between 1 and %d.', $maxQuantity), 422);
         }
 
         if ($viewLimitPerCode < 1 || $viewLimitPerCode > $maxViewLimit) {
-            $this->deny(ErrorCodes::INVALID_VIEWS, "View limit must be between 1 and {$maxViewLimit}.", 422);
+            $this->deny(ErrorCodes::INVALID_VIEWS, sprintf('View limit must be between 1 and %d.', $maxViewLimit), 422);
         }
 
         return DB::transaction(function () use ($admin, $video, $course, $quantity, $viewLimitPerCode): VideoCodeBatch {
@@ -164,7 +164,7 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
         $maxQuantity = (int) ($policy['video_code_batch_max_quantity'] ?? $catalog['video_code_batch_max_quantity']['default']);
 
         if ($additionalQuantity < 1 || $additionalQuantity > $maxQuantity) {
-            $this->deny(ErrorCodes::INVALID_STATE, "Additional quantity must be between 1 and {$maxQuantity}.", 422);
+            $this->deny(ErrorCodes::INVALID_STATE, sprintf('Additional quantity must be between 1 and %d.', $maxQuantity), 422);
         }
 
         return DB::transaction(function () use ($batch, $additionalQuantity, $maxQuantity): VideoCodeBatch {
@@ -185,7 +185,7 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
 
             $newTotal = $lockedBatch->quantity + $additionalQuantity;
             if ($newTotal > $maxQuantity) {
-                $this->deny(ErrorCodes::INVALID_STATE, "Total batch size cannot exceed {$maxQuantity} codes.", 422);
+                $this->deny(ErrorCodes::INVALID_STATE, sprintf('Total batch size cannot exceed %d codes.', $maxQuantity), 422);
             }
 
             $lockedBatch->quantity = $newTotal;
