@@ -115,6 +115,14 @@ class CourseService implements CourseServiceInterface
             unset($data['description']);
         }
 
+        if (array_key_exists('title_translations', $data) && is_array($data['title_translations'])) {
+            $data['title_translations'] = array_merge($course->title_translations ?? [], $data['title_translations']);
+        }
+
+        if (array_key_exists('description_translations', $data) && is_array($data['description_translations'])) {
+            $data['description_translations'] = array_merge($course->description_translations ?? [], $data['description_translations']);
+        }
+
         if ($actor instanceof User) {
             $this->centerScopeService->assertAdminSameCenter($actor, $course);
         }

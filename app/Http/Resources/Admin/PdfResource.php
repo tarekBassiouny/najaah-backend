@@ -39,6 +39,7 @@ class PdfResource extends JsonResource
             'source_label' => $pdf->source_type,
             'file_extension' => $pdf->file_extension,
             'file_size_kb' => $pdf->file_size_kb,
+            'page_count' => $pdf->page_count,
             'has_extracted_text' => $hasExtractedText,
             'text_extraction_status' => $textExtractionStatus->value,
             'text_extraction_status_label' => $textExtractionStatus->label(),

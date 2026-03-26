@@ -73,6 +73,21 @@ const tree = {
   studentLearningAssets: folder("🧩 Student – Learning Assets"),
   mobileSurveys: folder("🗳️ Student – Surveys"),
   instructors: folder("👨‍🏫 Instructors"),
+  webStudentAuth: folder("🌐 Web – Auth – Student"),
+  webParentAuth: folder("🌐 Web – Auth – Parent"),
+  webStudentCourses: folder("🌐 Web – Student – Courses"),
+  webStudentPlayback: folder("🌐 Web – Student – Playback"),
+  webStudentQuizzes: folder("🌐 Web – Student – Quizzes"),
+  webStudentAssignments: folder("🌐 Web – Student – Assignments"),
+  webStudentProgress: folder("🌐 Web – Student – Learning Assets"),
+  webStudentRequests: folder("🌐 Web – Student – Requests"),
+  webStudentVideoCodes: folder("🌐 Web – Student – Video Codes"),
+  webParentStudents: folder("🌐 Web – Parent – Students"),
+  webParentLinks: folder("🌐 Web – Parent – Links"),
+  webParentProgress: folder("🌐 Web – Parent – Progress"),
+  webParentQuizResults: folder("🌐 Web – Parent – Quiz Results"),
+  webParentAssignments: folder("🌐 Web – Parent – Assignments"),
+  webParentActivity: folder("🌐 Web – Parent – Activity"),
   health: folder("🧪 Smoke & Health"),
   uncategorized: folder("🧩 Uncategorized"),
 };
@@ -95,6 +110,21 @@ const orderedFolders = [
   tree.studentLearningAssets,
   tree.mobileSurveys,
   tree.instructors,
+  tree.webStudentAuth,
+  tree.webParentAuth,
+  tree.webStudentCourses,
+  tree.webStudentPlayback,
+  tree.webStudentQuizzes,
+  tree.webStudentAssignments,
+  tree.webStudentProgress,
+  tree.webStudentRequests,
+  tree.webStudentVideoCodes,
+  tree.webParentStudents,
+  tree.webParentLinks,
+  tree.webParentProgress,
+  tree.webParentQuizResults,
+  tree.webParentAssignments,
+  tree.webParentActivity,
   tree.health,
   tree.uncategorized,
 ];
@@ -233,7 +263,11 @@ function buildCollectionPrerequestEvent() {
     "const autoAuthEnabled = !isProduction && parseBoolean(pm.environment.get('auto_auth_enabled'), true);",
     "const adminToken = pm.environment.get('admin_access_token');",
     "const mobileToken = pm.environment.get('mobile_access_token');",
+    "const webStudentToken = pm.environment.get('web_student_access_token');",
+    "const webParentToken = pm.environment.get('web_parent_access_token');",
     "const adminPublicPaths = new Set(['/api/v1/admin/auth/login']);",
+    "const webStudentPublicPaths = new Set(['/api/v1/web/auth/student/send-otp', '/api/v1/web/auth/student/verify', '/api/v1/web/auth/student/refresh']);",
+    "const webParentPublicPaths = new Set(['/api/v1/web/auth/parent/register', '/api/v1/web/auth/parent/send-otp', '/api/v1/web/auth/parent/verify', '/api/v1/web/auth/parent/refresh']);",
     "const mobileProtectedPatterns = [",
     "  /^\\/api\\/v1\\/auth\\/me(?:\\/|$)/,",
     "  /^\\/api\\/v1\\/(settings\\/device-change|device-change\\/submit)$/,",
@@ -244,9 +278,15 @@ function buildCollectionPrerequestEvent() {
     "  /^\\/api\\/v1\\/centers\\/[^/]+\\/courses\\/[^/]+(?:\\/|$)/,",
     "];",
     "const isAdminRoute = path.startsWith('/api/v1/admin/');",
+    "const isWebStudentRoute = path.startsWith('/api/v1/web/') && !path.startsWith('/api/v1/web/auth/parent/') && !path.startsWith('/api/v1/web/students') && !path.startsWith('/api/v1/web/links') && !path.startsWith('/api/v1/web/quiz-attempts');",
+    "const isWebParentRoute = path.startsWith('/api/v1/web/auth/parent/') || path.startsWith('/api/v1/web/students') || path.startsWith('/api/v1/web/links') || path.startsWith('/api/v1/web/quiz-attempts');",
     "const requiresMobileAuth = mobileProtectedPatterns.some(pattern => pattern.test(path));",
     "if (autoAuthEnabled && isAdminRoute && !adminPublicPaths.has(path) && adminToken) {",
     "  pm.request.headers.upsert({ key: 'Authorization', value: `Bearer ${adminToken}` });",
+    "} else if (autoAuthEnabled && isWebParentRoute && !webParentPublicPaths.has(path) && webParentToken) {",
+    "  pm.request.headers.upsert({ key: 'Authorization', value: `Bearer ${webParentToken}` });",
+    "} else if (autoAuthEnabled && isWebStudentRoute && !webStudentPublicPaths.has(path) && webStudentToken) {",
+    "  pm.request.headers.upsert({ key: 'Authorization', value: `Bearer ${webStudentToken}` });",
     "} else if (autoAuthEnabled && requiresMobileAuth && mobileToken) {",
     "  pm.request.headers.upsert({ key: 'Authorization', value: `Bearer ${mobileToken}` });",
     "}",
@@ -301,6 +341,102 @@ function attachAuthTokenCapture(item, path) {
       "}",
       "if (tokenCaptureEnabled && typeof token?.refresh_token === 'string' && token.refresh_token.length > 0) {",
       "  pm.environment.set('mobile_refresh_token', token.refresh_token);",
+      "}",
+    ]);
+  }
+
+  // Web student auth token capture
+  if (path === "/api/v1/web/auth/student/send-otp") {
+    appendEvent(item, "test", [
+      "const parseBoolean = (value, fallback) => {",
+      "  if (typeof value !== 'string' || value.trim() === '') return fallback;",
+      "  const normalized = value.trim().toLowerCase();",
+      "  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;",
+      "  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;",
+      "  return fallback;",
+      "};",
+      "const tokenCaptureEnabled = !parseBoolean(pm.environment.get('is_production'), false) && parseBoolean(pm.environment.get('token_capture_enabled'), true);",
+      "pm.test('Web student OTP request succeeds', () => {",
+      "  pm.response.to.have.status(200);",
+      "});",
+      "const json = pm.response.json();",
+      "const otpToken = json?.token?.token ?? json?.token ?? null;",
+      "if (tokenCaptureEnabled && typeof otpToken === 'string' && otpToken.length > 0) {",
+      "  pm.environment.set('web_student_otp_token', otpToken);",
+      "}",
+    ]);
+  }
+
+  if (path === "/api/v1/web/auth/student/verify" || path === "/api/v1/web/auth/student/refresh") {
+    appendEvent(item, "test", [
+      "const parseBoolean = (value, fallback) => {",
+      "  if (typeof value !== 'string' || value.trim() === '') return fallback;",
+      "  const normalized = value.trim().toLowerCase();",
+      "  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;",
+      "  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;",
+      "  return fallback;",
+      "};",
+      "const tokenCaptureEnabled = !parseBoolean(pm.environment.get('is_production'), false) && parseBoolean(pm.environment.get('token_capture_enabled'), true);",
+      "pm.test('Web student auth request succeeds', () => {",
+      "  pm.response.to.have.status(200);",
+      "});",
+      "const json = pm.response.json();",
+      "const token = json?.token || null;",
+      "if (tokenCaptureEnabled && typeof token?.access_token === 'string' && token.access_token.length > 0) {",
+      "  pm.environment.set('web_student_access_token', token.access_token);",
+      "}",
+      "if (tokenCaptureEnabled && typeof token?.refresh_token === 'string' && token.refresh_token.length > 0) {",
+      "  pm.environment.set('web_student_refresh_token', token.refresh_token);",
+      "}",
+    ]);
+  }
+
+  // Web parent auth token capture
+  if (path === "/api/v1/web/auth/parent/send-otp") {
+    appendEvent(item, "test", [
+      "const parseBoolean = (value, fallback) => {",
+      "  if (typeof value !== 'string' || value.trim() === '') return fallback;",
+      "  const normalized = value.trim().toLowerCase();",
+      "  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;",
+      "  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;",
+      "  return fallback;",
+      "};",
+      "const tokenCaptureEnabled = !parseBoolean(pm.environment.get('is_production'), false) && parseBoolean(pm.environment.get('token_capture_enabled'), true);",
+      "pm.test('Web parent OTP request succeeds', () => {",
+      "  pm.response.to.have.status(200);",
+      "});",
+      "const json = pm.response.json();",
+      "const otpToken = json?.token?.token ?? json?.token ?? null;",
+      "if (tokenCaptureEnabled && typeof otpToken === 'string' && otpToken.length > 0) {",
+      "  pm.environment.set('web_parent_otp_token', otpToken);",
+      "}",
+    ]);
+  }
+
+  if (
+    path === "/api/v1/web/auth/parent/verify" ||
+    path === "/api/v1/web/auth/parent/refresh" ||
+    path === "/api/v1/web/auth/parent/register"
+  ) {
+    appendEvent(item, "test", [
+      "const parseBoolean = (value, fallback) => {",
+      "  if (typeof value !== 'string' || value.trim() === '') return fallback;",
+      "  const normalized = value.trim().toLowerCase();",
+      "  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;",
+      "  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;",
+      "  return fallback;",
+      "};",
+      "const tokenCaptureEnabled = !parseBoolean(pm.environment.get('is_production'), false) && parseBoolean(pm.environment.get('token_capture_enabled'), true);",
+      "pm.test('Web parent auth request succeeds', () => {",
+      "  pm.response.to.have.status(200);",
+      "});",
+      "const json = pm.response.json();",
+      "const token = json?.token || null;",
+      "if (tokenCaptureEnabled && typeof token?.access_token === 'string' && token.access_token.length > 0) {",
+      "  pm.environment.set('web_parent_access_token', token.access_token);",
+      "}",
+      "if (tokenCaptureEnabled && typeof token?.refresh_token === 'string' && token.refresh_token.length > 0) {",
+      "  pm.environment.set('web_parent_refresh_token', token.refresh_token);",
       "}",
     ]);
   }
@@ -449,6 +585,13 @@ function createBootstrapClone(item, path) {
     ["/api/v1/auth/send-otp", "Mobile Send OTP"],
     ["/api/v1/auth/verify", "Mobile Verify OTP"],
     ["/api/v1/auth/refresh", "Mobile Refresh Token"],
+    ["/api/v1/web/auth/student/send-otp", "Web Student Send OTP"],
+    ["/api/v1/web/auth/student/verify", "Web Student Verify OTP"],
+    ["/api/v1/web/auth/student/refresh", "Web Student Refresh Token"],
+    ["/api/v1/web/auth/parent/register", "Web Parent Register"],
+    ["/api/v1/web/auth/parent/send-otp", "Web Parent Send OTP"],
+    ["/api/v1/web/auth/parent/verify", "Web Parent Verify OTP"],
+    ["/api/v1/web/auth/parent/refresh", "Web Parent Refresh Token"],
   ]);
 
   const bootstrapName = bootstrapNames.get(path);
@@ -625,6 +768,60 @@ function explicitDisplayName(method, path) {
     [/^\/api\/v1\/resolve\/centers\/[^/]+$/, "GET", "Resolve Center by Slug"],
     [/^\/webhooks\/bunny$/, "POST", "Receive Bunny Webhook"],
     [/^\/webhooks\/evolution$/, "POST", "Receive Evolution Webhook"],
+
+    // Web Student Auth
+    [/^\/api\/v1\/web\/auth\/student\/send-otp$/, "POST", "Web Student Send OTP"],
+    [/^\/api\/v1\/web\/auth\/student\/verify$/, "POST", "Web Student Verify OTP"],
+    [/^\/api\/v1\/web\/auth\/student\/refresh$/, "POST", "Web Student Refresh Token"],
+    [/^\/api\/v1\/web\/auth\/student\/me$/, "GET", "Web Student Get Profile"],
+    [/^\/api\/v1\/web\/auth\/student\/logout$/, "POST", "Web Student Logout"],
+
+    // Web Parent Auth
+    [/^\/api\/v1\/web\/auth\/parent\/register$/, "POST", "Web Parent Register"],
+    [/^\/api\/v1\/web\/auth\/parent\/send-otp$/, "POST", "Web Parent Send OTP"],
+    [/^\/api\/v1\/web\/auth\/parent\/verify$/, "POST", "Web Parent Verify OTP"],
+    [/^\/api\/v1\/web\/auth\/parent\/refresh$/, "POST", "Web Parent Refresh Token"],
+    [/^\/api\/v1\/web\/auth\/parent\/me$/, "GET", "Web Parent Get Profile"],
+    [/^\/api\/v1\/web\/auth\/parent\/logout$/, "POST", "Web Parent Logout"],
+
+    // Web Student routes (mirror mobile with Web prefix)
+    [/^\/api\/v1\/web\/courses\/explore$/, "GET", "Web Explore Courses"],
+    [/^\/api\/v1\/web\/courses\/enrolled$/, "GET", "Web List Enrolled Courses"],
+    [/^\/api\/v1\/web\/courses\/enrolled\/by-instructor$/, "GET", "Web List Enrolled by Instructor"],
+    [/^\/api\/v1\/web\/auth\/me$/, "GET", "Web Student Profile"],
+    [/^\/api\/v1\/web\/auth\/me\/profile$/, "GET", "Web Student Full Profile"],
+    [/^\/api\/v1\/web\/auth\/me$/, "POST", "Web Update Student Profile"],
+    [/^\/api\/v1\/web\/auth\/me\/education$/, "PATCH", "Web Update Student Education"],
+    [/^\/api\/v1\/web\/auth\/logout$/, "POST", "Web Student Logout"],
+    [/^\/api\/v1\/web\/search$/, "GET", "Web Search Courses"],
+    [/^\/api\/v1\/web\/categories$/, "GET", "Web List Categories"],
+    [/^\/api\/v1\/web\/instructors$/, "GET", "Web List Instructors"],
+    [/^\/api\/v1\/web\/centers$/, "GET", "Web List Centers"],
+    [/^\/api\/v1\/web\/centers\/[^/]+$/, "GET", "Web Show Center"],
+    [/^\/api\/v1\/web\/centers\/[^/]+\/courses\/[^/]+$/, "GET", "Web Show Course Details"],
+    [/^\/api\/v1\/web\/surveys\/assigned$/, "GET", "Web List Assigned Surveys"],
+    [/^\/api\/v1\/web\/surveys\/[^/]+$/, "GET", "Web Show Survey"],
+    [/^\/api\/v1\/web\/surveys\/[^/]+\/submit$/, "POST", "Web Submit Survey"],
+
+    // Web Parent routes
+    [/^\/api\/v1\/web\/students$/, "GET", "Web Parent List Students"],
+    [/^\/api\/v1\/web\/students\/[^/]+$/, "GET", "Web Parent Show Student"],
+    [/^\/api\/v1\/web\/links$/, "GET", "Web Parent List Link Requests"],
+    [/^\/api\/v1\/web\/links$/, "POST", "Web Parent Request Link"],
+    [/^\/api\/v1\/web\/students\/[^/]+\/enrollments$/, "GET", "Web Parent List Enrollments"],
+    [/^\/api\/v1\/web\/students\/[^/]+\/courses\/[^/]+\/progress$/, "GET", "Web Parent Course Progress"],
+    [/^\/api\/v1\/web\/students\/[^/]+\/courses\/[^/]+\/quiz-attempts$/, "GET", "Web Parent List Quiz Attempts"],
+    [/^\/api\/v1\/web\/quiz-attempts\/[^/]+$/, "GET", "Web Parent Show Quiz Attempt"],
+    [/^\/api\/v1\/web\/students\/[^/]+\/courses\/[^/]+\/assignments$/, "GET", "Web Parent List Assignments"],
+    [/^\/api\/v1\/web\/students\/[^/]+\/centers\/[^/]+\/activity\/weekly$/, "GET", "Web Parent Weekly Activity"],
+
+    // Admin parent management
+    [/^\/api\/v1\/admin\/centers\/[^/]+\/parents$/, "GET", "List Center Parents"],
+    [/^\/api\/v1\/admin\/centers\/[^/]+\/parents\/pending-requests$/, "GET", "List Pending Parent Requests"],
+    [/^\/api\/v1\/admin\/centers\/[^/]+\/parents\/[^/]+$/, "GET", "Show Parent Details"],
+    [/^\/api\/v1\/admin\/centers\/[^/]+\/parent-links$/, "POST", "Create Parent-Student Link"],
+    [/^\/api\/v1\/admin\/centers\/[^/]+\/parent-links\/[^/]+$/, "PATCH", "Update Parent-Student Link"],
+    [/^\/api\/v1\/admin\/students\/[^/]+\/parent-links$/, "GET", "List Student Parent Links"],
   ];
 
   for (const [pattern, expectedMethod, name] of rules) {
@@ -818,6 +1015,8 @@ function resolveAdminModule(path, scope) {
   if (clean.startsWith("notifications")) return "Notifications";
   if (clean.startsWith("roles") || clean.startsWith("permissions")) return "Roles & Permissions";
   if (clean.startsWith("users")) return "Admin Users";
+  if (clean.startsWith("students") && clean.includes("parent-links")) return "Parents";
+  if (clean.startsWith("parents") || clean.startsWith("parent-links")) return "Parents";
   if (clean.startsWith("students")) return "Students";
   if (clean.startsWith("settings")) return "Settings";
   if (clean.startsWith("audit-logs")) return "Audit Logs";
@@ -983,6 +1182,121 @@ function route(item) {
 
   if (path.startsWith("/api/v1/surveys")) {
     return tree.mobileSurveys;
+  }
+
+  // ── Web Portal Routes ──
+
+  if (path.startsWith("/api/v1/web/auth/student/")) {
+    return tree.webStudentAuth;
+  }
+
+  if (path.startsWith("/api/v1/web/auth/parent/")) {
+    return tree.webParentAuth;
+  }
+
+  // Web student profile & auth (me, logout under /api/v1/web/auth/)
+  if (path.startsWith("/api/v1/web/auth/")) {
+    return tree.webStudentAuth;
+  }
+
+  // Web parent: activity
+  if (/^\/api\/v1\/web\/students\/[^/]+\/centers\/[^/]+\/activity\/weekly$/.test(path)) {
+    return tree.webParentActivity;
+  }
+
+  // Web parent: quiz results
+  if (
+    /^\/api\/v1\/web\/students\/[^/]+\/courses\/[^/]+\/quiz-attempts$/.test(path) ||
+    /^\/api\/v1\/web\/quiz-attempts\/[^/]+$/.test(path)
+  ) {
+    return tree.webParentQuizResults;
+  }
+
+  // Web parent: assignments
+  if (/^\/api\/v1\/web\/students\/[^/]+\/courses\/[^/]+\/assignments$/.test(path)) {
+    return tree.webParentAssignments;
+  }
+
+  // Web parent: progress
+  if (/^\/api\/v1\/web\/students\/[^/]+\/courses\/[^/]+\/progress$/.test(path)) {
+    return tree.webParentProgress;
+  }
+
+  // Web parent: enrollments
+  if (/^\/api\/v1\/web\/students\/[^/]+\/enrollments$/.test(path)) {
+    return tree.webParentStudents;
+  }
+
+  // Web parent: students
+  if (path === "/api/v1/web/students" || /^\/api\/v1\/web\/students\/[^/]+$/.test(path)) {
+    return tree.webParentStudents;
+  }
+
+  // Web parent: links
+  if (path === "/api/v1/web/links" || /^\/api\/v1\/web\/links\/[^/]+/.test(path)) {
+    return tree.webParentLinks;
+  }
+
+  // Web student: playback
+  if (
+    /^\/api\/v1\/web\/centers\/[^/]+\/courses\/[^/]+\/videos\/[^/]+\/(request_playback|refresh_token|playback_progress|close_session)$/.test(path)
+  ) {
+    return tree.webStudentPlayback;
+  }
+
+  // Web student: requests (extra view, access request, enrollment)
+  if (
+    /^\/api\/v1\/web\/centers\/[^/]+\/courses\/[^/]+\/videos\/[^/]+\/(extra-view|access-request|access-status)$/.test(path) ||
+    /^\/api\/v1\/web\/centers\/[^/]+\/courses\/[^/]+\/enroll-request$/.test(path) ||
+    path === "/api/v1/web/video-access-codes/redeem"
+  ) {
+    return tree.webStudentRequests;
+  }
+
+  // Web student: video codes
+  if (
+    path === "/api/v1/web/video-codes/redeem" ||
+    path === "/api/v1/web/video-codes/validate" ||
+    path === "/api/v1/web/video-codes/my-redemptions"
+  ) {
+    return tree.webStudentVideoCodes;
+  }
+
+  // Web student: PDFs
+  if (/^\/api\/v1\/web\/centers\/[^/]+\/courses\/[^/]+\/pdfs\/[^/]+\/signed-url$/.test(path)) {
+    return tree.webStudentRequests;
+  }
+
+  // Web student: quizzes
+  if (
+    /^\/api\/v1\/web\/centers\/[^/]+\/assets\/quiz\/[^/]+\/attempts$/.test(path) ||
+    /^\/api\/v1\/web\/centers\/[^/]+\/assets\/quiz\/attempts\/[^/]+/.test(path)
+  ) {
+    return tree.webStudentQuizzes;
+  }
+
+  // Web student: assignments
+  if (
+    /^\/api\/v1\/web\/centers\/[^/]+\/assets\/assignment\//.test(path)
+  ) {
+    return tree.webStudentAssignments;
+  }
+
+  // Web student: learning assets & surveys
+  if (
+    /^\/api\/v1\/web\/centers\/[^/]+\/courses\/[^/]+\/assets$/.test(path) ||
+    /^\/api\/v1\/web\/centers\/[^/]+\/assets\/[^/]+\/[^/]+/.test(path)
+  ) {
+    return tree.webStudentProgress;
+  }
+
+  if (path.startsWith("/api/v1/web/surveys")) {
+    return tree.webStudentProgress;
+  }
+
+  // Web student: courses, explore, enrolled, education, etc.
+  if (path.startsWith("/api/v1/web/")) {
+    return tree.webStudentCourses;
   }
 
   if (path.startsWith(API_PREFIX)) {

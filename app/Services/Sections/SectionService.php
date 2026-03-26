@@ -100,6 +100,14 @@ class SectionService implements SectionServiceInterface
             unset($data['description']);
         }
 
+        if (array_key_exists('title_translations', $data) && is_array($data['title_translations'])) {
+            $data['title_translations'] = array_merge($section->title_translations ?? [], $data['title_translations']);
+        }
+
+        if (array_key_exists('description_translations', $data) && is_array($data['description_translations'])) {
+            $data['description_translations'] = array_merge($section->description_translations ?? [], $data['description_translations']);
+        }
+
         if ($actor instanceof User) {
             $section->loadMissing('course');
             $this->centerScopeService->assertAdminSameCenter($actor, $section->course);

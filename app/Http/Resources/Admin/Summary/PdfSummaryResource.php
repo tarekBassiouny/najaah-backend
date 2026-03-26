@@ -27,7 +27,9 @@ class PdfSummaryResource extends JsonResource
         return [
             'id' => $pdf->id,
             'title' => $pdf->translate('title'),
+            'title_translations' => $pdf->title_translations,
             'tags' => $pdf->tags,
+            'page_count' => $pdf->page_count,
         ];
     }
 }

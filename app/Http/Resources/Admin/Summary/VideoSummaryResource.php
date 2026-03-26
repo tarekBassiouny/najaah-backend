@@ -29,6 +29,7 @@ class VideoSummaryResource extends JsonResource
         return [
             'id' => $video->id,
             'title' => $video->translate('title'),
+            'title_translations' => $video->title_translations,
             'tags' => $video->tags,
             'duration_seconds' => $video->duration_seconds,
             'thumbnail_url' => $thumbnail,

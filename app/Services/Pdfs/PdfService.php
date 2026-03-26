@@ -111,6 +111,14 @@ class PdfService implements PdfServiceInterface
             unset($payload['description']);
         }
 
+        if (array_key_exists('title_translations', $payload) && is_array($payload['title_translations'])) {
+            $payload['title_translations'] = array_merge($pdf->title_translations ?? [], $payload['title_translations']);
+        }
+
+        if (array_key_exists('description_translations', $payload) && is_array($payload['description_translations'])) {
+            $payload['description_translations'] = array_merge($pdf->description_translations ?? [], $payload['description_translations']);
+        }
+
         $pdf->update($payload);
 
         $this->auditLogService->log($admin, $pdf, AuditActions::PDF_UPDATED, [
