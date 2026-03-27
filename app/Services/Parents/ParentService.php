@@ -15,15 +15,19 @@ use App\Models\ParentStudentLink;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Parents\Contracts\ParentServiceInterface;
+use App\Services\Phone\PhoneNormalizer;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class ParentService implements ParentServiceInterface
 {
     public function __construct(
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly PhoneNormalizer $phoneNormalizer,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     /**
@@ -53,10 +57,21 @@ class ParentService implements ParentServiceInterface
 
     public function requestLink(User $parent, string $studentPhone, ?int $centerId): ParentStudentLink
     {
+        $normalizedPhone = $this->phoneNormalizer->normalize($studentPhone, $parent->country_code);
+
         /** @var User|null $student */
         $student = User::query()
-            ->where('phone', $studentPhone)
             ->where('is_student', true)
+            ->where(function ($query) use ($normalizedPhone, $studentPhone): void {
+                if ($normalizedPhone !== null) {
+                    $query->where('phone_normalized', $normalizedPhone)
+                        ->orWhere('phone', $studentPhone);
+
+                    return;
+                }
+
+                $query->where('phone', $studentPhone);
+            })
             ->when(is_numeric($centerId), fn ($q) => $q->where('center_id', $centerId))
             ->first();
 
@@ -101,7 +116,13 @@ class ParentService implements ParentServiceInterface
     public function autoLinkByPhone(User $parent, ?int $centerId): Collection
     {
         $students = User::query()
-            ->where('parent_phone', $parent->phone)
+            ->where(function ($query) use ($parent): void {
+                if ($parent->phone_normalized !== null) {
+                    $query->where('parent_phone_normalized', $parent->phone_normalized);
+                }
+
+                $query->orWhere('parent_phone', $parent->phone);
+            })
             ->where('is_student', true)
             ->when(is_numeric($centerId), fn ($q) => $q->where('center_id', $centerId))
             ->get();
@@ -267,6 +288,8 @@ class ParentService implements ParentServiceInterface
             ->when($search !== null && $search !== '', fn ($q) => $q->where(function ($q) use ($search): void {
                 $q->where('name', 'like', sprintf('%%%s%%', $search))
                     ->orWhere('phone', 'like', sprintf('%%%s%%', $search));
+
+                $this->phoneSearch->applyUserPhoneLike($q, $search);
             }))
             ->withCount(['parentLinks as active_links_count' => fn ($q) => $q->active()])
             ->orderByDesc('created_at')

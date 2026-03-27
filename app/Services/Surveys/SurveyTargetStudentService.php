@@ -7,13 +7,15 @@ namespace App\Services\Surveys;
 use App\Enums\SurveyScopeType;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class SurveyTargetStudentService
 {
     public function __construct(
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     /**
@@ -43,6 +45,8 @@ class SurveyTargetStudentService
                     ->orWhere('username', 'like', '%'.$search.'%')
                     ->orWhere('email', 'like', '%'.$search.'%')
                     ->orWhere('phone', 'like', '%'.$search.'%');
+
+                $this->phoneSearch->applyUserPhoneLike($builder, $search);
             });
         }
 

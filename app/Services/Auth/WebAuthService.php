@@ -11,18 +11,35 @@ use App\Models\ParentStudentLink;
 use App\Models\User;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Auth\Contracts\WebAuthServiceInterface;
+use App\Services\Phone\PhoneNormalizer;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
 class WebAuthService implements WebAuthServiceInterface
 {
     public function __construct(
-        private readonly OtpServiceInterface $otpService
+        private readonly OtpServiceInterface $otpService,
+        private readonly PhoneNormalizer $phoneNormalizer
     ) {}
 
     public function sendOtp(string $phone, string $countryCode, ?int $centerId = null, bool $isParent = false): string
     {
-        return $this->otpService->send($phone, $countryCode, $centerId);
+        $token = $this->otpService->send($phone, $countryCode, $centerId);
+
+        if (! $isParent) {
+            return $token;
+        }
+
+        $parent = $this->resolveExistingUser($phone, $countryCode, $centerId);
+
+        if ($parent instanceof User) {
+            OtpCode::query()
+                ->where('otp_token', $token)
+                ->update(['user_id' => $parent->id]);
+        }
+
+        return $token;
     }
 
     public function verifyOtp(string $otp, string $token): ?OtpCode
@@ -59,9 +76,10 @@ class WebAuthService implements WebAuthServiceInterface
 
     private function resolveExistingUser(string $phone, string $countryCode, ?int $centerId): ?User
     {
-        $query = User::query()
-            ->where('phone', $phone)
-            ->where('country_code', $countryCode);
+        $normalizedPhone = $this->phoneNormalizer->normalize($phone, $countryCode);
+        $query = User::query();
+
+        $this->applyPhoneLookup($query, $normalizedPhone, $phone, $countryCode);
 
         if (is_numeric($centerId)) {
             $query->where('center_id', $centerId);
@@ -112,7 +130,13 @@ class WebAuthService implements WebAuthServiceInterface
         $students = User::query()
             ->where('center_id', $centerId)
             ->where('is_student', true)
-            ->where('parent_phone', $phone)
+            ->where(function (Builder $query) use ($parent, $phone): void {
+                if ($parent->phone_normalized !== null) {
+                    $query->where('parent_phone_normalized', $parent->phone_normalized);
+                }
+
+                $query->orWhere('parent_phone', $phone);
+            })
             ->get();
 
         $linked = false;
@@ -138,5 +162,26 @@ class WebAuthService implements WebAuthServiceInterface
         }
 
         return $linked;
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     */
+    private function applyPhoneLookup(Builder $query, ?string $normalizedPhone, string $phone, string $countryCode): void
+    {
+        $query->where(function (Builder $builder) use ($normalizedPhone, $phone, $countryCode): void {
+            if ($normalizedPhone !== null) {
+                $builder->where('phone_normalized', $normalizedPhone)
+                    ->orWhereRaw(
+                        "CONCAT('+', REPLACE(REPLACE(COALESCE(country_code, ''), '+', ''), '00', ''), COALESCE(phone, '')) = ?",
+                        [$normalizedPhone]
+                    );
+
+                return;
+            }
+
+            $builder->where('phone', $phone)
+                ->where('country_code', $countryCode);
+        });
     }
 }

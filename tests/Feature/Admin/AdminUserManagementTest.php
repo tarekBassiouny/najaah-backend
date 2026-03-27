@@ -456,7 +456,8 @@ it('searches admin users by phone', function (): void {
         'is_student' => false,
         'center_id' => null,
         'email' => 'phone.search.admin@example.com',
-        'phone' => '19998887766',
+        'phone' => '1225291840',
+        'country_code' => '+20',
     ]);
     $otherAdmin = User::factory()->create([
         'is_student' => false,
@@ -465,7 +466,7 @@ it('searches admin users by phone', function (): void {
         'phone' => '19990001122',
     ]);
 
-    $response = $this->getJson('/api/v1/admin/users?page=1&per_page=10&search=19998887766', $this->adminHeaders());
+    $response = $this->getJson('/api/v1/admin/users?page=1&per_page=10&search=1225291840', $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('success', true);
@@ -476,6 +477,20 @@ it('searches admin users by phone', function (): void {
         ->all();
 
     expect($ids)
+        ->toContain((int) $matchingAdmin->id)
+        ->not->toContain((int) $otherAdmin->id);
+
+    $localPhoneResponse = $this->getJson('/api/v1/admin/users?page=1&per_page=10&search=01225291840', $this->adminHeaders());
+
+    $localPhoneResponse->assertOk()
+        ->assertJsonPath('success', true);
+
+    $localPhoneIds = collect((array) $localPhoneResponse->json('data'))
+        ->pluck('id')
+        ->map(static fn ($id): int => (int) $id)
+        ->all();
+
+    expect($localPhoneIds)
         ->toContain((int) $matchingAdmin->id)
         ->not->toContain((int) $otherAdmin->id);
 });

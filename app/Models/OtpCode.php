@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Services\Phone\PhoneNormalizer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int|null $user_id
  * @property string $phone
+ * @property string|null $country_code
+ * @property string|null $phone_normalized
  * @property string $otp_code
  * @property string $otp_token
  * @property string $provider
@@ -35,6 +38,7 @@ class OtpCode extends Model
     protected $fillable = [
         'phone',
         'country_code',
+        'phone_normalized',
         'otp_code',
         'otp_token',
         'provider',
@@ -90,6 +94,14 @@ class OtpCode extends Model
             if ($otp->expires_at === null) {
                 $otp->expires_at = now()->addMinutes(5);
             }
+
+            /** @var PhoneNormalizer $normalizer */
+            $normalizer = app(PhoneNormalizer::class);
+
+            $otp->phone_normalized = $normalizer->normalize(
+                $otp->phone,
+                $otp->country_code
+            );
         });
     }
 }

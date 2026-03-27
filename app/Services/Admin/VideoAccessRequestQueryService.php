@@ -8,6 +8,7 @@ use App\Filters\Admin\VideoAccessRequestFilters;
 use App\Models\User;
 use App\Models\VideoAccessRequest;
 use App\Services\Centers\CenterScopeService;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -15,7 +16,8 @@ use Illuminate\Support\Carbon;
 class VideoAccessRequestQueryService
 {
     public function __construct(
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     /**
@@ -75,11 +77,13 @@ class VideoAccessRequestQueryService
 
             if ($term !== '') {
                 $query->where(function (Builder $wrapped) use ($term): void {
-                    $wrapped->whereHas('user', static function (Builder $userQuery) use ($term): void {
+                    $wrapped->whereHas('user', function (Builder $userQuery) use ($term): void {
                         $userQuery
                             ->where('name', 'like', sprintf('%%%s%%', $term))
                             ->orWhere('email', 'like', sprintf('%%%s%%', $term))
                             ->orWhere('phone', 'like', sprintf('%%%s%%', $term));
+
+                        $this->phoneSearch->applyUserPhoneLike($userQuery, $term);
                     })->orWhereHas('video', function (Builder $videoQuery) use ($term): void {
                         $videoQuery->whereTranslationLike(['title'], $term, $this->searchLocales());
                     });

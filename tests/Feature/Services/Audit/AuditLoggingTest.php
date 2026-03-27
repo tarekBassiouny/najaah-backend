@@ -26,6 +26,7 @@ use App\Services\Playback\ExtraViewRequestService;
 use App\Services\Requests\RequestService;
 use App\Services\Roles\RoleService;
 use App\Support\AuditActions;
+use App\Support\PhoneSearch;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Helpers\AdminTestHelper;
 
@@ -54,7 +55,8 @@ test('admin user creation is audited with actor', function (): void {
     $admin = $this->asAdmin();
     $service = new AdminUserService(
         new AuditLogService,
-        new CenterScopeService
+        new CenterScopeService,
+        app(PhoneSearch::class)
     );
 
     $created = $service->create([

@@ -8,6 +8,7 @@ use App\Filters\Admin\DeviceChangeRequestFilters;
 use App\Models\DeviceChangeRequest;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -15,7 +16,8 @@ use Illuminate\Support\Carbon;
 class DeviceChangeRequestQueryService
 {
     public function __construct(
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     /**
@@ -96,11 +98,13 @@ class DeviceChangeRequestQueryService
         if ($filters->search !== null) {
             $term = trim($filters->search);
             if ($term !== '') {
-                $query->whereHas('user', static function (Builder $userQuery) use ($term): void {
+                $query->whereHas('user', function (Builder $userQuery) use ($term): void {
                     $userQuery
                         ->where('name', 'like', sprintf('%%%s%%', $term))
                         ->orWhere('email', 'like', sprintf('%%%s%%', $term))
                         ->orWhere('phone', 'like', sprintf('%%%s%%', $term));
+
+                    $this->phoneSearch->applyUserPhoneLike($userQuery, $term);
                 });
             }
         }

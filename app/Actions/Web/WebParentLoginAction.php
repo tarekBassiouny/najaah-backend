@@ -7,6 +7,7 @@ namespace App\Actions\Web;
 use App\Enums\TokenPlatform;
 use App\Enums\UserStatus;
 use App\Models\Center;
+use App\Models\OtpCode;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\JwtServiceInterface;
@@ -15,6 +16,7 @@ use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Settings\PolicySettingsService;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class WebParentLoginAction
@@ -45,7 +47,7 @@ class WebParentLoginAction
             return ['error' => ErrorCodes::OTP_INVALID];
         }
 
-        $user = $otp->user;
+        $user = $otp->user ?? $this->resolveUserFromOtp($otp, $centerId);
 
         if (! $user instanceof User) {
             return ['error' => ErrorCodes::USER_NOT_FOUND_FOR_OTP];
@@ -110,5 +112,34 @@ class WebParentLoginAction
             'token' => $token,
             'device_uuid' => $deviceUuid,
         ];
+    }
+
+    private function resolveUserFromOtp(OtpCode $otp, ?int $centerId): ?User
+    {
+        $query = User::query()
+            ->where('is_parent', true);
+
+        if (is_numeric($centerId)) {
+            $query->where('center_id', $centerId);
+        } else {
+            $query->whereNull('center_id');
+        }
+
+        $query->where(function (Builder $builder) use ($otp): void {
+            if ($otp->phone_normalized !== null) {
+                $builder->where('phone_normalized', $otp->phone_normalized)
+                    ->orWhereRaw(
+                        "CONCAT('+', REPLACE(REPLACE(COALESCE(country_code, ''), '+', ''), '00', ''), COALESCE(phone, '')) = ?",
+                        [$otp->phone_normalized]
+                    );
+
+                return;
+            }
+
+            $builder->where('phone', $otp->phone)
+                ->where('country_code', $otp->country_code);
+        });
+
+        return $query->first();
     }
 }
