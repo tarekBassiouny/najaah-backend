@@ -30,7 +30,7 @@ class UpdateAdminProfileRequest extends FormRequest
             'phone' => [
                 'sometimes',
                 'string',
-                'regex:/^[1-9][0-9]{9}$/',
+                'regex:/^(?:[1-9][0-9]{9}|01[0-9]{9})$/',
                 Rule::unique('users', 'phone')
                     ->ignore($userId)
                     ->where(function ($query) use ($centerId): void {
@@ -90,8 +90,8 @@ class UpdateAdminProfileRequest extends FormRequest
                 'example' => 'Tarek Admin',
             ],
             'phone' => [
-                'description' => 'Admin phone number (10 digits, no country code).',
-                'example' => '19990000003',
+                'description' => 'Admin phone number. Accepts either a 10-digit subscriber number or an 11-digit Egyptian local mobile number starting with 01.',
+                'example' => '01225291840',
             ],
             'country_code' => [
                 'description' => 'Admin country dialing code with + or 00 prefix.',

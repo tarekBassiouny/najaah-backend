@@ -126,7 +126,7 @@ test('send validates base phone and country code formats', function (): void {
     ]);
 
     $response->assertStatus(422)
-        ->assertJsonValidationErrors(['phone', 'country_code']);
+        ->assertJsonValidationErrors(['country_code']);
 
     $responseWithCountryCodeInPhone = $this->postJson('/api/v1/auth/send-otp', [
         'phone' => '201225291841',

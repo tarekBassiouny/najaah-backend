@@ -10,6 +10,7 @@ use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Phone\PhoneNormalizer;
 use App\Services\Students\StudentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -55,13 +56,15 @@ test('execute returns payload when otp valid', function (): void {
     $auditLogService->shouldReceive('log')
         ->once()
         ->with($user, $user, \Mockery::type('string'));
+    $phoneNormalizer = new PhoneNormalizer;
 
     $action = new LoginAction(
         $otpService,
         $deviceService,
         $jwtService,
         $studentService,
-        $auditLogService
+        $auditLogService,
+        $phoneNormalizer
     );
 
     $result = $action->execute([
@@ -95,13 +98,15 @@ test('execute returns error when otp invalid', function (): void {
 
     $auditLogService = \Mockery::mock(AuditLogService::class);
     $auditLogService->shouldNotReceive('log');
+    $phoneNormalizer = new PhoneNormalizer;
 
     $action = new LoginAction(
         $otpService,
         $deviceService,
         $jwtService,
         $studentService,
-        $auditLogService
+        $auditLogService,
+        $phoneNormalizer
     );
 
     $result = $action->execute([
@@ -135,13 +140,15 @@ test('execute returns error when center mismatches', function (): void {
 
     $auditLogService = \Mockery::mock(AuditLogService::class);
     $auditLogService->shouldNotReceive('log');
+    $phoneNormalizer = new PhoneNormalizer;
 
     $action = new LoginAction(
         $otpService,
         $deviceService,
         $jwtService,
         $studentService,
-        $auditLogService
+        $auditLogService,
+        $phoneNormalizer
     );
 
     $result = $action->execute([
@@ -175,13 +182,15 @@ test('execute returns error when system scope login is used for center student',
 
     $auditLogService = \Mockery::mock(AuditLogService::class);
     $auditLogService->shouldNotReceive('log');
+    $phoneNormalizer = new PhoneNormalizer;
 
     $action = new LoginAction(
         $otpService,
         $deviceService,
         $jwtService,
         $studentService,
-        $auditLogService
+        $auditLogService,
+        $phoneNormalizer
     );
 
     $result = $action->execute([
@@ -215,13 +224,15 @@ test('execute returns error when center scope login is used for system student',
 
     $auditLogService = \Mockery::mock(AuditLogService::class);
     $auditLogService->shouldNotReceive('log');
+    $phoneNormalizer = new PhoneNormalizer;
 
     $action = new LoginAction(
         $otpService,
         $deviceService,
         $jwtService,
         $studentService,
-        $auditLogService
+        $auditLogService,
+        $phoneNormalizer
     );
 
     $result = $action->execute([
@@ -298,13 +309,15 @@ test('execute creates student when otp has no user', function (): void {
             \Mockery::on(fn ($subject): bool => $subject instanceof User && $subject->phone === '1000000000'),
             \Mockery::type('string')
         );
+    $phoneNormalizer = new PhoneNormalizer;
 
     $action = new LoginAction(
         $otpService,
         $deviceService,
         $jwtService,
         $studentService,
-        $auditLogService
+        $auditLogService,
+        $phoneNormalizer
     );
 
     $result = $action->execute([

@@ -19,7 +19,7 @@ class WebOtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required', 'string', 'regex:/^[1-9][0-9]{9}$/'],
+            'phone' => ['required', 'string', 'regex:/^(?:[1-9][0-9]{9}|01[0-9]{9})$/'],
             'country_code' => ['required', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
         ];
     }

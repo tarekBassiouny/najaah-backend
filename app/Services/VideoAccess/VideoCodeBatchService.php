@@ -18,6 +18,7 @@ use App\Services\Evolution\EvolutionApiClient;
 use App\Services\Settings\PolicySettingsService;
 use App\Services\VideoAccess\Contracts\VideoCodeBatchServiceInterface;
 use App\Support\ErrorCodes;
+use App\Support\PhoneSearch;
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -72,7 +73,8 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
         private readonly VideoCodeGenerator $codeGenerator,
         private readonly CenterScopeService $centerScopeService,
         private readonly EvolutionApiClient $evolutionApiClient,
-        private readonly PolicySettingsService $policySettingsService
+        private readonly PolicySettingsService $policySettingsService,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     public function createBatch(
@@ -845,20 +847,12 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
 
         $like = '%'.$term.'%';
         $sequence = ctype_digit($term) ? (int) $term : null;
-        $phoneTerms = $this->phoneSearchTerms($term);
 
-        $query->where(function (Builder $builder) use ($like, $sequence, $phoneTerms): void {
-            $builder->whereHas('user', function (Builder $userQuery) use ($like, $phoneTerms): void {
+        $query->where(function (Builder $builder) use ($like, $sequence, $term): void {
+            $builder->whereHas('user', function (Builder $userQuery) use ($like, $term): void {
                 $userQuery->where('name', 'like', $like)
                     ->orWhere('phone', 'like', $like);
-
-                foreach ($phoneTerms as $phoneTerm) {
-                    $userQuery->orWhere(
-                        DB::raw("CONCAT(REPLACE(country_code, '+', ''), phone)"),
-                        'like',
-                        '%'.$phoneTerm.'%'
-                    );
-                }
+                $this->phoneSearch->applyUserPhoneLike($userQuery, $term);
             });
 
             if ($sequence !== null) {
@@ -880,29 +874,6 @@ class VideoCodeBatchService implements VideoCodeBatchServiceInterface
         }
 
         return $parsed['sequence'];
-    }
-
-    /**
-     * @return string[]
-     */
-    private function phoneSearchTerms(string $term): array
-    {
-        $digits = preg_replace('/\D+/', '', $term) ?: '';
-        if ($digits === '') {
-            return [];
-        }
-
-        $terms = [$digits];
-
-        if (str_starts_with($digits, '00')) {
-            $terms[] = ltrim($digits, '0');
-        }
-
-        if (str_starts_with($digits, '0')) {
-            $terms[] = ltrim($digits, '0');
-        }
-
-        return array_values(array_unique(array_filter($terms, static fn (string $value): bool => $value !== '')));
     }
 
     private function normalizeDestination(string $destination): string

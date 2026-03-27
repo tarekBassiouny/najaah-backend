@@ -11,6 +11,7 @@ use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use App\Services\Phone\PhoneNormalizer;
 use App\Services\Students\StudentService;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
@@ -23,7 +24,8 @@ class LoginAction
         private readonly DeviceServiceInterface $deviceService,
         private readonly JwtServiceInterface $jwtService,
         private readonly StudentService $studentService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly PhoneNormalizer $phoneNormalizer
     ) {}
 
     /**
@@ -104,7 +106,7 @@ class LoginAction
 
     private function resolveOrCreateStudent(string $phone, string $countryCode, ?int $centerId): User
     {
-        $existing = $this->findScopedStudent($phone, $centerId);
+        $existing = $this->findScopedStudent($phone, $countryCode, $centerId);
         if ($existing instanceof User) {
             if ($existing->country_code === null || $existing->country_code === '') {
                 $existing->forceFill(['country_code' => $countryCode])->save();
@@ -121,7 +123,7 @@ class LoginAction
                 'center_id' => $centerId,
             ]);
         } catch (UniqueConstraintViolationException) {
-            $resolved = $this->findScopedStudent($phone, $centerId);
+            $resolved = $this->findScopedStudent($phone, $countryCode, $centerId);
             if ($resolved instanceof User) {
                 return $resolved;
             }
@@ -130,11 +132,20 @@ class LoginAction
         }
     }
 
-    private function findScopedStudent(string $phone, ?int $centerId): ?User
+    private function findScopedStudent(string $phone, string $countryCode, ?int $centerId): ?User
     {
+        $normalizedPhone = $this->phoneNormalizer->normalize($phone, $countryCode);
         $query = User::query()
             ->where('is_student', true)
-            ->where('phone', $phone);
+            ->where(function ($builder) use ($normalizedPhone, $phone): void {
+                if ($normalizedPhone !== null) {
+                    $builder->where('phone_normalized', $normalizedPhone);
+
+                    return;
+                }
+
+                $builder->where('phone', $phone);
+            });
 
         if (is_numeric($centerId)) {
             $query->where('center_id', $centerId);

@@ -17,6 +17,7 @@ use App\Services\Centers\CenterScopeService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Students\Contracts\StudentNotificationServiceInterface;
 use App\Support\AuditActions;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -30,7 +31,8 @@ class EnrollmentService implements EnrollmentServiceInterface
         private readonly StudentNotificationServiceInterface $notificationService,
         private readonly StudentAccessService $studentAccessService,
         private readonly AuditLogService $auditLogService,
-        private readonly AdminNotificationDispatcher $adminNotificationDispatcher
+        private readonly AdminNotificationDispatcher $adminNotificationDispatcher,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     public function enroll(User $student, Course $course, string $status, ?User $actor = null): Enrollment
@@ -352,11 +354,13 @@ class EnrollmentService implements EnrollmentServiceInterface
         if ($filters->search !== null) {
             $term = trim($filters->search);
             if ($term !== '') {
-                $query->whereHas('user', static function (Builder $userQuery) use ($term): void {
+                $query->whereHas('user', function (Builder $userQuery) use ($term): void {
                     $userQuery
                         ->where('name', 'like', sprintf('%%%s%%', $term))
                         ->orWhere('email', 'like', sprintf('%%%s%%', $term))
                         ->orWhere('phone', 'like', sprintf('%%%s%%', $term));
+
+                    $this->phoneSearch->applyUserPhoneLike($userQuery, $term);
                 });
             }
         }

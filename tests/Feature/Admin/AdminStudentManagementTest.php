@@ -179,25 +179,20 @@ it('creates center-bound student for branded center route', function (): void {
     ]);
 });
 
-it('validates student phone as base number and country code format', function (): void {
+it('accepts egypt local student phone format and still rejects country code inside phone', function (): void {
     $this->asAdmin();
     $center = Center::factory()->create();
 
     $leadingZero = $this->postJson('/api/v1/admin/students', [
-        'name' => 'Invalid Phone Student',
-        'email' => 'invalid.phone@example.com',
+        'name' => 'Valid Local Phone Student',
+        'email' => 'valid.local.phone@example.com',
         'phone' => '01225291841',
         'country_code' => '+20',
         'center_id' => $center->id,
     ], $this->adminHeaders());
 
-    $leadingZero->assertStatus(422)
-        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
-        ->assertJsonStructure([
-            'error' => [
-                'details' => ['phone'],
-            ],
-        ]);
+    $leadingZero->assertCreated()
+        ->assertJsonPath('data.phone', '01225291841');
 
     $withCountryInPhone = $this->postJson('/api/v1/admin/students', [
         'name' => 'Invalid Base Phone Student',
@@ -346,7 +341,8 @@ it('filters students by status and student search fields', function (): void {
         'email' => 'alpha.search@example.com',
         'is_student' => true,
         'status' => 0,
-        'phone' => '19991234016',
+        'phone' => '1225291840',
+        'country_code' => '+20',
     ]);
     User::factory()->create([
         'name' => 'Beta Student',
@@ -354,6 +350,7 @@ it('filters students by status and student search fields', function (): void {
         'is_student' => true,
         'status' => 1,
         'phone' => '19995678017',
+        'country_code' => '+1',
     ]);
 
     $byStatus = $this->getJson('/api/v1/admin/students?status=0', $this->adminHeaders());
@@ -364,7 +361,8 @@ it('filters students by status and student search fields', function (): void {
 
     $byLegacySearch = $this->getJson('/api/v1/admin/students?search=Alpha', $this->adminHeaders());
     $byName = $this->getJson('/api/v1/admin/students?student_name=Alpha', $this->adminHeaders());
-    $byPhone = $this->getJson('/api/v1/admin/students?student_phone=1234', $this->adminHeaders());
+    $byPhone = $this->getJson('/api/v1/admin/students?student_phone=2252', $this->adminHeaders());
+    $byLocalPhone = $this->getJson('/api/v1/admin/students?student_phone=01225291840', $this->adminHeaders());
     $byEmail = $this->getJson('/api/v1/admin/students?student_email=alpha.search', $this->adminHeaders());
 
     $byLegacySearch->assertOk()
@@ -376,6 +374,10 @@ it('filters students by status and student search fields', function (): void {
         ->assertJsonPath('data.0.name', 'Alpha Student');
 
     $byPhone->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.name', 'Alpha Student');
+
+    $byLocalPhone->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.name', 'Alpha Student');
 
