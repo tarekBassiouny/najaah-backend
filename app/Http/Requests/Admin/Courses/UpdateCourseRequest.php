@@ -63,6 +63,7 @@ class UpdateCourseRequest extends FormRequest
             'description_translations.ar' => ['nullable', 'string'],
             'category_id' => ['sometimes', 'required', 'exists:categories,id'],
             'difficulty' => ['sometimes', 'required', 'in:beginner,intermediate,advanced'],
+            'language' => ['sometimes', 'nullable', 'string', 'max:10'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'requires_video_approval' => ['sometimes', 'nullable', 'boolean'],
             'access_model' => ['sometimes', Rule::enum(CourseAccessModel::class)],
@@ -130,6 +131,10 @@ class UpdateCourseRequest extends FormRequest
             'difficulty' => [
                 'description' => 'Difficulty level slug.',
                 'example' => 'intermediate',
+            ],
+            'language' => [
+                'description' => 'Primary language code for the course.',
+                'example' => 'ar',
             ],
             'price' => [
                 'description' => 'Optional course price.',
