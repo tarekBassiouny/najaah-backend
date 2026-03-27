@@ -14,6 +14,7 @@ use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -22,7 +23,8 @@ class AdminUserService implements AdminUserServiceInterface
 {
     public function __construct(
         private readonly AuditLogService $auditLogService,
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     /**
@@ -44,9 +46,13 @@ class AdminUserService implements AdminUserServiceInterface
         }
 
         if ($filters->search !== null) {
-            $query->where(function (Builder $builder) use ($filters): void {
-                $builder->where('email', 'like', '%'.$filters->search.'%')
-                    ->orWhere('phone', 'like', '%'.$filters->search.'%');
+            $term = trim($filters->search);
+
+            $query->where(function (Builder $builder) use ($term): void {
+                $builder->where('email', 'like', '%'.$term.'%')
+                    ->orWhere('phone', 'like', '%'.$term.'%');
+
+                $this->phoneSearch->applyUserPhoneLike($builder, $term);
             });
         }
 

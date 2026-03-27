@@ -6,6 +6,7 @@ use App\Models\OtpCode;
 use App\Models\User;
 use App\Services\Auth\Contracts\OtpSenderInterface;
 use App\Services\Auth\OtpService;
+use App\Services\Phone\PhoneNormalizer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -21,7 +22,7 @@ test('send creates otp record and returns token', function (): void {
     $sender->shouldReceive('send')
         ->once();
 
-    $service = new OtpService($sender);
+    $service = new OtpService($sender, app(PhoneNormalizer::class));
 
     $result = $service->send('1234567890', '+20', null);
 
@@ -44,7 +45,7 @@ test('verify returns otp code when valid', function (): void {
     ]);
 
     $sender = Mockery::mock(OtpSenderInterface::class);
-    $service = new OtpService($sender);
+    $service = new OtpService($sender, app(PhoneNormalizer::class));
     $result = $service->verify('123456', 'token-123');
 
     expect($result)->not()->toBeNull();
@@ -59,7 +60,7 @@ test('verify returns null when expired', function (): void {
     ]);
 
     $sender = Mockery::mock(OtpSenderInterface::class);
-    $service = new OtpService($sender);
+    $service = new OtpService($sender, app(PhoneNormalizer::class));
     $result = $service->verify('123456', 'token-123');
 
     expect($result)->toBeNull();
@@ -120,7 +121,7 @@ it('matches otp send to system student when center scope is null', function (): 
     $sender->shouldReceive('provider')->once()->andReturn('whatsapp');
     $sender->shouldReceive('send')->once();
 
-    $service = new OtpService($sender);
+    $service = new OtpService($sender, app(PhoneNormalizer::class));
     $token = $service->send('777000111', '+1', null);
 
     assertDatabaseHas('otp_codes', [
@@ -150,7 +151,7 @@ it('matches otp send to center student when center scope is provided', function 
     $sender->shouldReceive('provider')->once()->andReturn('whatsapp');
     $sender->shouldReceive('send')->once();
 
-    $service = new OtpService($sender);
+    $service = new OtpService($sender, app(PhoneNormalizer::class));
     $token = $service->send('888000111', '+1', (int) $center->id);
 
     assertDatabaseHas('otp_codes', [

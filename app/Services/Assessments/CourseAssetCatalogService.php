@@ -65,7 +65,7 @@ final class CourseAssetCatalogService
         $learningAssets = LearningAsset::query()
             ->where('course_id', $course->id)
             ->whereIn('attachable_type', ['video', 'pdf'])
-            ->whereIn('asset_type', [LearningAssetType::Summary, LearningAssetType::Flashcards])
+            ->whereIn('asset_type', [LearningAssetType::Summary, LearningAssetType::Flashcards, LearningAssetType::InteractiveActivity])
             ->get()
             ->groupBy(fn (LearningAsset $asset): string => $this->sourceKey((string) $asset->attachable_type, (int) $asset->attachable_id));
 
@@ -79,13 +79,14 @@ final class CourseAssetCatalogService
                 AIContentTargetType::Quiz,
                 AIContentTargetType::Flashcards,
                 AIContentTargetType::Assignment,
+                AIContentTargetType::InteractiveActivity,
             ])
             ->orderByDesc('id')
             ->get()
             ->filter(fn (AIContentJob $job): bool => isset($sourceKeyLookup[$this->sourceKey($job->source_type->value, $job->source_id)]))
             ->groupBy(fn (AIContentJob $job): string => $this->sourceKey($job->source_type->value, $job->source_id));
 
-        $slots = ['summary', 'quiz', 'flashcards', 'assignment'];
+        $slots = ['summary', 'quiz', 'flashcards', 'assignment', 'interactive_activity'];
 
         $sourcePayload = $sources
             ->sortBy([
@@ -167,6 +168,7 @@ final class CourseAssetCatalogService
             'assignment' => $this->selectAssignment($assignments),
             'summary' => $this->selectLearningAsset($learningAssets, LearningAssetType::Summary),
             'flashcards' => $this->selectLearningAsset($learningAssets, LearningAssetType::Flashcards),
+            'interactive_activity' => $this->selectLearningAsset($learningAssets, LearningAssetType::InteractiveActivity),
             default => null,
         };
 

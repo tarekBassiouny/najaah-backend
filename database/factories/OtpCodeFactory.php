@@ -19,6 +19,7 @@ class OtpCodeFactory extends Factory
         return [
             'phone' => '1000000000',
             'country_code' => $country,
+            'phone_normalized' => null,
             'otp_code' => '123456',
             'otp_token' => Str::uuid()->toString(),
             'provider' => 'sms',

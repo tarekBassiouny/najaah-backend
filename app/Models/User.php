@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\Pivots\RoleUser;
 use App\Models\Pivots\UserCenter;
+use App\Services\Phone\PhoneNormalizer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,7 +29,9 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property string|null $username
  * @property string $phone
  * @property string|null $country_code
+ * @property string|null $phone_normalized
  * @property string|null $parent_phone
+ * @property string|null $parent_phone_normalized
  * @property string|null $email
  * @property string $password
  * @property int $status
@@ -80,7 +83,9 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'phone',
         'country_code',
+        'phone_normalized',
         'parent_phone',
+        'parent_phone_normalized',
         'email',
         'password',
         'force_password_reset',
@@ -302,5 +307,23 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (User $user): void {
+            /** @var PhoneNormalizer $normalizer */
+            $normalizer = app(PhoneNormalizer::class);
+
+            $user->phone_normalized = $normalizer->normalize(
+                $user->phone,
+                $user->country_code
+            );
+
+            $user->parent_phone_normalized = $normalizer->normalize(
+                $user->parent_phone,
+                $user->country_code
+            );
+        });
     }
 }

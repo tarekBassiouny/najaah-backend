@@ -8,6 +8,7 @@ use App\Filters\Admin\VideoAccessCodeFilters;
 use App\Models\User;
 use App\Models\VideoAccessCode;
 use App\Services\Centers\CenterScopeService;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -15,7 +16,8 @@ use Illuminate\Support\Carbon;
 class VideoAccessCodeQueryService
 {
     public function __construct(
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     /**
@@ -76,11 +78,13 @@ class VideoAccessCodeQueryService
             if ($term !== '') {
                 $query->where(function (Builder $wrapped) use ($term): void {
                     $wrapped->where('code', 'like', sprintf('%%%s%%', $term))
-                        ->orWhereHas('user', static function (Builder $userQuery) use ($term): void {
+                        ->orWhereHas('user', function (Builder $userQuery) use ($term): void {
                             $userQuery
                                 ->where('name', 'like', sprintf('%%%s%%', $term))
                                 ->orWhere('email', 'like', sprintf('%%%s%%', $term))
                                 ->orWhere('phone', 'like', sprintf('%%%s%%', $term));
+
+                            $this->phoneSearch->applyUserPhoneLike($userQuery, $term);
                         });
                 });
             }

@@ -9,14 +9,15 @@ use App\Enums\UserDeviceStatus;
 use App\Filters\Admin\StudentFilters;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class StudentQueryService
 {
     public function __construct(
-        private readonly CenterScopeService $centerScopeService
+        private readonly CenterScopeService $centerScopeService,
+        private readonly PhoneSearch $phoneSearch
     ) {}
 
     /**
@@ -166,7 +167,7 @@ class StudentQueryService
                         ->orWhere('email', 'like', '%'.$term.'%')
                         ->orWhere('phone', 'like', '%'.$term.'%');
 
-                    $this->appendPhoneSearch($builder, $this->phoneSearchTerms($term));
+                    $this->phoneSearch->applyUserPhoneLike($builder, $term);
                 });
             }
         }
@@ -183,7 +184,7 @@ class StudentQueryService
             if ($studentPhone !== '') {
                 $query->where(function (Builder $builder) use ($studentPhone): void {
                     $builder->where('phone', 'like', '%'.$studentPhone.'%');
-                    $this->appendPhoneSearch($builder, $this->phoneSearchTerms($studentPhone));
+                    $this->phoneSearch->applyUserPhoneLike($builder, $studentPhone);
                 });
             }
         }
@@ -212,44 +213,5 @@ class StudentQueryService
                 $gradeQuery->where('stage', $filters->stage);
             });
         }
-    }
-
-    /**
-     * @phpstan-param Builder<User> $builder
-     * @phpstan-param string[] $values
-     */
-    private function appendPhoneSearch(Builder $builder, array $values): void
-    {
-        foreach ($values as $value) {
-            if ($value === '') {
-                continue;
-            }
-
-            $builder->orWhere('phone', 'like', '%'.$value.'%')
-                ->orWhere(DB::raw("CONCAT(REPLACE(country_code, '+', ''), phone)"), 'like', '%'.$value.'%');
-        }
-    }
-
-    /**
-     * @phpstan-return string[]
-     */
-    private function phoneSearchTerms(string $term): array
-    {
-        $digits = preg_replace('/\D+/', '', $term) ?: '';
-        if ($digits === '') {
-            return [];
-        }
-
-        $terms = [$digits];
-
-        if (str_starts_with($digits, '00')) {
-            $terms[] = ltrim($digits, '0');
-        }
-
-        if (str_starts_with($digits, '0')) {
-            $terms[] = ltrim($digits, '0');
-        }
-
-        return array_values(array_unique($terms));
     }
 }

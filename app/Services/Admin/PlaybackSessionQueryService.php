@@ -8,13 +8,17 @@ use App\Filters\Admin\PlaybackSessionFilters;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
+use App\Support\PhoneSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 final class PlaybackSessionQueryService
 {
-    public function __construct(private readonly CenterScopeService $centerScopeService) {}
+    public function __construct(
+        private readonly CenterScopeService $centerScopeService,
+        private readonly PhoneSearch $phoneSearch
+    ) {}
 
     /**
      * @return LengthAwarePaginator<PlaybackSession>
@@ -91,7 +95,13 @@ final class PlaybackSessionQueryService
             if ($term !== '') {
                 $like = sprintf('%%%s%%', $term);
                 $query->where(function (Builder $inner) use ($like, $term): void {
-                    $inner->whereHas('user', fn (Builder $userQuery) => $userQuery->where('name', 'like', $like)->orWhere('email', 'like', $like)->orWhere('phone', 'like', $like))
+                    $inner->whereHas('user', function (Builder $userQuery) use ($like, $term): void {
+                        $userQuery->where('name', 'like', $like)
+                            ->orWhere('email', 'like', $like)
+                            ->orWhere('phone', 'like', $like);
+
+                        $this->phoneSearch->applyUserPhoneLike($userQuery, $term);
+                    })
                         ->orWhereHas('video', fn (Builder $videoQuery) => $videoQuery->whereTranslationLike(['title'], $term, $this->searchLocales()));
                 });
             }

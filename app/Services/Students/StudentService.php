@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\Access\StudentAccessService;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Phone\PhoneNormalizer;
 use App\Services\Students\Contracts\StudentNotificationServiceInterface;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
@@ -24,7 +25,8 @@ class StudentService
         private readonly CenterScopeService $centerScopeService,
         private readonly StudentNotificationServiceInterface $notificationService,
         private readonly StudentAccessService $studentAccessService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly PhoneNormalizer $phoneNormalizer
     ) {}
 
     /**
@@ -382,6 +384,7 @@ class StudentService
     {
         $phone = (string) ($data['phone'] ?? '');
         $countryCode = (string) ($data['country_code'] ?? '');
+        $normalizedPhone = $this->phoneNormalizer->normalize($phone, $countryCode);
 
         if ($phone === '' || $countryCode === '') {
             return null;
@@ -390,8 +393,20 @@ class StudentService
         return User::query()
             ->where('is_student', true)
             ->whereNull('center_id')
-            ->where('phone', $phone)
-            ->where('country_code', $countryCode)
+            ->where(function ($query) use ($normalizedPhone, $phone, $countryCode): void {
+                if ($normalizedPhone !== null) {
+                    $query->where('phone_normalized', $normalizedPhone)
+                        ->orWhere(function ($rawQuery) use ($phone, $countryCode): void {
+                            $rawQuery->where('phone', $phone)
+                                ->where('country_code', $countryCode);
+                        });
+
+                    return;
+                }
+
+                $query->where('phone', $phone)
+                    ->where('country_code', $countryCode);
+            })
             ->first();
     }
 }
